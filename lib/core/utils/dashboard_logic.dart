@@ -49,16 +49,9 @@ bool shouldUseDashboardHome(Role role, int? tenantId, Map<String, dynamic>? meta
   return metadata?['showDashboardTab_$tenantId'] == true;
 }
 
-/// Start route after login / tenant selection (Ionic `LoginGuard` / `routeAfterAuth`).
-///
-/// REDESIGN: with the new design (Beta) switched on every role starts on
-/// "Heute".
+/// Start route after login / tenant selection: every role starts on "Heute".
 String homeRouteFor(Role role, int? tenantId, Map<String, dynamic>? metadata) =>
-    RedesignRoutes.active
-        ? RedesignRoutes.today
-        : shouldUseDashboardHome(role, tenantId, metadata)
-            ? '/home-dashboard'
-            : role.defaultRoute;
+    RedesignRoutes.today;
 
 /// Cards that can be configured: "Meine Aufgaben" only exists with Teamorganisation.
 List<DashboardCardConfig> configurableDashboardCards(

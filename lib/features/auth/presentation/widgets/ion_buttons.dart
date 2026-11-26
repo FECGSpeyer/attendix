@@ -34,19 +34,16 @@ class IonBlockButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ios = useIosLook(context);
     final disabled = onPressed == null;
-    final shape = ios
-        ? const StadiumBorder()
-        : RoundedRectangleBorder(borderRadius: BorderRadius.circular(4));
-    final textStyle = ios
-        ? const TextStyle(fontSize: 17, fontWeight: FontWeight.w400)
-        : const TextStyle(
-            fontSize: 14, fontWeight: FontWeight.w500, letterSpacing: 0.84);
-    final size = Size.fromHeight(ios ? 44 : 36);
-    final padding = EdgeInsets.symmetric(horizontal: ios ? 12 : 15.4);
-    final text = Text(ios ? label : label.toUpperCase());
-    // ion-spinner slot="start" next to the label while submitting.
+    final shape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(4));
+    const textStyle = TextStyle(
+      fontSize: 14,
+      fontWeight: FontWeight.w500,
+      letterSpacing: 0.84,
+    );
+    const size = Size.fromHeight(36);
+    const padding = EdgeInsets.symmetric(horizontal: 15.4);
+    final text = Text(label.toUpperCase());
     final Widget child = loading
         ? Row(
             mainAxisSize: MainAxisSize.min,
@@ -67,36 +64,23 @@ class IonBlockButton extends StatelessWidget {
         : text;
 
     Widget button;
-    var fade = disabled;
     if (solid) {
-      final greyDisabled = ios && !primaryWhenDisabled;
-      if (greyDisabled) fade = false;
-      // OEFF-49: the light #ccc fill was the brightest element of the dark
-      // page; dark mode uses a muted dark grey with a dimmed label.
-      final dark = Theme.of(context).brightness == Brightness.dark;
       button = ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
-          disabledBackgroundColor: greyDisabled
-              ? (dark ? const Color(0xFF3A3A3C) : AppColors.iosDisabledButton)
-              : AppColors.primary,
-          disabledForegroundColor: greyDisabled && dark
-              ? Colors.white.withValues(alpha: 0.5)
-              : Colors.white,
+          disabledBackgroundColor: AppColors.primary,
+          disabledForegroundColor: Colors.white,
           minimumSize: size,
           maximumSize: size,
           padding: padding,
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           visualDensity: VisualDensity.standard,
-          elevation: ios ? 0 : 2,
-          shadowColor: ios ? Colors.transparent : null,
+          elevation: 2,
           shape: shape,
           textStyle: textStyle,
         ).copyWith(
-          // md keeps the raised look while disabled (only the opacity
-          // changes).
-          elevation: ios ? null : const WidgetStatePropertyAll(2),
+          elevation: const WidgetStatePropertyAll(2),
         ),
         onPressed: onPressed,
         child: child,
@@ -119,51 +103,8 @@ class IonBlockButton extends StatelessWidget {
       );
     }
     return Padding(
-      // ion-button block margin: 4px 2px
       padding: const EdgeInsets.symmetric(horizontal: 2),
-      child: Opacity(opacity: fade ? 0.5 : 1, child: button),
-    );
-  }
-}
-
-/// Ionic `ion-button size="small" fill="clear"`: iOS 13.8pt (0.8125em of
-/// the 17pt root) in a 29pt pill, md uppercase 13px medium, 27px high.
-class IonSmallClearButton extends StatelessWidget {
-  const IonSmallClearButton({
-    super.key,
-    required this.label,
-    required this.onPressed,
-  });
-
-  final String label;
-  final VoidCallback? onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    final ios = useIosLook(context);
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 2),
-      child: TextButton(
-        style: TextButton.styleFrom(
-          foregroundColor: AppColors.primary,
-          textStyle: ios
-              ? const TextStyle(fontSize: 13.8125, fontWeight: FontWeight.w400)
-              : const TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                  letterSpacing: 0.78),
-          padding: EdgeInsets.symmetric(horizontal: ios ? 12.4 : 11.7),
-          minimumSize: Size(0, ios ? 29 : 27.3),
-          maximumSize: Size(double.infinity, ios ? 29 : 27.3),
-          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          visualDensity: VisualDensity.standard,
-          shape: ios
-              ? const StadiumBorder()
-              : RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-        ),
-        onPressed: onPressed,
-        child: Text(ios ? label : label.toUpperCase()),
-      ),
+      child: Opacity(opacity: disabled ? 0.5 : 1, child: button),
     );
   }
 }

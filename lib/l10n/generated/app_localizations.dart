@@ -21003,7 +21003,7 @@ abstract class AppLocalizations {
   /// rdType.lookHideNameHint
   ///
   /// In de, this message translates to:
-  /// **'Termine ohne eigenen Titel zeigen dann das Datum statt des Namens der Art (klassische Ansicht und Eltern).'**
+  /// **'Termine ohne eigenen Titel zeigen dann das Datum statt des Namens der Art (Eltern).'**
   String get rdTypeLookHideNameHint;
 
   /// rdType.lookHighlightHint
@@ -26417,18 +26417,6 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'{count, plural, one {1 × verspätet} other {{count} × verspätet}}'**
   String redesignMeAttendanceLate(num count);
-
-  /// redesign.me.beta
-  ///
-  /// In de, this message translates to:
-  /// **'Neues Design (Beta)'**
-  String get redesignMeBeta;
-
-  /// redesign.me.betaHint
-  ///
-  /// In de, this message translates to:
-  /// **'Nur auf diesem Gerät. Jederzeit wieder ausschaltbar.'**
-  String get redesignMeBetaHint;
 
   /// redesign.me.calendar
   ///

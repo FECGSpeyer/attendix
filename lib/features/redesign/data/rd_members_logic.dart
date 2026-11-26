@@ -2,8 +2,8 @@ import '../../../core/constants/enums.dart';
 import '../../../data/models/instrument/instrument.dart';
 import '../../../data/models/person/person.dart';
 import '../../../data/models/player_absence/player_absence.dart';
-import '../../attendance/presentation/widgets/attendance_detail/attendance_grid.dart'
-    show sortPersonsByGroup, mainGroupIdOf;
+import '../../attendance/presentation/attendance_group_sort.dart'
+    show mainGroupIdOf, sortPersonsByGroup;
 import 'rd_dates.dart';
 import '../../../core/utils/helper_member.dart';
 

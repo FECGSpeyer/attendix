@@ -19,7 +19,7 @@ import 'package:attendix/data/models/instrument/instrument.dart';
 import 'package:attendix/data/models/person/person.dart';
 import 'package:attendix/features/redesign/data/providers/rd_members_providers.dart';
 import 'package:attendix/data/models/player_absence/player_absence.dart';
-import 'package:attendix/features/people/presentation/pages/person_detail_page.dart'
+import 'package:attendix/core/providers/person_detail_providers.dart'
     show personProvider, personAttendanceStatsProvider, personHistoryProvider;
 import 'package:attendix/features/redesign/data/rd_members_list_filter.dart';
 import 'package:attendix/features/redesign/data/rd_members_logic.dart';
@@ -113,7 +113,7 @@ MaterialApp _material(GoRouter router) => MaterialApp.router(
 
 List<Override> _common(Role role, MockPlayerRepository repo) => [
       initialRedesignSettingsProvider.overrideWithValue(
-        const RedesignSettings(enabled: true, world: RdFarbwelt.petrol),
+        const RedesignSettings(world: RdFarbwelt.petrol),
       ),
       effectiveRoleProvider.overrideWithValue(role),
       currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),

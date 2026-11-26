@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:attendix/core/config/supabase_config.dart';
 import 'package:attendix/core/providers/files_providers.dart';
-import 'package:attendix/core/providers/redesign_providers.dart';
 import 'package:attendix/core/providers/role_permission_providers.dart';
 import 'package:attendix/core/providers/tenant_providers.dart';
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
@@ -74,7 +73,6 @@ Future<ProviderContainer> _pump(WidgetTester tester) async {
       overrides: [
         supabaseAuthProvider.overrideWithValue(_auth),
         currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),
-        redesignEnabledProvider.overrideWithValue(true),
         canAccessFilesProvider.overrideWithValue(true),
         canEditFilesProvider.overrideWithValue(true),
         isRoleLoadingProvider.overrideWithValue(false),

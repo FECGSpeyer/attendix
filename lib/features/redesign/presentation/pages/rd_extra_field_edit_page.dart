@@ -16,7 +16,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/extra_fields_repository.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../settings/presentation/pages/extra_fields_page.dart' show extraFieldChurchIds, extraFieldTypeName;
+import '../../../settings/data/extra_fields_helpers.dart' show extraFieldChurchIds, extraFieldTypeName;
 import '../widgets/event/rd_form_widgets.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;

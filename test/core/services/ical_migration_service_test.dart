@@ -278,12 +278,12 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('LINK 1 KOPIEREN'), findsOneWidget);
-      expect(find.text('LINK 2 KOPIEREN'), findsOneWidget);
+      expect(find.text('Link 1 kopieren'), findsOneWidget);
+      expect(find.text('Link 2 kopieren'), findsOneWidget);
       expect(find.textContaining('1. https://api.attendix.de/functions/v1/ical-personal?tenantId=1&personId=2'), findsOneWidget);
       expect(find.textContaining('2. https://api.attendix.de/functions/v1/ical-tenant?tenantId=9'), findsOneWidget);
 
-      await tester.tap(find.text('SPÄTER'));
+      await tester.tap(find.text('Später'));
       await tester.pumpAndSettle();
       await dialogFuture;
 

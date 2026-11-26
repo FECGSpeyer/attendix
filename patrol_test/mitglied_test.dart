@@ -1,5 +1,4 @@
 import 'package:attendix/features/auth/presentation/pages/login_page.dart';
-import 'package:flutter/material.dart';
 import 'package:patrol/patrol.dart';
 
 import 'support/app.dart';
@@ -44,15 +43,6 @@ void main() {
     await $(field('Titel oder Nummer')).enterText('Nacht');
     await see($, 'Kleine Nachtmusik');
     seeNot($, 'Ode an die Freude');
-  });
-
-  patrolTest('M-31 Das neue Design ausschalten', ($) async {
-    await startApp($);
-    await signInAs($, 'mitglied');
-    await tapOn($, 'Ich');
-    await tapOn($, $(Switch));
-    // The classic design greets differently.
-    await see($, RegExp('Shalom Mia'));
   });
 
   patrolTest('M-33 Mich ausloggen', ($) async {

@@ -1,17 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/enums.dart' show Role;
+import '../../../../core/providers/admin_providers.dart' show TenantUser, tenantUsersProvider;
 import '../../../../core/providers/parent_providers.dart';
+import '../../../../core/providers/user_registration_providers.dart';
 import '../../../../core/providers/viewer_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/error_message.dart';
+import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/parent/parent_model.dart';
 import '../../../../data/models/viewer/viewer.dart';
+import '../../../../data/repositories/parent_repository.dart';
+import '../../../../data/repositories/user_registration_repository.dart' show AccountFlowException;
+import '../../../../data/repositories/viewer_repository.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/app_action_sheet.dart';
-import '../../../settings/presentation/pages/parents_page.dart' show ParentsPage;
-import '../../../settings/presentation/pages/user_management_page.dart' show TenantUser, tenantUsersProvider;
-import '../../../settings/presentation/pages/viewers_page.dart' show ViewersPage;
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../data/rd_manage_logic.dart' show RdManageEntry;
 import '../widgets/manage/rd_manage_entries.dart' show rdManageTitle;
 import '../widgets/manage/rd_manage_list.dart';
@@ -87,7 +93,7 @@ class RdParentsPage extends ConsumerWidget {
         RdManageListAction(
           label: l10n.parentRegisterInviteByEmail,
           icon: Icons.mail_outline,
-          onSelected: () => ParentsPage.showAddParentDialog(context, ref),
+          onSelected: () => _showAddParentDialog(context, ref),
         ),
       ],
       onRefresh: () async {
@@ -102,13 +108,12 @@ class RdParentsPage extends ConsumerWidget {
     // TENANT: bound to the group of the shown list before the first await.
     final repo = ref.read(parentRepositoryWithTenantProvider);
     if (!await rdConfirmRemoveAction(context, parent.fullName, context.l10n.redesignParentsListRemove)) return;
-    if (context.mounted) await ParentsPage.removeParentWithConfirmation(context, ref, parent, repo: repo);
+    if (context.mounted) await _removeParentWithConfirmation(context, ref, parent, repo: repo);
   }
 }
 
 /// REDESIGN: Verwaltung › Beobachter in the template "Verwaltungsliste"
-/// (replaces the old viewers sheet while the Beta is on; leads only). Like
-/// [RdParentsPage].
+/// (leads only). Like [RdParentsPage].
 class RdViewersPage extends ConsumerWidget {
   const RdViewersPage({super.key});
 
@@ -149,7 +154,7 @@ class RdViewersPage extends ConsumerWidget {
       emptyText: l10n.redesignViewersListEmpty,
       emptyIcon: Icons.visibility_outlined,
       addLabel: l10n.redesignViewersListAdd,
-      onAdd: viewers == null ? null : () => ViewersPage.showAddViewerDialog(context, ref),
+      onAdd: viewers == null ? null : () => _showAddViewerDialog(context, ref),
       onRefresh: () async {
         ref.invalidate(viewersProvider);
         ref.invalidate(tenantUsersProvider);
@@ -162,7 +167,7 @@ class RdViewersPage extends ConsumerWidget {
     // TENANT: bound to the group of the shown list before the first await.
     final repo = ref.read(viewerRepositoryWithTenantProvider);
     if (!await rdConfirmRemoveAction(context, viewer.fullName, context.l10n.redesignViewersListRemove)) return;
-    if (context.mounted) await ViewersPage.removeViewerWithConfirmation(context, ref, viewer, repo: repo);
+    if (context.mounted) await _removeViewerWithConfirmation(context, ref, viewer, repo: repo);
   }
 }
 
@@ -198,4 +203,222 @@ Future<bool> rdConfirmRemoveAction(BuildContext context, String title, String la
     ],
   );
   return remove == true;
+}
+
+Future<({String email, String firstName, String lastName})?> _showInviteDialog(
+  BuildContext context, {
+  required String title,
+}) async {
+  final emailController = TextEditingController();
+  final firstNameController = TextEditingController();
+  final lastNameController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
+
+  final confirmed = await showAppDialog<bool>(
+    context: context,
+    builder: (ctx) => AppAlertDialog(
+      title: Text(title),
+      content: Form(
+        key: formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextFormField(
+              controller: emailController,
+              decoration: InputDecoration(
+                labelText: context.l10n.settingsEmailAddress,
+                prefixIcon: const Icon(Icons.email),
+              ),
+              keyboardType: TextInputType.emailAddress,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return context.l10n.settingsFlutterEmailRequired;
+                }
+                if (!value.contains('@')) {
+                  return context.l10n.registerModalInvalidEmail;
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: AppDimensions.paddingM),
+            TextFormField(
+              controller: firstNameController,
+              decoration: InputDecoration(
+                labelText: context.l10n.peopleFirstName,
+                prefixIcon: const Icon(Icons.person),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return context.l10n.settingsFlutterFirstNameRequired;
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: AppDimensions.paddingM),
+            TextFormField(
+              controller: lastNameController,
+              decoration: InputDecoration(
+                labelText: context.l10n.peopleLastName,
+                prefixIcon: const Icon(Icons.person_outline),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return context.l10n.settingsFlutterLastNameRequired;
+                }
+                return null;
+              },
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(ctx).pop(false),
+          child: Text(context.l10n.commonCancel),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            if (formKey.currentState?.validate() ?? false) {
+              Navigator.of(ctx).pop(true);
+            }
+          },
+          child: Text(context.l10n.settingsInvite),
+        ),
+      ],
+    ),
+  );
+
+  if (confirmed != true) return null;
+  return (
+    email: emailController.text,
+    firstName: firstNameController.text,
+    lastName: lastNameController.text,
+  );
+}
+
+Future<void> _showAddParentDialog(BuildContext context, WidgetRef ref) async {
+  // TENANT: both repositories bound before dialog.
+  final repo = ref.read(parentRepositoryWithTenantProvider);
+  final registration = ref.read(userRegistrationRepositoryWithTenantProvider);
+  final values = await _showInviteDialog(context, title: context.l10n.settingsAddParent);
+  if (values == null || !context.mounted) return;
+  try {
+    await ref.read(parentNotifierProvider.notifier).invite(
+          email: values.email,
+          firstName: values.firstName,
+          lastName: values.lastName,
+          repo: repo,
+          registration: registration,
+        );
+    if (context.mounted) {
+      ToastHelper.showSuccess(context, context.l10n.settingsUserCreated);
+    }
+  } on AccountFlowException catch (e) {
+    if (context.mounted) ToastHelper.showError(context, e.message);
+  } catch (e) {
+    if (context.mounted) {
+      ToastHelper.showError(context, context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(e)));
+    }
+  }
+}
+
+Future<void> _removeParentWithConfirmation(
+  BuildContext context,
+  WidgetRef ref,
+  ParentModel parent, {
+  required ParentRepository repo,
+}) async {
+  final confirmed = await showAppDialog<bool>(
+    context: context,
+    builder: (ctx) => AppAlertDialog(
+      title: Text(context.l10n.settingsRemoveParent),
+      content: Text(context.l10n.settingsRemoveMessage(parent.firstName)),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(ctx).pop(false),
+          child: Text(context.l10n.commonCancel),
+        ),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: AppColors.danger),
+          onPressed: () => Navigator.of(ctx).pop(true),
+          child: Text(context.l10n.commonYes),
+        ),
+      ],
+    ),
+  );
+  if (confirmed == true && context.mounted) {
+    try {
+      await ref.read(parentNotifierProvider.notifier).deleteParent(parent.id!, appId: parent.appId, repo: repo);
+      if (context.mounted) {
+        ToastHelper.showSuccess(context, context.l10n.settingsFlutterParentRemoved);
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ToastHelper.showError(context, context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(e)));
+      }
+    }
+  }
+}
+
+Future<void> _showAddViewerDialog(BuildContext context, WidgetRef ref) async {
+  final repo = ref.read(viewerRepositoryWithTenantProvider);
+  final registration = ref.read(userRegistrationRepositoryWithTenantProvider);
+  final values = await _showInviteDialog(context, title: context.l10n.settingsAddViewer);
+  if (values == null || !context.mounted) return;
+  try {
+    await ref.read(viewerNotifierProvider.notifier).invite(
+          email: values.email,
+          firstName: values.firstName,
+          lastName: values.lastName,
+          repo: repo,
+          registration: registration,
+        );
+    if (context.mounted) {
+      ToastHelper.showSuccess(context, context.l10n.settingsUserCreated);
+    }
+  } on AccountFlowException catch (e) {
+    if (context.mounted) ToastHelper.showError(context, e.message);
+  } catch (e) {
+    if (context.mounted) {
+      ToastHelper.showError(context, context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(e)));
+    }
+  }
+}
+
+Future<void> _removeViewerWithConfirmation(
+  BuildContext context,
+  WidgetRef ref,
+  Viewer viewer, {
+  required ViewerRepository repo,
+}) async {
+  final confirmed = await showAppDialog<bool>(
+    context: context,
+    builder: (ctx) => AppAlertDialog(
+      title: Text(context.l10n.settingsRemoveViewer),
+      content: Text(context.l10n.settingsRemoveMessage(viewer.firstName)),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(ctx).pop(false),
+          child: Text(context.l10n.commonCancel),
+        ),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: AppColors.danger),
+          onPressed: () => Navigator.of(ctx).pop(true),
+          child: Text(context.l10n.commonYes),
+        ),
+      ],
+    ),
+  );
+  if (confirmed == true && context.mounted) {
+    try {
+      await ref.read(viewerNotifierProvider.notifier).deleteViewer(viewer.id!, appId: viewer.appId, repo: repo);
+      if (context.mounted) {
+        ToastHelper.showSuccess(context, context.l10n.settingsFlutterViewerRemoved);
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ToastHelper.showError(context, context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(e)));
+      }
+    }
+  }
 }

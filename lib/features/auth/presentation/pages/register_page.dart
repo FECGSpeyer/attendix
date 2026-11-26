@@ -1,7 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -301,24 +300,19 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final ios = useIosLook(context);
-    // register-modal.component.scss in rem (1rem = 17px on the iPhone).
-    final rem = ios ? 17.0 : 16.0;
+    const rem = 16.0;
     final introStyle = TextStyle(
         fontSize: 0.95 * rem,
         height: 1.4,
         color: theme.brightness == Brightness.dark
             ? const Color(0xFFD0D0D0)
-            // md: --ion-color-medium-shade as rendered (#57585c); iOS: the
-            // darker grey of the iPhone screenshot audit.
-            : (ios ? const Color(0xFF333333) : const Color(0xFF57585C)));
-    final hintStyle = TextStyle(
-        fontSize: 0.85 * rem, height: 1.4, color: const Color(0xFF636469));
-    final privacyStyle = TextStyle(fontSize: 0.9 * rem, height: 1.4);
+            : const Color(0xFF57585C));
+    const hintStyle = TextStyle(
+        fontSize: 0.85 * rem, height: 1.4, color: Color(0xFF636469));
+    const privacyStyle = TextStyle(fontSize: 0.9 * rem, height: 1.4);
     final itemLine = theme.dividerTheme.color ?? theme.dividerColor;
-    // ion-list md: 8px padding above/below the items.
-    final listPad = ios ? 0.0 : 8.0;
-    final fieldMetrics = IonStackedItemMetrics.modern(ios: ios);
+    const listPad = 8.0;
+    final fieldMetrics = IonStackedItemMetrics.modern(ios: false);
     Widget field({
       required String label,
       required String placeholder,
@@ -331,9 +325,9 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
           metrics: fieldMetrics,
           indent: 16,
           lineColor: itemLine,
-          focusHighlight: !ios,
+          focusHighlight: true,
           trailing: trailing,
-          trailingSize: ios ? 29.75 : 40,
+          trailingSize: 40,
           builder: builder,
         );
 
@@ -420,7 +414,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                       tooltip: context.l10n.loginShowPassword,
                       color: AppColors.primary,
                       padding: EdgeInsets.zero,
-                      iconSize: ios ? 22 : 20,
+                      iconSize: 20,
                       icon: Icon(
                         _obscurePassword
                             ? AppIcons.visibilityOutlined
@@ -474,12 +468,10 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                   child: Row(
                     children: [
                       SizedBox(
-                        width: ios ? 23.4 : 18,
-                        height: ios ? 23.4 : 18,
+                        width: 18,
+                        height: 18,
                         child: Checkbox(
                           value: _privacyAccepted,
-                          // ion-checkbox: round in iOS mode
-                          shape: ios ? const CircleBorder() : null,
                           materialTapTargetSize:
                               MaterialTapTargetSize.shrinkWrap,
                           visualDensity: VisualDensity.compact,
@@ -488,7 +480,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                               setState(() => _privacyAccepted = v ?? false),
                         ),
                       ),
-                      SizedBox(width: ios ? 12.75 : 12), // margin-right .75rem
+                      const SizedBox(width: 12),
                       Expanded(
                         child: GestureDetector(
                           behavior: HitTestBehavior.opaque,
@@ -541,28 +533,13 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                 ),
                 if (_mode == AuthMode.otp && _otpSent) ...[
                   const SizedBox(height: 12),
-                  if (context.rdSkin == null)
-                    // SEL-21: Ionic `ion-button expand="block" fill="clear"`.
-                    ListenableBuilder(
-                      listenable: _cooldown,
-                      builder: (context, _) => IonBlockButton(
-                        solid: false,
-                        label: _cooldown.active
-                            ? context.l10n.loginResendIn(_cooldown.remaining)
-                            : context.l10n.loginResendCode,
-                        onPressed: (_isLoading || _cooldown.active)
-                            ? null
-                            : _requestCode,
-                      ),
-                    )
-                  else
-                    Center(
-                      child: ResendCodeButton(
-                        cooldown: _cooldown,
-                        enabled: !_isLoading,
-                        onResend: _requestCode,
-                      ),
+                  Center(
+                    child: ResendCodeButton(
+                      cooldown: _cooldown,
+                      enabled: !_isLoading,
+                      onResend: _requestCode,
                     ),
+                  ),
                 ],
                 const SizedBox(height: 12),
                 // Ionic: clear "Abbrechen" button closes the modal.

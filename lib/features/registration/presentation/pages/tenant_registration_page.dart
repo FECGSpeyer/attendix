@@ -12,7 +12,7 @@ import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/church_providers.dart';
 import '../../../../core/router/go_replace.dart';
-import '../../../../core/providers/redesign_providers.dart';
+import '../../../../core/providers/redesign_providers.dart' show redesignSettingsProvider;
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../shared/widgets/display/attendix_logo.dart';
 import '../../../redesign/presentation/widgets/rd_logo.dart' show rdLogoColors;
@@ -33,8 +33,6 @@ import '../../data/providers/registration_providers.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/common/error_state_view.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
-import '../../../../shared/widgets/layout/ionic_ios.dart'
-    show IonTranslucentAppBar, IonContentTopInset;
 
 /// Public tenant registration page
 class TenantRegistrationPage extends ConsumerStatefulWidget {
@@ -114,61 +112,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
   @override
   Widget build(BuildContext context) {
     final tenantAsync = ref.watch(tenantByRegisterIdProvider(widget.registerId));
-
-    if (ref.watch(redesignEnabledProvider)) return _buildBeta(tenantAsync);
-    final ios = ionIsIos(context);
-    final hasData = tenantAsync.valueOrNull != null;
-    return Scaffold(
-      // IOS_R6: Ionic `ion-content [fullscreen]` under the translucent header
-      extendBodyBehindAppBar: ios,
-      // Ionic tenant-register: no back/close on the left, a home button on
-      // the right (goHome()).
-      // IOS_R6: `ion-header [translucent]` (blur once the large title has
-      // scrolled away; always while there is no large title).
-      appBar: IonTranslucentAppBar(
-        condensed: !hasData,
-        condensedListenable: hasData ? _showToolbarTitle : null,
-        child: AppBar(
-        title: ionIsIos(context) &&
-                ref.watch(tenantByRegisterIdProvider(widget.registerId)).valueOrNull !=
-                    null
-            ? ValueListenableBuilder<bool>(
-                valueListenable: _showToolbarTitle,
-                builder: (context, show, child) => AnimatedOpacity(
-                  opacity: show ? 1 : 0,
-                  duration: const Duration(milliseconds: 150),
-                  child: child,
-                ),
-                child: Text(context.l10n.tenantRegisterTitle),
-              )
-            : Text(context.l10n.tenantRegisterTitle),
-        automaticallyImplyLeading: false,
-        // SEL-13: Ionic `ion-buttons slot="end"` (iOS glass capsule).
-        actions: [
-          ToolbarButtonGroup(children: [
-            IconButton(
-              icon: Icon(AppIcons.homeOutlined),
-              tooltip: context.l10n.coreFlutterRouterGoHome,
-              onPressed: _goHome,
-            ),
-          ]),
-        ],
-      ),
-      ),
-      body: tenantAsync.when(
-        // A retry shows the spinner again instead of the stale error.
-        skipLoadingOnRefresh: false,
-        loading: () => const Center(child: AppSpinner()),
-        error: (error, stack) => _buildErrorState(error: error),
-        data: (tenant) {
-          if (tenant == null) {
-            return _buildErrorState(
-                message: context.l10n.tenantRegisterFlutterInvalidLink);
-          }
-          return _buildForm(tenant);
-        },
-      ),
-    );
+    return _buildBeta(tenantAsync);
   }
 
   /// Ionic `goHome()`: signed-in member of a tenant -> that tenant's home,
@@ -227,74 +171,13 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
       _formData.additionalFields.addAll(
           registrationFieldDefaults(registrationFields, additionalFields));
     }
-    final theme = Theme.of(context);
-    final ios = ionIsIos(context);
     final inputStyle = ionItemInputStyle(context);
     final dateFormat = DateFormat(dateFmt());
 
-    final beta = ref.watch(redesignEnabledProvider);
-    Widget header(String text) => beta ? RdGroupLabel(text) : IonListHeader(text);
+    Widget header(String text) => RdGroupLabel(text);
 
-    // Ionic tenant-register: one inset list with a card (instance name +
-    // intro), then the "Account", "Persönliche Daten" and "Weitere
-    // Informationen" groups and the primary "Registrierung abschließen" item.
-    // REDESIGN (E5): in the Beta the same groups sit in the card over the
-    // login photo; the card header with the group comes from [_buildBeta].
+    // Registration groups sit inside the card over the login photo.
     final children = <Widget>[
-          if (!beta) const IonContentTopInset(),
-          // ion-header collapse="condense": large title on iOS
-          if (ios && !beta)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
-              child: Text(
-                context.l10n.tenantRegisterTitle,
-                style: TextStyle(
-                  fontSize: 34,
-                  fontWeight: FontWeight.w700,
-                  color: theme.colorScheme.onSurface,
-                ),
-              ),
-            ),
-
-          // ion-card: business icon, instance name (ion-title), intro
-          if (!beta) Container(
-            margin: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-            padding: const EdgeInsets.fromLTRB(16, 20, 16, 20),
-            decoration: BoxDecoration(
-              color: theme.cardTheme.color ?? theme.colorScheme.surface,
-              borderRadius: BorderRadius.circular(ios ? 24 : 4),
-              boxShadow: [
-                BoxShadow(
-                  color: ios ? const Color(0x1F000000) : const Color(0x33000000),
-                  blurRadius: ios ? 12 : 2,
-                  offset: Offset(0, ios ? 4 : 1),
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                Icon(AppIcons.businessOutlined,
-                    size: 64, color: Color(0xFF666666)),
-                const SizedBox(height: 12),
-                Text(
-                  tenant.longName.isNotEmpty ? tenant.longName : tenant.shortName,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w600,
-                    color: theme.colorScheme.onSurface,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  context.l10n.tenantRegisterIntro,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 14, color: Color(0xFF666666)),
-                ),
-              ],
-            ),
-          ),
-
           _buildChosenRow(),
 
           // Account
@@ -453,57 +336,24 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
           ),
           const SizedBox(height: 8),
 
-          // ion-item color="primary" button: Registrierung abschließen
-          if (beta)
-            Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: RdPrimaryButton(
-                key: const ValueKey('tenant-register-finish'),
-                icon: Icons.check_circle_outline,
-                label: _finishLabel,
-                loading: _isLoading,
-                onPressed: _isLoading ||
-                        _noGroupsAvailable ||
-                        (!_isLoggedIn && _mode == AuthMode.otp)
-                    ? null
-                    : () => _submit(tenant),
-              ),
-            )
-          else
-          IonInsetGroup(
-            children: [
-              IonButtonItem(
-                key: const ValueKey('tenant-register-finish'),
-                filled: true,
-                icon: AppIcons.checkCircleOutline,
-                label: _finishLabel,
-                onTap: _isLoading ||
-                        _noGroupsAvailable ||
-                        (!_isLoggedIn && _mode == AuthMode.otp)
-                    ? null
-                    : () => _submit(tenant),
-              ),
-            ],
-          ),
-          if (_isLoading && !beta)
-            const Padding(
-              padding: EdgeInsets.only(top: 16),
-              child: Center(child: AppSpinner()),
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: RdPrimaryButton(
+              key: const ValueKey('tenant-register-finish'),
+              icon: Icons.check_circle_outline,
+              label: _finishLabel,
+              loading: _isLoading,
+              onPressed: _isLoading ||
+                      _noGroupsAvailable ||
+                      (!_isLoggedIn && _mode == AuthMode.otp)
+                  ? null
+                  : () => _submit(tenant),
             ),
+          ),
     ];
-    if (beta) {
-      return Form(
-        key: _formKey,
-        child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: children),
-      );
-    }
     return Form(
       key: _formKey,
-      child: ListView(
-        controller: _scrollController,
-        padding: const EdgeInsets.only(bottom: 32),
-        children: children,
-      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: children),
     );
   }
 
@@ -522,7 +372,6 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
   /// Kind" (an Elternteil registers children). Nothing is preselected, so
   /// parents never register themselves as members by mistake.
   Widget _buildChoice(Tenant tenant) {
-    final beta = ref.watch(redesignEnabledProvider);
     final l10n = context.l10n;
     Widget tile(Key key, IconData icon, String title, String hint, bool forChildren) => IonItem(
           key: key,
@@ -534,18 +383,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
           onTap: () => _choose(forChildren),
         );
     final children = <Widget>[
-      if (!beta) ...[
-        const IonContentTopInset(),
-        // The Beta card shows the group above; the old page names it here.
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-          child: Text(
-            tenant.longName.isNotEmpty ? tenant.longName : tenant.shortName,
-            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
-          ),
-        ),
-      ],
-      beta ? RdGroupLabel(l10n.parentRegisterWhoTitle) : IonListHeader(l10n.parentRegisterWhoTitle),
+      RdGroupLabel(l10n.parentRegisterWhoTitle),
       IonInsetGroup(
         margin: _betaGroupMargin,
         color: _betaGroupColor,
@@ -557,14 +395,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
         ],
       ),
     ];
-    if (beta) {
-      return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: children);
-    }
-    return ListView(
-      controller: _scrollController,
-      padding: const EdgeInsets.only(bottom: 32),
-      children: children,
-    );
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: children);
   }
 
   /// "Anmeldung für: …" with "Ändern" back to the choice.
@@ -710,10 +541,9 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
     if (date != null && mounted) setState(() => child.birthDate = date);
   }
 
-  // REDESIGN (E5): the form groups sit flush inside the Beta card.
-  EdgeInsetsGeometry? get _betaGroupMargin =>
-      ref.read(redesignEnabledProvider) ? const EdgeInsets.only(bottom: 8) : null;
-  Color? get _betaGroupColor => ref.read(redesignEnabledProvider) ? context.rd.bg : null;
+  // Form groups sit flush inside the card.
+  EdgeInsetsGeometry? get _betaGroupMargin => const EdgeInsets.only(bottom: 8);
+  Color? get _betaGroupColor => context.rd.bg;
 
   /// REDESIGN (E5): same photo and logo as the login, a Beta card with the
   /// group on top that scrolls with the form; "Registrierung abschließen"
@@ -1216,9 +1046,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
                   onPressed: () => Navigator.pop(context, false),
                   child: Text(context.l10n.commonCancel),
                 ),
-                // SEL-07: classic = plain Ionic alert button (Beta keeps
-                // its raised button).
-                (context.rdSkin != null ? ElevatedButton.new : TextButton.new)(
+                ElevatedButton(
                   onPressed: () async {
                     try {
                       await ref.read(authFlowServiceProvider).signInWithPassword(
@@ -1332,22 +1160,14 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
         ] else if (_otpSent) ...[
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 12),
-            child: ref.read(redesignEnabledProvider)
-                // Beta card is narrower: shrink the code boxes to the space
-                // that is left (e.g. 320 px screens) instead of clipping.
-                ? FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: OtpCodeField(
-                      controller: _otpController,
-                      enabled: !_isLoading,
-                      onCompleted: (_) => _verifyCode(),
-                    ),
-                  )
-                : OtpCodeField(
-                    controller: _otpController,
-                    enabled: !_isLoading,
-                    onCompleted: (_) => _verifyCode(),
-                  ),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: OtpCodeField(
+                controller: _otpController,
+                enabled: !_isLoading,
+                onCompleted: (_) => _verifyCode(),
+              ),
+            ),
           ),
           ListenableBuilder(
             listenable: _otpController,
@@ -1387,7 +1207,6 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
         children: [
           Checkbox(
             value: _privacyAccepted,
-            shape: ionIsIos(context) ? const CircleBorder() : null,
             onChanged: (v) => setState(() => _privacyAccepted = v ?? false),
           ),
           const SizedBox(width: 4),

@@ -1,10 +1,9 @@
-# Attendix im neuen Design (Beta)
+# Attendix – Benutzerhandbuch
 
-Diese Dokumentation beschreibt Attendix so, wie die App mit eingeschaltetem
-**Neuen Design (Beta)** aussieht und funktioniert. Das klassische Design, das
-der früheren Ionic-App entspricht, ist hier nicht beschrieben.
+Diese Dokumentation beschreibt das Design und die Bedienung von Attendix für
+alle Rollen.
 
-Stand: 14.11.2026. Beschrieben sind 150 Aufgaben für alle Rollen. Geprüft
+Stand: 25.11.2026. Beschrieben sind 148 Aufgaben für alle Rollen. Geprüft
 wurde gegen den Code und die Texte der App, nicht an einem Gerät. Fällt beim
 Benutzen eine Abweichung auf, gehört sie mit der Nummer des Szenarios
 gemeldet.

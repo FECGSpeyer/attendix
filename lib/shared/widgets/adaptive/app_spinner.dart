@@ -1,15 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'adaptive_platform.dart';
-
-/// IOS_LOOK: drop-in replacement for an indeterminate
-/// [CircularProgressIndicator] that renders like `ion-spinner`:
-/// - iOS: the "lines" activity indicator (Ionic iOS default spinner,
-///   28px), sized to the box it is put in (e.g. `SizedBox(20, 20)` in a
-///   button),
-/// - elsewhere: the Material [CircularProgressIndicator] (Ionic md
-///   "circular" spinner), with the same parameters.
+/// Spinner matching the native look on iOS (`CupertinoActivityIndicator`) and
+/// Material ([CircularProgressIndicator]) elsewhere.
 class AppSpinner extends StatelessWidget {
   const AppSpinner({
     super.key,
@@ -30,12 +23,11 @@ class AppSpinner extends StatelessWidget {
   final String? semanticsLabel;
   final String? semanticsValue;
 
-  /// Default `ion-spinner` size in iOS mode (28px → radius 14).
   static const double _iosDefaultRadius = 14;
 
   @override
   Widget build(BuildContext context) {
-    if (!useIosLook(context) || value != null) {
+    if (Theme.of(context).platform != TargetPlatform.iOS || value != null) {
       return CircularProgressIndicator(
         value: value,
         color: color,

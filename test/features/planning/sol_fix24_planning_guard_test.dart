@@ -1,4 +1,3 @@
-import 'package:attendix/core/theme/app_icons.dart';
 import 'dart:async';
 import 'dart:io';
 
@@ -14,6 +13,7 @@ import 'package:attendix/core/theme/app_theme.dart';
 import 'package:attendix/data/models/plan/plan.dart';
 import 'package:attendix/data/repositories/plan_repository.dart';
 import 'package:attendix/features/planning/presentation/pages/planning_page.dart';
+import 'package:attendix/features/redesign/presentation/widgets/rd_widgets.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -112,6 +112,7 @@ void main() {
         planAttendanceTypesProvider.overrideWith((ref) async => const []),
         planBlockTemplatesProvider.overrideWith((ref) async => const []),
         planSongsProvider.overrideWith((ref) async => const []),
+        songCollectionsProvider.overrideWith((ref) async => null),
         currentSongsProvider.overrideWith((ref) async => const []),
         groupsProvider.overrideWith((ref) async => const []),
         groupCategoriesProvider.overrideWith((ref) async => const []),
@@ -156,7 +157,7 @@ void main() {
   }
 
   Future<void> tapClose(WidgetTester tester) async {
-    await tester.tap(find.byIcon(AppIcons.close));
+    await tester.tap(find.byType(RdBackLink));
     await tester.pump();
   }
 
@@ -168,8 +169,14 @@ void main() {
 
   Map<String, dynamic> planOf(Map<String, dynamic> update) => update['plan'] as Map<String, dynamic>;
 
-  Finder minutesField() =>
-      find.byWidgetPredicate((w) => w is TextField && w.keyboardType == TextInputType.number);
+  Future<void> enterMinutes(WidgetTester tester, String value) async {
+    final input = find.byKey(const Key('rd-plan-dur-input'));
+    if (input.evaluate().isEmpty) {
+      await tester.tap(find.byKey(const ValueKey('rd-plan-dur-0')));
+      await tester.pumpAndSettle();
+    }
+    await tester.enterText(input, value);
+  }
 
   /// Dialog button (Material dialogs show their labels upper case).
   Finder button(String label) =>
@@ -183,7 +190,7 @@ void main() {
     testWidgets('cleared minutes keep the page open with the Ionic toast; fixed minutes are saved',
         (tester) async {
       await openPage(tester, attendance());
-      await tester.enterText(minutesField(), '');
+      await enterMinutes(tester, '');
       await tester.pumpAndSettle();
       await tapClose(tester);
       await tester.pumpAndSettle();
@@ -192,7 +199,7 @@ void main() {
       expect(db.calls, isEmpty, reason: 'an invalid plan is never stored (Ionic validate)');
       await dismissToasts(tester);
 
-      await tester.enterText(minutesField(), '15');
+      await enterMinutes(tester, '15');
       await tester.pump();
       await tapClose(tester);
       await tester.pumpAndSettle();
@@ -203,7 +210,7 @@ void main() {
 
     testWidgets('cleared minutes keep the open plan on a plan switch', (tester) async {
       await openPage(tester, attendance(extra: const [secondPlan]));
-      await tester.enterText(minutesField(), '');
+      await enterMinutes(tester, '');
       await tester.pumpAndSettle();
       await tester.tap(find.text('Plan 2'));
       await tester.pumpAndSettle();
@@ -220,10 +227,10 @@ void main() {
       await tester.tap(titleField(title), warnIfMissed: false);
       await tester.pump();
       expect(tester.testTextInput.hasAnyClients, isFalse, reason: 'no field can be focused while busy');
-      await tester.tap(minutesField().first, warnIfMissed: false);
+      await tester.tap(find.byKey(const ValueKey('rd-plan-dur-0')), warnIfMissed: false);
       await tester.pump();
       expect(tester.testTextInput.hasAnyClients, isFalse);
-      await tester.tap(find.byIcon(AppIcons.close), warnIfMissed: false);
+      await tester.tap(find.byType(RdBackLink), warnIfMissed: false);
       await tester.pump();
       await tester.state<NavigatorState>(find.byType(Navigator).first).maybePop();
       await tester.pump();
@@ -233,11 +240,13 @@ void main() {
     testWidgets('add plan (copy): blocked while writing, then the new plan is open', (tester) async {
       await openPage(tester, attendance());
       db.hold = true;
-      await tester.tap(find.byTooltip('Feld hinzufügen'));
+      await tester.tap(find.byKey(const Key('rd-plan-more')));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Weiteren Ablaufplan anlegen'));
+      await tester.tap(find.byKey(const Key('rd-plan-add-plan-more')));
       await tester.pumpAndSettle();
-      await tester.tap(button('Kopie'));
+      await tester.tap(find.textContaining('Kopie'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('rd-plan-new-confirm')));
       await tester.pump();
       await tester.pump();
       expect(db.waiting, 1);
@@ -265,7 +274,7 @@ void main() {
     testWidgets('delete plan: blocked while writing, then the remaining plan is open', (tester) async {
       await openPage(tester, attendance(extra: const [secondPlan]));
       db.hold = true;
-      await tester.tap(find.byTooltip('Plan-Optionen'));
+      await tester.tap(find.byKey(const Key('rd-plan-more')));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Plan löschen'));
       await tester.pumpAndSettle();

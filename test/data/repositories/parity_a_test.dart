@@ -19,7 +19,7 @@ String _method(String src, String signature) {
 void main() {
   group('D1 no cross-tenant propagation', () {
     test('person detail no longer propagates identity fields', () {
-      final page = _read('lib/features/people/presentation/pages/person_detail_page.dart');
+      final page = _read('lib/features/redesign/presentation/pages/rd_person_edit_page.dart');
       final repo = _read('lib/data/repositories/cross_tenant_person_repository.dart');
       expect(page, isNot(contains('propagateSharedFields')));
       expect(page, isNot(contains('_propagateSharedIdentityFields')));
@@ -153,7 +153,7 @@ void main() {
     test('callers no longer pass ad-hoc limits', () {
       expect(_read('lib/core/providers/statistics_providers.dart'),
           isNot(contains('limit: 500')));
-      expect(_read('lib/features/export/presentation/pages/export_page.dart'),
+      expect(_read('lib/features/export/presentation/export_logic.dart'),
           isNot(contains('limit: 10000')));
     });
   });

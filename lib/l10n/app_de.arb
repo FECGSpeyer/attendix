@@ -16201,7 +16201,7 @@
   "@rdTypeLookHideName": {
     "description": "rdType.lookHideName"
   },
-  "rdTypeLookHideNameHint": "Termine ohne eigenen Titel zeigen dann das Datum statt des Namens der Art (klassische Ansicht und Eltern).",
+  "rdTypeLookHideNameHint": "Termine ohne eigenen Titel zeigen dann das Datum statt des Namens der Art (Eltern).",
   "@rdTypeLookHideNameHint": {
     "description": "rdType.lookHideNameHint"
   },
@@ -20708,14 +20708,6 @@
         "type": "num"
       }
     }
-  },
-  "redesignMeBeta": "Neues Design (Beta)",
-  "@redesignMeBeta": {
-    "description": "redesign.me.beta"
-  },
-  "redesignMeBetaHint": "Nur auf diesem Gerät. Jederzeit wieder ausschaltbar.",
-  "@redesignMeBetaHint": {
-    "description": "redesign.me.betaHint"
   },
   "redesignMeCalendar": "Kalender abonnieren",
   "@redesignMeCalendar": {

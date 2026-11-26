@@ -210,11 +210,7 @@ class RedesignRoutes {
   static bool _matches(Set<String> routes, String location) =>
       routes.any((route) => location == route || location.startsWith('$route/'));
 
-  /// True while the new design is switched on (set by
-  /// `RedesignSettingsNotifier`).
-  static bool active = false;
-
-  /// Routes that only exist in the new design.
+  /// Routes that only exist in the standard app design.
   static bool isRedesignRoute(String location) =>
       location == today ||
       location == events ||
@@ -227,15 +223,11 @@ class RedesignRoutes {
       location.startsWith('$works/') ||
       location.startsWith('$me/');
 
-  /// Where a notification, a push or an "open attendance" link leads while
-  /// the new design is on: the old Termin page, "Meine Termine", the Termin
-  /// list and the people list become their pages of the new design (the
-  /// role checks of [roleRedirect] stay). Other locations and every location
-  /// without the Beta stay as they are. The router applies it too (via
-  /// [legacyTarget]), so the old Termin page is not reachable in the Beta.
-  /// Query and fragment (e.g. a push's `tenantId`) are kept.
+  /// Where a notification, a push or an "open attendance" link leads: the old
+  /// Termin page, "Meine Termine", the Termin list and the people list map to
+  /// their pages (`/termine`, `/termine/:id`, `/mitglieder`). Other locations
+  /// stay as they are. Query and fragment (e.g. a push's `tenantId`) are kept.
   static String betaTarget(String location) {
-    if (!active) return location;
     final uri = Uri.tryParse(location);
     if (uri == null) return location;
     final path = uri.path;
@@ -253,28 +245,92 @@ class RedesignRoutes {
     return uri.replace(path: target).toString();
   }
 
-  /// Old locations that have a page of the new design while it is on:
-  /// `/attendance/:id`, `/attendance`, `/signout`, `/people` (via
-  /// [betaTarget]) and the old settings start page `/settings` (→ Ich).
-  /// Null for every other location (sub pages like `/people/:id` or
-  /// `/settings/…` stay, the new design still opens some of them).
+  /// Translates all removed classic routes (and legacy start pages) to their
+  /// destinations while preserving query and fragment parameters. Returns `null`
+  /// for routes that are still active directly.
   static String? legacyTarget(String location) {
-    if (!active) return null;
-    if (location == '/settings') return me;
-    final target = betaTarget(location);
-    return target == location ? null : target;
+    final uri = Uri.tryParse(location);
+    if (uri == null) return null;
+    final path = uri.path;
+
+    String? mapped;
+    final personMatch = RegExp(r'^/people/(\d+)$').firstMatch(path);
+    final songMatch = RegExp(r'^/(?:settings/songs|songs-tab)/(\d+)(/edit)?$').firstMatch(path);
+
+    if (path == '/settings' || path == '/settings/profile' || path == '/settings/calendar') {
+      mapped = me;
+    } else if (path == '/settings/meetings' || path.startsWith('/settings/meetings/')) {
+      mapped = '/settings/team-organization';
+    } else if (path == '/overview' || path == '/home-dashboard') {
+      mapped = today;
+    } else if (path == '/attendance/new') {
+      mapped = newEvent;
+    } else if (path == '/people/new') {
+      mapped = personNew;
+    } else if (personMatch != null) {
+      mapped = person(int.parse(personMatch.group(1)!));
+    } else if (path == '/statistics') {
+      mapped = stats;
+    } else if (path == '/history') {
+      mapped = workHistory;
+    } else if (path == '/settings/songs/new') {
+      mapped = newWork;
+    } else if (songMatch != null) {
+      final id = int.parse(songMatch.group(1)!);
+      mapped = (songMatch.group(2) != null && !path.startsWith('/songs-tab/'))
+          ? workEdit(id)
+          : work(id);
+    } else if (path == '/settings/songs' || path == '/songs-tab') {
+      mapped = works;
+    } else if (path == '/settings/instruments') {
+      mapped = groups;
+    } else if (path == '/settings/teachers') {
+      mapped = teachers;
+    } else if (path == '/settings/users') {
+      mapped = admins;
+    } else if (path == '/settings/types') {
+      // Only exact root; /settings/types/:id stays active for detail editing.
+      mapped = attendanceTypes;
+    } else if (path == '/settings/shifts') {
+      // Only exact root; /settings/shifts/:id stays active for detail editing.
+      mapped = shiftPlans;
+    } else if (path == '/settings/pending') {
+      mapped = approvals;
+    } else if (path == '/settings/left') {
+      mapped = archive;
+    } else if (path == '/settings/viewers') {
+      mapped = viewers;
+    } else if (path == '/settings/parents') {
+      mapped = parents;
+    } else if (path == '/settings/role-permissions') {
+      mapped = rolePermissions;
+    } else if (path == '/settings/general/extra-fields') {
+      mapped = extraFields;
+    } else if (path == '/settings/dashboard') {
+      mapped = manage;
+    } else if (path == '/org-plans-tab') {
+      mapped = '/settings/org-plans';
+    } else if (path == '/org-plans-tab/planung') {
+      mapped = '/settings/org-plans/planung';
+    } else {
+      final b = betaTarget(location);
+      return b == location ? null : b;
+    }
+
+    return uri.replace(path: mapped).toString();
   }
 
-  /// The old song page while the new design is on: `/settings/songs/:id`
-  /// and `/songs-tab/:id` open the Werk page, `/settings/songs/:id/edit`
-  /// "Werk bearbeiten" (links from the old pages, e.g. "Alle Details" of a
-  /// Termin). Null for every other location.
+  /// Legacy song path mapper; equivalent paths are also handled by [legacyTarget].
   static String? oldSongTarget(String location) {
-    final m = RegExp(r'^/(?:settings/songs|songs-tab)/(\d+)(/edit)?$').firstMatch(location);
+    final uri = Uri.tryParse(location);
+    if (uri == null) return null;
+    final m = RegExp(r'^/(?:settings/songs|songs-tab)/(\d+)(/edit)?$').firstMatch(uri.path);
     if (m == null) return null;
     final id = int.parse(m.group(1)!);
-    if (m.group(2) != null && !location.startsWith('/songs-tab/')) return workEdit(id);
-    return work(id);
+    final mapped = (m.group(2) != null && !uri.path.startsWith('/songs-tab/'))
+        ? workEdit(id)
+        : work(id);
+    return uri.replace(path: mapped).toString();
   }
 
   /// Role checks of the new design's routes (the router runs them after the

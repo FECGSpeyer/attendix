@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/plan_utils.dart';
 import '../../../../data/models/plan/plan.dart';
 import '../../../../l10n/l10n.dart';
@@ -325,8 +324,7 @@ class _PlanChip extends StatelessWidget {
             style: TextStyle(
               fontSize: 13,
               color: selected ? AppColors.primaryDark : color,
-              // The Beta keeps its bold selected chip.
-              fontWeight: selected && context.rdSkin != null ? FontWeight.w600 : FontWeight.w400,
+              fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
             ),
           ),
         ),

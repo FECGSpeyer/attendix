@@ -1,7 +1,3 @@
-// U1: Person bearbeiten, Verlauf and Neue Person in the new design (Beta).
-// Without the Beta the old pages keep their Ionic look (FAB, accordions).
-import 'package:attendix/core/theme/app_icons.dart';
-import 'package:attendix/features/people/person_create_prefill.dart';
 import 'dart:io';
 
 import 'package:attendix/core/config/supabase_config.dart';
@@ -10,19 +6,20 @@ import 'package:attendix/core/providers/church_providers.dart';
 import 'package:attendix/core/providers/debug_providers.dart';
 import 'package:attendix/core/providers/group_providers.dart';
 import 'package:attendix/core/providers/parent_providers.dart';
+import 'package:attendix/core/providers/person_detail_providers.dart'
+    show
+        personAttendanceStatsProvider,
+        personHistoryProvider,
+        personProvider,
+        upcomingAttendancesProvider;
 import 'package:attendix/core/providers/shift_providers.dart';
 import 'package:attendix/core/providers/teacher_providers.dart';
 import 'package:attendix/core/providers/tenant_providers.dart';
 import 'package:attendix/core/router/redesign_routes.dart';
-import 'package:attendix/core/theme/app_theme.dart';
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/data/models/tenant/tenant.dart';
-import 'package:attendix/features/people/presentation/pages/person_create_page.dart';
-import 'package:attendix/features/people/presentation/pages/person_detail_page.dart';
 import 'package:attendix/features/people/presentation/widgets/ion/ion_widgets.dart';
-import 'package:attendix/features/people/presentation/widgets/person_detail/person_detail.dart'
-    show upcomingAttendancesProvider;
 import 'package:attendix/features/redesign/presentation/pages/rd_person_history_page.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
@@ -53,7 +50,6 @@ final _auth = () {
 }();
 
 ThemeData _beta() => buildRdTheme(RdFarbwelt.petrol, Brightness.light).copyWith(platform: TargetPlatform.iOS);
-ThemeData _ionic() => AppTheme.forPlatform(Brightness.light, TargetPlatform.iOS, web: false);
 
 Future<void> _pump(
   WidgetTester tester,
@@ -96,61 +92,7 @@ Future<void> _pump(
 }
 
 void main() {
-  // ICONS: the Beta keeps the Material icons.
-  setUpAll(() => AppIcons.ionic = false);
-  tearDownAll(() => AppIcons.ionic = true);
-
   setUp(() => SharedPreferences.setMockInitialValues({}));
-
-  group('Neue Person', () {
-    testWidgets('Beta: Speichern in the header, fields in a card, no FAB', (tester) async {
-      await _pump(tester, _beta(), const PersonCreatePage());
-      expect(find.byType(FloatingActionButton), findsNothing);
-      expect(find.byType(IonFabButton), findsNothing);
-      expect(find.widgetWithText(TextButton, 'Speichern'), findsOneWidget);
-    });
-
-    testWidgets('a prefill from the chat assistant fills the old form', (tester) async {
-      await _pump(tester, _ionic(), const PersonCreatePage(prefill: PersonCreatePrefill(firstName: 'Anna', lastName: 'Müller')));
-      expect(find.text('Anna'), findsWidgets);
-      expect(find.text('Müller'), findsWidgets);
-    });
-
-    testWidgets('without the Beta the FAB stays', (tester) async {
-      await _pump(tester, _ionic(), const PersonCreatePage());
-      expect(find.byType(IonFabButton), findsOneWidget);
-      expect(find.widgetWithText(TextButton, 'Speichern'), findsNothing);
-    });
-  });
-
-  group('Person bearbeiten', () {
-    testWidgets('Beta: the FAB action sits in the header', (tester) async {
-      await _pump(tester, _beta(), const PersonDetailPage(personId: 1));
-      expect(find.byType(IonFabButton), findsNothing);
-      // E-mail without account → "Account erstellen" (key), like the FAB.
-      expect(find.widgetWithIcon(IconButton, Icons.key_outlined), findsOneWidget);
-    });
-
-    testWidgets('editing: the phone number gets its own Anrufen button', (tester) async {
-      tester.view.physicalSize = const Size(393, 4000);
-      tester.view.devicePixelRatio = 1;
-      addTearDown(tester.view.reset);
-      await _pump(tester, _beta(), const PersonDetailPage(personId: 1));
-      // A tap on the row opens the editor, calling is the button next to it.
-      if (find.text('0176 1234567').evaluate().isEmpty) {
-        await tester.tap(find.text('Allgemein').first);
-        await tester.pump(const Duration(seconds: 1));
-      }
-      expect(find.text('0176 1234567'), findsOneWidget);
-      expect(find.byTooltip('Anrufen'), findsOneWidget);
-    });
-
-    testWidgets('without the Beta the FAB stays', (tester) async {
-      await _pump(tester, _ionic(), const PersonDetailPage(personId: 1));
-      expect(find.byType(IonFabButton), findsOneWidget);
-      expect(find.widgetWithIcon(IconButton, Icons.key_outlined), findsNothing);
-    });
-  });
 
   group('Verlauf', () {
     testWidgets('shows the coming Termine and the history', (tester) async {
@@ -158,12 +100,10 @@ void main() {
       expect(find.text('Verlauf'), findsOneWidget);
       expect(find.text('Anna Beispiel'), findsOneWidget);
       expect(find.textContaining('Probe'), findsOneWidget);
-      // Beta lists instead of the old accordions.
       expect(find.text('Historie'), findsNothing);
       expect(find.byType(IonAccordion), findsNothing);
       expect(find.text('KOMMENDE TERMINE'), findsOneWidget);
       expect(find.text('Zugesagt'), findsOneWidget);
-      // No Termin counted yet: a hint instead of a red "0 %".
       expect(find.text('Noch keine vergangenen Termine.'), findsOneWidget);
     });
 
@@ -199,7 +139,6 @@ void main() {
       expect(find.text('Anwesend'), findsOneWidget);
       expect(find.text('Entschuldigt'), findsOneWidget);
       expect(find.textContaining('Krank'), findsOneWidget);
-      // Only the change of the person (not a Termin) can be deleted.
       expect(find.byTooltip('Weitere Aktionen'), findsOneWidget);
       await tester.tap(find.byTooltip('Weitere Aktionen'));
       await tester.pump(const Duration(seconds: 1));
@@ -217,7 +156,7 @@ void main() {
   });
 
   group('IonAccordion', () {
-    testWidgets('Beta: section heading, content in a card, toggles', (tester) async {
+    testWidgets('section heading, content in a card, toggles', (tester) async {
       var toggled = 0;
       await _pump(
         tester,
@@ -237,7 +176,6 @@ void main() {
       await tester.tap(find.text('Allgemein'));
       expect(toggled, 1);
 
-      // Keyboard: Tab focuses the heading, Enter and Space toggle.
       await tester.sendKeyEvent(LogicalKeyboardKey.tab);
       await tester.pump();
       await tester.sendKeyEvent(LogicalKeyboardKey.enter);
@@ -248,7 +186,7 @@ void main() {
       expect(toggled, 3);
     });
 
-    testWidgets('Beta: screen reader gets a button with title and expanded state', (tester) async {
+    testWidgets('screen reader gets a button with title and expanded state', (tester) async {
       final handle = tester.ensureSemantics();
       Future<void> pumpWith(bool expanded) => _pump(
             tester,
@@ -304,7 +242,6 @@ void main() {
       ));
       await tester.pump(const Duration(seconds: 1));
       expect(find.text('Diese Person gibt es hier nicht mehr.'), findsOneWidget);
-      // Gone, not failed: nothing to retry.
       expect(find.text('Erneut versuchen'), findsNothing);
     });
 

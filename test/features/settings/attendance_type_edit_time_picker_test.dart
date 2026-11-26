@@ -7,17 +7,19 @@ import 'package:flutter_test/flutter_test.dart';
 /// This is a UX improvement to match the pattern used in attendance_create_page.dart.
 void main() {
   late String pageSource;
+  late String betaSource;
 
   setUpAll(() {
-    final file = File(
+    pageSource = File(
       'lib/features/settings/presentation/pages/attendance_type_edit_page.dart',
-    );
-    pageSource = file.readAsStringSync();
+    ).readAsStringSync();
+    betaSource = File(
+      'lib/features/settings/presentation/pages/attendance_type_edit_page_beta.dart',
+    ).readAsStringSync();
   });
 
   group('AttendanceTypeEditPage - Time Input', () {
     test('uses showTimePicker for time selection', () {
-      // Should have a method that calls the (adaptive, IOS_LOOK) time picker
       expect(
         pageSource,
         contains('showAppTimePicker'),
@@ -26,7 +28,6 @@ void main() {
     });
 
     test('has TimeOfDay state for start and end time', () {
-      // Should use TimeOfDay state variables instead of TextEditingController
       expect(
         pageSource,
         contains('TimeOfDay'),
@@ -35,12 +36,10 @@ void main() {
     });
 
     test('time section uses tappable widgets, not TextFormField', () {
-      // Find the Time Settings section
       final timeSectionMatch = RegExp(
-        // UX_SETTINGS: Beginn/Ende tiles inside "Optionen" (Ionic order)
-        r"title:\s*Text\(context\.l10n\.typeSettingsStart\).*?_pickTime\(isStart: false\)",
+        r'title:\s*l10n\.rdTypeTime.*?_pickTime\(isStart: false\)',
         dotAll: true,
-      ).firstMatch(pageSource);
+      ).firstMatch(betaSource);
 
       expect(
         timeSectionMatch,
@@ -51,14 +50,18 @@ void main() {
       if (timeSectionMatch != null) {
         final timeSection = timeSectionMatch.group(0)!;
 
-        // Should NOT have TextFormField for time input
         expect(
           timeSection,
           isNot(contains('TextFormField')),
           reason: 'Time section should NOT use TextFormField - use tappable widgets with TimePicker instead',
         );
 
-        // Should have onTap handler for TimePicker
+        expect(
+          timeSection,
+          contains('RdValueBox'),
+          reason: 'Time section should use tappable RdValueBox widgets',
+        );
+
         expect(
           timeSection,
           contains('onTap'),

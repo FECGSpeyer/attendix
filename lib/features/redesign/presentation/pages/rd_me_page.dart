@@ -196,17 +196,6 @@ class RdMePage extends ConsumerWidget {
                 value: languageNames[language] ?? language,
                 onTap: () => _pickLanguage(context, ref, language),
               ),
-            RdListRow(
-              leading: const RdRowIcon(Icons.auto_awesome_outlined),
-              title: l10n.redesignMeBeta,
-              subtitle: l10n.redesignMeBetaHint,
-              showChevron: false,
-              trailing: Switch.adaptive(
-                value: settings.enabled,
-                activeTrackColor: p.primary,
-                onChanged: (v) => rdSetRedesignEnabled(context, ref, v),
-              ),
-            ),
           ],
         ),
         const SizedBox(height: 20),

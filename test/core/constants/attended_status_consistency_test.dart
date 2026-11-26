@@ -6,33 +6,33 @@ import 'package:flutter_test/flutter_test.dart';
 /// countsAsPresent getter instead of manual inline comparisons.
 void main() {
   group('BL-003: No raw integer checks for attended status', () {
-    test('person_detail_page.dart uses countsAsPresent instead of raw int check',
+    test('person_detail_providers.dart uses countsAsPresent instead of raw int check',
         () {
       final source = File(
-        'lib/features/people/presentation/pages/person_detail_page.dart',
+        'lib/core/providers/person_detail_providers.dart',
       ).readAsStringSync();
 
       expect(
         RegExp(r'status\s*==\s*1\s*\|\|\s*status\s*==\s*3\s*\|\|\s*status\s*==\s*5')
             .hasMatch(source),
         isFalse,
-        reason: 'person_detail_page.dart uses raw integer status check. '
+        reason: 'person_detail_providers.dart uses raw integer status check. '
             'Use AttendanceStatus.fromValue(status).countsAsPresent instead.',
       );
     });
 
     test(
-        'andere_instanzen_accordion.dart uses countsAsPresent instead of raw int check',
+        'rd_person_page.dart uses countsAsPresent instead of raw int check',
         () {
       final source = File(
-        'lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart',
+        'lib/features/redesign/presentation/pages/rd_person_page.dart',
       ).readAsStringSync();
 
       expect(
         RegExp(r'status\s*==\s*1\s*\|\|\s*status\s*==\s*3\s*\|\|\s*status\s*==\s*5')
             .hasMatch(source),
         isFalse,
-        reason: 'andere_instanzen_accordion.dart uses raw integer status check. '
+        reason: 'rd_person_page.dart uses raw integer status check. '
             'Use AttendanceStatus.fromValue(status).countsAsPresent instead.',
       );
     });

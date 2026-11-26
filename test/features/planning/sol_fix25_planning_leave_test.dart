@@ -11,6 +11,7 @@ import 'package:attendix/core/providers/group_providers.dart';
 import 'package:attendix/core/providers/optional_tabs_providers.dart';
 import 'package:attendix/core/providers/organisation_providers.dart';
 import 'package:attendix/core/providers/plan_providers.dart';
+import 'package:attendix/core/providers/realtime_providers.dart';
 import 'package:attendix/core/providers/song_providers.dart';
 import 'package:attendix/core/providers/team_org_providers.dart';
 import 'package:attendix/core/providers/tenant_providers.dart';
@@ -18,8 +19,8 @@ import 'package:attendix/core/theme/app_theme.dart';
 import 'package:attendix/data/models/plan/plan.dart';
 import 'package:attendix/data/repositories/plan_repository.dart';
 import 'package:attendix/features/planning/presentation/pages/planning_page.dart';
+import 'package:attendix/features/redesign/presentation/shell/rd_shell.dart';
 import 'package:attendix/l10n/l10n.dart';
-import 'package:attendix/shared/widgets/layout/main_shell.dart';
 import 'package:attendix/shared/widgets/layout/route_leave_guard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -121,6 +122,7 @@ void main() {
         planAttendanceTypesProvider.overrideWith((ref) async => const []),
         planBlockTemplatesProvider.overrideWith((ref) async => const []),
         planSongsProvider.overrideWith((ref) async => const []),
+        songCollectionsProvider.overrideWith((ref) async => null),
         currentSongsProvider.overrideWith((ref) async => const []),
         groupsProvider.overrideWith((ref) async => const []),
         groupCategoriesProvider.overrideWith((ref) async => const []),
@@ -128,7 +130,8 @@ void main() {
         currentOrganisationProvider.overrideWith((ref) async => null),
         hasBrandingProvider.overrideWithValue(false),
         effectiveRoleProvider.overrideWithValue(Role.admin),
-        // MainShell: no Supabase in tests.
+        // RdShell: no Supabase in tests.
+        realtimePendingPlayersProvider.overrideWith((ref) => Stream.value(const [])),
         showDashboardTabProvider.overrideWithValue(false),
         showSongsTabProvider.overrideWithValue(false),
         showOrgPlansTabProvider.overrideWithValue(false),
@@ -148,8 +151,14 @@ void main() {
   Finder titleField(String text) =>
       find.byWidgetPredicate((w) => w is TextField && w.controller?.text == text);
 
-  Finder minutesField() =>
-      find.byWidgetPredicate((w) => w is TextField && w.keyboardType == TextInputType.number);
+  Future<void> enterMinutes(WidgetTester tester, String value) async {
+    final input = find.byKey(const Key('rd-plan-dur-input'));
+    if (input.evaluate().isEmpty) {
+      await tester.tap(find.byKey(const ValueKey('rd-plan-dur-0')));
+      await tester.pumpAndSettle();
+    }
+    await tester.enterText(input, value);
+  }
 
   Map<String, dynamic> planOf(Map<String, dynamic> update) => update['plan'] as Map<String, dynamic>;
 
@@ -158,7 +167,7 @@ void main() {
 
   const fillRequired = 'Bitte fülle alle erforderlichen Felder aus.';
 
-  group('MainShell tab switch from /planning', () {
+  group('RdShell tab switch from /planning', () {
     late GoRouter router;
 
     Future<void> openInShell(WidgetTester tester) async {
@@ -169,11 +178,12 @@ void main() {
         initialLocation: '/planning',
         routes: [
           ShellRoute(
-            builder: (context, state, child) => MainShell(child: child),
+            builder: (context, state, child) => RdShell(child: child),
             routes: [
-              GoRoute(path: '/people', builder: (_, __) => const Placeholder(key: Key('people'))),
-              GoRoute(path: '/attendance', builder: (_, __) => const Placeholder(key: Key('attendance'))),
-              GoRoute(path: '/settings', builder: (_, __) => const Placeholder(key: Key('settings'))),
+              GoRoute(path: '/heute', builder: (_, __) => const Placeholder(key: Key('heute'))),
+              GoRoute(path: '/mitglieder', builder: (_, __) => const Placeholder(key: Key('people'))),
+              GoRoute(path: '/termine', builder: (_, __) => const Placeholder(key: Key('attendance'))),
+              GoRoute(path: '/ich', builder: (_, __) => const Placeholder(key: Key('settings'))),
               GoRoute(path: '/planning', builder: (_, __) => const PlanningPage(attendanceId: 7)),
             ],
           ),
@@ -203,13 +213,13 @@ void main() {
         (tester) async {
       await openInShell(tester);
       db.hold = true;
-      await tester.enterText(minutesField(), '15');
+      await enterMinutes(tester, '15');
       await tester.pump(const Duration(milliseconds: 450));
       expect(db.waiting, 1, reason: 'autosave of 15 is running');
       await tester.enterText(titleField('Probe'), 'Neu');
       await tester.pump();
 
-      await tapTab(tester, 'Personen');
+      await tapTab(tester, 'Mitglieder');
       await tester.pump();
       expect(find.byKey(const Key('people')), findsNothing, reason: 'switch waits for the write');
       expect(titleField('Neu'), findsOneWidget);
@@ -231,9 +241,9 @@ void main() {
 
     testWidgets('an invalid plan with user edits keeps the page (Ionic validate toast)', (tester) async {
       await openInShell(tester);
-      await tester.enterText(minutesField(), '');
+      await enterMinutes(tester, '');
       await tester.pumpAndSettle();
-      await tapTab(tester, 'Personen');
+      await tapTab(tester, 'Mitglieder');
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('people')), findsNothing);
       expect(find.text(fillRequired), findsOneWidget);
@@ -241,9 +251,9 @@ void main() {
       await tester.pump(const Duration(seconds: 5));
       await tester.pumpAndSettle();
 
-      await tester.enterText(minutesField(), '20');
+      await enterMinutes(tester, '20');
       await tester.pump();
-      await tapTab(tester, 'Personen');
+      await tapTab(tester, 'Mitglieder');
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('people')), findsOneWidget);
       expect(db.calls, hasLength(1));
@@ -255,7 +265,7 @@ void main() {
       db.hold = true;
       await tester.enterText(titleField('Probe'), 'Neu');
       await tester.pump();
-      await tapTab(tester, 'Personen');
+      await tapTab(tester, 'Mitglieder');
       await tester.pump();
       db.release(fail: true);
       await tester.pump();
@@ -266,7 +276,7 @@ void main() {
       await tester.pumpAndSettle();
 
       db.hold = false;
-      await tapTab(tester, 'Personen');
+      await tapTab(tester, 'Mitglieder');
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('people')), findsOneWidget);
       expect(planOf(db.calls.last)['title'], 'Neu');
@@ -276,14 +286,14 @@ void main() {
         (tester) async {
       await openInShell(tester);
       db.hold = true;
-      await tester.enterText(minutesField(), '15');
+      await enterMinutes(tester, '15');
       await tester.pump(const Duration(milliseconds: 450));
       expect(db.waiting, 1);
       await tester.enterText(titleField('Probe'), 'Neu');
       await tester.pump();
 
-      // Bypasses MainShell: the page is disposed with a pending edit.
-      router.go('/attendance');
+      // Bypasses RdShell: the page is disposed with a pending edit.
+      router.go('/termine');
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('attendance')), findsOneWidget);
       expect(db.calls, hasLength(1), reason: 'the dispose write waits for the running one');

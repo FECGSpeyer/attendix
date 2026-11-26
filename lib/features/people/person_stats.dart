@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import '../../core/constants/enums.dart';
 import '../../data/models/tenant/tenant.dart';
 
@@ -91,3 +93,17 @@ Map<String, int> computePersonAttendanceStats(
 /// Player history types a non-admin sees on the person page (Ionic
 /// getHistoryInfo: INSTRUMENT_CHANGE, PAUSED, UNPAUSED).
 const visibleHistoryTypesForMembers = <int>{7, 1, 6};
+
+/// Renders an Ionic innerHTML text with `<strong>` parts as bold spans.
+TextSpan htmlStrongToSpan(String html) {
+  final spans = <TextSpan>[];
+  final parts = html.split(RegExp(r'</?strong>'));
+  for (var i = 0; i < parts.length; i++) {
+    if (parts[i].isEmpty) continue;
+    spans.add(TextSpan(
+      text: parts[i],
+      style: i.isOdd ? const TextStyle(fontWeight: FontWeight.bold) : null,
+    ));
+  }
+  return TextSpan(children: spans);
+}

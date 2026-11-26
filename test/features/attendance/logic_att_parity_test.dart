@@ -108,18 +108,17 @@ void main() {
   });
 
   group('source parity', () {
-    // REDESIGN: the create writes are shared with the new design
-    // (attendance_create_writes.dart).
-    final create = File('lib/features/attendance/presentation/pages/attendance_create_page.dart')
+    final create = File('lib/features/redesign/presentation/pages/rd_event_create_page.dart')
             .readAsStringSync() +
         File('lib/features/attendance/presentation/attendance_create_writes.dart')
             .readAsStringSync();
-    // ASTRA_SIGNOUT_TOPICS: the date change of the Termin page is shared
-    // with the Teamorganisation (attendance_date_change.dart).
-    final detail = File('lib/features/attendance/presentation/pages/attendance_detail_page.dart')
+    final detail = File('lib/features/redesign/presentation/pages/rd_event_page.dart')
+            .readAsStringSync() +
+        File('lib/features/redesign/presentation/pages/rd_event_edit_page.dart')
             .readAsStringSync() +
         File('lib/features/attendance/presentation/widgets/attendance_date_change.dart')
             .readAsStringSync();
+    final realtime = File('lib/core/providers/realtime_providers.dart').readAsStringSync();
     final repo = File('lib/data/repositories/attendance_repository.dart').readAsStringSync();
 
     test('create: paused NULL counts as not paused, absences + shifts applied', () {
@@ -144,7 +143,7 @@ void main() {
       expect(detail, isNot(contains("from('history')")));
       expect(detail, contains('updateShiftAssignmentsForAttendance'));
       expect(detail, contains('dateChangeStatusUpdates('));
-      expect(detail, contains('PostgresChangeEvent.update'));
+      expect(realtime, contains('PostgresChangeEvent.update'));
       expect(detail, isNot(contains('recalculatePercentage')));
     });
 

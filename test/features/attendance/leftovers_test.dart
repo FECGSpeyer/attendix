@@ -8,7 +8,7 @@ import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/router/attendance_detail_guard.dart';
 import 'package:attendix/core/services/attendance_detail_cache.dart';
 import 'package:attendix/data/models/attendance/attendance.dart';
-import 'package:attendix/features/attendance/presentation/pages/attendance_detail_page.dart';
+import 'package:attendix/features/attendance/presentation/attendance_permissions.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -22,15 +22,15 @@ void main() {
       }
     });
 
-    test('viewer is sent to its home page (/people, Ionic /tabs/player)', () {
-      expect(attendanceDetailRedirect('/attendance/42', Role.viewer, canCreate: true), '/people');
-      expect(attendanceDetailRedirect('/attendance/new', Role.viewer, canCreate: true), '/people');
+    test('viewer is sent to its home page (/heute)', () {
+      expect(attendanceDetailRedirect('/attendance/42', Role.viewer, canCreate: true), '/heute');
+      expect(attendanceDetailRedirect('/attendance/new', Role.viewer, canCreate: true), '/heute');
     });
 
-    test('other roles land on their default route', () {
-      expect(attendanceDetailRedirect('/attendance/42', Role.player, canCreate: true), '/signout');
-      expect(attendanceDetailRedirect('/attendance/42', Role.voiceLeader, canCreate: true), '/signout');
-      expect(attendanceDetailRedirect('/attendance/42', Role.parent, canCreate: true), '/parents');
+    test('other roles land on their default route (/heute)', () {
+      expect(attendanceDetailRedirect('/attendance/42', Role.player, canCreate: true), '/heute');
+      expect(attendanceDetailRedirect('/attendance/42', Role.voiceLeader, canCreate: true), '/heute');
+      expect(attendanceDetailRedirect('/attendance/42', Role.parent, canCreate: true), '/heute');
     });
 
     // SOL_FIX2: attendance_create enforced for typed /attendance/new
@@ -41,7 +41,7 @@ void main() {
         // an existing Termin stays reachable
         expect(attendanceDetailRedirect('/attendance/42', role, canCreate: false), isNull);
       }
-      expect(attendanceDetailRedirect('/attendance/new', Role.viewer, canCreate: false), '/people');
+      expect(attendanceDetailRedirect('/attendance/new', Role.viewer, canCreate: false), '/heute');
     });
 
     test('router passes the resolved create permission', () {
@@ -141,25 +141,23 @@ void main() {
     });
   });
 
-  group('offline queue on the Termin page', () {
-    // ASTRA_SIGNOUT_TOPICS: the date change of the Termin page is shared
-    // with the Teamorganisation (attendance_date_change.dart).
-    final page = File('lib/features/attendance/presentation/pages/attendance_detail_page.dart')
+  group('offline queue on the Termin write path', () {
+    final writes = File('lib/features/attendance/presentation/person_attendance_writes.dart')
             .readAsStringSync() +
         File('lib/features/attendance/presentation/widgets/attendance_date_change.dart')
             .readAsStringSync();
 
     test('date-change status resets are queued while offline', () {
-      final start = page.indexOf('final updates = dateChangeStatusUpdates(');
-      final end = page.indexOf('updateShiftAssignmentsForAttendance', start);
-      final block = page.substring(start, end);
+      final start = writes.indexOf('final updates = dateChangeStatusUpdates(');
+      final end = writes.indexOf('updateShiftAssignmentsForAttendance', start);
+      final block = writes.substring(start, end);
       expect(block, contains('enqueueIfOffline(u.id'));
     });
 
     test('every person_attendances write goes through enqueueIfOffline', () {
-      final writes = RegExp(r'repo\.updatePersonAttendance\(').allMatches(page).length;
-      final queued = RegExp(r'enqueueIfOffline\(').allMatches(page).length;
-      expect(queued, greaterThanOrEqualTo(writes));
+      final updateCalls = RegExp(r'repo\.updatePersonAttendance\(').allMatches(writes).length;
+      final queued = RegExp(r'enqueueIfOffline\(').allMatches(writes).length;
+      expect(queued, greaterThanOrEqualTo(updateCalls));
     });
   });
 
@@ -183,16 +181,15 @@ void main() {
       expect(realtimeDutyStateChanged({'id': 'pa1', 'status': 1}, rows), isFalse);
     });
 
-    test('page reloads + resubscribes when it becomes visible again', () {
-      final page = File('lib/features/attendance/presentation/pages/attendance_detail_page.dart')
+    test('event page reloads when it becomes visible again', () {
+      final page = File('lib/features/redesign/presentation/pages/rd_event_page.dart')
           .readAsStringSync();
-      expect(page, contains('AppLifecycleListener(onShow: _onBecameVisible)'));
-      expect(page, contains('_lifecycleListener?.dispose()'));
-      final start = page.indexOf('void _onBecameVisible()');
+      expect(page, contains('AppLifecycleListener(onShow: _reload)'));
+      expect(page, contains('_lifecycle?.dispose()'));
+      final start = page.indexOf('void _reload()');
       final body = page.substring(start, page.indexOf('\n  }\n', start));
       expect(body, contains('ref.invalidate(attendanceDetailProvider'));
       expect(body, contains('ref.invalidate(personAttendancesForAttendanceProvider'));
-      expect(body, contains('_subscribeToRealtimeChanges()'));
     });
   });
 

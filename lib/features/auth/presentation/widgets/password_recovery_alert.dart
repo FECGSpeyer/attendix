@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
@@ -164,47 +163,6 @@ class _PasswordRecoveryDialogState extends State<PasswordRecoveryDialog> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    if (useIosLook(context)) {
-      return IosAlertCard(
-        title: Text(l10n.appNewPassword),
-        // ios27 `.alert-message:empty { padding: 0 0 12px }` above the inputs
-        // (Beta keeps its spacing).
-        contentPadding: EdgeInsets.fromLTRB(16, context.rdSkin == null ? 12 : 0, 16, 21),
-        content: IosAlertInput(
-          controller: _controller,
-          placeholder: l10n.appMinSixPlaceholder,
-          obscureText: true,
-          autofocus: true,
-          onSubmitted: (_) => _confirm(),
-        ),
-        actions: [
-          Row(
-            children: [
-              Expanded(
-                child: IosAlertButton(
-                  bold: false,
-                  onPressed: _cancel,
-                  child: _OneLine(l10n.commonCancel),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: IosAlertButton(
-                  bold: false,
-                  onPressed: _confirm,
-                  child: _OneLine(l10n.appChangePassword),
-                ),
-              ),
-            ],
-          ),
-        ],
-      );
-    }
-
-    // md alert: the shared underlined alert input (like "Passwort
-    // zurücksetzen"); Beta keeps its field.
-    final theme = Theme.of(context);
-    final line = UnderlineInputBorder(borderSide: BorderSide(color: theme.dividerColor));
     return AppAlertDialog(
       title: Text(l10n.appNewPassword),
       content: AppAlertInput(
@@ -214,33 +172,11 @@ class _PasswordRecoveryDialogState extends State<PasswordRecoveryDialog> {
         autofillHints: const [AutofillHints.newPassword],
         onSubmitted: (_) => _confirm(),
         placeholder: l10n.appMinSixPlaceholder,
-        betaDecoration: InputDecoration(
-          hintText: l10n.appMinSixPlaceholder,
-          filled: false,
-          isDense: true,
-          contentPadding: const EdgeInsets.symmetric(vertical: 13),
-          border: line,
-          enabledBorder: line,
-          focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: theme.colorScheme.primary, width: 2),
-          ),
-        ),
       ),
       actions: [
-        TextButton(onPressed: _cancel, child: Text(l10n.commonCancel.toUpperCase())),
-        TextButton(onPressed: _confirm, child: Text(l10n.appChangePassword.toUpperCase())),
+        TextButton(onPressed: _cancel, child: Text(l10n.commonCancel)),
+        TextButton(onPressed: _confirm, child: Text(l10n.appChangePassword)),
       ],
     );
   }
-}
-
-/// Button label on one line (the iOS alert card is narrower than Ionic's).
-class _OneLine extends StatelessWidget {
-  const _OneLine(this.text);
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) =>
-      FittedBox(fit: BoxFit.scaleDown, child: Text(text, maxLines: 1, softWrap: false));
 }

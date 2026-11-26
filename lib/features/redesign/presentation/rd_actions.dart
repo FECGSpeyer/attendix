@@ -6,14 +6,10 @@ import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../core/config/supabase_config.dart';
-import '../../../core/providers/debug_providers.dart';
 import '../../../core/providers/push_providers.dart';
-import '../../../core/providers/redesign_providers.dart';
 import '../../../core/providers/tenant_providers.dart';
-import '../../../core/router/redesign_routes.dart';
 import '../../../core/services/song_file_service.dart';
 import '../../../core/theme/redesign/rd_theme.dart';
-import '../../../core/utils/dashboard_logic.dart' show homeRouteFor;
 import '../../../core/utils/toast_helper.dart';
 import '../../../data/models/song/song.dart';
 import '../../../l10n/l10n.dart';
@@ -80,25 +76,6 @@ Future<void> rdLogout(BuildContext context, WidgetRef ref) async {
 
 /// A sign-out is running ([rdLogout]): a second tap does nothing.
 bool _loggingOut = false;
-
-/// Switches "Neues Design (Beta)" on or off and opens the start page of
-/// the chosen design ("Heute", or the old start page of the role).
-Future<void> rdSetRedesignEnabled(
-  BuildContext context,
-  WidgetRef ref,
-  bool enabled,
-) async {
-  final router = GoRouter.of(context);
-  await ref.read(redesignSettingsProvider.notifier).setEnabled(enabled);
-  final target = enabled
-      ? RedesignRoutes.today
-      : homeRouteFor(
-          ref.read(effectiveRoleProvider),
-          ref.read(currentTenantProvider)?.id,
-          ref.read(supabaseClientProvider).auth.currentUser?.userMetadata,
-        );
-  router.go(target);
-}
 
 /// Opens the system share sheet for [link] (WhatsApp, Telegram, Mail,
 /// "Kopieren" …), anchored at [button] (iPad popover). The message starts

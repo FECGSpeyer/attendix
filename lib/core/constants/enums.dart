@@ -134,12 +134,8 @@ enum Role {
       this == Role.helper ||
       this == Role.voiceLeaderHelper;
 
-  /// Get the default route for this role after tenant selection
-  String get defaultRoute {
-    if (isConductor) return '/people';
-    if (isParent) return '/parents';
-    return '/signout';
-  }
+  /// Get the default route for this role after tenant selection.
+  String get defaultRoute => '/heute';
 }
 
 /// Attendance status enumeration

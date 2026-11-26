@@ -4,21 +4,18 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show GoTrueClient;
 
 import '../../../../core/config/supabase_config.dart';
-import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/providers/plan_providers.dart';
 import '../../../../core/providers/song_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/services/plan_export_service.dart';
 import '../../../../core/services/public_plan_draft_storage.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/plan_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/plan/plan.dart';
@@ -32,21 +29,16 @@ import '../widgets/plan_export_actions.dart';
 import '../widgets/plan_field_dialogs.dart';
 import '../widgets/plan_fields_editor.dart';
 import '../widgets/plan_song_helper.dart';
-import '../widgets/ion_items.dart';
 import 'planning_page.dart' show planSongsProvider;
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/layout/centered_content.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../core/services/error_reporter.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
-import '../../../../shared/widgets/dialogs/ion_sheet.dart' show showIonSheet, IonSheetScaffold;
 
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../data/models/organisation/organisation.dart' show Organisation;
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
 import '../widgets/rd_plan_widgets.dart';
-
-export '../widgets/ion_items.dart' show IonDatetimeChip;
 
 part 'public_planning_page_beta.dart';
 
@@ -482,51 +474,12 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
     final blockTemplates = loggedIn
         ? (ref.read(planBlockTemplatesProvider).valueOrNull ?? const <PlanBlockTemplate>[])
         : const <PlanBlockTemplate>[];
-    final l10n = context.l10n;
-    final String? action;
-    if (context.rdSkin != null) {
-      // Beta: one sheet instead of the popover.
-      action = await _rdAddMenu(
-        loggedIn: loggedIn,
-        isGeneral: isGeneral,
-        orgFields: orgFields,
-        blockTemplates: blockTemplates,
-      );
-    } else {
-    // Bare `ion-item button`s with item lines; `ion-item-divider` + small
-    // bold label per section, minutes as `ion-note`.
-    action = await showAppPopoverMenu<String>(
-      context: anchorContext,
-      lines: true,
-      items: [
-        AppPopoverMenuItem(value: 'field', label: l10n.planningAddField),
-        AppPopoverMenuItem(value: 'group', label: l10n.planningAddBlock),
-        AppPopoverMenuItem(value: 'note', label: l10n.planningAddNoteField),
-        if (loggedIn && !isGeneral) ...[
-          AppPopoverMenuItem(value: 'current', label: l10n.planningAddCurrentSongs),
-          if (_songs.isNotEmpty) AppPopoverMenuItem(value: 'song', label: l10n.planningAddSong),
-        ],
-        if (orgFields.isNotEmpty) ...[
-          AppPopoverMenuItem.header(l10n.planningFields, ''),
-          for (var i = 0; i < orgFields.length; i++)
-            AppPopoverMenuItem(
-              value: 'orgfield:$i',
-              label: orgFields[i].name,
-              note: l10n.planningMinShort(orgFields[i].time),
-            ),
-        ],
-        if (blockTemplates.isNotEmpty) ...[
-          AppPopoverMenuItem.header(l10n.planningBlocks, ''),
-          for (final tpl in blockTemplates)
-            AppPopoverMenuItem(
-              value: 'block:${tpl.id}',
-              label: tpl.name,
-              note: l10n.planningMinShort(PlanUtils.templateMinutes(tpl)),
-            ),
-        ],
-      ],
+    final action = await _rdAddMenu(
+      loggedIn: loggedIn,
+      isGeneral: isGeneral,
+      orgFields: orgFields,
+      blockTemplates: blockTemplates,
     );
-    }
     if (action == null || !mounted) return;
     if (action.startsWith('orgfield:')) {
       // Every inserted occurrence is its own row (own uid), so editing or
@@ -537,7 +490,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
       return;
     }
     if (action.startsWith('block:')) {
-      final tpl = blockTemplates.where((t) => t.id == action!.substring(6)).firstOrNull;
+      final tpl = blockTemplates.where((t) => t.id == action.substring(6)).firstOrNull;
       if (tpl == null) return;
       setState(() => _fields = [..._fields, ...PlanUtils.cloneBlock(tpl.fields)]);
       _changed();
@@ -676,21 +629,8 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
   }
 
   Future<void> _openMyPlans() async {
-    if (context.rdSkin != null) {
-      final plan = await _rdMyPlansSheet();
-      if (plan != null && mounted) _loadPlan(plan);
-      return;
-    }
-    // ABL-04: Ionic sheet modal (MyPlansComponent) with `breakpoints:
-    // [0, 0.5, 0.9], initialBreakpoint: 0.9, handleBehavior: 'none'`.
-    final plan = await showIonSheet<SharedPlan>(
-      context,
-      breakpoints: const [0, 0.5, 0.9],
-      initialBreakpoint: 0.9,
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      builder: (_, controller) => _MyPlansSheet(scrollController: controller),
-    );
-    if (plan != null) _loadPlan(plan);
+    final plan = await _rdMyPlansSheet();
+    if (plan != null && mounted) _loadPlan(plan);
   }
 
   Future<void> _toggleOrg() async {
@@ -875,265 +815,6 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
         });
       }
     }
-    final orgTemplates = org?.planningTemplates ?? const <Plan>[];
-    if (context.rdSkin != null) return _rdBuild(context, loggedIn: loggedIn, org: org);
-
-    // Ionic: ion-header + `collapse="condense"` large title (iOS).
-    return IonCondenseScaffold(
-      automaticallyImplyLeading: widget.inApp,
-      title: context.l10n.plansPlanning,
-      // IOS_PAGES3: iOS → the end ion-buttons share one glass capsule
-      actions: [
-        ToolbarButtonGroup(children: [
-          if (loggedIn)
-            IconButton(tooltip: context.l10n.plansMyPlans, icon: Icon(AppIcons.list), onPressed: _openMyPlans),
-          IconButton(tooltip: context.l10n.plansShareExport, icon: Icon(AppIcons.iosShare), onPressed: _shareCurrentPlan),
-        ]),
-      ],
-      bodyBuilder: (context, largeTitle) => !_ready
-          ? const Center(child: AppSpinner())
-          : ListView(
-              padding: centeredListPadding(context, bottom: 32),
-              children: [
-                if (largeTitle != null) largeTitle,
-                // Ionic: ion-list [inset]="true"; the action items have
-                // lines="none" (ABL-17: the shared inset list).
-                IonInsetList(
-                  dividerIndent: null,
-                  children: [
-                    // ion-input labelPlacement="stacked" (no box)
-                    IonStackedInput(
-                      controller: _titleController,
-                      label: context.l10n.plansTitle,
-                      hint: context.l10n.plansRunSheet,
-                      onFocusLost: _changed,
-                    ),
-                    _itemLine(context),
-                    // ion-select interface="popover": label left, value right
-                    IonSelect<String>(
-                      key: ValueKey('tpl-$_templateId'),
-                      label: context.l10n.plansTemplate,
-                      value: _templateId,
-                      items: [
-                        for (final t in publicPlanningTemplates)
-                          DropdownMenuItem(value: t.id, child: Text(t.name)),
-                        if (loggedIn && orgTemplates.isNotEmpty) ...[
-                          DropdownMenuItem(value: '', enabled: false, child: Text(context.l10n.plansOrgTemplates)),
-                          for (var i = 0; i < orgTemplates.length; i++)
-                            DropdownMenuItem(
-                                value: 'org:$i', child: Text(context.l10n.plansOrgSuffix(orgTemplates[i].title ?? ''))),
-                        ],
-                      ],
-                      onChanged: _onTemplateChange,
-                    ),
-                    _itemLine(context),
-                    IonSelect<String>(
-                      key: ValueKey('brand-$_brandingId'),
-                      label: context.l10n.plansBranding,
-                      value: _brandingId,
-                      items: [
-                        for (final b in publicBrandings)
-                          DropdownMenuItem(
-                              value: b.id, child: Text(b.id == 'none' ? context.l10n.coreFlutterNoBranding : b.name)),
-                      ],
-                      onChanged: (v) {
-                        setState(() => _brandingId = v ?? 'none');
-                        _changed();
-                      },
-                    ),
-                    _itemLine(context),
-                    ListTile(
-                      title: Text(context.l10n.plansDate),
-                      trailing: IonDatetimeChip(
-                        text: DateFormat(dateFmt()).format(_date),
-                        onTap: _pickDate,
-                      ),
-                    ),
-                    _itemLine(context),
-                    ListTile(
-                      leading: Icon(AppIcons.refresh, color: AppColors.primary),
-                      title: Text(context.l10n.plansRestoreTemplate, style: const TextStyle(color: AppColors.primary)),
-                      onTap: _resetToTemplate,
-                    ),
-                    if (org != null)
-                      ListTile(
-                        leading: Icon(_isOrgPlan ? AppIcons.checkCircle : AppIcons.businessOutlined,
-                            color: _isOrgPlan ? AppColors.success : AppColors.primary),
-                        title: Text(
-                          _isOrgPlan ? context.l10n.plansInOrg(org.name) : context.l10n.plansAddToOrg,
-                          style: TextStyle(color: _isOrgPlan ? AppColors.success : AppColors.primary),
-                        ),
-                        onTap: _toggleOrg,
-                      ),
-                    if (loggedIn)
-                      ListTile(
-                        leading: Icon(AppIcons.addCircleOutline, color: AppColors.mediumOf(context)),
-                        title: Text(context.l10n.plansNewPlan, style: TextStyle(color: AppColors.mediumOf(context))),
-                        onTap: _newPlan,
-                      ),
-                  ],
-                ),
-                // ABL-09/17: second ion-list [inset] with its ion-list-header
-                // (same header style as every inset list) and the "+".
-                IonInsetList(
-                  header: context.l10n.planningRunSheet,
-                  headerTrailing: Builder(
-                    builder: (anchor) => IconButton(
-                      key: const ValueKey('plan-add-trigger'),
-                      color: AppColors.primary,
-                      tooltip: context.l10n.planningAddField,
-                      icon: Icon(AppIcons.add),
-                      onPressed: () => _showAddMenu(anchor),
-                    ),
-                  ),
-                  children: [
-                    ListTile(
-                      title: Text(context.l10n.attendanceStartLabel),
-                      trailing: IonDatetimeChip(text: _time, onTap: _pickTime),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        PlanFieldsEditor(
-                          fields: _fields,
-                          startTime: _time,
-                          publicFieldDialog: true,
-                          onChanged: (f) {
-                            setState(() => _fields = f);
-                            _changed();
-                          },
-                        ),
-                        if (_fields.isNotEmpty)
-                          ListTile(
-                            title: Text(context.l10n.attendanceEnd),
-                            // Ionic: disabled ion-datetime-button (same chip, read-only)
-                            trailing: IonDatetimeChip(text: _end),
-                          ),
-                      ],
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(AppDimensions.paddingM),
-                  child: FilledButton.icon(
-                    onPressed: _showExportOptions,
-                    icon: Icon(AppIcons.iosShare),
-                    label: IonButtonLabel(context.l10n.planningExport),
-                  ),
-                ),
-              ],
-            ),
-    );
+    return _rdBuild(context, loggedIn: loggedIn, org: org);
   }
 }
-
-/// "Meine Pläne" (Ionic `MyPlansComponent`).
-class _MyPlansSheet extends ConsumerWidget {
-  const _MyPlansSheet({required this.scrollController});
-
-  final ScrollController scrollController;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final plansAsync = ref.watch(mySharedPlansProvider);
-    return IonSheetScaffold(
-      title: context.l10n.plansMyPlans,
-      end: [
-        TextButton(onPressed: () => Navigator.pop(context), child: Text(context.l10n.commonClose)),
-      ],
-      body: plansAsync.when(
-        loading: () => ListView(
-          controller: scrollController,
-          children: const [Padding(padding: EdgeInsets.all(16), child: Center(child: AppSpinner()))],
-        ),
-        error: (e, _) => ListView(
-          controller: scrollController,
-          padding: const EdgeInsets.all(16),
-          children: [Text(context.l10n.planningFlutterErrorWith(friendlyErrorMessage(e)), textAlign: TextAlign.center)],
-        ),
-        // Ionic: inset list, ion-item-sliding with a danger option; empty
-        // text as a centered grey item.
-        data: (plans) => ListView(
-          controller: scrollController,
-          padding: EdgeInsets.only(bottom: 16 + MediaQuery.paddingOf(context).bottom),
-          children: [
-            SlidableAutoCloseBehavior(
-              child: IonInsetList(
-                children: plans.isEmpty
-                    ? [
-                        Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Text(context.l10n.plansNoPlans,
-                              textAlign: TextAlign.center, style: TextStyle(color: AppColors.mediumOf(context))),
-                        ),
-                      ]
-                    : [for (final p in plans) _MyPlanTile(plan: p)],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _MyPlanTile extends ConsumerWidget {
-  const _MyPlanTile({required this.plan});
-
-  final SharedPlan plan;
-
-  /// Ionic `deletePlan`: alert, then delete.
-  Future<void> _delete(BuildContext context, WidgetRef ref, String title) async {
-    final planRepo = ref.read(planRepositoryWithTenantProvider);
-    final ok = await showPlanConfirm(
-      context,
-      title: context.l10n.planningDeletePlan,
-      message: context.l10n.plansDeletePlanForever(title),
-      confirmText: context.l10n.commonDelete,
-      destructive: true,
-    );
-    if (!ok) return;
-    try {
-      await planRepo.deleteMySharedPlan(plan.id);
-      // TERMINE-22: the sheet row may be gone meanwhile.
-      if (context.mounted) ref.invalidate(mySharedPlansProvider);
-    } catch (_) {
-      if (context.mounted) ToastHelper.showError(context, context.l10n.plansDeleteFailed);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final d = DateTime.tryParse(plan.date ?? '');
-    final date = d == null
-        ? ''
-        : DateFormat(dateFmt()).format(d);
-    final count = plan.fields.length;
-    final title = (plan.planTitle?.isNotEmpty ?? false) ? plan.planTitle! : context.l10n.plansRunSheet;
-    return Slidable(
-      key: ValueKey(plan.id),
-      endActionPane: ActionPane(
-        motion: const DrawerMotion(),
-        extentRatio: 0.22,
-        children: [
-          SlidableAction(
-            onPressed: (_) => _delete(context, ref, title),
-            backgroundColor: AppColors.danger,
-            foregroundColor: Colors.white,
-            icon: AppIcons.deleteOutline,
-          ),
-        ],
-      ),
-      child: ListTile(
-        title: Text(title),
-        subtitle: Text('$date${count > 0 ? ' · ${context.l10n.plansFlutterFieldsCount(count)}' : ''}'),
-        trailing: const IonDetailIcon(),
-        onTap: () => Navigator.pop(context, plan),
-      ),
-    );
-  }
-}
-
-/// Ionic item line between two items of an inset list (`lines` inset).
-Widget _itemLine(BuildContext context) =>
-    Divider(height: 1, thickness: useIosLook(context) ? 0.5 : 1, indent: 16);

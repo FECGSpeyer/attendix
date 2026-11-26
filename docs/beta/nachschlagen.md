@@ -149,7 +149,6 @@ Bestehende Termine behalten sie, und „Wiederherstellen“ holt sie zurück.
 | Beobachter einladen | L-55 |
 | Besprechung | L-61, L-62 |
 | Dateiablage | H-15, A-03 |
-| Design wechseln | M-31, N-07 |
 | Dienste | M-15, M-16, L-64 |
 | Einladen | L-16, N-04, N-05 |
 | Eltern | L-54, E-01 bis E-11 |

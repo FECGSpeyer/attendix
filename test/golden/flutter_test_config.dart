@@ -18,12 +18,12 @@ Future<void> testExecutable(FutureOr<void> Function() testMain) async {
   await _loadAppFonts();
   final previous = goldenFileComparator;
   if (previous is LocalFileComparator) {
-    goldenFileComparator = _LinuxComparator(previous.basedir.resolve('golden_test.dart'));
+    goldenFileComparator = _LinuxComparator(previous.basedir.resolve('pages_beta_test.dart'));
   }
   await testMain();
 }
 
-/// Loads every font of the app bundle (Roboto, Material icons, Ionicons).
+/// Loads every font of the app bundle (Roboto, Material icons).
 /// Roboto also stands in for the system fonts the iOS look asks for, and for
 /// the test font ('FlutterTest') that text without a font family falls back
 /// to in tests (on a device that is the system font).

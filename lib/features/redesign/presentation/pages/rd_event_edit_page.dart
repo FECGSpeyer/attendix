@@ -25,20 +25,19 @@ import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/repositories/attendance_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart' show showAppDatePicker, showAppTimePicker;
+import '../../../attendance/presentation/attendance_permissions.dart'
+    show isDeadlineReadonly;
+import '../../../attendance/presentation/attendance_status_labels.dart' show ionicStatusLabel;
 import '../../../attendance/presentation/widgets/attendance_date_change.dart';
-import '../../../attendance/presentation/widgets/attendance_detail/status_chip.dart' show ionicStatusLabel;
 import '../../../attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart'
     show showFilesFolderPicker;
 import '../../../attendance/presentation/widgets/attendance_detail/description_attachment_sheet.dart';
-import '../../../attendance/presentation/widgets/attendance_detail/general_info_accordion.dart'
-    show isDeadlineReadonly;
 import '../../data/providers/rd_today_providers.dart' show rdDeadlineLabel;
 import '../../data/rd_create_logic.dart' show rdEndAfter, rdEndBeforeStart, rdPickedTimes, rdRecentPlaces;
 import '../../data/rd_event_details_logic.dart';
 import '../../data/rd_event_phase.dart' show rdEffectiveDurationDays;
 import '../../data/rd_type_flags.dart';
 import '../../../../shared/widgets/adaptive/app_dialog.dart';
-import '../../../../shared/widgets/adaptive/adaptive_platform.dart';
 import '../widgets/event/rd_create_sheets.dart' show showRdTypePicker;
 import '../widgets/event/rd_event_now.dart' show rdPlanMovedWithStart;
 import '../widgets/manage/rd_manage_entries.dart' show rdManageAccessProvider;
@@ -261,7 +260,7 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
       hour: int.tryParse(parts.first) ?? (start ? 17 : 20),
       minute: parts.length > 1 ? int.tryParse(parts[1]) ?? 0 : 0,
     );
-    final iosLook = useIosLook(context);
+    final iosLook = Theme.of(context).platform == TargetPlatform.iOS;
     var picked = await showAppTimePicker(
       context: context,
       initialTime: initial,

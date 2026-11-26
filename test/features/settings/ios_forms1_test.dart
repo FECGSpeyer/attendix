@@ -1,11 +1,10 @@
-import 'package:attendix/core/theme/app_theme.dart';
+import 'package:attendix/core/theme/redesign/rd_palette.dart';
+import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/features/profile/presentation/widgets/account_dialogs.dart';
 import 'package:attendix/features/profile/presentation/widgets/profile_helpers.dart';
 import 'package:attendix/features/settings/presentation/widgets/calendar_subscription_dialog.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:attendix/shared/widgets/adaptive/adaptive.dart';
-import 'package:attendix/shared/widgets/layout/ion_modal_handle.dart';
-import 'package:attendix/shared/widgets/layout/ionic_ios.dart';
 import 'package:attendix/shared/widgets/sheets/feedback_sheet.dart';
 import 'package:attendix/shared/widgets/sheets/version_history_sheet.dart';
 import 'package:flutter/material.dart';
@@ -14,12 +13,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
-/// IOS_FORMS1: page / sheet / dialog bodies of the Mehr sub-screens in the
-/// Ionic iOS look.
 void main() {
   Widget app(Widget home) => ProviderScope(
         child: MaterialApp(
-          theme: AppTheme.light,
+          theme: buildRdTheme(RdFarbwelt.petrol, Brightness.light),
           locale: const Locale('de'),
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
@@ -27,7 +24,7 @@ void main() {
         ),
       );
 
-  group('formatIonDateButton (ion-datetime-button)', () {
+  group('formatIonDateButton', () {
     setUpAll(() async {
       await initializeDateFormatting('de_DE');
       await initializeDateFormatting('en_GB');
@@ -62,7 +59,7 @@ void main() {
       );
     });
 
-    test('other languages append &lang= like Ionic', () {
+    test('other languages append &lang=', () {
       expect(
         calendarSubscriptionLink(tenantId: 1, personId: 2, language: 'en'),
         'https://abc.supabase.co/functions/v1/ical-tenant?tenantId=1&personId=2&lang=en',
@@ -70,51 +67,20 @@ void main() {
     });
   });
 
-  testWidgets('Passwort ändern (iOS): inputs without icons, '
-      '"Abbrechen | Ändern" side by side', (tester) async {
-    // The test font is far wider than SF: scale it so both labels fit half
-    // the alert like on a device (they wrap onto two lines otherwise).
-    tester.platformDispatcher.textScaleFactorTestValue = 0.5;
-    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+  testWidgets('Passwort ändern sheet renders inputs and primary button', (tester) async {
     await tester.pumpWidget(app(const ChangePasswordDialog()));
     await tester.pumpAndSettle();
-
-    expect(find.byType(IosAlertInput), findsNWidgets(2));
-    expect(find.byIcon(Icons.lock_outline), findsNothing);
-    expect(find.byIcon(Icons.visibility), findsNothing);
-    final cancel = tester.getCenter(find.text('Abbrechen'));
-    final change = tester.getCenter(find.text('Ändern'));
-    expect(cancel.dy, change.dy);
-    expect(cancel.dx, lessThan(change.dx));
-  }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
-
-  testWidgets('Passwort ändern (md): underline inputs without icons, '
-      'uppercase text buttons', (tester) async {
-    await tester.pumpWidget(app(const ChangePasswordDialog()));
-    await tester.pumpAndSettle();
-    expect(find.byType(IosAlertInput), findsNothing);
-    expect(find.byType(AlertDialog), findsOneWidget);
-    expect(find.byIcon(Icons.lock_outline), findsNothing);
-    expect(find.byIcon(Icons.visibility), findsNothing);
-    expect(find.text('ABBRECHEN'), findsOneWidget);
-    expect(find.text('ÄNDERN'), findsOneWidget);
-    expect(find.byType(ElevatedButton), findsNothing);
+    expect(find.byType(TextField), findsNWidgets(2));
+    expect(find.text('Passwort ändern'), findsNWidgets(2));
   });
 
-  testWidgets('Was ist neu? (iOS): grabber, centred title, no close button',
-      (tester) async {
+  testWidgets('Was ist neu? sheet renders cleanly', (tester) async {
     await tester.pumpWidget(app(const VersionHistorySheet()));
     await tester.pump();
+    expect(find.byType(VersionHistorySheet), findsOneWidget);
+  });
 
-    expect(find.byType(IonModalHandle), findsOneWidget);
-    // Shared classic sheet scaffold: the toolbar is the IonSheetHeader.
-    expect(find.byType(IonSheetHeader), findsOneWidget);
-    expect(find.byIcon(Icons.close), findsNothing);
-  }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
-
-  testWidgets('Feedback (iOS): grabber, neutral segment, "Absenden" visible',
-      (tester) async {
-    // iPhone 15 viewport
+  testWidgets('Feedback sheet switches chips and exposes Senden', (tester) async {
     tester.view.physicalSize = const Size(393 * 3, 852 * 3);
     tester.view.devicePixelRatio = 3;
     addTearDown(tester.view.reset);
@@ -127,21 +93,12 @@ void main() {
     await tester.tap(find.text('open'));
     await tester.pumpAndSettle();
 
-    expect(find.byType(IonModalHandle), findsOneWidget);
-    expect(find.text('Hilfe & Feedback'), findsOneWidget);
-    final segment =
-        tester.widget<IonSegment<int>>(find.byType(IonSegment<int>));
-    expect(segment.neutral, isTrue);
-    expect(find.text('Absenden'), findsOneWidget);
-    // Submit row lies inside the visible sheet without scrolling.
-    expect(tester.getBottomLeft(find.text('Absenden')).dy, lessThan(852));
+    expect(find.text('Feedback'), findsOneWidget);
+    expect(find.text('Hilfe/Frage'), findsOneWidget);
+    expect(find.text('Senden'), findsOneWidget);
 
-    // Switch to "Feedback": rating row + submit
-    await tester.tap(find.text('Feedback').last);
+    await tester.tap(find.text('Hilfe/Frage'));
     await tester.pumpAndSettle();
-    expect(find.text('Deine Bewertung'), findsOneWidget);
-    await tester.scrollUntilVisible(find.text('Absenden'), 100,
-        scrollable: find.byType(Scrollable).last);
-    expect(find.text('Absenden'), findsOneWidget);
-  }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
+    expect(find.text('Senden'), findsOneWidget);
+  });
 }

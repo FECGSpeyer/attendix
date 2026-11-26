@@ -21,7 +21,7 @@ import 'package:attendix/data/models/person/person.dart';
 import 'package:attendix/data/models/tenant/tenant.dart';
 import 'package:attendix/data/repositories/cross_tenant_person_repository.dart';
 import 'package:attendix/data/repositories/user_registration_repository.dart';
-import 'package:attendix/features/people/presentation/pages/person_detail_page.dart';
+import 'package:attendix/core/providers/person_detail_providers.dart';
 import 'package:attendix/features/people/person_create_prefill.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_person_create_page.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_person_edit_page.dart';

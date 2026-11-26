@@ -1,5 +1,4 @@
 import 'package:flutter/gestures.dart';
-import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -24,7 +23,7 @@ import 'register_page.dart';
 import '../../../../core/providers/dashboard_providers.dart';
 import '../../../../core/services/teams/teams_service.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../core/providers/redesign_providers.dart';
+import '../../../../core/providers/redesign_providers.dart' show redesignSettingsProvider;
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/display/attendix_logo.dart';
 import '../../../redesign/presentation/widgets/rd_account_switch.dart' show RdSavedAccountsOnLogin;
@@ -32,8 +31,6 @@ import '../../../redesign/presentation/widgets/rd_logo.dart' show rdLogoColors;
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
-import '../widgets/ion_buttons.dart';
-import '../widgets/ion_input_decoration.dart';
 import '../widgets/reset_password_dialog.dart';
 
 /// Login page
@@ -45,11 +42,9 @@ class LoginPage extends ConsumerStatefulWidget {
 }
 
 class _LoginPageState extends ConsumerState<LoginPage> {
-  /// LOGO: original colours, or those of the Farbwelt when the new design is on.
-  AttendixLogoColors _logoColors() {
-    final settings = ref.watch(redesignSettingsProvider);
-    return settings.enabled ? rdLogoColors(settings.world) : AttendixLogoColors.original;
-  }
+  /// LOGO: colours of the active Farbwelt.
+  AttendixLogoColors _logoColors() =>
+      rdLogoColors(ref.watch(redesignSettingsProvider).world);
 
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
@@ -378,9 +373,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   /// page. On `registered` show the toast, on `signedIn` route like a login.
   Future<void> _openRegister() async {
     final email = _emailController.text.trim();
-    // F-LOGIN-10: Ionic opens the register modal empty (no componentProps);
-    // only the Beta design prefills the login e-mail.
-    final prefill = ref.read(redesignEnabledProvider) && email.isNotEmpty;
+    final prefill = email.isNotEmpty;
     final outcome = await showRegisterModal(
       context,
       email: prefill ? email : null,
@@ -531,18 +524,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         Role.none;
   }
 
-  /// Ionic `ion-button color="primary" expand="block"` (disabled = teal at
-  /// opacity .5).
-  Widget _primaryButton(String label, VoidCallback onPressed) =>
-      IonBlockButton(
-        label: label,
-        loading: _isLoading,
-        onPressed: _isLoading || !_canSubmit ? null : onPressed,
-      );
-
-  Widget _smallClearButton(String label, VoidCallback? onPressed) =>
-      IonSmallClearButton(label: label, onPressed: onPressed);
-
   /// Height of the password-mode form; the code mode keeps the card at this
   /// height like Ionic (the card does not shrink when switching modes).
   final _formBoxKey = GlobalKey();
@@ -559,57 +540,16 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     });
   }
 
-  /// A persisted session exists but the auth stream has not reported yet.
-  bool _restoringSession() {
-    try {
-      if (!ref.watch(authStateProvider).isLoading) return false;
-      return ref.read(supabaseAuthProvider).currentSession != null;
-    } catch (_) {
-      return false;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final ios = useIosLook(context);
-    // REDESIGN (E5): photo and logo stay, only the card gets the Beta look.
-    final beta = ref.watch(redesignEnabledProvider);
-    final cardColor = beta
-        ? context.rd.surface
-        : Theme.of(context).cardTheme.color ?? Theme.of(context).colorScheme.surface;
-    // Ionic .version: white ion-label at the root font size (iOS 17pt via
-    // -apple-system-body, md 16px), 20 high lines, flowing text that wraps
-    // between words ("… | Impressum &" / "Datenschutz").
-    final footerStyle = TextStyle(
-      fontSize: ios ? 17 : 16,
-      height: 20 / (ios ? 17 : 16),
+    final cardColor = context.rd.surface;
+    const footerStyle = TextStyle(
+      fontSize: 16,
+      height: 20 / 16,
       color: Colors.white,
     );
-    // Ionic login.page.scss `.around` in rem: on the iPhone 1rem = 17px.
-    final rem = ios ? 17.0 : 16.0;
+    const rem = 16.0;
     final keyboardOpen = MediaQuery.viewInsetsOf(context).bottom > 0;
-
-    // EINST-03: cold start / reload with a stored session (e.g. a deep link
-    // stashed via /open-link): until the auth stream reports it, the router
-    // still sees "signed out" and lands here. Show the background with a
-    // spinner instead of flashing the login form; the router leaves as soon
-    // as the session is reported (a failed restore shows the form).
-    if (!beta && _restoringSession()) {
-      return Scaffold(
-        body: Stack(
-          fit: StackFit.expand,
-          children: [
-            Image.asset(
-              'assets/images/login_bg.jpg',
-              fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) =>
-                  const ColoredBox(color: AppColors.primary),
-            ),
-            const Center(child: AppSpinner()),
-          ],
-        ),
-      );
-    }
     _measurePasswordForm();
 
     // Ionic login: background photo, centered card (60 % / 95 % under
@@ -650,11 +590,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             1.5 * rem + 5,
                             1.75 * rem,
                             1.5 * rem + 5,
-                            ios ? 43.2 : 33.1,
+                            33.1,
                           ),
                           decoration: BoxDecoration(
                             color: cardColor,
-                            borderRadius: BorderRadius.circular(beta ? context.rd.cardRadius : 1.25 * rem),
+                            borderRadius: BorderRadius.circular(context.rd.cardRadius),
                             boxShadow: const [
                               BoxShadow(
                                 color: Color(0x73000000),
@@ -678,9 +618,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                 mainAxisSize: MainAxisSize.min,
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
-                                  // ACCOUNT_SWITCH (Beta): saved accounts
-                                  // open without password.
-                                  if (ref.watch(redesignEnabledProvider) && !_teamsLinkMode)
+                                  if (!_teamsLinkMode)
                                     RdSavedAccountsOnLogin(onPickEmail: _pickSavedEmail),
                                   KeyedSubtree(
                                     key: _formBoxKey,
@@ -692,7 +630,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                     child: AutofillGroup(
                                       onDisposeAction:
                                           AutofillContextAction.cancel,
-                                      child: beta ? _buildFormBeta(context) : _buildForm(context),
+                                      child: _buildFormBeta(context),
                                     ),
                                   ),
                                 ],
@@ -758,8 +696,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             visualDensity: VisualDensity.compact,
                           ),
                           onPressed: () => ref.read(appUpdateServiceProvider).applyUpdate(),
-                          icon: Icon(AppIcons.cloudDownloadOutlined, size: 18),
-                          label: IonButtonLabel(context.l10n.loginInstallUpdate),
+                          icon: const Icon(Icons.cloud_download_outlined, size: 18),
+                          label: Text(context.l10n.loginInstallUpdate),
                         ),
                       ),
                     // Ionic always shows "Demo starten" (environment.demoMail);
@@ -780,14 +718,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             ),
                             const TextSpan(text: ' | '),
                             TextSpan(
-                              // OEFF-46: classic keeps "Impressum &
-                              // Datenschutz" on one line, so its tap area
-                              // (one rect around the span) no longer covers
-                              // "Demo starten" when the footer wraps.
-                              text: beta
-                                  ? context.l10n.loginLegal
-                                  : context.l10n.loginLegal
-                                      .replaceAll(' ', '\u00A0'),
+                              text: context.l10n.loginLegal,
                               recognizer: _legalTap,
                             ),
                           ],
@@ -944,160 +875,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 cooldown: _cooldown,
                 enabled: !_isLoading,
                 onResend: _requestCode,
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  Widget _buildForm(BuildContext context) {
-    final ios = useIosLook(context);
-    // ion-row / ion-col gaps measured on the Ionic card (px).
-    const segmentToItem = 9.0; // .mode-col padding-bottom 4 + ion-col 5
-    final itemGap = ios ? 17.0 : 16.0; // .mailItem margin-bottom: 1rem
-    const itemsToLinks = 14.0; // ion-col 5 + ion-col 5 + button margin 4
-    const linksToButton = 18.0;
-    return Form(
-      key: _formKey,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // TEAMS: link-mode note replaces the mode segment
-          if (_teamsLinkMode)
-            Text(
-              context.l10n.loginLinkNote,
-              style: TextStyle(color: AppColors.mediumOf(context)),
-            )
-          else
-            // AUTH: mode segment (Passwort / Code per E-Mail)
-            AuthModeSegment(
-              mode: _mode,
-              enabled: !_isLoading,
-              onChanged: _setMode,
-            ),
-          const SizedBox(height: segmentToItem),
-
-          // E-mail: legacy stacked ion-label + ion-input
-          IonStackedItem(
-            label: context.l10n.loginEmail,
-            metrics: IonStackedItemMetrics.legacy(ios: ios),
-            builder: (decoration, style) => TextFormField(
-              controller: _emailController,
-              style: style,
-              decoration: decoration,
-              keyboardType: TextInputType.emailAddress,
-              textInputAction: _mode == AuthMode.password
-                  ? TextInputAction.next
-                  : TextInputAction.go,
-              autocorrect: false,
-              readOnly: _mode == AuthMode.otp && _otpSent,
-              autofillHints: const [AutofillHints.email],
-              onFieldSubmitted: _mode == AuthMode.otp && !_otpSent
-                  ? (_) => _requestCode()
-                  : null,
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return context.l10n.loginToastEnterEmail;
-                }
-                if (!isValidEmail(value)) {
-                  return context.l10n.loginToastInvalidEmail;
-                }
-                return null;
-              },
-            ),
-          ),
-
-          if (_mode == AuthMode.password) ...[
-            SizedBox(height: itemGap),
-            // Password: ion-input label labelPlacement="stacked" with the
-            // eye button in its end slot.
-            IonStackedItem(
-              label: context.l10n.loginPassword,
-              metrics: IonStackedItemMetrics.modern(ios: ios),
-              trailingSize: ios ? 29.75 : 40,
-              trailing: IconButton(
-                tooltip: context.l10n.loginShowPassword,
-                color: AppColors.primary,
-                padding: EdgeInsets.zero,
-                iconSize: ios ? 22 : 20,
-                icon: Icon(
-                  _obscurePassword
-                      ? AppIcons.visibilityOutlined
-                      : AppIcons.visibilityOffOutlined,
-                ),
-                onPressed: () {
-                  setState(() {
-                    _obscurePassword = !_obscurePassword;
-                  });
-                },
-              ),
-              builder: (decoration, style) => TextFormField(
-                controller: _passwordController,
-                style: style,
-                decoration: decoration,
-                obscureText: _obscurePassword,
-                textInputAction: TextInputAction.done,
-                autofillHints: const [AutofillHints.password],
-                onFieldSubmitted: (_) => _onSubmit(),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return context.l10n.loginFlutterEnterPassword;
-                  }
-                  return null;
-                },
-              ),
-            ),
-            const SizedBox(height: itemsToLinks),
-
-            // Register + forgot password (Ionic: small clear buttons, left)
-            Wrap(
-              spacing: 4.5, // inline whitespace between the two ion-buttons
-              children: [
-                _smallClearButton(context.l10n.loginRegister, _openRegister),
-                _smallClearButton(
-                    context.l10n.loginForgotPassword, _forgotPassword),
-              ],
-            ),
-            const SizedBox(height: linksToButton),
-            _primaryButton(
-                _teamsLinkMode
-                    ? context.l10n.loginLinkAndSignIn
-                    : context.l10n.loginSignIn,
-                _login),
-          ] else if (!_otpSent) ...[
-            const SizedBox(height: itemsToLinks),
-            Align(
-              alignment: Alignment.centerLeft,
-              child:
-                  _smallClearButton(context.l10n.loginRegister, _openRegister),
-            ),
-            const SizedBox(height: linksToButton),
-            _primaryButton(context.l10n.loginSendCode, _requestCode),
-          ] else ...[
-            const SizedBox(height: AppDimensions.paddingM),
-            OtpCodeField(
-              controller: _otpController,
-              enabled: !_isLoading,
-              onCompleted: (_) => _verifyCode(),
-            ),
-            const SizedBox(height: AppDimensions.paddingM),
-            _primaryButton(context.l10n.loginSignIn, _verifyCode),
-            const SizedBox(height: AppDimensions.paddingS),
-            // SEL-21: Ionic `ion-button size="small" fill="clear"` in a
-            // left-aligned column.
-            Align(
-              alignment: Alignment.centerLeft,
-              child: ListenableBuilder(
-                listenable: _cooldown,
-                builder: (context, _) => _smallClearButton(
-                  _cooldown.active
-                      ? context.l10n.loginResendIn(_cooldown.remaining)
-                      : context.l10n.loginResendCode,
-                  (_isLoading || _cooldown.active) ? null : _requestCode,
-                ),
               ),
             ),
           ],

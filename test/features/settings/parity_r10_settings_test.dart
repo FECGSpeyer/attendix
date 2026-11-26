@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:attendix/data/models/person/person.dart';
-import 'package:attendix/features/settings/presentation/pages/general_settings_page.dart';
-import 'package:attendix/features/settings/presentation/pages/link_persons_page.dart';
+import 'package:attendix/features/settings/data/general_settings_helpers.dart';
+import 'package:attendix/features/settings/data/link_persons_logic.dart';
 import 'package:attendix/features/voice_leader/data/providers/voice_leader_providers.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -109,14 +109,13 @@ void main() {
     final start = source.indexOf('Future<void> _deleteInstance(');
     final body = source.substring(start, source.indexOf('Future<void> _logout(', start));
 
-    test('closes the sheet and opens the next instance after deleting the current one', () {
-      expect(body, contains('sheetNavigator?.pop()'));
+    test('opens the tenant selection after deleting the current instance', () {
       expect(body, contains("if (wasCurrent) router.go('/tenants')"));
     });
 
-    test('uses the Ionic toasts', () {
-      expect(body, contains('dbInstanceDeleted'));
-      expect(body, contains('dbDeleteInstanceFailed'));
+    test('uses the delete result toasts', () {
+      expect(body, contains('redesignTenantsDeleteDone'));
+      expect(body, contains('redesignTenantsDeleteFailed'));
     });
   });
 }

@@ -14,7 +14,7 @@ import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../export/presentation/pages/export_page.dart' show showExportModal;
+import '../../../export/presentation/export_logic.dart' show showExportModal;
 import '../../data/providers/rd_stats_providers.dart';
 import '../../data/rd_stats_logic.dart';
 import '../../data/rd_words.dart';

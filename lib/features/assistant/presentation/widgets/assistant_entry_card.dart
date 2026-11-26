@@ -3,17 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/providers/assistant_providers.dart';
-import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../l10n/l10n.dart';
 
-/// Route of the chat assistant (same page in both designs).
+/// Route of the chat assistant.
 const assistantRoute = '/settings/assistant';
 
-/// Coloured card at the top of "Mehr" (old design) and "Ich" (new design)
-/// that opens the chat assistant.
+/// Coloured card at the top of "Ich" that opens the chat assistant.
 ///
 /// Shown when the admin switched the assistant on. While it is off, admins
 /// and Verantwortliche see it too, with a hint that leads to the switch.
@@ -28,21 +26,19 @@ class AssistantEntryCard extends ConsumerWidget {
     final role = ref.watch(currentRoleProvider);
     final isLead = role.isAdmin || role.isResponsible;
     if (!enabled && !isLead) return const SizedBox.shrink();
-    final redesign = ref.watch(redesignEnabledProvider);
     final l10n = context.l10n;
-    final rd = context.rdSkin;
-    final primary = rd?.primary ?? Theme.of(context).colorScheme.primary;
+    final rd = context.rd;
+    final primary = rd.primary;
     // A second, cooler tone so the card stands out from the plain rows.
     final second = Color.lerp(primary, const Color(0xFF7C4DFF), 0.55)!;
-    final radius = BorderRadius.circular(rd?.cardRadius ?? 16);
+    final radius = BorderRadius.circular(rd.cardRadius);
 
     void open() {
       if (enabled) {
         context.push(assistantRoute);
       } else {
-        // Where the switch is: Rollen und Rechte › Was Mitglieder sehen (new
-        // design), Einstellungen (old design).
-        context.push(redesign ? '${RedesignRoutes.rolePermissions}?from=ich' : '/settings/general');
+        // Where the switch is: Rollen und Rechte › Was Mitglieder sehen.
+        context.push('${RedesignRoutes.rolePermissions}?from=ich');
       }
     }
 

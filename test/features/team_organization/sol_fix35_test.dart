@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:attendix/features/attendance/presentation/pages/attendance_detail_page.dart';
+import 'package:attendix/features/attendance/presentation/widgets/attendance_date_change.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 String _src(String path) => File(path).readAsStringSync();
@@ -61,7 +61,7 @@ void main() {
     });
 
     test('duty confirmation via Zusagen reports its own result only', () {
-      final s = _src('lib/features/self_service/presentation/pages/signout_page.dart');
+      final s = _src('lib/features/self_service/presentation/widgets/self_service_event_actions.dart');
       final i = s.indexOf('await confirmDutyAction(');
       expect(s.substring(i, i + 120), contains('return null;'));
       expect(_src('lib/features/duty/presentation/widgets/duty_actions.dart'), contains('Future<bool> confirmDutyAction('));

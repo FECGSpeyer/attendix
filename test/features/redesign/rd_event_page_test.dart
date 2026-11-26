@@ -198,7 +198,7 @@ class _Harness {
     );
     return ProviderScope(
       overrides: [
-        initialRedesignSettingsProvider.overrideWithValue(const RedesignSettings(enabled: true)),
+        initialRedesignSettingsProvider.overrideWithValue(const RedesignSettings()),
         effectiveRoleProvider.overrideWithValue(role),
         currentTenantIdProvider.overrideWith((ref) => 7),
         attendanceRepositoryWithTenantProvider.overrideWithValue(repo),

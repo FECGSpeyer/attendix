@@ -7,9 +7,7 @@ missing button, a widget that moved.
 
 | File | Pages |
 |---|---|
-| `golden_test.dart` | Login and building blocks, classic design (`ios_*`, `md_*`) |
-| `pages_classic_test.dart` | Classic pages (`ios_*`, a few also as `md_*`) |
-| `pages_beta_test.dart` | Beta pages (`beta_*`) |
+| `pages_beta_test.dart` | Main app pages (`beta_*`) |
 
 ## After an intended change
 

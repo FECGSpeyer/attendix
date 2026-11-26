@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
@@ -18,14 +17,10 @@ import '../../../../core/utils/share_origin.dart';
 import '../../../../data/models/attendance/attendance.dart' show AttendanceType;
 import '../../../../data/models/plan/plan.dart' show PlanAttendance;
 import '../../../../core/utils/toast_helper.dart';
-import '../../../../core/theme/app_colors.dart';
-import 'ion_items.dart';
 import 'plan_field_dialogs.dart';
 import 'rd_plan_widgets.dart';
-import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Export formats of an Ablaufplan.
 enum PlanExportAction { pdf, pdf2x, image, telegram, telegram2x, telegramImage }
@@ -240,101 +235,12 @@ Future<PlanShareChoice?> showPlanShareSheet(
   required int planCount,
 }) {
   final hasChatId = planTelegramChatId(ref) != null;
-  if (context.rdSkin != null) {
-    return showRdPlanShareSheet(context, currentLabel: currentLabel, planCount: planCount, hasChatId: hasChatId);
-  }
-  // Ionic openPlanShareSheet: breakpoints [0, 0.75 | 0.5, 1]
-  final initial = hasChatId ? 0.75 : 0.5;
-  return showIonSheet<PlanShareChoice>(
+  return showRdPlanShareSheet(
     context,
-    breakpoints: [0, initial, 1],
-    initialBreakpoint: initial,
-    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-    builder: (_, scrollController) => _PlanShareSheet(
-      currentLabel: currentLabel,
-      planCount: planCount,
-      hasChatId: hasChatId,
-      scrollController: scrollController,
-    ),
+    currentLabel: currentLabel,
+    planCount: planCount,
+    hasChatId: hasChatId,
   );
-}
-
-class _PlanShareSheet extends StatefulWidget {
-  const _PlanShareSheet({
-    required this.currentLabel,
-    required this.planCount,
-    required this.hasChatId,
-    this.scrollController,
-  });
-
-  final String currentLabel;
-  final int planCount;
-  final bool hasChatId;
-  final ScrollController? scrollController;
-
-  @override
-  State<_PlanShareSheet> createState() => _PlanShareSheetState();
-}
-
-class _PlanShareSheetState extends State<_PlanShareSheet> {
-  bool _all = false;
-
-  void _choose(PlanExportAction action) => Navigator.of(context).pop((all: _all, action: action));
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final segments = {
-      false: l10n.planningOnlyLabel(widget.currentLabel),
-      true: l10n.planningAllPlans(widget.planCount),
-    };
-    Widget option(IconData icon, String label, PlanExportAction action) => ListTile(
-          leading: Icon(icon, color: AppColors.primary),
-          title: Text(label),
-          onTap: () => _choose(action),
-        );
-    // Ionic plan-share-sheet: toolbar title + close ✕ at the end.
-    return IonSheetScaffold(
-      title: l10n.attendanceShareRunSheet,
-      showClose: true,
-      body: Column(
-      children: [
-        Expanded(
-          child: ListView(
-            controller: widget.scrollController,
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                // Shared adaptive `ion-segment` (IOS_LOOK).
-                child: IonSegment<bool>(
-                  items: [
-                    for (final e in segments.entries)
-                      IonSegmentItem<bool>(value: e.key, label: Text(e.value)),
-                  ],
-                  value: _all,
-                  onChanged: (v) => setState(() => _all = v),
-                ),
-              ),
-              IonInsetList(
-                // ABL-16: Ionic icons document / documents / paper-plane.
-                dividerIndent: 56,
-                children: [
-                  option(AppIcons.documentOutline, l10n.attendanceExportPdf, PlanExportAction.pdf),
-                  option(AppIcons.documentsOutline, l10n.attendanceExportPdfA5, PlanExportAction.pdf2x),
-                  if (widget.hasChatId) ...[
-                    option(AppIcons.paperPlaneOutline, l10n.attendanceTelegramPdf, PlanExportAction.telegram),
-                    option(AppIcons.paperPlaneOutline, l10n.attendanceTelegramPdfA5, PlanExportAction.telegram2x),
-                    if (!_all) option(AppIcons.imageOutlined, l10n.attendanceTelegramImage, PlanExportAction.telegramImage),
-                  ],
-                ],
-              ),
-            ],
-          ),
-        ),
-      ],
-      ),
-    );
-  }
 }
 
 /// Type of [att] for export titles (Ionic `getPlanningTitle(type, typeInfo)`).

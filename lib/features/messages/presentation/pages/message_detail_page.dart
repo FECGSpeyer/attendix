@@ -1,20 +1,16 @@
 import 'package:flutter/material.dart';
-import '../../../../shared/widgets/layout/ionic_md.dart' show IonMd;
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/constants/app_constants.dart';
-import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/auto_message_providers.dart';
+import '../../../../core/providers/debug_providers.dart' show effectiveRoleProvider;
 import '../../../../core/providers/message_providers.dart';
-import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/providers/tenant_providers.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/quill_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -22,11 +18,9 @@ import '../../../../data/models/auto_message/auto_message.dart';
 import '../../../../data/models/message/message.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../settings/presentation/widgets/settings_list.dart';
 import '../message_format.dart';
 import '../widgets/message_termin_section.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 import '../../../../core/services/native/native_file_service.dart';
 import '../../../redesign/presentation/widgets/event/rd_event_head.dart' show rdEventMeta;
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
@@ -155,8 +149,8 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
     if (!confirmed || !mounted) return;
     final ok = await ref.read(messageNotifierProvider.notifier).delete(widget.messageId);
     if (!mounted) return;
-    if (ok && ref.read(redesignEnabledProvider) && context.canPop()) {
-      context.pop(); // Beta: back to the list it came from
+    if (ok && context.canPop()) {
+      context.pop();
     } else if (ok) {
       context.go('/settings/messages');
     } else {
@@ -175,10 +169,9 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
   Widget build(BuildContext context) {
     final messageAsync = ref.watch(messageByIdProvider(widget.messageId));
     final message = messageAsync.valueOrNull;
-    // Ionic: manager view only for messages of the current instance.
+    // Manager view only for messages of the current instance.
     final isManager = _isManager &&
         (message == null || message.tenantId == ref.watch(currentTenantIdProvider));
-    final l10n = context.l10n;
     _listenLoadError(messageByIdProvider(widget.messageId));
     if (message != null) {
       if (isManager) {
@@ -188,93 +181,7 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
       }
     }
 
-    if (ref.watch(redesignEnabledProvider)) return _buildBeta(messageAsync, isManager);
-
-    return Scaffold(
-      appBar: AppBar(
-        leading: BackButton(onPressed: _back),
-        title: Text(l10n.messagesMessage),
-        // IOS_PAGES3: iOS → ion-buttons end in a Liquid Glass circle
-        actions: [
-          if (isManager && message != null)
-            ToolbarButtonGroup(children: [
-              IconButton(
-                tooltip: l10n.messagesDeleteMessage,
-                icon: Icon(AppIcons.deleteOutline, color: AppColors.danger),
-                onPressed: _delete,
-              ),
-            ]),
-        ],
-      ),
-      body: messageAsync.when(
-        loading: () => const Center(child: AppSpinner()),
-        error: (e, _) => Center(child: Text(l10n.messagesLoadFailed)),
-        data: (message) {
-          if (message == null) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(AppDimensions.paddingL),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(AppIcons.campaignOutlined, size: 48, color: AppColors.mediumOf(context)),
-                    const SizedBox(height: AppDimensions.paddingM),
-                    Text(
-                      l10n.messagesNotAvailable,
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }
-          if (_switchTenantIfNeeded(message)) {
-            return const Center(child: AppSpinner());
-          }
-          _markReadOnce();
-          final showContent = _showContent ?? !isManager;
-          // AUTO_MESSAGES (Ionic 4.18): placeholders filled – members get
-          // their own copy (language + per-person values).
-          final autoInfo = ref.watch(messageAutoInfoProvider(message.id)).valueOrNull;
-          final ownInfo =
-              isManager ? null : ref.watch(ownRecipientAutoInfoProvider(message.id)).valueOrNull;
-          final display = personalizeMessage(message, autoInfo, ownInfo);
-          final children = <Widget>[
-            if (isManager) _managerHeader(message, showContent, display.title),
-            if (showContent)
-              _MessageCard(
-                message: message,
-                showTitle: !isManager,
-                title: display.title,
-                html: display.html,
-              ),
-            if (!isManager && autoInfo?.attendanceId != null)
-              MessageTerminSection(messageId: message.id, info: autoInfo!, recipient: ownInfo),
-            if (isManager && autoInfo?.attendanceId != null)
-              SettingsListSection(
-                children: [
-                  SettingsListTile(
-                    icon: AppIcons.calendarTodayOutlined,
-                    title: l10n.autoMessagesOpenTermin,
-                    onTap: () => context.push('/attendance/${autoInfo!.attendanceId}'),
-                  ),
-                ],
-              ),
-            if (isManager)
-              ..._managerOverview(message)
-            else
-              _EarlierMessages(currentId: message.id),
-          ];
-
-          final list = ListView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
-            children: children,
-          );
-          return isManager ? RefreshIndicator.adaptive(onRefresh: _refresh, child: list) : list;
-        },
-      ),
-    );
+    return _buildBeta(messageAsync, isManager);
   }
 
   /// REDESIGN (canvas K1 "Mitteilung"): page type "Detailseite". Title and
@@ -358,10 +265,10 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
         ],
         const SizedBox(height: 18),
         if (showContent)
-          _MessageCard(message: message, showTitle: false, title: display.title, html: display.html, beta: true),
+          _MessageCard(message: message, html: display.html),
         if (!isManager && attendanceId != null)
           MessageTerminSection(messageId: message.id, info: autoInfo!, recipient: ownInfo),
-        if (isManager) ..._betaOverview(message) else _EarlierMessages(currentId: message.id, beta: true),
+        if (isManager) ..._betaOverview(message) else _EarlierMessages(currentId: message.id),
       ];
     }
 
@@ -461,302 +368,18 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
         ),
     ];
   }
-
-  Widget _managerHeader(Message message, bool showContent, String title) {
-    final theme = Theme.of(context);
-    final meta = [
-      MessageFormat.dateTime(message.createdAt),
-      if (message.senderName != null && message.senderName!.isNotEmpty) message.senderName!,
-      showContent ? context.l10n.messagesFlutterHideMessage : context.l10n.messagesFlutterShowMessage,
-    ].join(' · ');
-    // UX_SETTINGS (WAVE 8): Ionic inset list item (h2.title 600, p meta,
-    // chevron-up/down in medium at the end).
-    final tile = ListTile(
-      title: Text(
-        title,
-        style: ionIsIos(context)
-            ? const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)
-            : theme.textTheme.titleMedium,
-      ),
-      subtitle: Text(meta),
-      trailing: Icon(
-        showContent ? AppIcons.expandLess : AppIcons.expandMore,
-        color: AppColors.mediumOf(context),
-      ),
-      onTap: () => setState(() => _showContent = !showContent),
-    );
-    if (ionIsIos(context)) {
-      return Padding(
-        padding: const EdgeInsets.only(bottom: 16),
-        child: IonInsetGroup(children: [tile]),
-      );
-    }
-    if (context.rdSkin == null) {
-      // EIB-17: md-ion-list-inset item group (radius 16, item background,
-      // no shadow) instead of a Material card.
-      return Padding(
-        padding: const EdgeInsets.only(bottom: AppDimensions.paddingM),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(IonMd.groupRadius),
-          child: Material(color: IonMd.itemBackground(theme.brightness), child: tile),
-        ),
-      );
-    }
-    return Card(
-      margin: const EdgeInsets.only(bottom: AppDimensions.paddingM),
-      child: tile,
-    );
-  }
-
-  List<Widget> _managerOverview(Message message) {
-    final theme = Theme.of(context);
-    final l10n = context.l10n;
-    final recipientsAsync = ref.watch(messageRecipientsProvider(message.id));
-    final groups = ref.watch(groupsMapProvider).valueOrNull ?? const <int, String>{};
-    final rows = recipientsAsync.valueOrNull ?? const <MessageRecipient>[];
-    final stats = RecipientOverview.from(rows);
-
-    final filtered = switch (_filter) {
-      _Filter.read => rows.where((r) => r.isRead).toList(),
-      _Filter.open => rows.where((r) => !r.isRead).toList(),
-      _Filter.problems => rows.where((r) => r.hasProblem).toList(),
-      _Filter.all => rows,
-    };
-
-    // Ionic .hint: 0.78rem, line-height 1.4, medium, margin 8/20.
-    Widget hint(String text) => Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-      child: Text(
-        text,
-        style: TextStyle(fontSize: 12.5, height: 1.4, color: AppColors.mediumOf(context)),
-      ),
-    );
-
-    return [
-      if (message.isSending) hint(l10n.messagesStillSending),
-      if (ionIsIos(context))
-        IonListHeader(title: l10n.messagesOverview)
-      else
-        Padding(
-          padding: const EdgeInsets.fromLTRB(
-            AppDimensions.paddingS,
-            AppDimensions.paddingM,
-            AppDimensions.paddingS,
-            AppDimensions.paddingS,
-          ),
-          child: Text(
-            l10n.messagesOverview,
-            style: theme.textTheme.titleSmall?.copyWith(color: AppColors.mediumOf(context)),
-          ),
-        ),
-      // Ionic .tiles: 2-column grid, gap 8, left-aligned value + label.
-      _TileRow(
-        left: _Tile(value: '${stats.read} / ${stats.total}', label: l10n.messagesReadInApp),
-        right: _Tile(
-          value: '${stats.pushDelivered} / ${stats.pushTotal}',
-          label: l10n.messagesPushDelivered,
-        ),
-      ),
-      const SizedBox(height: 8),
-      _TileRow(
-        left: _Tile(value: '${stats.emailDelivered} / ${stats.emailTotal}', label: l10n.messagesEmailDelivered),
-        right: _Tile(value: '≈ ${stats.emailOpened}', label: l10n.messagesEmailOpenedApprox),
-      ),
-      hint(l10n.messagesOpenedEstimate),
-      const SizedBox(height: AppDimensions.paddingS),
-      // IOS_PAGES3: Ionic `ion-segment.filter` – full-width segment
-      // (iOS segmented control / md tabs), not a scrolling button bar.
-      IonSegment<_Filter>(
-        items: [
-          IonSegmentItem(value: _Filter.all, label: Text(l10n.messagesAllCount(stats.total))),
-          IonSegmentItem(value: _Filter.read, label: Text(l10n.messagesReadCount(stats.readAny))),
-          IonSegmentItem(value: _Filter.open, label: Text(l10n.messagesOpenCount(stats.open))),
-          IonSegmentItem(value: _Filter.problems, label: Text(l10n.messagesProblemsCount(stats.problems))),
-        ],
-        value: _filter,
-        onChanged: (v) => setState(() => _filter = v),
-      ),
-      const SizedBox(height: AppDimensions.paddingM),
-      if (recipientsAsync.isLoading && rows.isEmpty)
-        const Center(child: AppSpinner())
-      else if (filtered.isEmpty)
-        hint(l10n.messagesNoPeopleView)
-      else
-        SettingsListSection(
-          icons: false,
-          children: [
-            for (final r in filtered)
-              _RecipientRow(
-                recipient: r,
-                groupName: r.groupId != null ? groups[r.groupId] : null,
-              ),
-          ],
-        ),
-    ];
-  }
-}
-
-class _TileRow extends StatelessWidget {
-  const _TileRow({required this.left, required this.right});
-
-  final Widget left;
-  final Widget right;
-
-  @override
-  Widget build(BuildContext context) {
-    return IntrinsicHeight(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(child: left),
-          const SizedBox(width: 8),
-          Expanded(child: right),
-        ],
-      ),
-    );
-  }
-}
-
-/// Ionic `.tile`: item-background box, radius 10, padding 10/12, value
-/// 1.35rem tabular, 0.75rem medium label.
-class _Tile extends StatelessWidget {
-  const _Tile({required this.value, required this.label});
-
-  final String value;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    final ios = ionIsIos(context);
-    final content = Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 21.6,
-              height: 1.15,
-              fontWeight: FontWeight.w700,
-              fontFeatures: [FontFeature.tabularFigures()],
-            ),
-          ),
-          Text(
-            label,
-            maxLines: 2,
-            style: TextStyle(fontSize: 12, color: AppColors.mediumOf(context)),
-          ),
-        ],
-      ),
-    );
-    if (!ios && context.rdSkin != null) {
-      return Card(margin: EdgeInsets.zero, child: content);
-    }
-    // EIB-17: Ionic `.tile` – flat box, radius 10, item background (md too).
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: ios
-            ? IonIos.itemBackground(context)
-            : IonMd.itemBackground(Theme.of(context).brightness),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: content,
-    );
-  }
-}
-
-class _RecipientRow extends StatelessWidget {
-  const _RecipientRow({required this.recipient, this.groupName});
-
-  final MessageRecipient recipient;
-  final String? groupName;
-
-  Color _bg(ChipTone tone) => switch (tone) {
-    ChipTone.ok => AppColors.success.withValues(alpha: 0.15),
-    ChipTone.bad => AppColors.danger.withValues(alpha: 0.15),
-    ChipTone.warn => AppColors.warning.withValues(alpha: 0.2),
-    ChipTone.neutral => AppColors.medium.withValues(alpha: 0.15),
-  };
-
-  Color _fg(ChipTone tone) => switch (tone) {
-    ChipTone.ok => AppColors.successDark,
-    ChipTone.bad => AppColors.dangerDark,
-    ChipTone.warn => AppColors.warningDark,
-    ChipTone.neutral => AppColors.medium,
-  };
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final chips = recipientChips(recipient);
-    return Padding(
-      padding: ionIsIos(context)
-          ? const EdgeInsets.fromLTRB(16, 10, 18, 10)
-          : const EdgeInsets.all(AppDimensions.paddingM),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text.rich(
-            TextSpan(
-              children: [
-                TextSpan(
-                  text: recipient.name.isNotEmpty ? recipient.name : context.l10n.commonUnknown,
-                  style: theme.textTheme.titleSmall,
-                ),
-                if (groupName != null && groupName!.isNotEmpty)
-                  TextSpan(
-                    text: '  $groupName',
-                    style: theme.textTheme.bodySmall?.copyWith(color: AppColors.mediumOf(context)),
-                  ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 6),
-          Wrap(
-            spacing: 6,
-            runSpacing: 4,
-            children: [
-              for (final c in chips)
-                // Ionic .chip: radius 4, padding 1/7, 0.72rem
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 1),
-                  decoration: BoxDecoration(
-                    color: _bg(c.tone),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text(
-                    c.text,
-                    style: TextStyle(fontSize: 11.5, color: _fg(c.tone)),
-                  ),
-                ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 /// The formatted message body (server-rendered allowlisted HTML).
 class _MessageCard extends StatefulWidget {
   const _MessageCard({
     required this.message,
-    required this.showTitle,
-    required this.title,
     required this.html,
-    this.beta = false,
   });
 
   final Message message;
-  final bool showTitle;
 
-  /// REDESIGN: the text in a Beta card (title and sender are on the page).
-  final bool beta;
-
-  /// Title / HTML with the placeholders filled (Ionic `display`).
-  final String title;
+  /// HTML with the placeholders filled.
   final String html;
 
   @override
@@ -798,84 +421,28 @@ class _MessageCardState extends State<_MessageCard> {
   Future<void> _openLink(String url) async {
     final uri = Uri.tryParse(url);
     if (uri == null) return;
-    // Ionic message-detail Browser.open: in-app browser in the native app.
     await NativeFileService.openLinkInApp(uri);
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final m = widget.message;
-    final sender = (m.senderName != null && m.senderName!.isNotEmpty) ? m.senderName! : context.l10n.commonUnknown;
-    final ios = ionIsIos(context);
-    // UX_SETTINGS (WAVE 8): Ionic .message-card — item background, radius
-    // 10, padding 16; h1 1.3rem/700, .from 0.8rem medium (margin 14).
-    if (widget.beta) {
-      return Padding(
-        padding: const EdgeInsets.only(bottom: 18),
-        child: RdCard(
-          child: QuillEditor.basic(
-            controller: _controller,
-            config: QuillEditorConfig(showCursor: false, scrollable: false, onLaunchUrl: _openLink),
-          ),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 18),
+      child: RdCard(
+        child: QuillEditor.basic(
+          controller: _controller,
+          config: QuillEditorConfig(showCursor: false, scrollable: false, onLaunchUrl: _openLink),
         ),
-      );
-    }
-    final body = Padding(
-        padding: const EdgeInsets.all(AppDimensions.paddingM),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (widget.showTitle) ...[
-              Text(
-                widget.title,
-                style: ios
-                    ? const TextStyle(fontSize: 20.8, fontWeight: FontWeight.w700)
-                    : theme.textTheme.headlineSmall,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                context.l10n.messagesFrom(sender, MessageFormat.dateTime(m.createdAt)),
-                style: ios
-                    ? TextStyle(fontSize: 12.8, color: AppColors.mediumOf(context))
-                    : theme.textTheme.bodySmall?.copyWith(color: AppColors.mediumOf(context)),
-              ),
-              SizedBox(height: ios ? 14 : AppDimensions.paddingM),
-            ],
-            QuillEditor.basic(
-              controller: _controller,
-              config: QuillEditorConfig(
-                showCursor: false,
-                scrollable: false,
-                onLaunchUrl: _openLink,
-              ),
-            ),
-          ],
-        ),
-      );
-    if (!ios) {
-      return Card(
-        margin: const EdgeInsets.only(bottom: AppDimensions.paddingM),
-        child: body,
-      );
-    }
-    return Container(
-      margin: const EdgeInsets.only(bottom: AppDimensions.paddingM),
-      decoration: BoxDecoration(
-        color: IonIos.itemBackground(context),
-        borderRadius: BorderRadius.circular(10),
       ),
-      child: body,
     );
   }
 }
 
 /// "Frühere Mitteilungen" for recipients.
 class _EarlierMessages extends ConsumerWidget {
-  const _EarlierMessages({required this.currentId, this.beta = false});
+  const _EarlierMessages({required this.currentId});
 
   final String currentId;
-  final bool beta;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -885,39 +452,24 @@ class _EarlierMessages extends ConsumerWidget {
             .take(5)
             .toList();
     if (earlier.isEmpty) return const SizedBox.shrink();
-    if (beta) {
-      return Padding(
-        padding: const EdgeInsets.only(top: 8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            RdGroupLabel(context.l10n.messagesEarlier),
-            RdGroupedList(
-              children: [
-                for (final m in earlier)
-                  RdListRow(
-                    title: m.title,
-                    subtitle: m.createdAt == null ? null : rdEventMeta(m.createdAt!.toLocal()),
-                    onTap: () => context.push('/messages/${m.id}'),
-                  ),
-              ],
-            ),
-          ],
-        ),
-      );
-    }
-    // UX_SETTINGS (WAVE 8): list header + inset list of detail items.
-    return SettingsListSection(
-      title: context.l10n.messagesEarlier,
-      icons: false,
-      children: [
-        for (final m in earlier)
-          SettingsListTile(
-            title: m.title,
-            subtitle: MessageFormat.date(m.createdAt),
-            onTap: () => context.push('/messages/${m.id}'),
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          RdGroupLabel(context.l10n.messagesEarlier),
+          RdGroupedList(
+            children: [
+              for (final m in earlier)
+                RdListRow(
+                  title: m.title,
+                  subtitle: m.createdAt == null ? null : rdEventMeta(m.createdAt!.toLocal()),
+                  onTap: () => context.push('/messages/${m.id}'),
+                ),
+            ],
           ),
-      ],
+        ],
+      ),
     );
   }
 }

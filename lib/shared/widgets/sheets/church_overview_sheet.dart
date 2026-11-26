@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../core/theme/app_colors.dart';
@@ -8,10 +7,6 @@ import '../../../data/models/church/church.dart';
 import '../../../features/planning/presentation/widgets/rd_plan_widgets.dart';
 import '../../../features/redesign/presentation/widgets/rd_widgets.dart';
 import '../../../l10n/l10n.dart';
-import '../layout/ionic_ios.dart' as ios27
-    show IonInsetList, IonItem, IonListHeader;
-import '../../../features/people/presentation/widgets/ion/ion_widgets.dart'
-    show IonBadge, ionLightColor;
 
 /// One church with its number of persons.
 class ChurchCount {
@@ -83,33 +78,11 @@ Future<void> showChurchOverviewSheet(
   String? subtitle,
 }) {
   final data = computeChurchOverview(churchIds, churches);
-  if (context.rdSkin != null) {
-    final label = subtitle ?? context.l10n.commonPeople;
-    return showRdPlanSheet<void>(
-      context,
-      title: context.l10n.churchOverviewTitle,
-      builder: (ctx, _) => [RdChurchOverviewView(data: data, subtitle: label)],
-    );
-  }
-  // Ionic ChurchOverviewComponent: breakpoints [0, 0.5, 0.75, 1], initial
-  // 0.5; toolbar with the title and the close button at the end.
   final label = subtitle ?? context.l10n.commonPeople;
-  return showIonSheet<void>(
+  return showRdPlanSheet<void>(
     context,
-    breakpoints: const [0, 0.5, 0.75, 1],
-    initialBreakpoint: 0.5,
-    builder: (ctx, scrollController) => IonSheetScaffold(
-      title: ctx.l10n.churchOverviewTitle,
-      showClose: true,
-      // PEO-09: Ionic `ion-content color="light"`.
-      backgroundColor: ionLightColor(ctx),
-      body: ChurchOverviewView(
-        data: data,
-        subtitle: label,
-        scrollController: scrollController,
-        showTitle: false,
-      ),
-    ),
+    title: context.l10n.churchOverviewTitle,
+    builder: (ctx, _) => [RdChurchOverviewView(data: data, subtitle: label)],
   );
 }
 
@@ -130,61 +103,8 @@ class ChurchOverviewView extends StatelessWidget {
   /// false when the sheet toolbar already shows the title.
   final bool showTitle;
 
-  /// PEO-09: Ionic `ion-list inset` with list headers, start icons and
-  /// `ion-badge` (primary / medium) on the light background.
-  Widget _buildIonic(BuildContext context) {
-    final l10n = context.l10n;
-    Widget badge(int value, {Color color = AppColors.primary}) =>
-        IonBadge(text: '$value', color: color);
-    return ListView(
-      controller: scrollController,
-      padding: const EdgeInsets.only(top: 8, bottom: 24),
-      children: [
-        ios27.IonListHeader(l10n.churchOverviewTotal),
-        ios27.IonInsetList(children: [
-          ios27.IonItem(
-            leading: Icon(AppIcons.peopleOutline),
-            title: Text(subtitle),
-            trailing: badge(data.total),
-          ),
-          ios27.IonItem(
-            leading: Icon(AppIcons.businessOutlined),
-            title: Text(l10n.churchOverviewChurches),
-            trailing: badge(data.churchCounts.length),
-          ),
-        ]),
-        if (data.churchCounts.isNotEmpty) ...[
-          ios27.IonListHeader(l10n.churchOverviewChurches),
-          ios27.IonInsetList(children: [
-            for (final c in data.churchCounts)
-              ios27.IonItem(title: Text(c.name), trailing: badge(c.count)),
-          ]),
-        ],
-        if (data.withoutChurch > 0) ...[
-          ios27.IonListHeader(l10n.churchOverviewUnassigned),
-          ios27.IonInsetList(children: [
-            ios27.IonItem(
-              title: Text(l10n.churchOverviewNoChurch),
-              trailing: badge(data.withoutChurch, color: AppColors.mediumOf(context)),
-            ),
-          ]),
-        ],
-        if (data.total == 0)
-          ios27.IonInsetList(children: [
-            ios27.IonItem(
-              title: Center(
-                child: Text(l10n.churchOverviewNoPeople,
-                    style: TextStyle(color: AppColors.mediumOf(context))),
-              ),
-            ),
-          ]),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    if (!showTitle && context.rdSkin == null) return _buildIonic(context);
     final theme = Theme.of(context);
     final l10n = context.l10n;
     Widget header(String text) => Padding(

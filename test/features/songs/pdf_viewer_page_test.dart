@@ -94,10 +94,9 @@ void main() {
     expect(source, contains('Printing.layoutPdf('));
   });
 
-  test('the normal app keeps its PDF viewer, the new design opens the page', () {
+  test('song file opener opens the full-screen PDF viewer page directly', () {
     final opener = File('lib/features/songs/presentation/widgets/song_file_opener.dart').readAsStringSync();
-    expect(opener, contains('if (RedesignRoutes.active) {'));
     expect(opener, contains('await showPdfViewer(context'));
-    expect(opener, contains('await showPdfViewerSheet(context'));
+    expect(opener, isNot(contains('showPdfViewerSheet')));
   });
 }

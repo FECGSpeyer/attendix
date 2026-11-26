@@ -1,16 +1,13 @@
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/l10n/generated/app_localizations.dart';
-import 'package:attendix/shared/widgets/adaptive/adaptive_platform.dart';
 import 'package:attendix/shared/widgets/adaptive/app_select.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  // BETA_SELECT: in the Beta design a select opens the Beta menu card, not
-  // the Ionic glass popover – also on iOS / the Mac.
-  testWidgets('Beta select opens its own menu instead of the glass popover', (tester) async {
+  testWidgets('select opens popup menu and picks value on iOS', (tester) async {
     int? picked;
     await tester.pumpWidget(
       MaterialApp(
@@ -36,17 +33,15 @@ void main() {
         ),
       ),
     );
-    expect(find.byType(IonSelectIcon), findsNothing);
     await tester.tap(find.text('Sonstige'));
     await tester.pumpAndSettle();
-    expect(find.byType(IosGlassSurface), findsNothing);
     expect(find.byType(PopupMenuItem<AppSelection<int?>>), findsNWidgets(2));
     await tester.tap(find.text('Viola'));
     await tester.pumpAndSettle();
     expect(picked, 7);
   });
 
-  testWidgets('Beta select field on Material: Tab + Enter opens the Beta menu', (tester) async {
+  testWidgets('select field on Android: Tab + Enter opens popup menu', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
         theme: buildRdTheme(RdFarbwelt.petrol, Brightness.light).copyWith(platform: TargetPlatform.android),

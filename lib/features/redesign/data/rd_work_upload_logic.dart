@@ -1,5 +1,5 @@
 import '../../../core/utils/instrument_matcher.dart';
-import '../../songs/presentation/widgets/file_upload_sheet.dart' show FileCategoryGuess;
+import '../../songs/data/file_category_guess.dart' show FileCategoryGuess;
 import 'import/rd_import_ai.dart';
 import 'import/rd_import_logic.dart';
 

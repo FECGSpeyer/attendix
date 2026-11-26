@@ -10,7 +10,7 @@ import '../../../../core/utils/instrument_sort.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../instruments/presentation/pages/instruments_list_page.dart' show groupClefLabel;
+import '../../../instruments/data/group_options.dart' show groupClefLabel;
 import '../../../instruments/presentation/widgets/instrument_categories_sheet.dart';
 import '../../data/rd_manage_logic.dart' show RdManageEntry;
 import '../../data/rd_words.dart';

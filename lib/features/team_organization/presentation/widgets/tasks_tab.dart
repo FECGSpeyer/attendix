@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_constants.dart';
-import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
@@ -16,7 +15,6 @@ import '../../../../shared/widgets/loading/loading.dart';
 import '../../../planning/presentation/widgets/ion_items.dart';
 import '../../team_org_utils.dart';
 import 'task_form_sheet.dart';
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 import '../../../../core/services/error_reporter.dart';
 import '../../../../shared/widgets/adaptive/ion_button_label.dart';
 import '../../../../shared/widgets/adaptive/ion_switch.dart';
@@ -104,7 +102,7 @@ class _TasksTabState extends ConsumerState<TasksTab> {
             onRefresh: () => reloadTeamOrgTab(ref, 'tasks'),
             child: ListView(
               physics: const AlwaysScrollableScrollPhysics(),
-              padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 16, fabRoom: 72)),
+              padding: EdgeInsets.only(bottom: 16 + 72 + MediaQuery.paddingOf(context).bottom),
               children: [
                 // Ionic `.task-chips`: horizontally scrolling ion-chips (white,
                 // active = primary shade).
@@ -177,14 +175,14 @@ class _TasksTabState extends ConsumerState<TasksTab> {
     return Scaffold(
       // PARITY_R5: page colour of the team-org page shows through.
       backgroundColor: Colors.transparent,
-      floatingActionButton: TabBarFab.wrap(isLeader
+      floatingActionButton: isLeader
           ? FloatingActionButton(
               heroTag: 'team-org-add-task',
               tooltip: l10n.teamOrgCreateTask,
               onPressed: _addTask,
               child: Icon(AppIcons.add),
             )
-          : null),
+          : null,
       // Ionic reload(): after a failed load the previous list stays (none →
       // empty state), a red toast reports it, pull-to-refresh keeps working.
       body: tasksAsync.when(
@@ -198,9 +196,7 @@ class _TasksTabState extends ConsumerState<TasksTab> {
 
   Widget _chip(String label, bool selected, VoidCallback onTap) => Padding(
         padding: const EdgeInsets.only(right: 4),
-        child: ref.watch(redesignEnabledProvider)
-            ? RdChoiceChip(label: label, selected: selected, onTap: onTap)
-            : IonFilterChip(label: label, selected: selected, onTap: onTap),
+        child: RdChoiceChip(label: label, selected: selected, onTap: onTap),
       );
 }
 
@@ -224,7 +220,7 @@ class TaskListTile extends StatelessWidget {
     final done = task.status == 'completed';
     final overdue = isTaskOverdue(task, today);
     final l10n = context.l10n;
-    final rd = context.rdSkin;
+    final rd = context.rd;
     final parts = <String>[];
     if (showPerson) {
       final name = task.responsiblePerson.fullName;
@@ -245,7 +241,7 @@ class TaskListTile extends StatelessWidget {
         iconSize: 26,
         icon: Icon(
           done ? AppIcons.checkCircle : AppIcons.radioButtonUnchecked,
-          color: done ? (rd?.primary ?? AppColors.success) : (rd?.text2 ?? AppColors.mediumOf(context)),
+          color: done ? rd.primary : rd.text2,
         ),
         onPressed: onToggle,
       ),
@@ -254,13 +250,13 @@ class TaskListTile extends StatelessWidget {
       title: Text(
         task.title,
         style: done
-            ? TextStyle(decoration: TextDecoration.lineThrough, color: rd?.text2 ?? AppColors.mediumOf(context))
+            ? TextStyle(decoration: TextDecoration.lineThrough, color: rd.text2)
             : null,
       ),
       subtitle: Text(
         parts.join(' · '),
         style: TextStyle(
-          color: overdue ? (rd?.absent ?? AppColors.danger) : (rd?.text2 ?? AppColors.mediumOf(context)),
+          color: overdue ? rd.absent : rd.text2,
         ),
       ),
       trailing: Wrap(
@@ -274,7 +270,7 @@ class TaskListTile extends StatelessWidget {
   }
 }
 
-/// Ionic `ion-badge` (contrast text: black on warning).
+/// Pill badge (contrast-matched per color).
 class _Badge extends StatelessWidget {
   const _Badge({required this.label, required this.color});
   final String label;
@@ -282,18 +278,14 @@ class _Badge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Beta: same pill as everywhere else in the new design.
-    if (context.rdSkin != null) {
-      final tone = switch (color) {
-        AppColors.danger => RdTone.absent,
-        AppColors.warning => RdTone.late,
-        AppColors.success => RdTone.present,
-        AppColors.primary => RdTone.primary,
-        _ => null,
-      };
-      return RdPill(label, tone: tone);
-    }
-    return IonBadge(label: label, color: color);
+    final tone = switch (color) {
+      AppColors.danger => RdTone.absent,
+      AppColors.warning => RdTone.late,
+      AppColors.success => RdTone.present,
+      AppColors.primary => RdTone.primary,
+      _ => null,
+    };
+    return RdPill(label, tone: tone);
   }
 }
 

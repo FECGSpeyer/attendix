@@ -1,4 +1,4 @@
-import 'package:attendix/features/teachers/presentation/pages/teachers_list_page.dart';
+import 'package:attendix/features/teachers/data/teacher_helpers.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// ASTRA_TEACH_STATS: Ionic validates only when creating a teacher

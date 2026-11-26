@@ -103,10 +103,7 @@ void main() {
     // removePushTokenBeforeSignOut must run before signOutAndClearTenant /
     // auth.signOut, whichever the file uses.
     for (final path in [
-      'lib/features/settings/presentation/pages/settings_page.dart',
       'lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart',
-      'lib/features/tenant_selection/presentation/pages/tenant_create_page.dart',
-      'lib/shared/widgets/layout/side_nav/side_nav.dart',
       'lib/features/redesign/presentation/rd_actions.dart',
     ]) {
       final src = File(path).readAsStringSync();

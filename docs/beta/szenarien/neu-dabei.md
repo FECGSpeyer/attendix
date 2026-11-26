@@ -5,16 +5,11 @@
 Für alle, die noch kein Konto haben, noch in keiner Gruppe sind oder auf ihre
 Freigabe warten.
 
-Das neue Design ist ein Schalter auf dem Gerät. Auf einem neuen Gerät startet
-die App deshalb im klassischen Design. Anmelden, Registrieren und das Formular
-des Einladungslinks sehen in beiden Designs gleich aus. Schritte mit dem
-Zusatz (neues Design) gelten, sobald der Schalter an ist (siehe N-07).
-
 | Bereich | Szenarien |
 |---------|-----------|
 | [Konto und Anmelden](#konto-und-anmelden) | N-01 bis N-03 |
 | [Einer Gruppe beitreten](#einer-gruppe-beitreten) | N-04 bis N-06 |
-| [Erste Schritte](#erste-schritte) | N-07 bis N-08 |
+| [Erste Schritte](#erste-schritte) | N-08 |
 
 ---
 
@@ -73,7 +68,7 @@ Zusatz (neues Design) gelten, sobald der Schalter an ist (siehe N-07).
 
 ### N-05 Angemeldet, aber noch in keiner Gruppe
 
-- **Wo:** Startseite nach dem Anmelden (neues Design)
+- **Wo:** Startseite nach dem Anmelden
 - **Schritte:**
   1. Tippe auf „Ich habe eine Einladung“.
   2. Füge den „Einladungslink“ ein oder tippe auf „QR-Code scannen“.
@@ -102,17 +97,6 @@ Zusatz (neues Design) gelten, sobald der Schalter an ist (siehe N-07).
 ---
 
 ## Erste Schritte
-
-### N-07 Das neue Design einschalten
-
-- **Wo:** Einstellungen der App (klassisches Design)
-- **Schritte:**
-  1. Öffne im klassischen Design die Einstellungen.
-  2. Schalte „Neues Design (Beta)“ ein.
-- **Ergebnis:** Die App zeigt die Reiter des neuen Designs. Der Schalter gilt
-  nur für dieses Gerät.
-- **Gut zu wissen:** Zurück geht es unter „Ich“ › „Neues Design (Beta)“
-  (siehe M-31).
 
 ### N-08 Eine eigene Gruppe gründen
 

@@ -7,6 +7,7 @@ import '../../../../core/config/supabase_config.dart';
 import '../../../../core/providers/church_providers.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/organisation_providers.dart';
+import '../../../../core/providers/person_detail_providers.dart' show duplicateCandidatesProvider, personProvider;
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/profile_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
@@ -25,8 +26,6 @@ import '../../../../data/repositories/extra_fields_repository.dart' show extraFi
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart' show showAppConfirm;
 import '../../../people/person_write.dart';
-import '../../../people/presentation/pages/person_detail_page.dart' show personProvider;
-import '../../../people/presentation/widgets/duplicate_candidates_card.dart' show duplicateCandidatesProvider;
 import '../../../people/presentation/widgets/parent_review_hint.dart';
 import '../widgets/manage/rd_manage_list.dart' show rdLoadedValue;
 import '../widgets/manage/rd_settings_sheets.dart';

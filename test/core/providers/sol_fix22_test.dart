@@ -91,10 +91,5 @@ void main() {
       expect(r.allowed, isFalse);
       expect(r.shown, isFalse);
     });
-
-    test('songs list only offers the toggle when the tab is allowed', () {
-      final src = File('lib/features/songs/presentation/pages/songs_list_page.dart').readAsStringSync();
-      expect(src, contains('if (!data.isPublic && ref.watch(songsTabAllowedProvider))'));
-    });
   });
 }

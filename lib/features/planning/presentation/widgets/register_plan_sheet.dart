@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
-import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -17,13 +15,11 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/services/pdf_branding.dart';
 import '../../../../core/services/register_plan_service.dart';
 import '../../../../core/services/telegram_service.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/plan/plan.dart' show RegisterPlanSettings;
 import '../../../../l10n/l10n.dart';
-import 'ion_items.dart';
 import 'plan_export_actions.dart';
 import 'rd_register_setup_sheet.dart';
 import '../../../../core/services/error_reporter.dart';
@@ -39,21 +35,12 @@ import '../../../redesign/presentation/widgets/rd_widgets.dart';
 /// [attendanceDate] is the date of the Termin selected in the editor (Ionic
 /// uses it for "Stand: …"; today when none is selected).
 Future<void> showRegisterPlanSheet(BuildContext context, {DateTime? attendanceDate}) async {
-  if (context.rdSkin == null) {
-    await showIonSheet<void>(
-      context,
-      // The Scaffold of the sheet moves its content above the keyboard.
-      avoidKeyboard: false,
-      builder: (context, _) => RegisterPlanSheet(attendanceDate: attendanceDate),
-    );
-    return;
-  }
   await showModalBottomSheet(
     context: context,
-    useRootNavigator: true, // IOS_SHELL2: above the tab bar
+    useRootNavigator: true,
     isScrollControlled: true,
     useSafeArea: true,
-    backgroundColor: context.rdSkin != null ? context.rd.bg : null,
+    backgroundColor: context.rd.bg,
     builder: (context) => FractionallySizedBox(
       heightFactor: 1,
       child: RegisterPlanSheet(attendanceDate: attendanceDate),
@@ -218,114 +205,10 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
     // Telegram buttons only when the user linked Telegram (Ionic `telegram_chat_id`).
     ref.watch(notificationConfigProvider);
     final chatId = planTelegramChatId(ref);
-    final theme = Theme.of(context);
-    if (context.rdSkin != null) return _buildBeta(context, chatId);
-
-    return Scaffold(
-      // Ionic: ion-content color="light" (grey grouped background).
-      backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: AppBar(
-        toolbarHeight: ionModalToolbarHeight(context),
-        automaticallyImplyLeading: false,
-        title: Text(l10n.planningSectionalPlan),
-        // IOS_PAGES3: iOS → ✕ in a Liquid Glass circle
-        actions: [
-          ToolbarButtonGroup(children: [
-            IconButton(icon: Icon(AppIcons.close, semanticLabel: context.l10n.commonClose), onPressed: () => Navigator.pop(context)),
-          ]),
-        ],
-      ),
-      body: _loading
-          ? const Center(child: AppSpinner())
-          : ListView(
-              padding: const EdgeInsets.only(bottom: 32),
-              children: [
-                // ABL-09/17: ion-list [inset] with its ion-list-header.
-                _insetList(l10n.planningGroups, () => setState(() => _groups.add(_entry(''))), [
-                  for (var i = 0; i < _groups.length; i++)
-                    _inputRow(
-                      key: ValueKey('group-${_groups[i].id}'),
-                      icon: AppIcons.peopleOutline,
-                      controller: _groups[i].controller,
-                      hint: l10n.planningGroupName,
-                      capitalization: TextCapitalization.sentences,
-                      onRemove: _groups.length > 2 ? () => _remove(_groups, i) : null,
-                    ),
-                ]),
-                _insetList(l10n.planningConductors, () => setState(() => _conductors.add(_entry(''))), [
-                  for (var i = 0; i < _conductors.length; i++)
-                    _inputRow(
-                      key: ValueKey('conductor-${_conductors[i].id}'),
-                      icon: AppIcons.personOutline,
-                      controller: _conductors[i].controller,
-                      hint: l10n.planningName,
-                      capitalization: TextCapitalization.words,
-                      onRemove: _conductors.length > 1 ? () => _remove(_conductors, i) : null,
-                    ),
-                ]),
-                _insetList(null, null, [
-                  // Ionic: ion-input with an inline start label.
-                  ListTile(
-                    leading: Icon(AppIcons.schedule, color: AppColors.mediumOf(context)),
-                    title: Row(
-                      children: [
-                        Text(l10n.planningTimeMinutes),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: TextField(
-                            controller: _minutesController,
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))],
-                            decoration: const InputDecoration(
-                              border: InputBorder.none,
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                              filled: false,
-                              isDense: true,
-                            ),
-                            onChanged: (_) => setState(() {}),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ]),
-                // Ionic `.plan-actions`: block buttons below the lists.
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 24, 16, 0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      FilledButton.icon(
-                        onPressed: _disabled ? null : () => _createPlan(),
-                        // ABL-29: Ionic document-outline.
-                        icon: Icon(AppIcons.documentOutline),
-                        label: IonButtonLabel(l10n.planningExport),
-                      ),
-                      if (chatId != null) ...[
-                        const SizedBox(height: 8),
-                        OutlinedButton.icon(
-                          onPressed: _disabled ? null : () => _createPlan(perTelegram: true),
-                          icon: Icon(AppIcons.sendOutlined),
-                          label: IonButtonLabel(l10n.planningTelegramPdfShort),
-                        ),
-                        const SizedBox(height: 8),
-                        OutlinedButton.icon(
-                          onPressed: _disabled ? null : () => _createPlan(perTelegram: true, asImage: true),
-                          icon: Icon(AppIcons.imageOutlined),
-                          label: IonButtonLabel(l10n.planningTelegramImageShort),
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-              ],
-            ),
-    );
+    return _buildBeta(context, chatId);
   }
 
   /// REDESIGN (Termin-Werkzeuge T1): the same generator in the Beta look.
@@ -513,56 +396,6 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
       final e = list.removeAt(index);
       e.controller.dispose();
     });
-  }
-
-  /// Ionic `ion-list [inset]` with an optional `ion-list-header` and its
-  /// small clear add button; item lines start at the label (after the icon).
-  Widget _insetList(String? header, VoidCallback? onAdd, List<Widget> children) {
-    return IonInsetList(
-      header: header,
-      headerTrailing: onAdd == null
-          ? null
-          : IconButton(
-              icon: Icon(AppIcons.addCircleOutline, semanticLabel: context.l10n.a11yIncrease),
-              color: AppColors.primary,
-              onPressed: onAdd,
-            ),
-      dividerIndent: 56,
-      children: children,
-    );
-  }
-
-  Widget _inputRow({
-    required Key key,
-    required IconData icon,
-    required TextEditingController controller,
-    required String hint,
-    required TextCapitalization capitalization,
-    VoidCallback? onRemove,
-  }) {
-    return ListTile(
-      key: key,
-      leading: Icon(icon, color: AppColors.mediumOf(context)),
-      title: TextField(
-        controller: controller,
-        textCapitalization: capitalization,
-        decoration: InputDecoration(
-          hintText: hint,
-          border: InputBorder.none,
-          enabledBorder: InputBorder.none,
-          focusedBorder: InputBorder.none,
-          filled: false,
-          isDense: true,
-        ),
-      ),
-      trailing: onRemove == null
-          ? null
-          : IconButton(
-              icon: Icon(AppIcons.highlightOff, semanticLabel: context.l10n.commonRemove),
-              color: AppColors.danger,
-              onPressed: onRemove,
-            ),
-    );
   }
 
   /// Ionic `createPlan(timeString, modal, perTelegram, asImage)`.

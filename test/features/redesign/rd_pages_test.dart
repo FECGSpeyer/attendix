@@ -44,7 +44,7 @@ void main() {
       ProviderScope(
         overrides: [
           initialRedesignSettingsProvider
-              .overrideWithValue(const RedesignSettings(enabled: true)),
+              .overrideWithValue(const RedesignSettings()),
         ],
         child: const _App(RdAppearancePage()),
       ),

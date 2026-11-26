@@ -826,5 +826,4 @@ wird eine feste Zahl Personen gebraucht.
   bestätigen (siehe M-15). Bei jeder Person steht „Angefragt“, „Bestätigt“
   oder „Abgesagt“.
 - **Gut zu wissen:** Wählst du mehr Personen, als Plätze frei sind, ist der
-  Dienst überbesetzt. Dienste automatisch über viele Termine zu verteilen,
-  geht bisher nur im klassischen Design.
+  Dienst überbesetzt.

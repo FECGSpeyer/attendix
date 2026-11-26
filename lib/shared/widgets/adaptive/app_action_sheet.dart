@@ -2,13 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/redesign/rd_palette.dart';
 import '../../../core/theme/redesign/rd_theme.dart';
-
 import '../../../l10n/l10n.dart';
-import 'adaptive_platform.dart';
-import '../layout/ionic_md.dart' show IonMd;
-import 'app_dialog.dart' show IosAlertButton, iosAlertMessageColor;
 
-/// One button of [showAppActionSheet] (Ionic `ActionSheetButton`).
+/// One button of [showAppActionSheet].
 class AppActionSheetAction<T> {
   const AppActionSheetAction({
     required this.label,
@@ -26,11 +22,9 @@ class AppActionSheetAction<T> {
   /// Returned by [showAppActionSheet] when this button is tapped.
   final T value;
 
-  /// `ActionSheetButton.icon` (Ionic shows icons only in md mode unless set;
-  /// we show them on both platforms like the Flutter pages did before).
   final IconData? icon;
 
-  /// `role: 'destructive'` → red label.
+  /// Destructive actions render with the alert/danger colour.
   final bool destructive;
 
   /// Optional text/icon colour (e.g. a status colour). Ignored for
@@ -39,31 +33,16 @@ class AppActionSheetAction<T> {
 
   final bool enabled;
 
-  /// Optional second line (Material only).
   final String? subtitle;
 
-  /// F-EINST-32: Ionic `.action-sheet-selected` – the current value of an
-  /// `ion-select interface="action-sheet"`: bold, in iOS also in the
-  /// button colour (primary; ios27 tints only the other buttons in the
-  /// text colour). The Beta sheets ignore it.
   final bool selected;
 }
 
-/// IOS_LOOK: `ion-action-sheet`.
-///
-/// - iOS (IOS27_SWEEP, ionic-theme-ios27): a floating glass card (12pt
-///   from the screen edges, radius 36, 16pt padding) with the start-aligned
-///   17pt semibold title in the text colour (sub-title 16pt grey), grey
-///   48pt pill buttons (17pt medium, destructive = #ea292d) 8pt apart and
-///   the semibold "Abbrechen" button 8pt below them.
-/// - elsewhere: a Material bottom sheet like the Ionic md action sheet
-///   (title, icon + label rows, cancel row last).
+/// Shows the app's action sheet (or an anchored popup menu on desktop when
+/// [anchor] is provided).
 ///
 /// Returns the `value` of the tapped action, or null when cancelled or
-/// dismissed. Set [cancelLabel] to override "Abbrechen", [showCancel] false to
-/// hide it (Ionic sheets without a cancel button), [cancelDestructive] for
-/// Ionic's `{ text: 'Abbrechen', role: 'destructive' }` (red, last button of
-/// the main group instead of a separate cancel button).
+/// dismissed.
 Future<T?> showAppActionSheet<T>(
   BuildContext context, {
   String? title,
@@ -75,60 +54,23 @@ Future<T?> showAppActionSheet<T>(
   bool useRootNavigator = true,
   BuildContext? anchor,
 }) {
-  final rd = context.rdSkin;
-  // Beta on desktop: a menu right at the button ([anchor]) instead of a
-  // sheet from the bottom (canvas "Beta: Desktop-UX").
-  if (rd != null && anchor != null && MediaQuery.sizeOf(context).width >= 840) {
-    return _showRdAnchoredMenu<T>(anchor, rd, actions, useRootNavigator: useRootNavigator);
-  }
-  if (rd != null) {
-    // Beta-Skin: the action sheet of the new design on every platform.
-    return showModalBottomSheet<T>(
-      context: context,
+  final rd = context.rd;
+  if (anchor != null && MediaQuery.sizeOf(context).width >= 840) {
+    return _showRdAnchoredMenu<T>(
+      anchor,
+      rd,
+      actions,
       useRootNavigator: useRootNavigator,
-      isScrollControlled: true,
-      backgroundColor: rd.bg,
-      showDragHandle: false,
-      constraints: const BoxConstraints(maxWidth: 560),
-      builder: (ctx) => _RdActionSheet<T>(
-        title: title,
-        message: message,
-        actions: actions,
-        cancelLabel: showCancel ? (cancelLabel ?? ctx.l10n.commonCancel) : null,
-        cancelDestructive: cancelDestructive,
-      ),
-    );
-  }
-  if (useIosLook(context)) {
-    return showModalBottomSheet<T>(
-      context: context,
-      useRootNavigator: useRootNavigator,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      barrierColor: const Color(0x33000000),
-      showDragHandle: false,
-      // F-EINST-30: not Flutter's German scrim label "Gitter".
-      barrierLabel: context.l10n.commonClose,
-      builder: (ctx) => _IosActionSheet<T>(
-        title: title,
-        message: message,
-        actions: actions,
-        cancelLabel: showCancel ? (cancelLabel ?? ctx.l10n.commonCancel) : null,
-        cancelDestructive: cancelDestructive,
-      ),
     );
   }
   return showModalBottomSheet<T>(
     context: context,
     useRootNavigator: useRootNavigator,
     isScrollControlled: true,
+    backgroundColor: rd.bg,
     showDragHandle: false,
-    shape: const RoundedRectangleBorder(),
-    barrierLabel: context.l10n.commonClose,
-    // PARITY_R3: Ionic md action sheet `--max-width: 500px`, centred.
-    constraints: const BoxConstraints(maxWidth: 500),
-    builder: (ctx) => _MaterialActionSheet<T>(
+    constraints: const BoxConstraints(maxWidth: 560),
+    builder: (ctx) => _RdActionSheet<T>(
       title: title,
       message: message,
       actions: actions,
@@ -138,265 +80,8 @@ Future<T?> showAppActionSheet<T>(
   );
 }
 
-class _IosActionSheet<T> extends StatelessWidget {
-  const _IosActionSheet({
-    required this.title,
-    required this.message,
-    required this.actions,
-    required this.cancelLabel,
-    this.cancelDestructive = false,
-  });
-
-  final String? title;
-  final String? message;
-  final List<AppActionSheetAction<T>> actions;
-  final String? cancelLabel;
-  final bool cancelDestructive;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final mq = MediaQuery.of(context);
-    // --ios26-floating-safe-area-bottom: max(10px, safe-area-bottom - 12px)
-    final bottom = (mq.padding.bottom - 12).clamp(10.0, double.infinity);
-    final grey = iosAlertMessageColor(theme.brightness);
-
-    Widget button(AppActionSheetAction<T> a) => IosAlertButton(
-          minHeight: 48,
-          bold: false,
-          destructive: a.destructive,
-          icon: a.icon == null ? null : Icon(a.icon),
-          onPressed:
-              a.enabled ? () => Navigator.of(context).pop(a.value) : null,
-          child: a.selected && !a.destructive
-              ? Text(a.label,
-                  style: TextStyle(
-                      color: a.color ?? theme.colorScheme.primary,
-                      fontWeight: FontWeight.bold))
-              : a.color != null && !a.destructive
-                  ? Text(a.label, style: TextStyle(color: a.color))
-                  : Text(a.label),
-        );
-
-    return Padding(
-      padding: EdgeInsets.fromLTRB(12, mq.padding.top + 12, 12, bottom),
-      child: Material(
-        type: MaterialType.transparency,
-        child: IosGlassSurface(
-          borderRadius: const BorderRadius.all(Radius.circular(36)),
-          overlay: true,
-          blur: 20,
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              if (title != null || message != null)
-                Padding(
-                  // ios27 `.action-sheet-title { padding: 6px 14px 20px }`
-                  padding: const EdgeInsets.fromLTRB(14, 6, 14, 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (title != null)
-                        Text(
-                          title!,
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                            fontSize: 17,
-                            height: 1.21,
-                            fontWeight: FontWeight.w600,
-                            color: theme.colorScheme.onSurface,
-                          ),
-                        ),
-                      if (message != null)
-                        Padding(
-                          padding: EdgeInsets.only(top: title != null ? 8 : 0),
-                          child: Text(
-                            message!,
-                            textAlign: TextAlign.start,
-                            style: TextStyle(
-                                fontSize: 0.94 * 17, height: 1.19, color: grey),
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              Flexible(
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      for (var i = 0; i < actions.length; i++) ...[
-                        if (i > 0) const SizedBox(height: 8),
-                        button(actions[i]),
-                      ],
-                      if (cancelLabel != null && cancelDestructive) ...[
-                        const SizedBox(height: 8),
-                        IosAlertButton(
-                          minHeight: 48,
-                          bold: false,
-                          destructive: true,
-                          onPressed: () => Navigator.of(context).pop(),
-                          child: Text(cancelLabel!),
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-              ),
-              if (cancelLabel != null && !cancelDestructive) ...[
-                // ios27 `.action-sheet-cancel { margin-top: 8px }` below the
-                // group's last button.
-                const SizedBox(height: 8),
-                IosAlertButton(
-                  minHeight: 48,
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: Text(cancelLabel!),
-                ),
-              ],
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _MaterialActionSheet<T> extends StatelessWidget {
-  const _MaterialActionSheet({
-    required this.title,
-    required this.message,
-    required this.actions,
-    required this.cancelLabel,
-    this.cancelDestructive = false,
-  });
-
-  final String? title;
-  final String? message;
-  final List<AppActionSheetAction<T>> actions;
-  final String? cancelLabel;
-  final bool cancelDestructive;
-
-  @override
-  Widget build(BuildContext context) {
-    // MD_SWEEP: Ionic md `ion-action-sheet` – `--background:
-    // var(--ion-background-color)` (#fff, dark #121212); title 16px in
-    // rgba(text, .54) (padding 20 16 17, min-height 60), sub-title 14px
-    // 16px below; 52px buttons (padding 12 16) with 16px step-850 labels
-    // and 24px rgba(text, .54) icons 32px before the label. md has no
-    // destructive colour (`role: 'destructive'` only styles iOS) and no
-    // extra padding above / below the button groups.
-    final b = Theme.of(context).brightness;
-    final grey = IonMd.text(b).withValues(alpha: 0.54);
-    final buttonColor = IonMd.step850(b);
-
-    Widget button({
-      required String label,
-      IconData? icon,
-      Color? color,
-      String? subtitle,
-      bool enabled = true,
-      bool selected = false,
-      required VoidCallback onTap,
-    }) {
-      return InkWell(
-        onTap: enabled ? onTap : null,
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: 52),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Opacity(
-              opacity: enabled ? 1 : 0.38,
-              child: Row(
-                children: [
-                  if (icon != null) ...[
-                    Icon(icon, size: 24, color: color ?? grey),
-                    const SizedBox(width: IonMd.startIconGap),
-                  ],
-                  Expanded(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(label,
-                            style: TextStyle(
-                                fontSize: 16,
-                                color: color ?? buttonColor,
-                                fontWeight:
-                                    selected ? FontWeight.bold : null)),
-                        if (subtitle != null)
-                          Text(subtitle,
-                              style: TextStyle(
-                                  fontSize: IonMd.pFontSize,
-                                  color: IonMd.labelP(b))),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      );
-    }
-
-    return Material(
-      color: IonMd.background(b),
-      child: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              if (title != null || message != null)
-                ConstrainedBox(
-                  constraints: const BoxConstraints(minHeight: 60),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 20, 16, 17),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (title != null)
-                          Text(title!,
-                              style: TextStyle(fontSize: 16, color: grey)),
-                        if (message != null)
-                          Padding(
-                            padding:
-                                EdgeInsets.only(top: title != null ? 16 : 0),
-                            child: Text(message!,
-                                style: TextStyle(fontSize: 14, color: grey)),
-                          ),
-                      ],
-                    ),
-                  ),
-                ),
-              for (final a in actions)
-                button(
-                  label: a.label,
-                  icon: a.icon,
-                  color: a.destructive ? null : a.color,
-                  subtitle: a.subtitle,
-                  enabled: a.enabled,
-                  selected: a.selected,
-                  onTap: () => Navigator.of(context).pop(a.value),
-                ),
-              if (cancelLabel != null)
-                button(
-                  label: cancelLabel!,
-                  onTap: () => Navigator.of(context).pop(),
-                ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// Beta-Skin: action sheet of the new design – grab handle, bold title,
-/// grey message, the actions as one grouped list (icon tiles, destructive
+/// Redesign action sheet: drag pill, header, one rounded surface card for the
+/// options (icon in soft badge, muted divider, optional subtitle, destructive
 /// ones red) and an outlined cancel button.
 class _RdActionSheet<T> extends StatelessWidget {
   const _RdActionSheet({

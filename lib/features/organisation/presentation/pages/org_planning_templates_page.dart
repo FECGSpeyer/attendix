@@ -2,27 +2,18 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:attendix/core/theme/app_icons.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 
 import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/providers/plan_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/plan_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/plan/plan.dart';
 import '../../../planning/presentation/widgets/plan_field_dialogs.dart';
 import '../../../planning/presentation/widgets/plan_fields_editor.dart';
 import '../../../../l10n/l10n.dart';
-import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
 import '../../../../shared/widgets/adaptive/adaptive.dart';
-import '../../../settings/presentation/widgets/ion_condense.dart';
-import '../../../settings/presentation/widgets/settings_list.dart';
-import '../../../planning/presentation/widgets/ion_items.dart' as pl show IonListHeader;
-import '../../../../shared/widgets/layout/ionic_md.dart' show IonMd;
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../planning/presentation/widgets/rd_plan_widgets.dart';
 import '../../../redesign/presentation/widgets/manage/rd_manage_list.dart';
@@ -101,16 +92,6 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
     return t.isEmpty ? '' : PlanUtils.computeEnd(t, tpl.fields);
   }
 
-  String _duration(Plan tpl) {
-    final total = PlanUtils.totalMinutes(tpl.fields);
-    if (total == 0) return '';
-    final h = total ~/ 60;
-    final m = total % 60;
-    final l10n = context.l10n;
-    if (h == 0) return l10n.planningMinShort(m);
-    return m > 0 ? l10n.orgTemplatesDuration(h, m) : l10n.orgTemplatesDurationH(h);
-  }
-
   // ---------------------------------------------------------------------------
   // Default fields
   // ---------------------------------------------------------------------------
@@ -131,45 +112,6 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
           PlanField(id: PlanUtils.uuid(), name: r.name, conductor: r.conductor, info: r.info, time: '${r.minutes ?? 20}'),
         ]);
     await _saveDefaultFields();
-  }
-
-  Future<void> _editDefaultField(int index) async {
-    final field = _defaultFields[index];
-    final r = await showPlanFieldDialog(
-      context,
-      title: context.l10n.typeSettingsEditField,
-      nameLabel: context.l10n.orgTemplatesFieldName,
-      nameHint: context.l10n.orgTemplatesFieldNamePh,
-      conductorHint: context.l10n.orgTemplatesPerformerOptPh,
-      emptyNameMessage: context.l10n.orgTemplatesEnterFieldName,
-      confirmText: context.l10n.commonSave,
-      initialName: field.name,
-      initialConductor: field.conductor,
-      initialMinutes: PlanUtils.minutesOf(field),
-      withInfo: false,
-    );
-    if (r == null) return;
-    setState(() {
-      final list = [..._defaultFields];
-      list[index] = field.copyWith(name: r.name, conductor: r.conductor, time: '${r.minutes ?? field.time}');
-      _defaultFields = list;
-    });
-    await _saveDefaultFields();
-  }
-
-  /// Inline minutes of a Standardfeld. Looked up by id (the row may have been
-  /// reordered/removed meanwhile) and stored without `setState`: it is also
-  /// called from the input's `dispose()`, e.g. while this page is popped.
-  /// Nothing else on the page shows the minutes, so no rebuild is needed.
-  /// Saves even if the local value is unchanged: the input retries a value
-  /// whose earlier save failed.
-  Future<bool> _setDefaultMinutes(String id, String minutes) {
-    final index = _defaultFields.indexWhere((f) => f.id == id);
-    if (index < 0) return Future.value(true); // removed, nothing to save
-    final list = [..._defaultFields];
-    list[index] = list[index].copyWith(time: minutes);
-    _defaultFields = list;
-    return _saveDefaultFields();
   }
 
   Future<void> _removeDefaultField(int index) async {
@@ -195,24 +137,6 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
       _selected = _templates!.length - 1;
     });
     await _saveTemplates();
-  }
-
-  Future<void> _templateOptions(int index) async {
-    final tpl = _templates![index];
-    final action = await showPlanActionSheet<String>(
-      context,
-      title: tpl.title,
-      actions: [
-        PlanSheetAction('rename', context.l10n.orgTemplatesRenameTemplate, icon: AppIcons.editOutlined),
-        PlanSheetAction('delete', context.l10n.commonDelete, icon: AppIcons.deleteOutline, destructive: true),
-      ],
-    );
-    if (action == null || !mounted) return;
-    if (action == 'rename') {
-      await _renameTemplate(index);
-    } else {
-      await _removeTemplate(index);
-    }
   }
 
   Future<void> _renameTemplate(int index) async {
@@ -250,46 +174,25 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
     });
   }
 
-  /// Ionic: `ion-popover` at the "Feld hinzufügen" button; the Standardfelder
-  /// follow a divider and a small bold header.
   Future<void> _addToTemplate(int index, BuildContext buttonContext) async {
     final tpl = _templates![index];
     final isGeneral = ref.read(currentTenantProvider)?.type == 'general';
-    final String? action;
-    if (context.rdSkin != null) {
-      action = await showPlanActionSheet<String>(
-        context,
-        title: context.l10n.redesignPlanAddTitle,
-        actions: [
-          PlanSheetAction('field', context.l10n.typeSettingsAddField, icon: AppIcons.add),
-          PlanSheetAction('note', context.l10n.typeSettingsAddNoteField, icon: AppIcons.stickyNote2Outlined),
-          if (!isGeneral)
-            PlanSheetAction('song', context.l10n.orgTemplatesSongPlaceholder, icon: AppIcons.musicNoteOutlined),
-          for (var i = 0; i < _defaultFields.length; i++)
-            PlanSheetAction(
-              'default:$i',
-              '${_defaultFields[i].name} · ${context.l10n.planningMinShort(_defaultFields[i].time)}',
-              icon: AppIcons.shortText,
-            ),
-        ],
-      );
-    } else {
-    action = await showAppPopoverMenu<String>(
-      context: buttonContext,
-      items: [
-        AppPopoverMenuItem(value: 'field', label: context.l10n.typeSettingsAddField),
-        AppPopoverMenuItem(value: 'note', label: context.l10n.typeSettingsAddNoteField),
-        if (!isGeneral) AppPopoverMenuItem(value: 'song', label: context.l10n.orgTemplatesSongPlaceholder),
-        if (_defaultFields.isNotEmpty) AppPopoverMenuItem.header(context.l10n.orgTemplatesDefaultFields, ''),
+    final action = await showPlanActionSheet<String>(
+      context,
+      title: context.l10n.redesignPlanAddTitle,
+      actions: [
+        PlanSheetAction('field', context.l10n.typeSettingsAddField, icon: AppIcons.add),
+        PlanSheetAction('note', context.l10n.typeSettingsAddNoteField, icon: AppIcons.stickyNote2Outlined),
+        if (!isGeneral)
+          PlanSheetAction('song', context.l10n.orgTemplatesSongPlaceholder, icon: AppIcons.musicNoteOutlined),
         for (var i = 0; i < _defaultFields.length; i++)
-          AppPopoverMenuItem(
-            value: 'default:$i',
-            label: _defaultFields[i].name,
-            subtitle: context.l10n.planningMinShort(_defaultFields[i].time),
+          PlanSheetAction(
+            'default:$i',
+            '${_defaultFields[i].name} · ${context.l10n.planningMinShort(_defaultFields[i].time)}',
+            icon: AppIcons.shortText,
           ),
       ],
     );
-    }
     if (action == null || !mounted) return;
     PlanField? field;
     if (action.startsWith('default:')) {
@@ -356,64 +259,6 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
   // Build
   // ---------------------------------------------------------------------------
 
-  // UX_SETTINGS (WAVE 8): org-planning-templates.page.html — condense
-  // title, inset lists with header "+" buttons, hint items in their own
-  // inset lists. ABL-07: md uses the md-ion-list-inset group and header
-  // instead of an uppercase caption + Material card.
-  Widget _box(Widget child) => ionIsIos(context)
-      ? Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-          child: IonInsetGroup(children: [child]),
-        )
-      : Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-          child: Card(
-            margin: EdgeInsets.zero,
-            elevation: 0,
-            color: IonMd.itemBackground(Theme.of(context).brightness),
-            shape: IonMd.insetGroupShape,
-            clipBehavior: Clip.antiAlias,
-            child: child,
-          ),
-        );
-
-  Widget _header(String text, VoidCallback onAdd) => ionIsIos(context)
-      ? Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-          child: IonListHeader(
-            title: text,
-            action: IconButton(
-              icon: Icon(AppIcons.add, color: AppColors.primary, semanticLabel: context.l10n.a11yAdd),
-              onPressed: onAdd,
-            ),
-          ),
-        )
-      : Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-          child: pl.IonListHeader(
-            inset: true,
-            title: text,
-            trailing: IconButton(
-              icon: Icon(AppIcons.add, color: AppColors.primary, semanticLabel: context.l10n.a11yAdd),
-              onPressed: onAdd,
-            ),
-          ),
-        );
-
-  Widget _hint(String text) {
-    final tile = ListTile(
-      leading: Icon(AppIcons.infoOutline, color: AppColors.mediumOf(context)),
-      title: Text(
-        text,
-        style: TextStyle(
-          fontSize: ionIsIos(context) ? 14 : 13,
-          color: ionIsIos(context) ? IonIos.labelP(context) : AppColors.mediumOf(context),
-        ),
-      ),
-    );
-    return _box(tile);
-  }
-
   @override
   Widget build(BuildContext context) {
     final orgAsync = ref.watch(currentOrganisationProvider);
@@ -423,298 +268,6 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
       _defaultFields = [...?org?.defaultFields];
       _orgId = org?.id;
     }
-    if (context.rdSkin != null) return _rdBuild(context);
-
-    return IonCondense(builder: (context, collapsed) => Scaffold(
-      // IOS_R6: Ionic `ion-content fullscreen` under the translucent header
-      extendBodyBehindAppBar: ionIsIos(context),
-      // IOS_R6: `ion-header translucent` (blur once condensed)
-      appBar: IonTranslucentAppBar(condensed: collapsed, child: AppBar(title: IonCondenseTitle(context.l10n.orgTemplatesTitle, collapsed: collapsed))),
-      body: _templates == null
-          ? const Center(child: AppSpinner())
-          : ListView(
-              padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 32)),
-              children: [
-                const IonContentTopInset(),
-                IonLargeTitle(context.l10n.orgTemplatesTitle),
-                _header(context.l10n.orgTemplatesDefaultFields, _addDefaultField),
-                _box(_defaultFields.isEmpty
-                      ? ListTile(
-                          title: Text(context.l10n.orgTemplatesNoDefaultFields,
-                              style: TextStyle(color: AppColors.mediumOf(context))))
-                      : ReorderableListView(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          buildDefaultDragHandles: false,
-                          onReorder: (from, to) {
-                            setState(() {
-                              final list = [..._defaultFields];
-                              final item = list.removeAt(from);
-                              list.insert(to > from ? to - 1 : to, item);
-                              _defaultFields = list;
-                            });
-                            _saveDefaultFields();
-                          },
-                          children: [
-                            for (var i = 0; i < _defaultFields.length; i++)
-                              // Ionic: ion-item-sliding with an expandable trash option
-                              // (full swipe deletes).
-                              Slidable(
-                                key: ValueKey('df-${_defaultFields[i].id}-$i'),
-                                endActionPane: ActionPane(
-                                  motion: const DrawerMotion(),
-                                  extentRatio: 0.2,
-                                  dismissible: DismissiblePane(onDismissed: () => _removeDefaultField(i)),
-                                  children: [
-                                    SlidableAction(
-                                      onPressed: (_) => _removeDefaultField(i),
-                                      backgroundColor: AppColors.danger,
-                                      foregroundColor: Colors.white,
-                                      icon: AppIcons.delete,
-                                    ),
-                                  ],
-                                ),
-                                child: ListTile(
-                                  title: Text(_defaultFields[i].name),
-                                  subtitle: (_defaultFields[i].conductor ?? '').isNotEmpty
-                                      ? Text(_defaultFields[i].conductor!)
-                                      : null,
-                                  onTap: () => _editDefaultField(i),
-                                  trailing: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      // Ionic: inline number input "min", saved on blur.
-                                      _DefaultMinutesInput(
-                                        key: ValueKey('dfm-${_defaultFields[i].id}-$i'),
-                                        fieldId: _defaultFields[i].id,
-                                        value: _defaultFields[i].time,
-                                        onSubmitted: _setDefaultMinutes,
-                                      ),
-                                      const SizedBox(width: 8),
-                                      ReorderableDragStartListener(index: i, child: Icon(AppIcons.dragHandle)),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                ),
-                _hint(context.l10n.orgTemplatesDefaultFieldsHint),
-                _header(context.l10n.orgTemplatesTemplates, _addTemplate),
-                _box(Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      if (_templates!.isEmpty)
-                        ListTile(
-                            title: Text(context.l10n.orgTemplatesNoTemplates,
-                                style: TextStyle(color: AppColors.mediumOf(context)))),
-                      for (var i = 0; i < _templates!.length; i++) ..._templateTiles(i),
-                    ],
-                  ),
-                ),
-                _hint(context.l10n.orgTemplatesTemplatesHint),
-              ],
-            ),
-    ));
-  }
-
-  List<Widget> _templateTiles(int i) {
-    final tpl = _templates![i];
-    final count = tpl.fields.length;
-    final duration = _duration(tpl);
-    final expanded = _selected == i;
-    final end = _computeEnd(tpl);
-    final start = PlanUtils.formatTime(tpl.time);
-    return [
-      // Ionic: ion-item-sliding with "Umbenennen" (pencil) and delete (trash).
-      Slidable(
-        key: ValueKey('tpl-$i-${tpl.title}'),
-        endActionPane: ActionPane(
-          motion: const DrawerMotion(),
-          extentRatio: 0.4,
-          children: [
-            SlidableAction(
-              onPressed: (_) => _renameTemplate(i),
-              backgroundColor: AppColors.primary,
-              foregroundColor: Colors.white,
-              icon: AppIcons.editOutlined,
-            ),
-            SlidableAction(
-              onPressed: (_) => _removeTemplate(i),
-              backgroundColor: AppColors.danger,
-              foregroundColor: Colors.white,
-              icon: AppIcons.deleteOutline,
-            ),
-          ],
-        ),
-        child: ListTile(
-          title: Text(tpl.title ?? ''),
-          subtitle: Text('${context.l10n.orgFlutterFieldCount(count)}${duration.isNotEmpty ? ' · $duration' : ''}'),
-          onTap: () => setState(() => _selected = expanded ? null : i),
-          // Desktop/mouse fallback for the swipe options.
-          onLongPress: () => _templateOptions(i),
-          trailing: Icon(expanded ? AppIcons.expandLess : AppIcons.expandMore, color: AppColors.mediumOf(context)),
-        ),
-      ),
-      if (expanded) ...[
-        ListTile(
-          title: Text(context.l10n.shiftsStartTime),
-          // Ionic `ion-datetime-button slot="end"` (QUE-28); Beta: as before.
-          trailing: context.rdSkin != null
-              ? TextButton(onPressed: () => _pickStart(i), child: Text(start.isEmpty ? '--:--' : start))
-              : IonDatetimeButton(time: start.isEmpty ? '--:--' : start, onTimeTap: () => _pickStart(i)),
-        ),
-        PlanFieldsEditor(
-          fields: tpl.fields,
-          startTime: start,
-          showTimes: start.isNotEmpty,
-          emptyText: context.l10n.orgFlutterNoFields,
-          onChanged: (f) {
-            _updateTemplate(i, tpl.copyWith(fields: PlanUtils.normalizeGroups(f)));
-            _saveTemplates();
-          },
-        ),
-        // ABL-27: Ionic `ion-item` with a small clear button (add-outline).
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          child: Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: Builder(
-              builder: (buttonContext) => TextButton.icon(
-                style: TextButton.styleFrom(visualDensity: VisualDensity.compact),
-                icon: Icon(AppIcons.add, size: 18),
-                label: IonButtonLabel(context.l10n.typeSettingsAddField),
-                onPressed: () => _addToTemplate(i, buttonContext),
-              ),
-            ),
-          ),
-        ),
-        if (end.isNotEmpty)
-          ListTile(
-            leading: Icon(AppIcons.schedule, color: AppColors.mediumOf(context)),
-            title: Text(context.l10n.orgTemplatesEndApprox(end), style: TextStyle(color: AppColors.mediumOf(context))),
-          ),
-        const Divider(height: 1),
-      ],
-    ];
-  }
-}
-
-/// Inline minutes of a Standardfeld (Ionic `ion-input type="number"`
-/// placeholder "min", `(ionBlur)="saveDefaultFields()"`).
-///
-/// Saves debounced while typing, on blur and on dispose: on iOS/Android going
-/// back directly never blurs the field, so a blur-only save would be lost.
-/// A failed save stays pending and is retried on blur/dispose.
-class _DefaultMinutesInput extends StatefulWidget {
-  const _DefaultMinutesInput({
-    super.key,
-    required this.fieldId,
-    required this.value,
-    required this.onSubmitted,
-  });
-
-  final String fieldId;
-  final String value;
-
-  /// Called with ([fieldId], minutes); resolves to `true` once saved. Must
-  /// not call `setState` or use `ref`/`context` synchronously (also runs from
-  /// `dispose()`).
-  final Future<bool> Function(String fieldId, String minutes) onSubmitted;
-
-  @override
-  State<_DefaultMinutesInput> createState() => _DefaultMinutesInputState();
-}
-
-class _DefaultMinutesInputState extends State<_DefaultMinutesInput> {
-  late final TextEditingController _controller = TextEditingController(text: widget.value);
-  final FocusNode _focus = FocusNode();
-  Timer? _debounce;
-
-  /// Last value handed to `onSubmitted` (saved or still in flight).
-  late String _submitted = widget.value;
-
-  /// The save of [_submitted] failed: it stays pending and blur/dispose
-  /// retry it.
-  bool _failed = false;
-  int _seq = 0;
-  int _inFlight = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    _focus.addListener(() {
-      if (!_focus.hasFocus) _commit();
-    });
-  }
-
-  @override
-  void didUpdateWidget(covariant _DefaultMinutesInput oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    // An external change (e.g. the edit dialog) replaces the value; the echo
-    // of our own, maybe still unsaved, text must not mark it as saved.
-    if (widget.value != oldWidget.value && widget.value != _controller.text.trim()) {
-      _submitted = widget.value;
-      _failed = false;
-    }
-    if (!_focus.hasFocus && widget.value != _controller.text) _controller.text = widget.value;
-  }
-
-  /// Saves the current text unless it is already saved or being saved.
-  /// Only the newest submission counts (the page writes the whole list).
-  /// [force] re-sends even an already submitted value (used when leaving
-  /// while a save is still pending, so its failure can't be lost).
-  Future<void> _commit({bool force = false}) async {
-    _debounce?.cancel();
-    _debounce = null;
-    final v = _controller.text.trim();
-    if (!force && v == _submitted && !_failed) return;
-    _submitted = v;
-    _failed = false;
-    final seq = ++_seq;
-    _inFlight++;
-    try {
-      final ok = await widget.onSubmitted(widget.fieldId, v);
-      if (!ok && seq == _seq) _failed = true;
-    } finally {
-      _inFlight--;
-    }
-  }
-
-  void _onChanged(String _) {
-    _debounce?.cancel();
-    _debounce = Timer(const Duration(milliseconds: 600), _commit);
-  }
-
-  @override
-  void dispose() {
-    // Writes are coalesced, so re-sending a pending value is harmless.
-    _commit(force: _inFlight > 0 || _failed);
-    _controller.dispose();
-    _focus.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 48,
-      child: TextField(
-        controller: _controller,
-        focusNode: _focus,
-        keyboardType: TextInputType.number,
-        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-        textAlign: TextAlign.center,
-        decoration: InputDecoration(
-          hintText: context.l10n.planningMinPlaceholder,
-          isDense: true,
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(vertical: 8),
-        ),
-        onChanged: _onChanged,
-        onTapOutside: (_) => _focus.unfocus(),
-        onSubmitted: (_) => _focus.unfocus(),
-      ),
-    );
+    return _rdBuild(context);
   }
 }

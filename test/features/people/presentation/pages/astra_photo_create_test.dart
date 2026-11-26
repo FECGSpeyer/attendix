@@ -8,28 +8,25 @@ import 'package:attendix/core/providers/parent_providers.dart';
 import 'package:attendix/core/providers/shift_providers.dart';
 import 'package:attendix/core/providers/teacher_providers.dart';
 import 'package:attendix/core/providers/tenant_providers.dart';
-import 'package:attendix/core/theme/app_theme.dart';
+import 'package:attendix/core/theme/redesign/rd_palette.dart';
+import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/data/models/tenant/tenant.dart';
-import 'package:attendix/features/people/presentation/pages/person_create_page.dart';
 import 'package:attendix/features/people/presentation/widgets/person_image_picker.dart';
+import 'package:attendix/features/redesign/presentation/pages/rd_person_create_page.dart';
+import 'package:attendix/features/redesign/presentation/widgets/members/rd_person_form.dart';
+import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image_picker/image_picker.dart';
 
-/// ASTRA_PHOTO: Ionic person.page lets the user pick a Passbild while
+/// ASTRA_PHOTO: person create page lets the user pick a Passbild while
 /// creating a person; it is uploaded after the insert (db.addPlayer).
 class _TenantNotifier extends CurrentTenantNotifier {
   _TenantNotifier(super.ref);
 
   @override
-  Tenant? build() => null;
-
-  @override
   Future<void> setTenant(Tenant? tenant) async {}
-
-  @override
-  Future<void> loadFromPrefs() async {}
 }
 
 Widget _app(PersonImagePicker picker) => ProviderScope(
@@ -41,19 +38,21 @@ Widget _app(PersonImagePicker picker) => ProviderScope(
         parentsProvider.overrideWith((ref) async => const []),
         shiftsProvider.overrideWith((ref) async => const []),
         personImagePickerProvider.overrideWithValue(picker),
-        // The create form is locked for viewers (Ionic readOnly).
         currentRoleProvider.overrideWithValue(Role.admin),
       ],
       child: MaterialApp(
-        theme: AppTheme.light,
-        home: const PersonCreatePage(),
+        theme: buildRdTheme(RdFarbwelt.petrol, Brightness.light),
+        locale: const Locale('de'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: const RdPersonCreatePage(),
       ),
     );
 
 String _read(String path) => File(path).readAsStringSync();
 
 Finder _avatarImage() => find.descendant(
-      of: find.byKey(const Key('person_create_avatar')),
+      of: find.byType(RdPersonAvatar),
       matching: find.byType(Image),
     );
 
@@ -69,7 +68,7 @@ void main() {
       await tester.pump();
 
       expect(_avatarImage(), findsNothing);
-      await tester.tap(find.byKey(const Key('person_create_avatar')));
+      await tester.tap(find.byType(RdPersonAvatar));
       await tester.pump();
       await tester.pump();
 
@@ -77,21 +76,21 @@ void main() {
       // Preview of the picked bytes replaces the placeholder.
       expect(_avatarImage(), findsOneWidget);
 
-      // With a picture, the avatar offers replace / remove (Ionic viewer).
-      await tester.tap(find.byKey(const Key('person_create_avatar')));
+      // With a picture, the avatar offers replace / remove.
+      await tester.tap(find.byType(RdPersonAvatar));
       await tester.pumpAndSettle();
       expect(find.text('Ersetzen'), findsOneWidget);
       expect(find.text('Entfernen'), findsOneWidget);
     });
 
-    testWidgets('picture over 2 MB is rejected with the Ionic toast',
+    testWidgets('picture over 2 MB is rejected with error toast',
         (tester) async {
       await tester.pumpWidget(_app(() async => XFile.fromData(
           Uint8List(kPersonImageMaxBytes + 1),
           name: 'big.jpg')));
       await tester.pump();
 
-      await tester.tap(find.byKey(const Key('person_create_avatar')));
+      await tester.tap(find.byType(RdPersonAvatar));
       await tester.pump();
       await tester.pump();
 
@@ -104,7 +103,7 @@ void main() {
   group('ASTRA_PHOTO upload (source analysis)', () {
     final repo = _read('lib/data/repositories/player_repository.dart');
 
-    test('updateImage uses the Ionic key and filters id AND tenantId', () {
+    test('updateImage uses the storage key and filters id AND tenantId', () {
       final start = repo.indexOf('Future<String> updateImage(');
       expect(start, greaterThan(0));
       final body = repo.substring(start, repo.indexOf('\n  }\n', start));
@@ -132,7 +131,7 @@ void main() {
 
     test('create page passes the picked bytes, header shares the upload', () {
       final page = _read(
-          'lib/features/people/presentation/pages/person_create_page.dart');
+          'lib/features/redesign/presentation/pages/rd_person_create_page.dart');
       expect(page, contains('imageBytes: _pickedImage'));
       expect(page, contains('pickPersonImage(context, ref)'));
       final header = _read(

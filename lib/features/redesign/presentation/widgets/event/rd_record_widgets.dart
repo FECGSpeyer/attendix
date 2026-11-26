@@ -4,7 +4,7 @@ import '../../../../../core/constants/enums.dart';
 import '../../../../../core/theme/redesign/rd_palette.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../l10n/l10n.dart';
-import '../../../../attendance/presentation/widgets/attendance_detail/status_chip.dart'
+import '../../../../attendance/presentation/attendance_status_labels.dart'
     show ionicSelectableStatuses, ionicStatusLabel;
 import '../../../data/rd_event_logic.dart';
 import '../rd_widgets.dart';

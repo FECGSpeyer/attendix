@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/providers/player_providers.dart';
-import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/person/person.dart';
@@ -14,7 +12,6 @@ import '../../../planning/presentation/widgets/ion_items.dart';
 import '../../../../l10n/l10n.dart';
 import '../../team_org_utils.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
-import '../../../../shared/widgets/dialogs/ion_sheet.dart' show showIonSheet, IonSheetScaffold;
 
 /// Opens "Neue Aufgabe" / "Aufgabe bearbeiten" as a sheet (leadership only).
 /// Resolves with the created/updated task, or null when closed without saving.
@@ -28,31 +25,11 @@ Future<TeamTask?> showTaskFormSheet(
   int? presetPersonId,
   String? contextLabel,
 }) {
-  if (context.rdSkin == null) {
-    // Ionic `openTaskForm`: sheet modal `breakpoints: [0, 1]`,
-    // `initialBreakpoint: 1`, `ion-content color="light"`.
-    return showIonSheet<TeamTask>(
-      context,
-      breakpoints: const [0, 1],
-      initialBreakpoint: 1,
-      builder: (_, controller) => TaskFormSheet(
-        task: task,
-        attendanceId: attendanceId,
-        protocolId: protocolId,
-        agendaItemId: agendaItemId,
-        presetTitle: presetTitle,
-        presetPersonId: presetPersonId,
-        contextLabel: contextLabel,
-        scrollController: controller,
-      ),
-    );
-  }
   return showModalBottomSheet<TeamTask>(
     context: context,
-    useRootNavigator: true, // IOS_SHELL2: above the tab bar
+    useRootNavigator: true,
     isScrollControlled: true,
     useSafeArea: true,
-    // Ionic: ion-modal breakpoints [0, 1] (full height), content color light.
     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
     builder: (_) => TaskFormSheet(
       task: task,
@@ -76,11 +53,7 @@ class TaskFormSheet extends ConsumerStatefulWidget {
     this.presetTitle,
     this.presetPersonId,
     this.contextLabel,
-    this.scrollController,
   });
-
-  /// Set when the form is shown as a classic sheet ([showIonSheet]).
-  final ScrollController? scrollController;
 
   final TeamTask? task;
   final int? attendanceId;
@@ -100,7 +73,6 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
   int? _personId;
   String? _dueDate;
   String _priority = 'medium';
-  bool _notify = true;
   bool _saving = false;
 
   bool get _isEdit => widget.task?.id != null;
@@ -147,18 +119,6 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
   }
 
   Future<void> _pickPerson(List<Person> persons) async {
-    if (context.rdSkin == null) {
-      // Ionic: `[initialBreakpoint]="0.75" [breakpoints]="[0, 0.75, 1]"`.
-      final result = await showIonSheet<({int? id})>(
-        context,
-        breakpoints: const [0, 0.75, 1],
-        initialBreakpoint: 0.75,
-        builder: (_, controller) =>
-            _PersonPicker(persons: persons, selectedId: _personId, scrollController: controller),
-      );
-      if (result != null && mounted) setState(() => _personId = result.id);
-      return;
-    }
     final result = await showModalBottomSheet<({int? id})>(
       context: context,
       isScrollControlled: true,
@@ -177,8 +137,6 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
       firstDate: DateTime(now.year - 2),
       lastDate: DateTime(now.year + 5),
       locale: Locale(currentLanguage()),
-      // Ionic: `[showDefaultButtons]="true"` (OK / Abbrechen).
-      overlay: IonDatetimeOverlay.buttons,
     );
     if (picked != null) setState(() => _dueDate = localToday(picked));
   }
@@ -192,7 +150,7 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
     if (_saving) return;
     setState(() => _saving = true);
     final description = _description.text.trim();
-    final shouldNotify = (_notify || ref.read(redesignEnabledProvider)) && _showNotifyToggle;
+    final shouldNotify = _showNotifyToggle;
     final notifier = ref.read(teamTaskNotifierProvider.notifier);
     try {
       TeamTask saved;
@@ -234,27 +192,12 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
   Widget build(BuildContext context) {
     final persons = _persons();
     final personName = _personName(persons);
-    final theme = Theme.of(context);
     final l10n = context.l10n;
 
     final hasPerson = _personId != null && personName.isNotEmpty;
-    final classic = widget.scrollController != null;
     final title = _isEdit ? l10n.tasksFlutterEditTask : l10n.tasksFlutterNewTask;
     final rows = _formRows(context, persons, personName, hasPerson);
     final footer = _footer(context);
-    if (classic) {
-      return IonSheetScaffold(
-        title: title,
-        start: [IonCloseButton(onPressed: () => Navigator.of(context).pop())],
-        backgroundColor: theme.scaffoldBackgroundColor,
-        body: ListView(
-          controller: widget.scrollController,
-          padding: const EdgeInsets.only(bottom: 16),
-          children: rows,
-        ),
-        footer: footer,
-      );
-    }
     return Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: SizedBox(
@@ -265,15 +208,11 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
               toolbarHeight: ionModalToolbarHeight(context),
               automaticallyImplyLeading: false,
               primary: false,
-              // Ionic: close ✕ in `ion-buttons slot="start"` (iOS glass circle).
-              leadingWidth: context.rdSkin == null && useIosLook(context) ? 68 : null,
-              leading: context.rdSkin == null
-                  ? IonCloseButton(onPressed: () => Navigator.of(context).pop())
-                  : IconButton(
-                      icon: Icon(AppIcons.close),
-                      tooltip: l10n.commonClose,
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
+              leading: IconButton(
+                icon: Icon(AppIcons.close),
+                tooltip: l10n.commonClose,
+                onPressed: () => Navigator.of(context).pop(),
+              ),
               title: Text(title),
             ),
             Expanded(
@@ -365,58 +304,31 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
                         ),
                         onTap: () => _pickPerson(persons),
                       ),
-                      if (ref.watch(redesignEnabledProvider))
-                        // Beta: a plain select row like the others.
-                        ListTile(
-                          key: const ValueKey('rd-task-due'),
-                          title: Text(l10n.tasksDueOn),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                _dueDate != null ? formatLongDate(_dueDate) : l10n.tasksFlutterNoDate,
-                                style: TextStyle(
-                                    color: _dueDate != null ? theme.colorScheme.onSurface : AppColors.mediumOf(context)),
-                              ),
-                              if (_dueDate != null)
-                                IconButton(
-                                  tooltip: l10n.commonDelete,
-                                  visualDensity: VisualDensity.compact,
-                                  icon: Icon(AppIcons.cancel, size: 18, color: AppColors.mediumOf(context)),
-                                  onPressed: () => setState(() => _dueDate = null),
-                                )
-                              else ...[
-                                const SizedBox(width: 4),
-                                const IonDetailIcon(),
-                              ],
-                            ],
-                          ),
-                          onTap: _pickDate,
-                        )
-                      else
                       ListTile(
+                        key: const ValueKey('rd-task-due'),
                         title: Text(l10n.tasksDueOn),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            // Ionic: small outline button with the date.
-                            OutlinedButton(
-                              style: OutlinedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(horizontal: 12),
-                                minimumSize: const Size(0, 32),
-                                visualDensity: VisualDensity.compact,
-                              ),
-                              onPressed: _pickDate,
-                              child: IonButtonLabel(_dueDate != null ? formatLongDate(_dueDate) : l10n.tasksFlutterNoDate),
+                            Text(
+                              _dueDate != null ? formatLongDate(_dueDate) : l10n.tasksFlutterNoDate,
+                              style: TextStyle(
+                                  color: _dueDate != null ? theme.colorScheme.onSurface : AppColors.mediumOf(context)),
                             ),
                             if (_dueDate != null)
                               IconButton(
                                 tooltip: l10n.commonDelete,
-                                icon: Icon(AppIcons.clear, color: AppColors.mediumOf(context)),
+                                visualDensity: VisualDensity.compact,
+                                icon: Icon(AppIcons.cancel, size: 18, color: AppColors.mediumOf(context)),
                                 onPressed: () => setState(() => _dueDate = null),
-                              ),
+                              )
+                            else ...[
+                              const SizedBox(width: 4),
+                              const IonDetailIcon(),
+                            ],
                           ],
                         ),
+                        onTap: _pickDate,
                       ),
                       IonSelect<String>(
                         label: l10n.tasksPriority,
@@ -426,14 +338,6 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
                             .toList(),
                         onChanged: (v) => setState(() => _priority = v ?? 'medium'),
                       ),
-                      // Beta: the assignee always gets the notice, no switch.
-                      if (_showNotifyToggle && !ref.watch(redesignEnabledProvider))
-                        IonSwitchListTile(
-                          value: _notify,
-                          onChanged: (v) => setState(() => _notify = v),
-                          title: Text(l10n.tasksNotify(_firstName(persons) ?? l10n.tasksPerson)),
-                          subtitle: Text(l10n.tasksNotifyHint, style: TextStyle(color: AppColors.mediumOf(context))),
-                        ),
                     ],
                   ),
     ];
@@ -469,22 +373,12 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
     }
     return widget.task?.responsiblePerson.initials ?? '';
   }
-
-  String? _firstName(List<Person> persons) {
-    for (final p in persons) {
-      if (p.id == _personId && p.firstName.isNotEmpty) return p.firstName;
-    }
-    return null;
-  }
 }
 
 class _PersonPicker extends StatefulWidget {
-  const _PersonPicker({required this.persons, required this.selectedId, this.scrollController});
+  const _PersonPicker({required this.persons, required this.selectedId});
   final List<Person> persons;
   final int? selectedId;
-
-  /// Set in the classic design ([showIonSheet]).
-  final ScrollController? scrollController;
 
   @override
   State<_PersonPicker> createState() => _PersonPickerState();
@@ -526,19 +420,6 @@ class _PersonPickerState extends State<_PersonPicker> {
                 );
               },
             );
-    if (widget.scrollController != null) {
-      // Ionic: title + "Fertig" in `slot="end"`, searchbar in a second
-      // toolbar, plain `ion-list`.
-      return IonSheetScaffold(
-        title: l10n.tasksResponsible,
-        end: [TextButton(onPressed: () => Navigator.of(context).pop(), child: IonButtonLabel(l10n.personDone))],
-        bottom: IonSearchbar(
-          placeholder: l10n.tasksSearchPerson,
-          onChanged: (v) => setState(() => _search = v),
-        ),
-        body: list,
-      );
-    }
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.75,
       child: Column(

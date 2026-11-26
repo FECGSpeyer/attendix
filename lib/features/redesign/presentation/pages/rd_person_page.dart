@@ -8,6 +8,8 @@ import '../../../../core/providers/attendance_providers.dart';
 import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/church_providers.dart';
 import '../../../../core/providers/group_providers.dart';
+import '../../../../core/providers/person_detail_providers.dart'
+    show personAttendanceStatsProvider, personHistoryProvider, personProvider;
 import '../../../../core/providers/profile_providers.dart'
     show personExtraFieldsProvider, personListExtraFieldsProvider, profileRepositoryWithTenantProvider;
 import '../../../../core/providers/player_absence_providers.dart';
@@ -26,12 +28,9 @@ import '../../../../data/models/church/church.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../people/person_write.dart' show organisationPersonKey;
-import '../../../people/presentation/pages/person_detail_page.dart'
-    show personProvider, personAttendanceStatsProvider, personHistoryProvider;
 import '../../../people/presentation/widgets/pause_person_sheet.dart' show pausePersonFlow;
-import '../../../settings/presentation/pages/left_players_page.dart' show LeftPlayersPage;
+import '../../../settings/data/left_players_actions.dart' show leftPlayersProvider, reactivatePersonWithConfirmation;
 import '../../data/rd_members_logic.dart';
-import '../../../settings/presentation/pages/left_players_page.dart' show leftPlayersProvider;
 import '../widgets/members/rd_critical_talk.dart' show RdCriticalTalkCard, rdCanRecordTalk;
 import '../widgets/members/rd_pause_sheets.dart' show showRdArchiveSheet;
 import '../widgets/manage/rd_settings_sheets.dart' show RdListNote;
@@ -252,7 +251,7 @@ class _LeftCard extends ConsumerWidget {
               icon: Icons.restore,
               label: l10n.redesignArchiveListRestore,
               onPressed: () async {
-                await LeftPlayersPage.reactivateWithConfirmation(context, ref, person);
+                await reactivatePersonWithConfirmation(context, ref, person);
                 if (!context.mounted) return;
                 if (person.id != null) ref.invalidate(personProvider(person.id!));
                 ref.invalidate(archivedPlayersProvider);

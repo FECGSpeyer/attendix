@@ -9,7 +9,6 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/auto_message/auto_message.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
-import '../../../settings/presentation/widgets/settings_list.dart';
 import '../auto_message_texts.dart';
 import 'attendance_response_page.dart';
 
@@ -121,8 +120,7 @@ class _MessageTerminSectionState extends ConsumerState<MessageTerminSection> {
       (termin.typeInfo?.isNotEmpty ?? false) ? termin.typeInfo! : typeName,
       formatTerminDate(termin.date),
     ].where((s) => s.isNotEmpty).join(' · ');
-    final ios = ionIsIos(context);
-    final cardColor = ios ? IonIos.itemBackground(context) : Theme.of(context).cardColor;
+    final cardColor = Theme.of(context).cardColor;
     final own = _ownResponse;
 
     return Column(

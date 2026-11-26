@@ -13,6 +13,7 @@ import 'package:attendix/core/providers/group_providers.dart';
 import 'package:attendix/core/providers/optional_tabs_providers.dart';
 import 'package:attendix/core/providers/organisation_providers.dart';
 import 'package:attendix/core/providers/plan_providers.dart';
+import 'package:attendix/core/providers/realtime_providers.dart';
 import 'package:attendix/core/providers/song_providers.dart';
 import 'package:attendix/core/providers/team_org_providers.dart';
 import 'package:attendix/core/providers/tenant_providers.dart';
@@ -20,8 +21,8 @@ import 'package:attendix/core/theme/app_theme.dart';
 import 'package:attendix/data/models/plan/plan.dart';
 import 'package:attendix/data/repositories/plan_repository.dart';
 import 'package:attendix/features/planning/presentation/pages/planning_page.dart';
+import 'package:attendix/features/redesign/presentation/shell/rd_shell.dart';
 import 'package:attendix/l10n/l10n.dart';
-import 'package:attendix/shared/widgets/layout/main_shell.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -107,6 +108,7 @@ void main() {
         planAttendanceTypesProvider.overrideWith((ref) async => const []),
         planBlockTemplatesProvider.overrideWith((ref) async => const []),
         planSongsProvider.overrideWith((ref) async => const []),
+        songCollectionsProvider.overrideWith((ref) async => null),
         currentSongsProvider.overrideWith((ref) async => const []),
         groupsProvider.overrideWith((ref) async => const []),
         groupCategoriesProvider.overrideWith((ref) async => const []),
@@ -114,6 +116,7 @@ void main() {
         currentOrganisationProvider.overrideWith((ref) async => null),
         hasBrandingProvider.overrideWithValue(false),
         effectiveRoleProvider.overrideWithValue(Role.admin),
+        realtimePendingPlayersProvider.overrideWith((ref) => Stream.value(const [])),
         showDashboardTabProvider.overrideWithValue(false),
         showSongsTabProvider.overrideWithValue(false),
         showOrgPlansTabProvider.overrideWithValue(false),
@@ -128,8 +131,14 @@ void main() {
   Finder titleField(String text) =>
       find.byWidgetPredicate((w) => w is TextField && w.controller?.text == text);
 
-  Finder minutesField() =>
-      find.byWidgetPredicate((w) => w is TextField && w.keyboardType == TextInputType.number);
+  Future<void> enterMinutes(WidgetTester tester, String value) async {
+    final input = find.byKey(const Key('rd-plan-dur-input'));
+    if (input.evaluate().isEmpty) {
+      await tester.tap(find.byKey(const ValueKey('rd-plan-dur-0')));
+      await tester.pumpAndSettle();
+    }
+    await tester.enterText(input, value);
+  }
 
   Map<String, dynamic> planOf(Map<String, dynamic> update) => update['plan'] as Map<String, dynamic>;
 
@@ -143,8 +152,9 @@ void main() {
       initialLocation: '/planning',
       routes: [
         ShellRoute(
-          builder: (context, state, child) => MainShell(child: child),
+          builder: (context, state, child) => RdShell(child: child),
           routes: [
+            GoRoute(path: '/heute', builder: (_, __) => const Placeholder(key: Key('heute'))),
             GoRoute(path: '/people', builder: (_, __) => const Placeholder(key: Key('people'))),
             GoRoute(path: '/attendance', builder: (_, __) => const Placeholder(key: Key('attendance'))),
             GoRoute(path: '/settings', builder: (_, __) => const Placeholder(key: Key('settings'))),
@@ -181,7 +191,7 @@ void main() {
     expect(attendanceLoads, 1);
     expect(orgPlanLoads, 1);
 
-    await tester.enterText(minutesField(), '15');
+    await enterMinutes(tester, '15');
     await tester.pump(const Duration(milliseconds: 450));
     await tester.pumpAndSettle();
     expect(db.calls, hasLength(1), reason: 'autosave finished, nothing pending');
@@ -198,7 +208,10 @@ void main() {
     router.go('/planning');
     await tester.pumpAndSettle();
     expect(attendanceLoads, 2, reason: 'Termine reloaded');
-    expect(tester.widget<TextField>(minutesField()).controller!.text, '15', reason: 'no stale plan');
+    await tester.tap(find.byKey(const ValueKey('rd-plan-dur-0')));
+    await tester.pumpAndSettle();
+    expect(tester.widget<TextField>(find.byKey(const Key('rd-plan-dur-input'))).controller!.text, '15',
+        reason: 'no stale plan');
   });
 
   testWidgets('item 1: no write, no invalidation', (tester) async {

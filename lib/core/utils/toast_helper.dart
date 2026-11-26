@@ -4,11 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../l10n/l10n.dart';
-import '../router/redesign_routes.dart';
-import '../../shared/widgets/adaptive/adaptive_platform.dart'
-    show IosGlassSurface, useIosLook;
 import '../theme/app_colors.dart';
-import '../theme/redesign/rd_theme.dart';
 import 'demo_guard.dart';
 
 /// QUE-26: a button of a toast (Ionic `toastController.create({ buttons:
@@ -210,7 +206,7 @@ class ToastHelper {
   /// before keeps it ([legacy]); true when it was shown.
   static bool _betaSnackBar(
       BuildContext context, String message, LegacySnackBar? legacy) {
-    if (legacy == null || !RedesignRoutes.active) return false;
+    if (legacy == null) return false;
     final messenger = context is StatefulElement &&
             context.state is ScaffoldMessengerState
         ? context.state as ScaffoldMessengerState
@@ -239,12 +235,11 @@ class ToastHelper {
     if (overlay != null) {
       // The theme sits below the root messenger: read it at the overlay.
       final themed = above != null ? context : overlay.context;
-      showIonMdToast(
+      showToastOverlay(
         overlay,
         message,
         color: _ionColorFor(backgroundColor),
-        ios: useIosLook(themed),
-        beta: themed.rdSkin != null,
+        ios: Theme.of(themed).platform == TargetPlatform.iOS,
         duration: duration ?? const Duration(milliseconds: 3000),
         action: action,
       );
@@ -326,18 +321,14 @@ OverlayEntry? _mdToastEntry;
 /// MD_SWEEP: Ionic md `ion-toast` as Utils.showToast creates it
 /// (`position: 'top'`, `duration: 3000`, a colour, no buttons): a card 8px
 /// below the top (+ safe area), centred, at most 700px wide with 8px side
-/// margins, radius 4, the md elevation-6 shadow, 14px / 20px text with
-/// 16 × 14 padding. With [color] it is filled with that Ionic colour (dark
-/// mode palette in dark mode) and its contrast text; without, the md
-/// default #333 (dark #d0d0d0) with step-50 text. A new toast replaces the
-/// previous one. [ios] / [beta] / [action]: see [IonMdToast].
-void showIonMdToast(
+/// Shows a toast banner in the root overlay above modals and sheets. A new
+/// toast replaces the previous one.
+void showToastOverlay(
   OverlayState overlay,
   String message, {
   Color? color,
   Duration duration = const Duration(milliseconds: 3000),
   bool ios = false,
-  bool beta = false,
   ToastAction? action,
 }) {
   final previous = _mdToastEntry;
@@ -348,12 +339,11 @@ void showIonMdToast(
   }
   late final OverlayEntry entry;
   entry = OverlayEntry(
-    builder: (context) => IonMdToast(
+    builder: (context) => AppToast(
       message: message,
       color: color,
       duration: duration,
       ios: ios,
-      beta: beta,
       action: action,
       onDismissed: () {
         if (entry.mounted) entry.remove();
@@ -365,15 +355,14 @@ void showIonMdToast(
   overlay.insert(entry);
 }
 
-/// MD_SWEEP: the md toast card of [showIonMdToast].
-class IonMdToast extends StatefulWidget {
-  const IonMdToast({
+/// Toast overlay card shown by [showToastOverlay].
+class AppToast extends StatefulWidget {
+  const AppToast({
     super.key,
     required this.message,
     this.color,
     this.duration = const Duration(milliseconds: 3000),
     this.ios = false,
-    this.beta = false,
     this.action,
     this.onDismissed,
   });
@@ -382,28 +371,17 @@ class IonMdToast extends StatefulWidget {
   final Color? color;
   final Duration duration;
 
-  /// QUE-26: the Ionic iOS `ion-toast` of the app's iOS theme
-  /// (@rdlabo/ionic-theme-ios27 + global.scss): a Liquid Glass overlay
-  /// 16px from the sides (`--start / --end`), at most 560px wide, radius 24
-  /// (global.scss), `.94rem` text with line-height 1.33 in 15px padding;
-  /// with a colour `rgba(colour, .87)` and its contrast text.
+  /// Uses iOS native toast geometry (10px inset, 14px radius, no elevation).
   final bool ios;
 
-  /// Beta design with [ios]: the toast it had before – Ionic core ios
-  /// `ion-toast` (10px inset, radius 14, no shadow, light step-50
-  /// background (dark #1e1e1e) with step-850 text).
-  final bool beta;
-
-  /// Ionic toast button after the message (md: uppercase 14px / 500 in the
-  /// primary colour, on a coloured toast in its text colour; iOS: 17px).
   final ToastAction? action;
   final VoidCallback? onDismissed;
 
   @override
-  State<IonMdToast> createState() => _IonMdToastState();
+  State<AppToast> createState() => _AppToastState();
 }
 
-class _IonMdToastState extends State<IonMdToast>
+class _AppToastState extends State<AppToast>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(
     vsync: this,
@@ -454,7 +432,6 @@ class _IonMdToastState extends State<IonMdToast>
         ? null
         : AppColors.forBrightness(widget.color!, b);
     final ios = widget.ios;
-    final glass = ios && !widget.beta;
     final background = base ??
         (ios
             ? (dark ? const Color(0xFF1E1E1E) : const Color(0xFFF2F2F2))
@@ -466,28 +443,20 @@ class _IonMdToastState extends State<IonMdToast>
         : (ios
             ? (dark ? const Color(0xFFDBDBDB) : const Color(0xFF262626))
             : (dark ? const Color(0xFF1E1E1E) : const Color(0xFFF2F2F2)));
-    final inset = glass ? 16.0 : (ios ? 10.0 : 8.0);
+    final inset = ios ? 10.0 : 8.0;
     final top = MediaQuery.paddingOf(context).top + (ios ? 10.0 : 8.0);
     final curved =
         CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic);
-    final glassText = base != null
-        ? textColor
-        : (dark ? const Color(0xFFD9D9D9) : const Color(0xFF262626));
     final message = Text(
       widget.message,
-      style: glass
-          ? TextStyle(fontSize: 0.94 * 17, height: 1.33, color: glassText)
-          : TextStyle(
-              fontSize: 14,
-              height: 20 / 14,
-              color: textColor,
-            ),
+      style: TextStyle(
+        fontSize: 14,
+        height: 20 / 14,
+        color: textColor,
+      ),
     );
-    final messagePadding = glass
-        ? const EdgeInsets.all(15)
-        : const EdgeInsets.symmetric(horizontal: 16, vertical: 14);
+    const messagePadding = EdgeInsets.symmetric(horizontal: 16, vertical: 14);
     final action = widget.action;
-    // .toast-container: the message, then the end button group.
     final Widget content = action == null
         ? Padding(padding: messagePadding, child: message)
         : Row(
@@ -498,13 +467,8 @@ class _IonMdToastState extends State<IonMdToast>
                 child: _ToastButton(
                   label: action.label,
                   ios: ios,
-                  // `--button-color`: primary; `.ion-color`: inherit.
-                  color: base != null
-                      ? (glass ? glassText : textColor)
-                      : AppColors.primary,
+                  color: base != null ? textColor : AppColors.primary,
                   onPressed: () {
-                    // Once only: the button stays hittable while the
-                    // toast fades out.
                     if (_actionDone) return;
                     _actionDone = true;
                     _dismiss();
@@ -523,51 +487,24 @@ class _IonMdToastState extends State<IonMdToast>
         bottom: false,
         child: Center(
           child: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: glass ? 560 : 700),
-            // Announced by VoiceOver/TalkBack like the SnackBar it replaces.
+            constraints: const BoxConstraints(maxWidth: 700),
             child: Semantics(
               container: true,
               liveRegion: true,
               child: FadeTransition(
-              opacity: curved,
-              child: SlideTransition(
-                position: Tween<Offset>(
-                        begin: const Offset(0, -0.5), end: Offset.zero)
-                    .animate(curved),
-                // `.toast-wrapper { left: var(--start); right: var(--end);
-                // width: auto }`: as wide as the screen allows (up to
-                // max-width), not as narrow as the text. Beta: as before.
-                child: SizedBox(
-                width: widget.beta ? null : double.infinity,
-                child: glass
-                    // ion-toast glass overlay (rgba(glass, .67), dark
-                    // .52; 0.5pt rgba(text, .18) rim, .06 shadow).
-                    ? IosGlassSurface(
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(24)),
-                        overlay: true,
-                        blur: 20,
-                        shadowOpacity: 0.06,
-                        // a toast does not dim the page
-                        scrim: Colors.transparent,
-                        color: base?.withValues(alpha: 0.87),
-                        // The overlay has no Material above it: without
-                        // this the text would inherit the app's error
-                        // style (fallback font, yellow underline).
-                        child: Material(
-                          type: MaterialType.transparency,
-                          child: content,
-                        ),
-                      )
-                    : Material(
-                        color: background,
-                        elevation: ios ? 0 : 6,
-                        shadowColor: Colors.black,
-                        borderRadius: BorderRadius.circular(ios ? 14 : 4),
-                        child: content,
-                      ),
+                opacity: curved,
+                child: SlideTransition(
+                  position: Tween<Offset>(
+                          begin: const Offset(0, -0.5), end: Offset.zero)
+                      .animate(curved),
+                  child: Material(
+                    color: background,
+                    elevation: ios ? 0 : 6,
+                    shadowColor: Colors.black,
+                    borderRadius: BorderRadius.circular(ios ? 14 : 4),
+                    child: content,
+                  ),
                 ),
-              ),
               ),
             ),
           ),

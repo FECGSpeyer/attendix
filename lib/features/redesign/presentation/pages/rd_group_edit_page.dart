@@ -16,7 +16,7 @@ import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/repositories/group_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/app_action_sheet.dart';
-import '../../../instruments/presentation/pages/instruments_list_page.dart'
+import '../../../instruments/data/group_options.dart'
     show groupClefLabel, groupClefOptions, groupTuningOptions;
 import '../../../instruments/presentation/widgets/instrument_categories_sheet.dart';
 import '../../data/rd_words.dart';

@@ -13,7 +13,7 @@ import 'package:attendix/data/models/person/person.dart';
 import 'package:attendix/data/repositories/attendance_repository.dart';
 import 'package:attendix/data/repositories/user_registration_repository.dart';
 import 'package:attendix/features/auth/data/auth_link_listener.dart';
-import 'package:attendix/features/settings/presentation/pages/settings_page.dart'
+import 'package:attendix/features/settings/data/account_provisioning_actions.dart'
     show playersOfCurrentTenant;
 import 'package:attendix/features/team_organization/presentation/pages/protocol_page.dart'
     show chainProtocolSectionSave;
@@ -154,26 +154,7 @@ void main() {
       );
     });
 
-    test('every direct person_attendances write on the Termin page is guarded', () {
-      final page = _read(
-          'lib/features/attendance/presentation/pages/attendance_detail_page.dart');
-      final writes = RegExp(r'repo\.updatePersonAttendance\(([^;]*);')
-          .allMatches(page)
-          .toList();
-      expect(writes, isNotEmpty);
-      for (final w in writes) {
-        expect(w.group(1), contains('isSessionCurrent: writeSession.isCurrent'));
-        expect(w.group(1), contains('actingUserId: writeSession.userId'));
-      }
-      final enqueues =
-          RegExp(r'enqueueIfOffline\(([^;]*?)\)\)?').allMatches(page).toList();
-      for (final e in enqueues) {
-        expect(e.group(1), contains('session: writeSession'));
-      }
-    });
-
-    // REDESIGN: status and note writes of the Termin page and the new
-    // design's recording view share one write path.
+    // Shared status and note write path is guarded.
     test('the shared person_attendances write path is guarded too', () {
       final shared = _read(
           'lib/features/attendance/presentation/person_attendance_writes.dart');
@@ -185,11 +166,6 @@ void main() {
       expect(enqueues, hasLength(1));
       expect(enqueues.single.group(1), contains('session: writeSession'));
       expect(shared, contains('validatePersonAttendanceTenant(personAttendanceId)'));
-
-      final page = _read(
-          'lib/features/attendance/presentation/pages/attendance_detail_page.dart');
-      expect(page, contains('await writePersonStatus('));
-      expect(page, contains('await writePersonAttendance('));
     });
   });
 
@@ -325,8 +301,8 @@ void main() {
       expect(membership, lessThan(body.indexOf('await registerUser(')));
     });
 
-    test('settings page captures the tenant and passes it to the job', () {
-      final src = _read('lib/features/settings/presentation/pages/settings_page.dart');
+    test('account provisioning captures the tenant and passes it to the job', () {
+      final src = _read('lib/features/settings/data/account_provisioning_actions.dart');
       final start = src.indexOf('Future<void> createMissingAccounts(');
       final body = src.substring(start);
       final capture = body.indexOf('final tenantId = ref.read(currentTenantIdProvider);');

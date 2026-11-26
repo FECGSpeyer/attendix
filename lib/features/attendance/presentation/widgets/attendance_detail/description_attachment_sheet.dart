@@ -1,14 +1,11 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
 import 'package:attendix/shared/widgets/layout/sheet_drag.dart';
-import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../core/providers/attendance_detail_providers.dart';
 import '../../../../../core/providers/attendance_providers.dart';
-import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../core/utils/quill_utils.dart';
 import '../../../../../core/utils/toast_helper.dart';
@@ -23,38 +20,23 @@ import '../../../../redesign/presentation/widgets/rd_widgets.dart';
 /// rich text description (stored as HTML like the Ionic quill editor) and
 /// one file attachment (upload, open, remove).
 Future<void> showDescriptionAttachmentSheet(BuildContext context, {required Attendance attendance}) {
-  if (context.rdSkin == null) {
-    // Ionic descriptionModal: [breakpoints]="[0, 0.8, 1]"
-    // [initialBreakpoint]="0.8", ion-title + close ✕ (end).
-    return showIonSheet<void>(
-      context,
-      breakpoints: const [0, 0.8, 1],
-      initialBreakpoint: 0.8,
-      builder: (ctx, controller) => IonSheetScaffold(
-        title: ctx.l10n.attendanceDescriptionAttachment,
-        showClose: true,
-        body: DescriptionAttachmentEditor(attendance: attendance, scrollController: controller),
-      ),
-    );
-  }
   return showModalBottomSheet<void>(
     context: context,
-    useRootNavigator: true, // IOS_SHELL2: above the tab bar
+    useRootNavigator: true,
     isScrollControlled: true,
     showDragHandle: true,
-    backgroundColor: context.rdSkin != null ? context.rd.bg : null,
-    builder:
-        (ctx) => Padding(
-          padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
-          child: AppDraggableSheet(
-            expand: false,
-            initialChildSize: 0.8,
-            minChildSize: 0.4,
-            maxChildSize: 0.95,
-            builder:
-                (ctx, controller) => DescriptionAttachmentEditor(attendance: attendance, scrollController: controller),
-          ),
-        ),
+    backgroundColor: context.rd.bg,
+    builder: (ctx) => Padding(
+      padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
+      child: AppDraggableSheet(
+        expand: false,
+        initialChildSize: 0.8,
+        minChildSize: 0.4,
+        maxChildSize: 0.95,
+        builder: (ctx, controller) =>
+            DescriptionAttachmentEditor(attendance: attendance, scrollController: controller),
+      ),
+    ),
   );
 }
 
@@ -269,58 +251,5 @@ class _DescriptionAttachmentEditorState extends ConsumerState<DescriptionAttachm
   }
 
   @override
-  Widget build(BuildContext context) {
-    if (context.rdSkin != null) return _buildBeta(context);
-    return ListView(
-      controller: widget.scrollController,
-      // ion-content class="ion-padding"; the title is in the sheet toolbar.
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-      children: [
-        Card(
-          margin: EdgeInsets.zero,
-          clipBehavior: Clip.antiAlias,
-          child: Column(
-            children: [
-              _toolbar(),
-              const Divider(height: 1),
-              ConstrainedBox(
-                constraints: const BoxConstraints(minHeight: 200),
-                child: Padding(padding: const EdgeInsets.all(12), child: _editor()),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(
-              child: Text(context.l10n.selfServiceAttachment, style: const TextStyle(fontWeight: FontWeight.w500)),
-            ),
-            if (_busy)
-              const SizedBox(width: 24, height: 24, child: AppSpinner(strokeWidth: 2))
-            else if (_attachmentUrl == null)
-              IconButton(
-                tooltip: context.l10n.attendanceFlutterAddAttachment,
-                icon: Icon(AppIcons.attachFile),
-                onPressed: _upload,
-              )
-            else ...[
-              Flexible(
-                child: ActionChip(
-                  avatar: Icon(AppIcons.descriptionOutlined, size: 18),
-                  label: Text(_attachmentName ?? context.l10n.selfServiceAttachment, overflow: TextOverflow.ellipsis),
-                  onPressed: _open,
-                ),
-              ),
-              IconButton(
-                tooltip: context.l10n.attendanceFlutterRemoveAttachment,
-                icon: Icon(AppIcons.cancelOutlined, color: AppColors.danger),
-                onPressed: _remove,
-              ),
-            ],
-          ],
-        ),
-      ],
-    );
-  }
+  Widget build(BuildContext context) => _buildBeta(context);
 }

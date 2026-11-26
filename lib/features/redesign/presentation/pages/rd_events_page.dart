@@ -18,16 +18,14 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../duty/presentation/widgets/self_service_duty_section.dart' show showOpenDutiesSheet;
-import '../../../self_service/presentation/pages/signout_page.dart'
-    show signoutEventActions;
 import '../../../self_service/presentation/widgets/self_service_event_actions.dart';
 import '../../data/providers/rd_events_providers.dart';
 import '../../data/providers/rd_today_providers.dart';
 import '../widgets/event/rd_absence_sheet.dart';
+import '../widgets/event/rd_current_songs_sheet.dart' show showCurrentSongsSheet;
 import '../widgets/event/rd_parent_event_card.dart';
 import '../widgets/today/rd_parent_today.dart' show rdOpenChildren;
 import '../../../parents/data/providers/parents_providers.dart';
-import '../../../parents/presentation/widgets/parents_header_widgets.dart' show showCurrentSongsSheet;
 import '../../../../core/providers/song_providers.dart';
 import '../../../../data/repositories/song_repository.dart' show CurrentSongsGroup;
 import '../widgets/event/rd_own_answer_sheet.dart';

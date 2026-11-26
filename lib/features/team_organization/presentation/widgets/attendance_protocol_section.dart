@@ -1,22 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/attendance_detail_providers.dart';
 import '../../../../core/providers/plan_providers.dart';
 import '../../../../core/providers/team_org_providers.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/team_org/team_org.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/adaptive_platform.dart' show useIosLook;
-import '../../../../shared/widgets/layout/ionic_md.dart' show IonMd;
 import '../../team_org_utils.dart';
 import 'agenda_picker_sheet.dart';
 import '../../../../core/services/error_reporter.dart';
-import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
 
@@ -103,81 +97,6 @@ class AttendanceProtocolSection extends ConsumerWidget {
     final protocolAsync = ref.watch(protocolForAttendanceProvider(attendanceId));
     final protocol = protocolAsync.valueOrNull;
     final tasks = ref.watch(tasksForAttendanceProvider(attendanceId)).valueOrNull ?? const <TeamTask>[];
-    final published = protocol?.status == 'published';
-    if (ref.watch(redesignEnabledProvider)) {
-      return _buildBeta(context, ref, protocol: protocol, loading: protocolAsync.isLoading, isLeader: isLeader, tasks: tasks);
-    }
-
-    // PARITY_R9: an `ion-item-group` of Ionic's inset list, not an
-    // ion-card – md shows a flat block with radius 16 and no shadow.
-    final ios = useIosLook(context);
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM, vertical: AppDimensions.paddingXS),
-      elevation: ios ? null : 0,
-      shape: ios ? null : IonMd.insetGroupShape,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          ListTile(
-            leading: Icon(AppIcons.descriptionOutlined, color: AppColors.primary),
-            title: Text(context.l10n.attendanceProtocol, style: const TextStyle(fontWeight: FontWeight.w600)),
-            subtitle: protocolAsync.isLoading && protocol == null
-                ? const Text('…')
-                : Text(protocolCardStatus(protocol)),
-            trailing: protocol == null
-                ? null
-                : Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: published ? AppColors.success : AppColors.mediumOf(context),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Text(
-                      published ? context.l10n.attendancePublished : context.l10n.attendanceDraft,
-                      style: const TextStyle(color: Colors.white, fontSize: 12),
-                    ),
-                  ),
-          ),
-          if (isLeader)
-            ListTile(
-              leading: Icon(protocol != null ? AppIcons.editOutlined : AppIcons.playCircleOutline,
-                  color: AppColors.primary),
-              title: Text(
-                protocol != null ? context.l10n.attendanceOpenProtocol : context.l10n.attendanceStartSession,
-                style: const TextStyle(color: AppColors.primary),
-              ),
-              onTap: () => _push(context, ref, '/settings/protocol/$attendanceId'),
-            )
-          else if (published)
-            ListTile(
-              leading: Icon(AppIcons.chromeReaderModeOutlined, color: AppColors.primary),
-              title: Text(context.l10n.attendanceReadProtocol, style: const TextStyle(color: AppColors.primary)),
-              onTap: () => _push(context, ref, '/settings/protocol/$attendanceId'),
-            ),
-          if (tasks.isNotEmpty) ...[
-            const Divider(height: 1),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-              child: Text(context.l10n.attendanceTasksFromEvent, style: Theme.of(context).textTheme.titleSmall),
-            ),
-            for (final task in tasks) _taskTile(context, ref, task),
-          ],
-        ],
-      ),
-    );
-  }
-
-  /// REDESIGN: "Protokoll" and "Aufgaben aus diesem Termin" as Beta grouped
-  /// lists with pills on the Beta Termin page; same rows, rights and targets
-  /// as the classic card.
-  Widget _buildBeta(
-    BuildContext context,
-    WidgetRef ref, {
-    required Protocol? protocol,
-    required bool loading,
-    required bool isLeader,
-    required List<TeamTask> tasks,
-  }) {
     final p = context.rd;
     final l10n = context.l10n;
     final published = protocol?.status == 'published';
@@ -191,7 +110,7 @@ class AttendanceProtocolSection extends ConsumerWidget {
             RdListRow(
               leading: const RdRowIcon(Icons.description_outlined),
               title: l10n.attendanceProtocol,
-              subtitle: loading && protocol == null ? '…' : protocolCardStatus(protocol),
+              subtitle: protocolAsync.isLoading && protocol == null ? '…' : protocolCardStatus(protocol),
               showChevron: false,
               trailing: protocol == null
                   ? null
@@ -251,25 +170,6 @@ class AttendanceProtocolSection extends ConsumerWidget {
           _ => RdTone.late,
         },
       ),
-      onTap: () => _push(context, ref, '/settings/tasks/${task.id}'),
-    );
-  }
-
-  Widget _taskTile(BuildContext context, WidgetRef ref, TeamTask task) {
-    final done = task.status == 'completed';
-    final who = task.responsiblePerson.fullName.isNotEmpty ? task.responsiblePerson.fullName : context.l10n.attendanceNobodyAssigned;
-    final due = DateTime.tryParse(task.dueDate ?? '');
-    final subtitle = due != null && !done
-        ? '$who ${context.l10n.attendanceDueOn(DateFormat(dateFmt(DateFmtKind.dayMonth)).format(due))}'
-        : who;
-    return ListTile(
-      leading: Icon(
-        done ? AppIcons.checkCircle : AppIcons.radioButtonUnchecked,
-        color: done ? AppColors.success : AppColors.mediumOf(context),
-      ),
-      title: Text(task.title, style: done ? const TextStyle(decoration: TextDecoration.lineThrough) : null),
-      subtitle: Text(subtitle),
-      trailing: Text(taskStatusLabel(task.status), style: TextStyle(color: AppColors.mediumOf(context))),
       onTap: () => _push(context, ref, '/settings/tasks/${task.id}'),
     );
   }

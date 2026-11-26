@@ -31,8 +31,6 @@ import 'core/services/live_activity_service.dart';
 import 'core/services/native/ionic_offline_queue_takeover.dart';
 import 'core/services/native/ionic_session_takeover.dart';
 import 'core/services/native/shorebird_patch_service.dart';
-import 'core/theme/app_icons.dart';
-import 'core/theme/app_theme.dart';
 import 'core/theme/redesign/rd_theme.dart';
 import 'core/utils/toast_helper.dart';
 import 'features/auth/data/auth_link_listener.dart';
@@ -43,9 +41,7 @@ import 'core/providers/tenant_providers.dart' show currentTenantIdProvider;
 import 'core/services/telegram_service.dart' show notificationConfigProvider;
 import 'l10n/l10n.dart';
 import 'shared/widgets/dialogs/ion_modal.dart';
-import 'shared/widgets/adaptive/app_toolbar.dart' show IonToolbarMetrics;
 import 'shared/widgets/layout/scroll_away_dismiss.dart';
-import 'shared/widgets/layout/side_safe_area.dart';
 import 'shared/widgets/layout/tap_outside_dismiss.dart';
 import 'core/services/error_reporter.dart';
 import 'core/constants/app_constants.dart';
@@ -56,10 +52,6 @@ import 'features/redesign/presentation/widgets/work/rd_sibelius_actions.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Like Ionic's `?ionic:mode=ios|md`: on the web `?mode=ios` forces the
-  // iPhone look (and `?mode=md` the Material look) regardless of the browser.
-  if (kIsWeb) applyWebModeOverride(Uri.base);
 
   // desktop_drop (file drag & drop in the desktop apps) also registers on the
   // web and reports every browser drag to Dart; without a handler each report
@@ -82,7 +74,7 @@ void main() async {
     await initializeDateFormatting(intlLocales[lang]!, null);
   }
   final initialLanguage = await loadInitialLanguage();
-  // REDESIGN: "Neues Design (Beta)", Farbwelt and hell/dunkel of this device
+  // REDESIGN: Farbwelt and hell/dunkel of this device
   final initialRedesign = await loadInitialRedesignSettings();
   // Ionic setPendingLink: a shared file link survives reload / restart.
   await PendingFileLink.restore();
@@ -300,22 +292,12 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
       });
     }
 
-    // ICONS: the normal design shows the Ionic app's Ionicons, the Beta keeps
-    // its Material icons (also on the classic pages it reuses).
-    AppIcons.ionic = !redesign.enabled;
-
     return MaterialApp.router(
       title: 'Attendix',
       debugShowCheckedModeBanner: false,
-      // REDESIGN: the new design brings its Farbwelt and hell/dunkel choice
-      theme: redesign.enabled
-          ? buildRdTheme(redesign.world, Brightness.light)
-          : AppTheme.light,
-      darkTheme: redesign.enabled
-          ? buildRdTheme(redesign.world, Brightness.dark)
-          : AppTheme.dark,
-      themeMode: ref.watch(teamsThemeModeProvider) ??
-          (redesign.enabled ? redesign.themeMode : ThemeMode.system),
+      theme: buildRdTheme(redesign.world, Brightness.light),
+      darkTheme: buildRdTheme(redesign.world, Brightness.dark),
+      themeMode: ref.watch(teamsThemeModeProvider) ?? redesign.themeMode,
       routerConfig: router,
       scaffoldMessengerKey: rootScaffoldMessengerKey,
       // IOS_SHELL: Ionic iOS has no tooltips – hide Material tooltips (tap /
@@ -326,22 +308,13 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
       builder: (context, child) => TooltipVisibility(
         visible: false,
         child: WebSafeArea(
-          // Phone held sideways: stay clear of notch / Dynamic Island.
-          child: SideSafeArea(
-            // PARITY_R3: Ionic ion-modal sheet sizes (600 wide on desktop).
-            child: IonModalTheme(
-              // IOS_R4: Ionic iOS toolbar height (safe area dependent)
-              child: IonToolbarMetrics(
-                // PLATFORM: tap outside a field closes the keyboard (web
-                // view).
-                child: TapOutsideToDismissKeyboard(
-                  // PLATFORM: a field scrolled out of its list loses the
-                  // focus (iOS left its blue selection highlight over the
-                  // list).
-                  child: ScrollAwayDismissesKeyboard(
-                    child: child ?? const SizedBox.shrink(),
-                  ),
-                ),
+          child: IonModalTheme(
+            // PLATFORM: tap outside a field closes the keyboard (web view).
+            child: TapOutsideToDismissKeyboard(
+              // PLATFORM: a field scrolled out of its list loses the focus
+              // (iOS left its blue selection highlight over the list).
+              child: ScrollAwayDismissesKeyboard(
+                child: child ?? const SizedBox.shrink(),
               ),
             ),
           ),
@@ -377,23 +350,4 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
       },
     );
   }
-}
-
-/// Web only: `?mode=ios` / `?ionic:mode=ios` → iOS look, `md` → Material.
-@visibleForTesting
-TargetPlatform? webModeOverride(Uri uri) {
-  final mode = (uri.queryParameters['mode'] ?? uri.queryParameters['ionic:mode'])
-      ?.toLowerCase();
-  return switch (mode) {
-    'ios' => TargetPlatform.iOS,
-    'md' => TargetPlatform.android,
-    _ => null,
-  };
-}
-
-/// WEB_MODE_FIX: only the look follows the override (release-safe);
-/// `debugDefaultTargetPlatformOverride` throws outside debug builds.
-void applyWebModeOverride(Uri uri) {
-  final platform = webModeOverride(uri);
-  if (platform != null) AppTheme.webLookOverride = platform;
 }

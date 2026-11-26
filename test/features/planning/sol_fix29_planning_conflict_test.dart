@@ -7,7 +7,6 @@
 //    before their dialog.
 // 3. Loading a Termin adopts the newest stored row together with its
 //    sequence number (never marks a stale copy as current).
-import 'package:attendix/core/theme/app_icons.dart';
 import 'dart:convert';
 
 import 'package:attendix/core/config/supabase_config.dart';
@@ -19,6 +18,7 @@ import 'package:attendix/core/providers/group_providers.dart';
 import 'package:attendix/core/providers/optional_tabs_providers.dart';
 import 'package:attendix/core/providers/organisation_providers.dart';
 import 'package:attendix/core/providers/plan_providers.dart';
+import 'package:attendix/core/providers/realtime_providers.dart';
 import 'package:attendix/core/providers/song_providers.dart';
 import 'package:attendix/core/providers/team_org_providers.dart';
 import 'package:attendix/core/providers/tenant_providers.dart';
@@ -27,8 +27,8 @@ import 'package:attendix/data/models/plan/plan.dart';
 import 'package:attendix/data/repositories/plan_repository.dart';
 import 'package:attendix/features/planning/data/planning_write_sync.dart';
 import 'package:attendix/features/planning/presentation/pages/planning_page.dart';
+import 'package:attendix/features/redesign/presentation/shell/rd_shell.dart';
 import 'package:attendix/l10n/l10n.dart';
-import 'package:attendix/shared/widgets/layout/main_shell.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -108,6 +108,7 @@ void main() {
         planAttendanceTypesProvider.overrideWith((ref) async => const []),
         planBlockTemplatesProvider.overrideWith((ref) async => const []),
         planSongsProvider.overrideWith((ref) async => const []),
+        songCollectionsProvider.overrideWith((ref) async => null),
         currentSongsProvider.overrideWith((ref) async => const []),
         groupsProvider.overrideWith((ref) async => const []),
         groupCategoriesProvider.overrideWith((ref) async => const []),
@@ -115,6 +116,7 @@ void main() {
         currentOrganisationProvider.overrideWith((ref) async => null),
         hasBrandingProvider.overrideWithValue(false),
         effectiveRoleProvider.overrideWithValue(Role.admin),
+        realtimePendingPlayersProvider.overrideWith((ref) => Stream.value(const [])),
         showDashboardTabProvider.overrideWithValue(false),
         showSongsTabProvider.overrideWithValue(false),
         showOrgPlansTabProvider.overrideWithValue(false),
@@ -156,12 +158,17 @@ void main() {
   }
 
   /// Opens the editor of Termin 7 (plans [plans]) directly.
-  Future<void> openEditor(WidgetTester tester, List<Plan> plans, {List<PlanAttendance> others = const []}) async {
+  Future<void> openEditor(
+    WidgetTester tester,
+    List<Plan> plans, {
+    List<PlanAttendance> others = const [],
+    int? attendanceId = 7,
+  }) async {
     tester.view.physicalSize = const Size(390, 2400);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
     container = makeContainer([row(7, plans), ...others]);
-    await tester.pumpWidget(app(home: const PlanningPage(attendanceId: 7)));
+    await tester.pumpWidget(app(home: PlanningPage(attendanceId: attendanceId)));
     await tester.pumpAndSettle();
   }
 
@@ -187,7 +194,7 @@ void main() {
   }
 
   Future<void> openPlanOption(WidgetTester tester, String option) async {
-    await tester.tap(find.byTooltip('Plan-Optionen'));
+    await tester.tap(find.byKey(const Key('rd-plan-more')));
     await tester.pumpAndSettle();
     await tester.tap(find.text(option));
     await tester.pumpAndSettle();
@@ -241,9 +248,12 @@ void main() {
         initialLocation: '/planning',
         routes: [
           ShellRoute(
-            builder: (context, state, child) => MainShell(child: child),
+            builder: (context, state, child) => RdShell(child: child),
             routes: [
+              GoRoute(path: '/heute', builder: (_, __) => const Placeholder(key: Key('heute'))),
+              GoRoute(path: '/people', builder: (_, __) => const Placeholder(key: Key('people'))),
               GoRoute(path: '/attendance', builder: (_, __) => const Placeholder(key: Key('attendance'))),
+              GoRoute(path: '/settings', builder: (_, __) => const Placeholder(key: Key('settings'))),
               GoRoute(path: '/planning', builder: (_, __) => const PlanningPage(attendanceId: 7)),
             ],
           ),
@@ -315,12 +325,12 @@ void main() {
 
     testWidgets('add: appended to the newest stored row', (tester) async {
       await openEditor(tester, const [_p1, _p2]);
-      await tester.tap(find.byTooltip('Feld hinzufügen'));
+      await tester.tap(find.byKey(const Key('rd-plan-more')));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Weiteren Ablaufplan anlegen'));
+      await tester.tap(find.byKey(const Key('rd-plan-add-plan-more')));
       await tester.pumpAndSettle();
       otherEditorStores(row(7, [_p1, _p2.copyWith(title: 'Von B')]));
-      await tester.tap(button('Leer'));
+      await tester.tap(find.byKey(const Key('rd-plan-new-confirm')));
       await tester.pumpAndSettle();
 
       expect(db.calls, hasLength(1));
@@ -333,18 +343,18 @@ void main() {
     testWidgets('switching back to a Termin stored by another editor meanwhile', (tester) async {
       // Termin 8 (later) is "Nächste" of Termin 7.
       const p8 = Plan(id: 'q', time: '10:00', title: 'Acht', fields: [PlanField(id: 'c', name: 'X', time: '10')]);
-      await openEditor(tester, const [_p1, _p2], others: [row(8, const [p8], days: 5)]);
+      await openEditor(tester, const [_p1, _p2], others: [row(8, const [p8], days: 5)], attendanceId: null);
       expect(titleField('Eins'), findsOneWidget);
-      await tester.ensureVisible(find.byIcon(AppIcons.arrowForward));
-      await tester.tap(find.byIcon(AppIcons.arrowForward));
+      await tester.ensureVisible(find.byTooltip('Nächster Termin'));
+      await tester.tap(find.byTooltip('Nächster Termin'));
       await tester.pumpAndSettle();
       expect(titleField('Acht'), findsOneWidget);
 
       // B stores plan 2 of Termin 7 while A shows Termin 8.
       otherEditorStores(row(7, [_p1, _p2.copyWith(title: 'Von B')]));
 
-      await tester.ensureVisible(find.byIcon(AppIcons.arrowBack));
-      await tester.tap(find.byIcon(AppIcons.arrowBack));
+      await tester.ensureVisible(find.byTooltip('Vorheriger Termin'));
+      await tester.tap(find.byTooltip('Vorheriger Termin'));
       await tester.pumpAndSettle();
       expect(titleField('Eins'), findsOneWidget);
 

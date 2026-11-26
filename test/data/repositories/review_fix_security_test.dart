@@ -45,10 +45,10 @@ void main() {
   group('M2 person detail sync ignores group changes (Ionic parity)', () {
     test('oldInstrument equals the new group', () {
       final source =
-          read('lib/features/people/presentation/pages/person_detail_page.dart');
+          read('lib/features/redesign/presentation/pages/rd_person_edit_page.dart');
       final call = body(source, 'syncPlayerWithUpcomingAttendances(', 400);
-      expect(call, contains('oldInstrument: _selectedGroupId'));
-      expect(call, isNot(contains('oldInstrument: person.instrument')));
+      expect(call, contains('oldInstrument: (_person ?? person).instrument'));
+      expect(call, isNot(contains('oldInstrument: before.instrument')));
     });
   });
 
@@ -129,14 +129,14 @@ void main() {
   group('Attendance detail', () {
     late String source;
     setUpAll(() => source = read(
-        'lib/features/attendance/presentation/pages/attendance_detail_page.dart'));
+        'lib/features/redesign/presentation/pages/rd_event_page.dart'));
 
     // LOGIC_ATT: rows are synced one by one (Ionic add/update/remove
     // history entry) – no bulk delete, and no early return in between.
     test('song history sync never stops half-way', () {
-      // Shared by the old page and the Beta Termin (attendance_song_history.dart).
+      final sections = read('lib/features/redesign/presentation/widgets/event/rd_event_sections.dart');
       final shared = read('lib/features/attendance/presentation/attendance_song_history.dart');
-      expect(source, contains('syncAttendanceSongHistory('));
+      expect(sections, contains('syncAttendanceSongHistory('));
       final sync = body(shared, 'Future<void> syncAttendanceSongHistory(', 2400);
       expect(sync, contains('deleteHistoryEntry'));
       expect(sync, contains('addHistoryEntries'));
@@ -144,28 +144,23 @@ void main() {
       expect(sync, isNot(contains('.delete()')));
     });
 
-    test('mutating menu actions and description are gated', () {
-      final menu = body(source, 'List<AppPopoverMenuItem<String>> _buildAttDetailMenuItems(', 4000);
-      expect(menu, contains("if (canMutate) item('add_person'"));
-      expect(menu, contains("if (canMutate) item('reminder'"));
-      // No "Foto" entry: Ionic has the photo upload commented out.
-      expect(menu, isNot(contains("item('photo'")));
-      // IOS_DETAIL: Ionic shows the description link to Helfer too; viewers
-      // stay read-only.
-      expect(source, contains('onEditDescription: canEditAttendanceDescription('));
+    test('mutating actions are gated and photo upload is not in menu', () {
+      expect(source, contains('canRemove: !isHelper && canMutateAttendanceDetail(role)'));
+      expect(source, contains('canMutateAttendanceDetail(ref.watch(effectiveRoleProvider))'));
+      final menu = body(source, 'Future<void> _openMenu(', 2000);
+      expect(menu, isNot(contains('addAttendancePhoto')));
     });
   });
 
   group('Attendance create', () {
-    test('typeInfo defaults to empty string (Ionic)', () {
+    test('typeInfo defaults to empty string (Ionic) and pop is blocked while saving', () {
       final source = read(
-          'lib/features/attendance/presentation/pages/attendance_create_page.dart');
+          'lib/features/redesign/presentation/pages/rd_event_create_page.dart');
       final writes = read(
           'lib/features/attendance/presentation/attendance_create_writes.dart');
       expect(writes, contains("'typeInfo': input.typeInfo ?? '',"));
-      expect(source, contains('typeInfo: _typeInfo,'));
-      expect(source, contains('shouldCloseOnMinExtent: !isSaving'));
-      expect(source, contains('canPop: !_isLoading'));
+      expect(source, contains('typeInfo: title.isEmpty || title == type.name ? null : title,'));
+      expect(source, contains('canPop: !_saving && !_touched,'));
     });
   });
 }

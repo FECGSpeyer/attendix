@@ -28,17 +28,17 @@ void main() {
     const role = Role.helper;
 
     test('audit routes: planning/parents redirect, history stays (Ionic modal)', () {
-      expect(_go('/planning', role), '/signout');
-      expect(_go('/parents', role), '/signout');
-      expect(_go('/statistics', role), '/signout');
-      expect(_go('/settings/messages', role), '/signout');
+      expect(_go('/planning', role), '/heute');
+      expect(_go('/parents', role), '/heute');
+      expect(_go('/statistics', role), '/heute');
+      expect(_go('/settings/messages', role), '/heute');
       // Ionic settings: Werkhistorie for `isAdmin || isHelper`.
       expect(_go('/history', role), isNull);
     });
 
     test('plan of a Termin may be edited (att-list canEdit: isHelper)', () {
       expect(_go('/planning?attendanceId=12', role), isNull);
-      expect(_go('/planning?attendanceId=x', role), '/signout');
+      expect(_go('/planning?attendanceId=x', role), '/heute');
     });
 
     test('own tabs stay reachable', () {
@@ -61,7 +61,7 @@ void main() {
         '/home-dashboard',
         '/org-plans-tab',
       ]) {
-        expect(_go(r, role), '/signout', reason: r);
+        expect(_go(r, role), '/heute', reason: r);
       }
     });
   });
@@ -69,7 +69,7 @@ void main() {
   group('player', () {
     const role = Role.player;
 
-    test('restricted routes redirect to /signout', () {
+    test('restricted routes redirect to /heute', () {
       for (final r in [
         '/planning',
         '/planning?attendanceId=3',
@@ -84,7 +84,7 @@ void main() {
         '/settings/planung',
         '/settings/voice-leader',
       ]) {
-        expect(_go(r, role), '/signout', reason: r);
+        expect(_go(r, role), '/heute', reason: r);
       }
     });
 
@@ -96,8 +96,8 @@ void main() {
 
     test('tenant flags: members list and multiple instances', () {
       const single = RouteAccessTenant(showMembersList: false, tenantCount: 1);
-      expect(_go('/members', role, tenant: single), '/signout');
-      expect(_go('/overview', role, tenant: single), '/signout');
+      expect(_go('/members', role, tenant: single), '/heute');
+      expect(_go('/overview', role, tenant: single), '/heute');
       // unknown tenant data never blocks (cold start)
       expect(_go('/members', role, tenant: const RouteAccessTenant()), isNull);
     });
@@ -107,11 +107,11 @@ void main() {
     test('voice-leader settings only for VL/VLH', () {
       expect(_go('/settings/voice-leader', Role.voiceLeader), isNull);
       expect(_go('/settings/voice-leader', Role.voiceLeaderHelper), isNull);
-      expect(_go('/settings/voice-leader', Role.admin), '/people');
+      expect(_go('/settings/voice-leader', Role.admin), '/heute');
     });
 
     test('overview is not a voice-leader tab (Ionic isPlayer || isHelper)', () {
-      expect(_go('/overview', Role.voiceLeader), '/signout');
+      expect(_go('/overview', Role.voiceLeader), '/heute');
       expect(_go('/overview', Role.voiceLeaderHelper), isNull);
     });
   });
@@ -140,20 +140,20 @@ void main() {
           expect(_go(r, role), isNull, reason: '${role.name} $r');
         }
       }
-      expect(_go('/settings/users', Role.responsible), '/people');
+      expect(_go('/settings/users', Role.responsible), '/heute');
     });
 
     test('admin has no self-service or parent tabs', () {
-      expect(_go('/signout', Role.admin), '/people');
-      expect(_go('/parents', Role.admin), '/people');
-      expect(_go('/overview', Role.admin), '/people');
-      expect(_go('/members', Role.admin), '/people');
+      expect(_go('/signout', Role.admin), '/heute');
+      expect(_go('/parents', Role.admin), '/heute');
+      expect(_go('/overview', Role.admin), '/heute');
+      expect(_go('/members', Role.admin), '/heute');
     });
 
     test('general tenants have no Werkhistorie', () {
       expect(
         _go('/history', Role.admin, tenant: const RouteAccessTenant(type: 'general')),
-        '/people',
+        '/heute',
       );
     });
 
@@ -172,12 +172,12 @@ void main() {
         '/signout',
         '/settings/messages',
       ]) {
-        expect(_go(r, role), '/people', reason: r);
+        expect(_go(r, role), '/heute', reason: r);
       }
     });
   });
 
-  group('parent (Ionic start page /tabs/parents)', () {
+  group('parent (start page /heute)', () {
     const role = Role.parent;
 
     test('parents portal only for parents', () {
@@ -185,7 +185,7 @@ void main() {
       expect(_go('/settings', role), isNull);
     });
 
-    test('everything else lands on /parents (no /signout loop)', () {
+    test('everything else lands on /heute', () {
       for (final r in [
         '/signout',
         '/members',
@@ -198,7 +198,7 @@ void main() {
         '/statistics',
         '/settings/messages',
       ]) {
-        expect(_go(r, role), '/parents', reason: r);
+        expect(_go(r, role), '/heute', reason: r);
       }
     });
   });
@@ -220,7 +220,7 @@ void main() {
         '/people',
         '/attendance',
       ]) {
-        expect(_go(r, role), '/signout', reason: r);
+        expect(_go(r, role), '/heute', reason: r);
       }
     });
   });

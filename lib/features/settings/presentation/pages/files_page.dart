@@ -1,9 +1,7 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -15,8 +13,6 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/services/audio_player/audio_player_service.dart';
 import '../../../../core/services/native/native_file_service.dart';
 import '../../../../core/services/telegram_service.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/system_share.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/storage/storage_entry.dart';
@@ -27,15 +23,10 @@ import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../l10n/l10n.dart';
 import '../widgets/files_move_modal.dart';
-import '../widgets/settings_list.dart';
-import '../../../../shared/widgets/layout/ionic_md.dart' show IonMd;
-import '../../../../shared/widgets/layout/ionic_ios.dart' show IonInsetList;
 import '../../../../core/utils/file_mime.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/adaptive/ion_loading.dart';
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
-import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/router/route_access.dart' show canOpenSongsTab;
 import '../../../../core/providers/debug_providers.dart' show effectiveRoleProvider;
@@ -217,9 +208,6 @@ class _FilesPageState extends ConsumerState<FilesPage> {
 
   FilesRepository get _repo => ref.read(filesRepositoryWithTenantProvider);
 
-  /// The new design (Beta switch): same logic, Beta look and sheets.
-  bool get _beta => ref.read(redesignEnabledProvider);
-
   /// Whether [tenantId] (read when an action started) is still the current
   /// group; an action that started in another group writes nothing.
   bool _stillIn(int? tenantId) => mounted && tenantId != null && ref.read(currentTenantIdProvider) == tenantId;
@@ -245,33 +233,11 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     });
   }
 
-  /// Text input: the Beta text sheet or the old dialog.
-  Future<String?> _askText({required String title, String initial = '', String? hint, String? confirmText}) {
-    if (_beta) {
-      return showRdTextSheet(context, title: title, initial: initial, hint: hint, capitalization: TextCapitalization.none);
-    }
-    return DialogHelper.showTextInput(
-      context,
-      title: title,
-      initialValue: initial.isEmpty ? null : initial,
-      hint: hint,
-      confirmText: confirmText,
-    );
-  }
+  Future<String?> _askText({required String title, String initial = '', String? hint, String? confirmText}) =>
+      showRdTextSheet(context, title: title, initial: initial, hint: hint, capitalization: TextCapitalization.none);
 
-  /// Confirmation: the Beta confirm or the old dialog.
-  Future<bool> _confirm({required String title, required String message, required String confirmText}) {
-    if (_beta) {
-      return showAppConfirm(context, title: title, message: message, confirmText: confirmText, destructive: true);
-    }
-    return DialogHelper.showConfirmation(
-      context,
-      title: title,
-      message: message,
-      confirmText: confirmText,
-      isDestructive: true,
-    );
-  }
+  Future<bool> _confirm({required String title, required String message, required String confirmText}) =>
+      showAppConfirm(context, title: title, message: message, confirmText: confirmText, destructive: true);
   bool get _canEdit => ref.read(canEditFilesProvider);
   int? get _maxBytes => ref.read(currentTenantProvider)?.filesMaxBytes;
 
@@ -474,15 +440,10 @@ class _FilesPageState extends ConsumerState<FilesPage> {
       ToastHelper.showWarning(context, context.l10n.filesConnectTelegram);
       return;
     }
-    final beta = ref.read(redesignEnabledProvider);
-    if (beta) ToastHelper.showInfo(context, context.l10n.filesSendingTelegram);
+    ToastHelper.showInfo(context, context.l10n.filesSendingTelegram);
     try {
-      Future<void> send() async {
-        final url = await repo.getSignedFileUrl(entry.path, expiresInSeconds: 600);
-        await ref.read(telegramServiceProvider).sendDocumentPerTelegram(url: url, chatId: chatId);
-      }
-      // Ionic: `ion-loading` "Datei wird per Telegram gesendet..." (WER-19).
-      beta ? await send() : await _withLoading(send, message: context.l10n.filesSendingTelegram);
+      final url = await repo.getSignedFileUrl(entry.path, expiresInSeconds: 600);
+      await ref.read(telegramServiceProvider).sendDocumentPerTelegram(url: url, chatId: chatId);
       if (mounted) ToastHelper.showSuccess(context, context.l10n.svcMessageSent);
     } catch (e) {
       if (mounted) ToastHelper.showError(context, context.l10n.filesTelegramFailed(_errorText(e)));
@@ -494,11 +455,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     final openFailed = context.l10n.filesFlutterOpenLinkFailed;
     final repo = _repo;
     try {
-      // Ionic downloadFile: `ion-loading` while the link is fetched (WER-19).
-      Future<String> link() => repo.getSignedFileUrl(entry.path, downloadName: entry.name);
-      final url = ref.read(redesignEnabledProvider)
-          ? await link()
-          : await withIonLoading(context, link);
+      final url = await repo.getSignedFileUrl(entry.path, downloadName: entry.name);
       // NATIVE_MISC: native app → cache dir + system viewer (Ionic downloadFileNative)
       final ok = await NativeFileService.openUrl(url, fileName: entry.name);
       if (!ok) throw Exception(openFailed);
@@ -885,13 +842,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     return false;
   }
 
-  /// Upload progress: Ionic `ion-loading` whose message follows the upload
-  /// (WER-19); the Beta keeps its alert with spinner and text.
   ({void Function(String) update, VoidCallback close}) _showUploadProgress(String initial) {
-    if (!ref.read(redesignEnabledProvider)) {
-      final loading = showIonLoading(context, message: initial);
-      return (update: (m) => loading.message = m, close: loading.dismiss);
-    }
     final progress = ValueNotifier<String>(initial);
     final navigator = Navigator.of(context, rootNavigator: true);
     showAppDialog<void>(
@@ -1055,130 +1006,9 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     return spans;
   }
 
-  /// Ionic `ion-popover` at the ⋯ button of an entry (same entries,
-  /// order and conditions; a tap outside closes it).
-  Future<void> _showEntryActions(BuildContext button, StorageEntry entry) async {
-    final tenantId = ref.read(currentTenantIdProvider);
-    final canEdit = _canEdit;
-    final isAudio = FilesSearch.isAudio(entry);
-    final action = await showAppPopoverMenu<VoidCallback>(
-      context: button,
-      items: [
-        AppPopoverMenuItem(
-          value: () => _openEntry(entry),
-          icon: isAudio ? AppIcons.playCircleOutline : AppIcons.openInNew,
-          label: entry.isFolder
-              ? context.l10n.filesFlutterOpenFolder
-              : isAudio
-                  ? context.l10n.songsPlayRecording
-                  : context.l10n.filesFlutterOpenDownload,
-        ),
-        if (!entry.isFolder)
-          AppPopoverMenuItem(
-            value: () => _downloadEntry(entry),
-            icon: AppIcons.downloadOutlined,
-            label: context.l10n.filesDownload,
-          ),
-        AppPopoverMenuItem(
-          value: () => _shareEntry(entry),
-          icon: AppIcons.link,
-          label: context.l10n.filesShareLink,
-        ),
-        // INTEGRATION: Ionic files "Per Telegram senden"
-        if (!entry.isFolder && (_telegramChatId?.isNotEmpty ?? false))
-          AppPopoverMenuItem(
-            value: () => _sendEntryPerTelegram(entry),
-            icon: AppIcons.paperPlaneOutline,
-            label: context.l10n.filesSendTelegram,
-          ),
-        if (canEdit) ...[
-          AppPopoverMenuItem(
-            value: () => _renameEntry(entry),
-            icon: AppIcons.editOutlined,
-            label: context.l10n.filesRename,
-          ),
-          AppPopoverMenuItem(
-            value: () => _moveEntry(entry),
-            icon: AppIcons.swapHoriz,
-            label: context.l10n.filesMove,
-          ),
-          // Ionic 4.19.1: "Mehrere auswählen" (starts with this entry)
-          AppPopoverMenuItem(
-            value: () => _startSelection(entry),
-            icon: AppIcons.checkCircleOutline,
-            label: context.l10n.filesSelectMultiple,
-          ),
-          // Ionic: plain item (not red) like the others
-          AppPopoverMenuItem(
-            value: () => _deleteEntry(entry),
-            icon: AppIcons.deleteOutline,
-            label: context.l10n.commonDelete,
-          ),
-        ],
-      ],
-    );
-    // An entry of a group switched away from is not acted on.
-    if (!mounted || !_stillIn(tenantId)) return;
-    action?.call();
-  }
-
-  void _onMenuSelected(String value) {
-    switch (value) {
-      case 'upload':
-        _upload();
-      case 'folder':
-        _createFolder();
-      case 'select':
-        _startSelection();
-      case 'share':
-        _shareEntry();
-      case 'sort_name':
-        setState(() {
-          _sortBy = FilesSortBy.name;
-          _entries = FilesSearch.sort(_entries, _sortBy, _ascending);
-        });
-      case 'sort_date':
-        setState(() {
-          _sortBy = FilesSortBy.updatedAt;
-          _entries = FilesSearch.sort(_entries, _sortBy, _ascending);
-        });
-      case 'sort_size':
-        setState(() {
-          _sortBy = FilesSortBy.size;
-          _entries = FilesSearch.sort(_entries, _sortBy, _ascending);
-        });
-      case 'sort_dir':
-        setState(() {
-          _ascending = !_ascending;
-          _entries = FilesSearch.sort(_entries, _sortBy, _ascending);
-        });
-    }
-  }
-
   // ---------------------------------------------------------------------------
   // UI
   // ---------------------------------------------------------------------------
-
-  /// Ionic 4.19.16 `handleInPageBack`: beendet zuerst den Auswahlmodus,
-  /// geht in Unterordnern eine Ebene hoch. false = im obersten Ordner oder
-  /// kein Zugriff.
-  bool _handleInPageBack({required bool canAccess}) {
-    if (!canAccess) return false;
-    if (_selectionMode) {
-      _exitSelection();
-      return true;
-    }
-    if (_currentPath.isNotEmpty) {
-      _navigateTo(FilesRepository.parentPath(_currentPath));
-      return true;
-    }
-    return false;
-  }
-
-  void _goBackClassic(BuildContext context, {required bool canAccess}) {
-    if (_handleInPageBack(canAccess: canAccess)) return;
-    context.canPop() ? context.pop() : context.go('/settings');
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -1188,559 +1018,6 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     ref.listen<int?>(currentTenantIdProvider, (prev, next) {
       if (prev != next) _onTenantChanged();
     });
-    if (ref.watch(redesignEnabledProvider)) {
-      return _buildBeta(context, canAccess: canAccess, isRoleLoading: isRoleLoading, canEdit: canEdit);
-    }
-
-    return PopScope(
-      canPop: !canAccess || (_currentPath.isEmpty && !_selectionMode),
-      onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) _handleInPageBack(canAccess: canAccess);
-      },
-      child: Scaffold(
-      // Ionic 4.19.1: selection toolbar (✕, "n ausgewählt", Alle/Keine)
-      appBar: _selectionMode
-          ? AppBar(
-              automaticallyImplyLeading: false,
-              // WER-18: `ion-buttons` (ios27 glass on iOS) at both ends.
-              leading: Center(
-                child: ToolbarButtonGroup(children: [
-                  IconButton(
-                    icon: Icon(AppIcons.close),
-                    tooltip: context.l10n.filesSelectionDone,
-                    onPressed: _exitSelection,
-                  ),
-                ]),
-              ),
-              leadingWidth: ionIsIos(context) ? 72 : null,
-              title: Text(context.l10n.filesSelectedCount(_selectedPaths.length)),
-              actions: [
-                ToolbarButtonGroup(children: [
-                  TextButton(
-                    onPressed: _toggleSelectAll,
-                    child: IonButtonLabel(_allVisibleSelected
-                        ? context.l10n.filesSelectNone
-                        : context.l10n.filesSelectAll),
-                  ),
-                ]),
-              ],
-            )
-          : AppBar(
-        title: Text(context.l10n.filesTitle),
-        // UX_SETTINGS (WAVE 8): files.page.html — arrow-back button.
-        // IOS_FORMS2: iOS → start/end ion-buttons in Liquid Glass circles
-        leading: ionIsIos(context)
-            ? Center(
-                child: Semantics(
-                  button: true,
-                  label: MaterialLocalizations.of(context).backButtonTooltip,
-                  child: GestureDetector(
-                    onTap: () => _goBackClassic(context, canAccess: canAccess),
-                    // PARITY_R7: Ionic `ion-buttons` glass around a clear
-                    // icon-only `ion-button` (28px ionicon, 25px radius) is
-                    // larger than the 44pt back circle.
-                    child: IosCircleIcon(icon: AppIcons.arrowBack, size: 48, iconSize: 24),
-                  ),
-                ),
-              )
-            : IconButton(
-                icon: Icon(AppIcons.arrowBack, semanticLabel: context.l10n.commonBack),
-                onPressed: () => _goBackClassic(context, canAccess: canAccess),
-              ),
-        leadingWidth: ionIsIos(context) ? 72 : null, // PARITY_R7: 12 + 48 + 12
-        actions: [
-          if (canAccess)
-            ToolbarButtonGroup(children: [
-            // Ionic 4.19.1: "Auswählen" (checkmark-circle-outline)
-            if (canEdit && _entries.isNotEmpty)
-              IconButton(
-                icon: Icon(AppIcons.checkCircleOutline),
-                tooltip: context.l10n.filesSelect,
-                onPressed: () => _startSelection(),
-              ),
-            // Ionic `ion-popover #filesMenuPopover`: `ion-list` (item
-            // lines) with icons in slot start; the sorting row is a plain
-            // `ion-item lines="none"` with h3 / p – no divider.
-            if (context.rdSkin == null)
-              Builder(
-                builder: (buttonContext) => IconButton(
-                  icon: Icon(AppIcons.moreVert),
-                  tooltip: MaterialLocalizations.of(context).showMenuTooltip,
-                  onPressed: () async {
-                    final value = await showAppPopoverMenu<String>(
-                      context: buttonContext,
-                      lines: true,
-                      items: [
-                        if (canEdit) ...[
-                          AppPopoverMenuItem(
-                            value: 'upload',
-                            icon: AppIcons.cloudUploadOutlined,
-                            label: context.l10n.filesUpload,
-                          ),
-                          AppPopoverMenuItem(
-                            value: 'folder',
-                            icon: AppIcons.folderOpenOutlined,
-                            label: context.l10n.filesCreateFolder,
-                          ),
-                          if (_entries.isNotEmpty)
-                            AppPopoverMenuItem(
-                              value: 'select',
-                              icon: AppIcons.checkCircleOutline,
-                              label: context.l10n.filesSelectMultiple,
-                            ),
-                        ],
-                        AppPopoverMenuItem(
-                          value: 'share',
-                          icon: AppIcons.shareSocialOutline,
-                          label: _currentPath.isNotEmpty
-                              ? context.l10n.filesFlutterShareFolderLink
-                              : context.l10n.filesFlutterShareRootLink,
-                        ),
-                        AppPopoverMenuItem.info(
-                          context.l10n.filesSorting,
-                          '',
-                          subtitle: _sortLabel,
-                        ),
-                        AppPopoverMenuItem(
-                          value: 'sort_name',
-                          icon: AppIcons.textFields,
-                          label: context.l10n.filesName,
-                        ),
-                        AppPopoverMenuItem(
-                          value: 'sort_date',
-                          icon: AppIcons.calendarTodayOutlined,
-                          label: context.l10n.filesModified,
-                        ),
-                        AppPopoverMenuItem(
-                          value: 'sort_size',
-                          icon: AppIcons.straighten,
-                          label: context.l10n.filesSize,
-                        ),
-                        AppPopoverMenuItem(
-                          value: 'sort_dir',
-                          icon: _ascending ? AppIcons.arrowUpward : AppIcons.arrowDownward,
-                          label: _ascending
-                              ? context.l10n.filesFlutterAscending
-                              : context.l10n.filesFlutterDescending,
-                          lines: false,
-                        ),
-                      ],
-                    );
-                    if (value != null && mounted) _onMenuSelected(value);
-                  },
-                ),
-              )
-            else
-            // Beta design: its Material menu as before.
-            PopupMenuButton<String>(
-              icon: Icon(AppIcons.moreVert),
-              onSelected: _onMenuSelected,
-              itemBuilder: (_) => [
-                if (canEdit) ...[
-                  PopupMenuItem(
-                    value: 'upload',
-                    child: ListTile(leading: Icon(AppIcons.cloudUploadOutlined), title: Text(context.l10n.filesUpload), contentPadding: EdgeInsets.zero),
-                  ),
-                  PopupMenuItem(
-                    value: 'folder',
-                    child: ListTile(leading: Icon(AppIcons.createNewFolderOutlined), title: Text(context.l10n.filesCreateFolder), contentPadding: EdgeInsets.zero),
-                  ),
-                  // Ionic 4.19.1: "Mehrere auswählen"
-                  if (_entries.isNotEmpty)
-                    PopupMenuItem(
-                      value: 'select',
-                      child: ListTile(leading: Icon(AppIcons.checkCircleOutline), title: Text(context.l10n.filesSelectMultiple), contentPadding: EdgeInsets.zero),
-                    ),
-                ],
-                PopupMenuItem(
-                  value: 'share',
-                  child: ListTile(
-                    leading: Icon(AppIcons.shareOutlined),
-                    title: Text(_currentPath.isNotEmpty ? context.l10n.filesFlutterShareFolderLink : context.l10n.filesFlutterShareRootLink),
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                ),
-                const PopupMenuDivider(),
-                PopupMenuItem(
-                  enabled: false,
-                  child: ListTile(title: Text(context.l10n.filesSorting), subtitle: Text(_sortLabel), contentPadding: EdgeInsets.zero),
-                ),
-                PopupMenuItem(
-                  value: 'sort_name',
-                  child: ListTile(leading: Icon(AppIcons.textFields), title: Text(context.l10n.filesName), contentPadding: EdgeInsets.zero),
-                ),
-                PopupMenuItem(
-                  value: 'sort_date',
-                  child: ListTile(leading: Icon(AppIcons.calendarTodayOutlined), title: Text(context.l10n.filesModified), contentPadding: EdgeInsets.zero),
-                ),
-                PopupMenuItem(
-                  value: 'sort_size',
-                  child: ListTile(leading: Icon(AppIcons.straighten), title: Text(context.l10n.filesSize), contentPadding: EdgeInsets.zero),
-                ),
-                PopupMenuItem(
-                  value: 'sort_dir',
-                  child: ListTile(
-                    leading: Icon(_ascending ? AppIcons.arrowUpward : AppIcons.arrowDownward),
-                    title: Text(_ascending ? context.l10n.filesFlutterAscending : context.l10n.filesFlutterDescending),
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                ),
-              ],
-            ),
-            ]),
-        ],
-      ),
-      // Ionic 4.19.1: footer of the selection – move / delete together.
-      bottomNavigationBar: _selectionMode
-          // WER-18: `ion-footer > ion-toolbar` – toolbar surface, line on top.
-          ? DecoratedBox(
-              decoration: BoxDecoration(
-                color: Theme.of(context).appBarTheme.backgroundColor ??
-                    Theme.of(context).colorScheme.surface,
-                border: Border(
-                  top: BorderSide(
-                    color: ionIsIos(context)
-                        ? IonIos.line(context)
-                        : IonMd.line(Theme.of(context).brightness),
-                    width: ionIsIos(context) ? 0.55 : 1,
-                  ),
-                ),
-              ),
-              child: SafeArea(
-              top: false,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    TextButton.icon(
-                      onPressed: _selectedPaths.isEmpty ? null : _moveSelected,
-                      icon: Icon(AppIcons.swapHoriz),
-                      label: IonButtonLabel(context.l10n.filesMove),
-                    ),
-                    TextButton.icon(
-                      style: TextButton.styleFrom(foregroundColor: AppColors.danger),
-                      onPressed: _selectedPaths.isEmpty ? null : _deleteSelected,
-                      icon: Icon(AppIcons.deleteOutline),
-                      label: IonButtonLabel(context.l10n.commonDelete),
-                    ),
-                  ],
-                ),
-              ),
-              ),
-            )
-          : null,
-      // IOS_PAGES3: Ionic has no FAB in either mode – upload lives in the
-      // toolbar menu (⋮ → Hochladen).
-      body: isRoleLoading
-          ? const Center(child: AppSpinner())
-          : !canAccess
-              ? Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(AppDimensions.paddingL),
-                    child: Text(context.l10n.filesNoAccess, textAlign: TextAlign.center),
-                  ),
-                )
-              : RefreshIndicator.adaptive(
-                  onRefresh: _loadEntries,
-                  child: ListView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 16, fabRoom: 64)),
-                    children: [
-                      _buildBreadcrumbs(),
-                      if (canEdit && _usedBytes != null) _buildStorageUsage(),
-                      _buildSearch(),
-                      ..._buildList(),
-                    ],
-                  ),
-                ),
-      ),
-    );
-  }
-
-  Widget _buildBreadcrumbs() {
-    final segments = _pathSegments;
-    // IOS_PAGES3: same breadcrumbs in md mode (files.page.scss is mode-free).
-    // Ionic .breadcrumbs-container: medium crumbs (0.88rem/500), the
-    // active (last) one in primary, chevron separators.
-    Widget crumb(String label, String path, bool active) => GestureDetector(
-          onTap: () => _navigateTo(path),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
-            child: Text(
-              label,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: active ? AppColors.primary : AppColors.mediumOf(context),
-              ),
-            ),
-          ),
-        );
-    final crumbs = <Widget>[crumb(context.l10n.filesRoot, '', segments.isEmpty)];
-    for (var i = 0; i < segments.length; i++) {
-      // WER-17: `ion-breadcrumb` separators – chevron in iOS, "/" in md.
-      crumbs.add(ionIsIos(context)
-          ? Icon(AppIcons.cupertinoChevronForward, size: 14, color: AppColors.mediumOf(context))
-          : Padding(
-              padding: EdgeInsets.symmetric(horizontal: 2),
-              child: Text('/', style: TextStyle(fontSize: 14, color: AppColors.mediumOf(context))),
-            ));
-      crumbs.add(crumb(
-        segments[i],
-        segments.sublist(0, i + 1).join('/'),
-        i == segments.length - 1,
-      ));
-    }
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.fromLTRB(10, 14, 10, 12),
-      child: Row(children: crumbs),
-    );
-  }
-
-  Widget _buildStorageUsage() {
-    final max = _maxBytes;
-    final used = _usedBytes ?? 0;
-    final text = max != null
-        ? context.l10n.filesStorageUsedOf(formatFileSize(used), formatFileSize(max))
-        : context.l10n.filesStorageUsed(formatFileSize(used));
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM, vertical: AppDimensions.paddingS),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('$text$_storageStatusLabel',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.mediumOf(context))),
-          if (max != null && max > 0) ...[
-            const SizedBox(height: 4),
-            Builder(builder: (context) {
-              final color = used >= max * 0.9 ? AppColors.danger : AppColors.primary;
-              // NB-W01: Ionic `ion-progress-bar` – 4px, the track in the bar
-              // colour at 30 % (an empty store no longer looks full).
-              final classic = context.rdSkin == null;
-              return LinearProgressIndicator(
-                value: (used / max).clamp(0.0, 1.0),
-                color: color,
-                backgroundColor: classic ? color.withValues(alpha: 0.3) : null,
-                minHeight: classic ? 4 : null,
-                borderRadius: classic ? BorderRadius.zero : null,
-              );
-            }),
-          ],
-          if (_isStorageAlmostFull)
-            TextButton.icon(
-              onPressed: _requestMoreStorage,
-              icon: Icon(AppIcons.addCircleOutline),
-              label: IonButtonLabel(context.l10n.filesRequestMore),
-            ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSearch() {
-    // PARITY_R9: Ionic `.search-row` – the searchbar (host padding 8 on
-    // both platforms: iOS ios27 glass, md white with shadow) next to the
-    // help button; "Suche zurücksetzen" below while a term is entered.
-    final ios = ionIsIos(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: IonSearchbar(
-                controller: _searchController,
-                hint: context.l10n.filesSearchPlaceholder,
-                onChanged: (_) {},
-                padding: ios ? const EdgeInsets.all(8) : IonMd.searchbarPadding,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(right: ios ? 8 : 4),
-              child: Builder(
-                builder: (button) => IconButton(
-                  icon: Icon(ios ? AppIcons.cupertinoQuestionCircle : AppIcons.helpOutline,
-                      color: AppColors.mediumOf(context), semanticLabel: context.l10n.a11yHelp),
-                  onPressed: () => _showSearchHelp(button),
-                ),
-              ),
-            ),
-          ],
-        ),
-        if (_hasSearchTerm)
-          Padding(
-            padding: const EdgeInsets.only(left: 8),
-            child: TextButton(onPressed: _searchController.clear, child: IonButtonLabel(context.l10n.filesResetSearch)),
-          ),
-      ],
-    );
-  }
-
-  List<Widget> _buildList() {
-    if (_isLoading && _entries.isEmpty) {
-      return const [Padding(padding: EdgeInsets.all(32), child: Center(child: AppSpinner()))];
-    }
-    if (_entries.isEmpty) {
-      return [_EmptyCard(icon: AppIcons.folderOpenOutlined, text: context.l10n.filesFolderEmpty)];
-    }
-    final filtered = _filteredEntries;
-    if (filtered.isEmpty) {
-      return [_EmptyCard(icon: AppIcons.search, text: context.l10n.filesNoHits(_searchController.text))];
-    }
-    if (ionIsIos(context)) {
-      return [
-        Padding(
-          padding: const EdgeInsets.all(16),
-          child: IonInsetGroup(
-            dividerIndent: IonIos.iconDividerIndent,
-            children: [for (final e in filtered) _buildEntryTile(e)],
-          ),
-        ),
-      ];
-    }
-    // WER-17: md `ion-list [inset]="true"` – rounded, no shadow, item lines
-    // from the label start (16 + 24px icon + 32px gap).
-    return [
-      IonInsetList(
-        margin: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
-        dividerIndent: 72,
-        children: [for (final e in filtered) _buildEntryTile(e)],
-      ),
-    ];
-  }
-
-  Widget _buildEntryTile(StorageEntry entry) {
-    final preview = _imagePreviewUrls[entry.path];
-    final ios = ionIsIos(context);
-    Widget leading;
-    if (preview != null) {
-      // ion-thumbnail.file-thumb: 38px, radius 6
-      leading = ClipRRect(
-        borderRadius: BorderRadius.circular(ios ? 6 : 4),
-        child: Image.network(
-          preview,
-          width: ios ? 38 : 40,
-          height: ios ? 38 : 40,
-          fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => Icon(AppIcons.imageOutlined),
-        ),
-      );
-    } else {
-      // IOS_PAGES3: Ionic folder-outline / document-outline for every
-      // entry; md start icons in the 54 % text colour, no primary tint.
-      leading = Icon(
-        entry.isFolder ? AppIcons.folderOutlined : AppIcons.insertDriveFileOutlined,
-        color: ios
-            ? null
-            : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54),
-      );
-    }
-
-    String? subtitle;
-    if (!entry.isFolder && entry.size != null) {
-      subtitle = formatFileSize(entry.size);
-      if (entry.updatedAt != null) {
-        subtitle += ' ${context.l10n.filesChangedAt(FilesSearch.formatUpdatedAt(entry.updatedAt))}';
-      }
-    }
-
-    final Widget leadingBox = ios
-        ? (preview != null ? leading : SizedBox(width: IonIos.itemIconSize, child: Center(child: leading)))
-        : SizedBox(width: 40, height: 40, child: Center(child: leading));
-    final selected = _selectionMode && _selectedPaths.contains(entry.path);
-
-    return ListTile(
-      // Ionic 4.19.1: checkbox in front while selecting, row tinted.
-      leading: _selectionMode
-          ? Row(mainAxisSize: MainAxisSize.min, children: [
-              ExcludeSemantics(
-                child: IgnorePointer(
-                  child: Checkbox(value: selected, onChanged: (_) {}),
-                ),
-              ),
-              const SizedBox(width: 4),
-              leadingBox,
-            ])
-          : leadingBox,
-      title: Text(entry.name),
-      subtitle: subtitle != null ? Text(subtitle) : null,
-      tileColor: selected ? AppColors.primary.withValues(alpha: 0.1) : null,
-      onTap: () => _selectionMode ? _toggleSelection(entry) : _openEntry(entry),
-      trailing: _selectionMode
-          ? null
-          : Builder(
-              builder: (button) => IconButton(
-                icon: Icon(AppIcons.moreHoriz, color: AppColors.mediumOf(context), semanticLabel: context.l10n.a11yMoreActions),
-                onPressed: () => _showEntryActions(button, entry),
-              ),
-            ),
-    );
-  }
-}
-
-class _EmptyCard extends StatelessWidget {
-  const _EmptyCard({required this.icon, required this.text});
-
-  final IconData icon;
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    final ios = ionIsIos(context);
-    if (ios) {
-      // IOS_FORMS2: Ionic iOS ion-card here renders flat (no shadow) with
-      // the message in the text colour at 17pt.
-      // PARITY_R9: ios27 `ion-card-content` – padding 16 20, 1rem (17pt)
-      // text with line-height 1.29 (`p { font-size: inherit }`).
-      return Container(
-        key: const ValueKey('files-empty-card'),
-        width: double.infinity,
-        margin: const EdgeInsets.all(AppDimensions.paddingM),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        decoration: BoxDecoration(
-          color: IonIos.itemBackground(context),
-          borderRadius: BorderRadius.circular(IonIos.groupRadius),
-        ),
-        child: Column(
-          children: [
-            // PARITY_R7: Ionic `folder-open-outline` at 48px draws a ≈36pt
-            // outline folder; the Material glyph fills more of its box.
-            Icon(
-              icon == AppIcons.folderOpenOutlined ? AppIcons.cupertinoFolderOpen : icon,
-              size: 44,
-              color: IonIos.text(context).withValues(alpha: 0.6),
-            ),
-            const SizedBox(height: AppDimensions.paddingS),
-            Text(
-              text,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 17, height: 1.29, color: IonIos.text(context)),
-            ),
-          ],
-        ),
-      );
-    }
-    return IonCardBox(
-      margin: const EdgeInsets.all(AppDimensions.paddingM),
-      child: Padding(
-        padding: const EdgeInsets.all(AppDimensions.paddingL),
-        child: Column(
-          children: [
-            Icon(
-              icon,
-              size: 48,
-              color: ios
-                  ? IonIos.text(context).withValues(alpha: 0.6)
-                  : AppColors.mediumOf(context),
-            ),
-            const SizedBox(height: AppDimensions.paddingS),
-            Text(text, textAlign: TextAlign.center),
-          ],
-        ),
-      ),
-    );
+    return _buildBeta(context, canAccess: canAccess, isRoleLoading: isRoleLoading, canEdit: canEdit);
   }
 }

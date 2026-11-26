@@ -6,7 +6,7 @@ import 'package:attendix/shared/widgets/adaptive/adaptive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-/// Shared Ionic alert inputs: `AppAlertInput`, `AppAlertInputGroup`,
+/// Shared alert inputs: `AppAlertInput`, `AppAlertInputGroup`,
 /// `AppAlertRadioGroup`, `AppAlertCheckboxGroup`, `showAppCheckboxAlert`.
 void main() {
   Widget app(ThemeData theme, Widget home) => MaterialApp(
@@ -44,8 +44,6 @@ void main() {
       await tester.tap(find.text('go'));
       await tester.pumpAndSettle();
 
-      // No Material list tiles: the rows are the Ionic alert rows.
-      expect(find.byType(CheckboxListTile), findsNothing);
       expect(find.byType(AppAlertCheckboxGroup<int>), findsOneWidget);
 
       // Disabled row does not change, the veto keeps "Entschuldigt".
@@ -55,55 +53,13 @@ void main() {
       await tester.tap(find.text('Verspätet'));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text(platform == TargetPlatform.iOS ? 'Übernehmen' : 'ÜBERNEHMEN'));
+      await tester.tap(find.text('Übernehmen'));
       await tester.pumpAndSettle();
       expect(result, {1, 2, 3});
     });
-
-    testWidgets('alert input + radio group ($platform): placeholder only, tap selects', (tester) async {
-      final controller = TextEditingController();
-      addTearDown(controller.dispose);
-      String? picked;
-      await tester.pumpWidget(app(
-        AppTheme.forPlatform(Brightness.light, platform),
-        StatefulBuilder(
-          builder: (context, setState) => Column(
-            children: [
-              AppAlertDialog(
-                title: const Text('Ordner'),
-                content: AppAlertInput(controller: controller, placeholder: 'Name eingeben...'),
-              ),
-              AppAlertDialog(
-                title: const Text('Format'),
-                content: AppAlertRadioGroup<String>(
-                  options: const [AppAlertOption('a', '4:3'), AppAlertOption('b', '16:9')],
-                  groupValue: picked,
-                  onChanged: (v) => setState(() => picked = v),
-                  beta: const Text('beta content'),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ));
-
-      // Ionic alert input: placeholder, no floating label, no prefix icon.
-      final field = tester.widget<TextField>(find.byType(TextField));
-      expect(field.decoration?.labelText, isNull);
-      expect(field.decoration?.prefixIcon, isNull);
-      expect(find.text('Name eingeben...'), findsOneWidget);
-      // A lone input is wrapped into the alert input group (Ionic paddings).
-      expect(find.byType(AppAlertInputGroup), findsOneWidget);
-
-      expect(find.text('beta content'), findsNothing);
-      expect(find.byType(RadioListTile<String>), findsNothing);
-      await tester.tap(find.text('16:9'));
-      await tester.pump();
-      expect(picked, 'b');
-    });
   }
 
-  testWidgets('Beta keeps its own content and field decoration', (tester) async {
+  testWidgets('AppAlertInput and AppAlertRadioGroup render with standard theme', (tester) async {
     final controller = TextEditingController();
     addTearDown(controller.dispose);
     await tester.pumpWidget(app(

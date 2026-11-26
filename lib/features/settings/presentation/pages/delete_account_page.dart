@@ -1,26 +1,20 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import '../../../../shared/widgets/layout/ion_form_items.dart';
-import '../../../../shared/widgets/layout/ionic_ios.dart' show ionPlainContentBackground;
-import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/providers/legal_providers.dart';
-import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
-import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/repositories/base_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../widgets/strong_html_text.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 
 /// Characters for the verification code — avoids visually ambiguous chars
 /// (0/O, 1/I/L), identical to Ionic.
@@ -89,14 +83,7 @@ class _DeleteAccountPageState extends ConsumerState<DeleteAccountPage> {
     if (confirmed != true || !mounted) return;
 
     try {
-      final notifier = ref.read(accountNotifierProvider.notifier);
-      // EIB-19 / EIB-22: Ionic `ion-loading` "Konto wird gelöscht…".
-      if (ref.read(redesignEnabledProvider)) {
-        await notifier.deleteAccount();
-      } else {
-        await withIonLoading(context, notifier.deleteAccount,
-            message: context.l10n.deleteAccountDeleting);
-      }
+      await ref.read(accountNotifierProvider.notifier).deleteAccount();
       if (!mounted) return;
       ToastHelper.showSuccess(context, context.l10n.deleteAccountDeleted);
       context.go('/login');
@@ -207,125 +194,7 @@ class _DeleteAccountPageState extends ConsumerState<DeleteAccountPage> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final isDeleting = ref.watch(accountNotifierProvider).isLoading;
-    if (ref.watch(redesignEnabledProvider)) return _buildBeta(context, isDeleting);
-    const white = TextStyle(color: Colors.white);
-
-    // UX_SETTINGS (WAVE 8): delete-account.page.html — arrow-back, danger
-    // tint warning box (radius 12), centred code chip, stacked input item.
-    return Scaffold(
-      // EIB-22: `<ion-content class="ion-padding">` without colour.
-      backgroundColor: ionPlainContentBackground(context),
-      appBar: AppBar(
-        // EIB-12: Ionic custom `arrow-back` ion-button.
-        leading: IonArrowBackButton(onPressed: () => Navigator.of(context).maybePop()),
-        leadingWidth: IonArrowBackButton.leadingWidth(context),
-        title: Text(context.l10n.deleteAccountTitle),
-      ),
-      body: ListView(
-        padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
-        children: [
-          Container(
-            padding: const EdgeInsets.all(AppDimensions.paddingM),
-            decoration: BoxDecoration(
-              // --ion-color-danger-tint
-              color: Color.lerp(AppColors.danger, Colors.white, 0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: DefaultTextStyle.merge(
-              style: white,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Icon(AppIcons.warningAmberRounded,
-                      color: Colors.white, size: 32),
-                  const SizedBox(height: 8),
-                  Text(
-                    context.l10n.deleteAccountWarning,
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  StrongHtmlText(context.l10n.deleteAccountIntro),
-                  const SizedBox(height: 8),
-                  for (final item in [
-                    context.l10n.deleteAccountProfile,
-                    context.l10n.deleteAccountAttendance,
-                    context.l10n.deleteAccountMemberships,
-                    context.l10n.deleteAccountAccess,
-                  ])
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8, top: 4, bottom: 4),
-                      child: Text('•  $item'),
-                    ),
-                  const SizedBox(height: 8),
-                  StrongHtmlText(context.l10n.deleteAccountCannotUndo),
-                ],
-              ),
-            ),
-          ),
-          // .warning-box margin-bottom 24 / .verification-box margin-top 24
-          // (collapsing margins).
-          const SizedBox(height: 24),
-          Text(
-            context.l10n.deleteAccountEnterCode,
-            textAlign: TextAlign.center,
-            style: TextStyle(color: AppColors.mediumOf(context)),
-          ),
-          const SizedBox(height: 12),
-          Center(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-              decoration: BoxDecoration(
-                color: theme.brightness == Brightness.dark
-                    ? const Color(0xFF222428)
-                    : const Color(0xFFF4F5F8),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              // F-LOGIN-23: read the code out character by character
-              // (SelectableText alone is missing from the web semantics tree).
-              child: Semantics(
-                label: _verificationCode.split('').join(' '),
-                child: SelectableText(
-                  _verificationCode,
-                  style: TextStyle(
-                    fontFamily: 'Courier New',
-                    fontFamilyFallback: const ['Courier', 'monospace'],
-                    fontSize: 28,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 6,
-                    color: theme.colorScheme.onSurface,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          // EIB-15: `ion-item` + stacked label + `ion-input`.
-          IonStackedInputItem(
-            label: context.l10n.deleteAccountCode,
-            placeholder: context.l10n.deleteAccountCodePlaceholder,
-            controller: _confirmController,
-            autocorrect: false,
-            enableSuggestions: false,
-            textCapitalization: TextCapitalization.characters,
-            onChanged: (_) => setState(() {}),
-          ),
-          // `ion-button expand="block" color="danger" class="ion-margin-top"`
-          // with the trash icon; the progress is the loading overlay.
-          const SizedBox(height: AppDimensions.paddingM),
-          IonButton(
-            expand: true,
-            color: AppColors.danger,
-            icon: AppIcons.deleteOutline,
-            label: context.l10n.deleteAccountDeleteForever,
-            onPressed: !_canDelete || isDeleting ? null : _deleteAccount,
-          ),
-        ],
-      ),
-    );
+    return _buildBeta(context, isDeleting);
   }
 }

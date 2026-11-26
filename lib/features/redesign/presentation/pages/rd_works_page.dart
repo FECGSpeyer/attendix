@@ -23,7 +23,6 @@ import '../../../../data/models/song/song.dart';
 import '../../../../data/models/song/song_filter.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/app_action_sheet.dart';
-import '../../../history/presentation/pages/history_page.dart' show showHistoryModal;
 import '../../../songs/data/song_print_service.dart';
 import '../../../songs/presentation/utils/song_utils.dart';
 import '../../../songs/presentation/widgets/song_categories_sheet.dart';
@@ -143,7 +142,7 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
       case 'categories':
         await showSongCategoriesSheet(context);
       case 'history':
-        await showHistoryModal(context);
+        await context.push(RedesignRoutes.workHistory);
       case 'files':
         await context.push('/settings/files');
       case 'share':

@@ -12,11 +12,7 @@ import '../../../redesign/data/rd_collections_logic.dart';
 import 'plan_export_actions.dart';
 import 'plan_field_dialogs.dart';
 
-/// REDESIGN (Termin-Werkzeuge T1): Beta versions of the plan dialogs and
-/// action sheets. The classic helpers in plan_field_dialogs.dart switch to
-/// these when the Beta skin is active ([RdSkinContext.rdSkin]), so every
-/// caller (Ablauf-Editor, Ablauf ansehen, Export) gets the Beta look without
-/// changing its logic. The normal app keeps the classic dialogs.
+/// REDESIGN (Termin-Werkzeuge T1): Plan dialogs and action sheets.
 
 /// Typical durations of a Programmpunkt (same as the inline editor).
 const rdPlanDurationPresets = [5, 10, 15, 20, 30, 40, 45, 60];

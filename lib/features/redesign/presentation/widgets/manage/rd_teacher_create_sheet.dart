@@ -9,7 +9,7 @@ import '../../../../../core/utils/toast_helper.dart';
 import '../../../../../data/models/instrument/instrument.dart';
 import '../../../../../data/repositories/teacher_repository.dart';
 import '../../../../../l10n/l10n.dart';
-import '../../../../teachers/presentation/pages/teachers_list_page.dart' show isTeacherFormValid, loadTeacherGroups;
+import '../../../../teachers/data/teacher_helpers.dart' show isTeacherFormValid, loadTeacherGroups;
 import '../../../data/rd_words.dart';
 import '../event/rd_form_widgets.dart' show rdInputDecoration;
 import '../rd_widgets.dart';

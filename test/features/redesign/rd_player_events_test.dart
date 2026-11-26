@@ -376,7 +376,7 @@ void main() {
     final player = TestFactories.createPerson(id: 3, firstName: 'Lea', tenantId: 7);
     await tester.pumpWidget(ProviderScope(
       overrides: [
-        initialRedesignSettingsProvider.overrideWithValue(const RedesignSettings(enabled: true)),
+        initialRedesignSettingsProvider.overrideWithValue(const RedesignSettings()),
         currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),
         currentSelfServicePlayerProvider.overrideWith((ref) async => player),
         signoutDataProvider.overrideWith((ref) async => SignoutData(
@@ -438,7 +438,7 @@ void main() {
     );
     await tester.pumpWidget(ProviderScope(
       overrides: [
-        initialRedesignSettingsProvider.overrideWithValue(const RedesignSettings(enabled: true)),
+        initialRedesignSettingsProvider.overrideWithValue(const RedesignSettings()),
         currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),
         currentSelfServicePlayerProvider.overrideWith(
           (ref) async => TestFactories.createPerson(id: 3, firstName: 'Lea', tenantId: 7),

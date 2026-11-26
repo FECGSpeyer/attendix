@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/providers/shift_providers.dart';
 import '../../../../data/models/shift/shift_plan.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../shifts/presentation/pages/shifts_list_page.dart' show showCreateShiftPlanSheet;
+import '../../../shifts/presentation/widgets/create_shift_plan_sheet.dart' show showCreateShiftPlanSheet;
 import '../../data/rd_manage_logic.dart' show RdManageEntry;
 import '../widgets/manage/rd_manage_entries.dart' show rdManageTitle;
 import '../widgets/manage/rd_manage_list.dart';

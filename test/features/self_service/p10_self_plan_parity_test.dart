@@ -72,24 +72,18 @@ void main() {
     });
 
     test('Regelmäßig verhindert only considers visible types', () {
-      final page = read('lib/features/duty/presentation/pages/unavailability_page.dart');
-      expect(page, contains('countFutureMatches(rule, _types)'));
+      final page = read('lib/features/redesign/presentation/pages/rd_unavailability_page.dart');
+      expect(page, contains('countFutureMatches(rule, types)'));
       final providers = read('lib/core/providers/duty_providers.dart');
       expect(providers, contains('.where((t) => t.visible)'));
     });
 
-    test('Ablaufplan editor export sheet follows Ionic showOptions', () {
-      final page = read('lib/features/planning/presentation/pages/planning_page.dart');
-      expect(page, contains('pdfLabel: context.l10n.planningExportPdf'));
-      expect(page, contains('afterPdfActions:'));
-      expect(page, contains('trailingActions:'));
-    });
-
-    test('Org tab: planning route stays in the tab', () {
-      final router = read('lib/core/router/app_router.dart');
-      expect(router, contains("name: 'orgPlansTabPlanning'"));
-      final page = read('lib/features/organisation/presentation/pages/org_plans_page.dart');
-      expect(page, contains("'/org-plans-tab/planung'"));
+    test('Ablaufplan editor share sheet offers PDF, image and public link', () {
+      final page = read('lib/features/planning/presentation/pages/planning_page_beta.dart');
+      expect(page, contains("Key('rd-plan-pdf')"));
+      expect(page, contains("Key('rd-plan-image')"));
+      expect(page, contains("Key('rd-plan-link')"));
+      expect(page, contains('title: l10n.planningExportPdf'));
     });
   });
 }

@@ -12,6 +12,7 @@ import 'package:attendix/core/providers/group_providers.dart';
 import 'package:attendix/core/providers/optional_tabs_providers.dart';
 import 'package:attendix/core/providers/organisation_providers.dart';
 import 'package:attendix/core/providers/plan_providers.dart';
+import 'package:attendix/core/providers/realtime_providers.dart';
 import 'package:attendix/core/providers/song_providers.dart';
 import 'package:attendix/core/providers/team_org_providers.dart';
 import 'package:attendix/core/providers/tenant_providers.dart';
@@ -21,8 +22,8 @@ import 'package:attendix/data/models/plan/plan.dart';
 import 'package:attendix/data/repositories/plan_repository.dart';
 import 'package:attendix/features/planning/data/planning_write_sync.dart';
 import 'package:attendix/features/planning/presentation/pages/planning_page.dart';
+import 'package:attendix/features/redesign/presentation/shell/rd_shell.dart';
 import 'package:attendix/l10n/l10n.dart';
-import 'package:attendix/shared/widgets/layout/main_shell.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -117,6 +118,7 @@ void main() {
         planAttendanceTypesProvider.overrideWith((ref) async => const []),
         planBlockTemplatesProvider.overrideWith((ref) async => const []),
         planSongsProvider.overrideWith((ref) async => const []),
+        songCollectionsProvider.overrideWith((ref) async => null),
         currentSongsProvider.overrideWith((ref) async => const []),
         groupsProvider.overrideWith((ref) async => const []),
         groupCategoriesProvider.overrideWith((ref) async => const []),
@@ -124,6 +126,7 @@ void main() {
         currentOrganisationProvider.overrideWith((ref) async => null),
         hasBrandingProvider.overrideWithValue(false),
         effectiveRoleProvider.overrideWithValue(Role.admin),
+        realtimePendingPlayersProvider.overrideWith((ref) => Stream.value(const [])),
         showDashboardTabProvider.overrideWithValue(false),
         showSongsTabProvider.overrideWithValue(false),
         showOrgPlansTabProvider.overrideWithValue(false),
@@ -161,9 +164,12 @@ void main() {
       initialLocation: '/planning',
       routes: [
         ShellRoute(
-          builder: (context, state, child) => MainShell(child: child),
+          builder: (context, state, child) => RdShell(child: child),
           routes: [
+            GoRoute(path: '/heute', builder: (_, __) => const Placeholder(key: Key('heute'))),
+            GoRoute(path: '/people', builder: (_, __) => const Placeholder(key: Key('people'))),
             GoRoute(path: '/attendance', builder: (_, __) => const Placeholder(key: Key('attendance'))),
+            GoRoute(path: '/settings', builder: (_, __) => const Placeholder(key: Key('settings'))),
             GoRoute(path: '/planning', builder: (_, __) => const PlanningPage(attendanceId: 7)),
             GoRoute(
                 path: '/planning2', builder: (_, __) => const PlanningPage(attendanceId: 7, initialPlanIndex: 1)),

@@ -7,7 +7,6 @@ import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../help/data/help_content_service.dart';
 import '../../../help/data/help_models.dart';
-import '../../../help/presentation/pages/help_page.dart' show helpCategoryIcon;
 import '../../../help/presentation/widgets/glossary_term_popover.dart';
 import '../../../help/presentation/widgets/help_markdown.dart';
 import '../widgets/rd_widgets.dart';
@@ -299,4 +298,21 @@ class _RdHelpGlossaryPageState extends ConsumerState<RdHelpGlossaryPage> {
       ],
     );
   }
+}
+
+/// Maps the icon keys of help categories to Material icons.
+IconData helpCategoryIcon(String ionIcon) {
+  return switch (ionIcon) {
+    'rocket-outline' => Icons.rocket_launch_outlined,
+    'checkmark-done-outline' => Icons.done_all,
+    'people-outline' => Icons.people_outline,
+    'list-outline' => Icons.format_list_bulleted,
+    'musical-notes-outline' => Icons.music_note_outlined,
+    'person-circle-outline' => Icons.account_circle_outlined,
+    'settings-outline' => Icons.settings_outlined,
+    'people-circle-outline' => Icons.supervised_user_circle_outlined,
+    'headset-outline' => Icons.headset_mic_outlined,
+    'ellipsis-horizontal-circle-outline' => Icons.pending_outlined,
+    _ => Icons.help_outline,
+  };
 }

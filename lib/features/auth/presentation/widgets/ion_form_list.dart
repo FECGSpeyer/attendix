@@ -5,41 +5,24 @@ import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
-import '../../../../shared/widgets/adaptive/app_select.dart';
 import '../../../../shared/widgets/adaptive/ion_datetime_button.dart';
-import '../../../../shared/widgets/layout/ionic_ios.dart' as ion;
 
-/// UX_AUTH: building blocks for the Ionic `ion-list [inset]="true"` forms of
-/// the auth / registration / tenant / profile screens.
-///
-/// The Ionic app runs with the rdlabo iOS 26 theme on the iPhone (inset
-/// groups 20 px from the screen edge, 28 px corners, 53 px rows, 17 px text)
-/// and with the MD inset list elsewhere (16 px margin, 16 px corners).
+/// Building blocks for inset grouped forms of the auth / registration /
+/// tenant / profile screens.
 
-/// True when the app renders the Ionic iOS mode (iPhone app and Flutter web
-/// in iPhone Safari).
-bool ionIsIos(BuildContext context) =>
-    Theme.of(context).platform == TargetPlatform.iOS;
-
-/// Horizontal margin of an inset list (`ion-list [inset]`).
-/// IOS_SETTINGS2: iOS values shared with the settings lane
-/// ([ion.IonIos] in shared/widgets/layout/ionic_ios.dart).
-double ionInsetMargin(BuildContext context) =>
-    ionIsIos(context) ? ion.IonIos.insetMargin : 16;
+/// Horizontal margin of an inset list.
+double ionInsetMargin(BuildContext context) => 16;
 
 /// Corner radius of an inset group.
-double ionInsetRadius(BuildContext context) =>
-    context.rdSkin?.listRadius ?? (ionIsIos(context) ? ion.IonIos.groupRadius : 16);
+double ionInsetRadius(BuildContext context) => context.rd.listRadius;
 
-/// `ion-label` font size inside an inset item (17 px on iOS, 16 px in MD).
-double ionItemFontSize(BuildContext context) =>
-    ionIsIos(context) ? ion.IonIos.itemFontSize : 16;
+/// Label font size inside an inset item.
+double ionItemFontSize(BuildContext context) => 16;
 
-/// `ion-color-medium-tint` used for list headers and notes.
+/// Grey tint used for list headers and notes.
 const Color ionMediumTint = Color(0xFF9D9FA6);
 
-/// `ion-list-header` above an inset group: small medium-grey label
-/// (0.9rem) with optional leading badge and trailing button.
+/// Header above an inset group with optional leading badge and trailing button.
 class IonListHeader extends StatelessWidget {
   const IonListHeader(
     this.text, {
@@ -52,39 +35,22 @@ class IonListHeader extends StatelessWidget {
   final String text;
   final Widget? leading;
   final Widget? trailing;
-
-  /// Page-specific override (e.g. register.page.scss: 1rem / 600).
   final TextStyle? style;
 
   @override
   Widget build(BuildContext context) {
-    final rd = context.rdSkin;
-    if (rd != null) {
-      // Beta-Skin: the uppercase group label of the new design.
-      return Padding(
-        padding: EdgeInsets.fromLTRB(ionInsetMargin(context) + 4, 10, ionInsetMargin(context), 6),
-        child: Row(
-          children: [
-            if (leading != null) ...[leading!, const SizedBox(width: 8)],
-            Expanded(
-              child: Semantics(
-                header: true,
-                child: Text(text.toUpperCase(), style: RdType.eyebrow(rd.text2).merge(style?.copyWith(fontSize: 12))),
-              ),
-            ),
-            if (trailing != null) trailing!,
-          ],
-        ),
-      );
-    }
-    final base = TextStyle(fontSize: 14.4, color: ionMediumTint);
+    final rd = context.rd;
     return Padding(
-      padding: EdgeInsets.fromLTRB(
-          ionInsetMargin(context) + 4, 8, ionInsetMargin(context), 4),
+      padding: EdgeInsets.fromLTRB(ionInsetMargin(context) + 4, 10, ionInsetMargin(context), 6),
       child: Row(
         children: [
-          if (leading != null) ...[leading!, const SizedBox(width: 10)],
-          Expanded(child: Text(text, style: base.merge(style))),
+          if (leading != null) ...[leading!, const SizedBox(width: 8)],
+          Expanded(
+            child: Semantics(
+              header: true,
+              child: Text(text.toUpperCase(), style: RdType.eyebrow(rd.text2).merge(style?.copyWith(fontSize: 12))),
+            ),
+          ),
           if (trailing != null) trailing!,
         ],
       ),
@@ -92,8 +58,7 @@ class IonListHeader extends StatelessWidget {
   }
 }
 
-/// One `ion-item-group` of an inset list: white rounded block whose items are
-/// separated by hairlines that start at the label (16 px inset).
+/// Rounded grouped list whose items are separated by lines.
 class IonInsetGroup extends StatelessWidget {
   const IonInsetGroup({
     super.key,
@@ -110,14 +75,8 @@ class IonInsetGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    // IOS_R4: iOS dark item groups are --ion-item-background #000.
-    final rd = context.rdSkin;
-    final background = color ??
-        rd?.surface ??
-        (ion.isIosLook(context) && theme.brightness == Brightness.dark
-            ? ion.ionItemBackground(context)
-            : (theme.cardTheme.color ?? theme.colorScheme.surface));
+    final rd = context.rd;
+    final background = color ?? rd.surface;
     final visible = children;
     return Container(
       margin: margin ??
@@ -126,7 +85,7 @@ class IonInsetGroup extends StatelessWidget {
       decoration: BoxDecoration(
         color: background,
         borderRadius: BorderRadius.circular(ionInsetRadius(context)),
-        boxShadow: rd?.cardShadow,
+        boxShadow: rd.cardShadow,
       ),
       clipBehavior: Clip.antiAlias,
       child: Material(
@@ -145,7 +104,7 @@ class IonInsetGroup extends StatelessWidget {
   }
 }
 
-/// Inset hairline between two items of a group.
+/// Hairline between two items of a group.
 class IonItemDivider extends StatelessWidget {
   const IonItemDivider({super.key, this.indent = 16});
 
@@ -153,20 +112,12 @@ class IonItemDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final rd = context.rdSkin;
-    if (rd != null) return Divider(height: 1, thickness: 1, color: rd.line);
-    final dark = Theme.of(context).brightness == Brightness.dark;
-    return Divider(
-      height: 0.5,
-      thickness: 0.5,
-      indent: indent,
-      color: dark ? AppColors.dividerDark : AppColors.dividerLight,
-    );
+    return Divider(height: 1, thickness: 1, color: context.rd.line);
   }
 }
 
-/// `ion-item` row: optional start slot, label (with optional `p` line),
-/// optional end slot and the iOS detail chevron.
+/// List row: optional start slot, label (with optional subtitle),
+/// optional end slot and optional chevron.
 class IonItem extends StatelessWidget {
   const IonItem({
     super.key,
@@ -190,18 +141,13 @@ class IonItem extends StatelessWidget {
   final Widget? subtitle;
   final Widget? end;
   final VoidCallback? onTap;
-
-  /// Ionic `detail`: chevron at the end (iOS only, like Ionic).
   final bool detail;
-
-  /// `ion-label color="primary"` etc.
   final Color? labelColor;
   final bool enabled;
   final double? minHeight;
 
   @override
   Widget build(BuildContext context) {
-    final ios = ionIsIos(context);
     final fontSize = ionItemFontSize(context);
     final theme = Theme.of(context);
     Widget content = Row(
@@ -223,7 +169,6 @@ class IonItem extends StatelessWidget {
                 ),
                 if (subtitle != null)
                   DefaultTextStyle.merge(
-                    // ion-label p: 0.875rem, step-600 grey
                     style: const TextStyle(
                       fontSize: 14,
                       color: Color(0xFF999999),
@@ -235,7 +180,7 @@ class IonItem extends StatelessWidget {
           ),
         ),
         if (end != null) ...[const SizedBox(width: 8), end!],
-        if (detail && ios) ...[
+        if (detail) ...[
           const SizedBox(width: 4),
           Icon(AppIcons.chevronRight,
               size: 22, color: AppColors.mediumOf(context).withValues(alpha: 0.6)),
@@ -243,7 +188,7 @@ class IonItem extends StatelessWidget {
       ],
     );
     content = ConstrainedBox(
-      constraints: BoxConstraints(minHeight: minHeight ?? (ios ? ion.IonIos.itemMinHeight : 48)),
+      constraints: BoxConstraints(minHeight: minHeight ?? 48),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: content,
@@ -257,9 +202,7 @@ class IonItem extends StatelessWidget {
   }
 }
 
-/// `ion-item` + `ion-input labelPlacement="stacked"` inside an inset group:
-/// small label above the value, no field border (the group draws the lines),
-/// optional helper text / counter below.
+/// Stacked input decoration inside an inset group.
 InputDecoration ionItemInputDecoration(
   BuildContext context,
   String label, {
@@ -267,22 +210,19 @@ InputDecoration ionItemInputDecoration(
   String? helper,
   Widget? suffixIcon,
 }) {
-  final ios = ionIsIos(context);
   return InputDecoration(
     labelText: label,
     hintText: hint,
     helperText: helper,
     helperMaxLines: 3,
     hintStyle: TextStyle(color: AppColors.mediumOf(context).withValues(alpha: 0.75)),
-    // Stacked label: 0.875rem (iOS) / 16px scaled to .75 (MD); the input
-    // stretches the label to Flutter's floating size, so set the final size.
     labelStyle: TextStyle(
       color: Theme.of(context).colorScheme.onSurface,
-      fontSize: ios ? 14 / 0.75 : 16,
+      fontSize: 16,
     ),
     floatingLabelStyle: TextStyle(
       color: Theme.of(context).colorScheme.onSurface,
-      fontSize: ios ? 14 / 0.75 : 16,
+      fontSize: 16,
     ),
     helperStyle: TextStyle(fontSize: 12, color: AppColors.mediumOf(context)),
     floatingLabelBehavior: FloatingLabelBehavior.always,
@@ -299,7 +239,7 @@ InputDecoration ionItemInputDecoration(
   );
 }
 
-/// Text style of the value of an `ion-input` inside an inset item.
+/// Text style of the value of an input inside an inset item.
 TextStyle ionItemInputStyle(BuildContext context) => TextStyle(
       fontSize: ionItemFontSize(context),
       color: Theme.of(context).colorScheme.onSurface,
@@ -320,8 +260,7 @@ class IonInputItem extends StatelessWidget {
   }
 }
 
-/// Primary-tinted text item that acts as a button (`ion-item button`
-/// with `ion-label color="primary"`).
+/// Primary-tinted text item that acts as a button.
 class IonButtonItem extends StatelessWidget {
   const IonButtonItem({
     super.key,
@@ -336,8 +275,6 @@ class IonButtonItem extends StatelessWidget {
   final VoidCallback? onTap;
   final Color color;
   final IconData? icon;
-
-  /// `ion-item color="primary"`: primary background, white text.
   final bool filled;
 
   @override
@@ -355,9 +292,7 @@ class IonButtonItem extends StatelessWidget {
   }
 }
 
-/// `ion-datetime-button` at the end of an item: light grey rounded chip
-/// with the formatted value. QUE-28: the shared [IonDatetimeButton] under
-/// its old name.
+/// Date button chip at the end of an item.
 class IonDateButton extends StatelessWidget {
   const IonDateButton({super.key, required this.text, required this.onTap});
 
@@ -375,7 +310,7 @@ class IonDateButton extends StatelessWidget {
       );
 }
 
-/// Value + caret at the end of an `ion-select` item (non-stacked label).
+/// Value + caret at the end of a select item.
 class IonSelectValue extends StatelessWidget {
   const IonSelectValue({super.key, required this.text, this.placeholder = false});
 
@@ -403,49 +338,27 @@ class IonSelectValue extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 4),
-          // md: the `ion-select` md caret of the shared select.
-          if (!ionIsIos(context) && context.rdSkin == null)
-            const IonMdSelectIcon()
-          else
-            Icon(
-              ionIsIos(context) ? AppIcons.unfoldMore : AppIcons.arrowDropDown,
-              size: 18,
-              color: AppColors.mediumOf(context),
-            ),
+          Icon(
+            AppIcons.arrowDropDown,
+            size: 18,
+            color: AppColors.mediumOf(context),
+          ),
         ],
       ),
     );
   }
 }
 
-/// Options of an `ion-select` without `interface` (Ionic default: the
-/// alert with a radio list and "Abbrechen" / "OK"): the shared select
-/// ([showAppSelect], `interface: alert`) with [title] as its header.
-/// Returns the chosen value, null when cancelled.
-///
-/// The Beta design keeps its bottom sheet list (checkmark on the current
-/// value).
+/// Bottom sheet list of select options with a checkmark on the current value.
 Future<T?> showIonSelectOptions<T>(
   BuildContext context, {
   required String title,
   required List<(T, String)> options,
   T? selected,
-}) async {
-  if (context.rdSkin == null) {
-    final picked = await showAppSelect<T>(
-      context: context,
-      interface: AppSelectInterface.alert,
-      header: title,
-      value: selected,
-      options: [
-        for (final (value, label) in options) AppSelectOption<T>(value: value, label: label),
-      ],
-    );
-    return picked?.value;
-  }
+}) {
   return showModalBottomSheet<T>(
     context: context,
-    useRootNavigator: true, // IOS_SHELL2: above the tab bar
+    useRootNavigator: true,
     useSafeArea: true,
     isScrollControlled: true,
     builder: (sheetContext) => SafeArea(

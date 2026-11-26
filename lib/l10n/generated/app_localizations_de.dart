@@ -13177,7 +13177,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get rdTypeLookHideNameHint =>
-      'Termine ohne eigenen Titel zeigen dann das Datum statt des Namens der Art (klassische Ansicht und Eltern).';
+      'Termine ohne eigenen Titel zeigen dann das Datum statt des Namens der Art (Eltern).';
 
   @override
   String get rdTypeLookHighlightHint =>
@@ -17237,13 +17237,6 @@ class AppLocalizationsDe extends AppLocalizations {
     );
     return '$_temp0';
   }
-
-  @override
-  String get redesignMeBeta => 'Neues Design (Beta)';
-
-  @override
-  String get redesignMeBetaHint =>
-      'Nur auf diesem Gerät. Jederzeit wieder ausschaltbar.';
 
   @override
   String get redesignMeCalendar => 'Kalender abonnieren';

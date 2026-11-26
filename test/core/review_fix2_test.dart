@@ -51,10 +51,12 @@ void main() {
     });
 
     test('type edit page no longer writes tenants directly', () {
-      final s = src(
-          'lib/features/settings/presentation/pages/attendance_type_edit_page.dart');
-      expect(s, isNot(contains(".from('tenants')")));
-      expect(s, contains('setDutyView(true)'));
+      for (final path in [
+        'lib/features/settings/presentation/pages/attendance_type_edit_page.dart',
+        'lib/features/settings/presentation/pages/attendance_type_edit_page_beta.dart',
+      ]) {
+        expect(src(path), isNot(contains(".from('tenants')")), reason: path);
+      }
     });
   });
 

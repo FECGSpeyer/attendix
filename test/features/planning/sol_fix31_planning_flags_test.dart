@@ -100,6 +100,7 @@ void main() {
         planAttendanceTypesProvider.overrideWith((ref) async => const []),
         planBlockTemplatesProvider.overrideWith((ref) async => const []),
         planSongsProvider.overrideWith((ref) async => const []),
+        songCollectionsProvider.overrideWith((ref) async => null),
         currentSongsProvider.overrideWith((ref) async => const []),
         groupsProvider.overrideWith((ref) async => const []),
         groupCategoriesProvider.overrideWith((ref) async => const []),
@@ -199,7 +200,7 @@ void main() {
       // Editor B deletes the main plan (no id): plan 2 moves up to position 0.
       otherEditorStores(row(7, [_p2.copyWith(title: 'Von B')]));
 
-      await tester.tap(find.text('Plan mit Mitgliedern teilen'));
+      await tester.tap(find.byType(Switch).first);
       await tester.pumpAndSettle();
 
       expect(find.text(_changedToast), findsOneWidget);
@@ -219,7 +220,7 @@ void main() {
 
       // The flag write runs in the queue right after the autosave (which hits
       // the conflict itself) or before it; in any case nothing overwrites B.
-      await tester.tap(find.text('Plan mit Mitgliedern teilen'));
+      await tester.tap(find.byType(Switch).first);
       await tester.pumpAndSettle();
 
       expect(storedTitles(), ['Von B']);

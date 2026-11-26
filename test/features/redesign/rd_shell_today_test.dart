@@ -81,7 +81,7 @@ Widget _app(Role role, {RdFarbwelt world = RdFarbwelt.petrol, List<Override> ext
   return ProviderScope(
     key: key,
     overrides: [
-      initialRedesignSettingsProvider.overrideWithValue(RedesignSettings(enabled: true, world: world)),
+      initialRedesignSettingsProvider.overrideWithValue(RedesignSettings(world: world)),
       effectiveRoleProvider.overrideWithValue(role),
       isApplicantProvider.overrideWithValue(false),
       currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),

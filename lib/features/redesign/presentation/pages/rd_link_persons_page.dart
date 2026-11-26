@@ -6,7 +6,7 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../settings/presentation/pages/link_persons_page.dart';
+import '../../../settings/data/link_persons_logic.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/rd_widgets.dart';
 

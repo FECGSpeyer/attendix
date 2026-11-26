@@ -4,7 +4,6 @@ import 'package:attendix/core/config/supabase_config.dart';
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/group_providers.dart';
 import 'package:attendix/core/providers/realtime_providers.dart';
-import 'package:attendix/core/providers/redesign_providers.dart';
 import 'package:attendix/core/providers/tenant_providers.dart';
 import 'package:attendix/data/models/attendance/attendance.dart';
 import 'package:attendix/data/models/person/person.dart';
@@ -79,7 +78,6 @@ class MemberAttendanceFixture {
     this.tenant = memberFixtureTenant,
     this.person = memberFixturePerson,
     this.role = Role.viewer,
-    this.beta = true,
   }) {
     httpClient = MockClient(_handle);
     supabase = SupabaseClient(
@@ -95,7 +93,6 @@ class MemberAttendanceFixture {
   final Tenant tenant;
   final Person person;
   final Role role;
-  final bool beta;
   late final MockClient httpClient;
   late final SupabaseClient supabase;
   final requests = <http.Request>[];
@@ -111,7 +108,6 @@ class MemberAttendanceFixture {
           currentRoleProvider.overrideWith(
             (ref) => ref.watch(memberFixtureRoleProvider),
           ),
-          redesignEnabledProvider.overrideWithValue(beta),
           // The counter is driven explicitly; no websocket leaves the test.
           attendanceRealtimeSubscriptionProvider.overrideWith((ref) {}),
           groupsMapProvider.overrideWith((ref) async => const {1: 'Violine'}),

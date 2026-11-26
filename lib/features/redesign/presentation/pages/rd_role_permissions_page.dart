@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/config/supabase_config.dart' show currentAuthUserIdProvider;
 import '../../../../core/constants/enums.dart';
+import '../../../../core/providers/admin_providers.dart' show tenantUsersProvider;
 import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/parent_providers.dart';
@@ -19,8 +20,7 @@ import '../../../../data/models/role_permission/tenant_role_permission.dart';
 import '../../../../data/repositories/role_permission_repository.dart';
 import '../../../../data/repositories/user_registration_repository.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../settings/presentation/pages/settings_page.dart' show playersOfCurrentTenant;
-import '../../../settings/presentation/pages/user_management_page.dart' show tenantUsersProvider;
+import '../../../settings/data/account_provisioning_actions.dart' show playersOfCurrentTenant;
 import '../../data/rd_manage_logic.dart' show RdManageEntry, rdManageVisible;
 import '../../data/rd_roles_logic.dart';
 import 'rd_general_settings_page.dart' show RdTenantSettings, RdTenantSettingsBlock;

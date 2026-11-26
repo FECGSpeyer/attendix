@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/shared/widgets/layout/sheet_drag.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,7 +19,6 @@ import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
-import '../../../../shared/widgets/dialogs/ion_sheet.dart' show showIonSheet;
 
 /// "Aktuelle Werke" sheet (Ionic signout songsModal): one inset list per
 /// Termin, rows "Nr. Name" / "Dirigent: …", red rows when there are no notes
@@ -75,9 +73,7 @@ class UpcomingSongsSheet extends ConsumerWidget {
         return Container(
           decoration: BoxDecoration(
             color: theme.scaffoldBackgroundColor,
-            borderRadius: context.rdSkin == null
-                ? null
-                : const BorderRadius.vertical(top: Radius.circular(16)),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
           ),
           child: Column(
             children: [
@@ -232,42 +228,24 @@ class _SongListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final fg = missingNotes ? Colors.white : null;
     final number = song.fullNumber;
-    // Ionic ion-label (iOS): h2 17px, h3 14px; button items show the chevron.
-    final ios = isIosLook(context);
     final hasLink = song.link != null && song.link!.isNotEmpty;
     return ListTile(
       tileColor: missingNotes ? AppColors.danger : null,
       textColor: fg,
       iconColor: fg,
-      minVerticalPadding: ios ? 10 : null,
       title: Text(
         number.isEmpty ? song.name : '$number. ${song.name}',
-        style: ios ? const TextStyle(fontSize: 17) : null,
       ),
       subtitle: missingNotes && missingNotesText != null
-          ? Text(missingNotesText!, style: ios ? TextStyle(fontSize: 14, color: fg) : null)
+          ? Text(missingNotesText!)
           : conductorName != null && conductorName!.isNotEmpty
-          ? Text(
-              context.l10n.signoutConductor(conductorName!),
-              style: ios
-                  ? TextStyle(fontSize: 14, color: fg ?? Theme.of(context).colorScheme.onSurface)
-                  : null,
-            )
+          ? Text(context.l10n.signoutConductor(conductorName!))
           : null,
-      trailing: hasLink || (ios && !linkOnly)
-          ? Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (hasLink)
-                  IconButton(
-                    icon: Icon(AppIcons.downloadOutlined, color: fg ?? AppColors.primary),
-                    tooltip: context.l10n.signoutOpenScoreLink,
-                    onPressed: () => openSongLink(context, song.link!),
-                  ),
-                if (ios && (!linkOnly || hasLink))
-                  Icon(AppIcons.chevronRight,
-                      color: (fg ?? AppColors.mediumOf(context)).withValues(alpha: 0.6)),
-              ],
+      trailing: hasLink
+          ? IconButton(
+              icon: Icon(AppIcons.downloadOutlined, color: fg ?? AppColors.primary),
+              tooltip: context.l10n.signoutOpenScoreLink,
+              onPressed: () => openSongLink(context, song.link!),
             )
           : null,
       onTap: linkOnly
@@ -311,16 +289,15 @@ Future<void> showUpcomingSongsSheet(BuildContext context) {
     useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     useSafeArea: true,
-    clipBehavior: context.rdSkin == null ? Clip.antiAlias : null,
     backgroundColor: Colors.transparent,
     builder: (context) => const UpcomingSongsSheet(),
   );
 }
 
 
-/// Ionic 4.17.26 `AttendanceSongsComponent`: the Werke of one Termin for
-/// members and parents. Tapping a Werk opens the score options (parents:
-/// only the Werk link); the toolbar prints all own scores of the Termin.
+/// The Werke of one Termin for members and parents. Tapping a Werk opens the
+/// score options (parents: only the Werk link); the toolbar prints all own
+/// scores of the Termin.
 class AttendanceSongsSheet extends ConsumerWidget {
   const AttendanceSongsSheet({
     super.key,
@@ -330,13 +307,7 @@ class AttendanceSongsSheet extends ConsumerWidget {
     this.instrumentId,
     this.linkOnly = false,
     this.onOpenPlan,
-    this.scrollController,
   });
-
-  /// TER-30: set when the classic look presents the sheet via
-  /// [showIonSheet] (Ionic breakpoints and handle); null = own draggable
-  /// sheet (Beta).
-  final ScrollController? scrollController;
 
   final String title;
   final String subtitle;
@@ -384,9 +355,7 @@ class AttendanceSongsSheet extends ConsumerWidget {
         Container(
         decoration: BoxDecoration(
           color: theme.scaffoldBackgroundColor,
-          borderRadius: context.rdSkin == null
-              ? null
-              : const BorderRadius.vertical(top: Radius.circular(16)),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
         ),
         child: Column(
           children: [
@@ -452,7 +421,6 @@ class AttendanceSongsSheet extends ConsumerWidget {
           ],
         ),
       );
-    if (scrollController != null) return content(context, scrollController!);
     return AppDraggableSheet(
       // Ionic: initialBreakpoint 0.75, breakpoints [0, 0.75, 1]
       breakpoints: const [0, 0.75, 1],
@@ -466,7 +434,7 @@ class AttendanceSongsSheet extends ConsumerWidget {
   }
 }
 
-/// Shows the Werke of one Termin (Ionic `openAttendanceSongs`).
+/// Shows the Werke of one Termin.
 Future<void> showAttendanceSongsSheet(
   BuildContext context, {
   required String title,
@@ -476,31 +444,11 @@ Future<void> showAttendanceSongsSheet(
   bool linkOnly = false,
   VoidCallback? onOpenPlan,
 }) {
-  // TER-30: classic = Ionic sheet [0, 0.75, 1] with the modal handle and
-  // the shared sheet radius (stage-1 block); Beta keeps its own sheet.
-  if (context.rdSkin == null) {
-    return showIonSheet<void>(
-      context,
-      breakpoints: const [0, 0.75, 1],
-      initialBreakpoint: 0.75,
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      builder: (context, scrollController) => AttendanceSongsSheet(
-        title: title,
-        subtitle: subtitle,
-        entries: entries,
-        instrumentId: instrumentId,
-        linkOnly: linkOnly,
-        onOpenPlan: onOpenPlan,
-        scrollController: scrollController,
-      ),
-    );
-  }
   return showModalBottomSheet(
     context: context,
     useRootNavigator: true,
     isScrollControlled: true,
     useSafeArea: true,
-    clipBehavior: context.rdSkin == null ? Clip.antiAlias : null,
     backgroundColor: Colors.transparent,
     builder: (context) => AttendanceSongsSheet(
       title: title,

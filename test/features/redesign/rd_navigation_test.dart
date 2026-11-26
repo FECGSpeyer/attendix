@@ -93,8 +93,6 @@ void main() {
   });
 
   group('RedesignRoutes', () {
-    tearDown(() => RedesignRoutes.active = false);
-
     test('recognises the routes of the new design', () {
       expect(RedesignRoutes.isRedesignRoute('/heute'), isTrue);
       expect(RedesignRoutes.isRedesignRoute('/ich/darstellung'), isTrue);
@@ -108,13 +106,10 @@ void main() {
       expect(isTenantScopedRoute('/ich/darstellung'), isTrue);
     });
 
-    test('homeRouteFor: "Heute" for every role while the Beta is on', () {
-      RedesignRoutes.active = true;
+    test('homeRouteFor: "Heute" for every role', () {
       for (final role in [Role.admin, Role.player, Role.parent, Role.helper]) {
         expect(homeRouteFor(role, 42, null), '/heute', reason: role.name);
       }
-      RedesignRoutes.active = false;
-      expect(homeRouteFor(Role.player, 42, null), Role.player.defaultRoute);
     });
   });
 }

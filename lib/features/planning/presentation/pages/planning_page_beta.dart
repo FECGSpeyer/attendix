@@ -221,7 +221,7 @@ extension _PlanningBeta on _PlanningPageState {
               ),
             ),
             const SizedBox(width: 8),
-            _rdStatus(),
+            Flexible(child: _rdStatus()),
           ],
         ),
       ];
@@ -302,7 +302,7 @@ extension _PlanningBeta on _PlanningPageState {
     } else if (!_hasUserEdits) {
       return const SizedBox(height: 18);
     } else if (!_validate()) {
-      content = Text(l10n.redesignPlanInvalid, style: TextStyle(fontSize: 13, color: p.late));
+      content = Text(l10n.redesignPlanInvalid, textAlign: TextAlign.end, style: TextStyle(fontSize: 13, color: p.late));
     } else {
       content = Text(l10n.redesignPlanSaving, style: RdType.meta(p, size: 13));
     }

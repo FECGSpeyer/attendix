@@ -9,7 +9,6 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/attendance_type_providers.dart';
-import '../../../../core/providers/duty_providers.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../data/models/instrument/instrument.dart' show Group;
 import '../../../../core/providers/tenant_providers.dart';
@@ -24,9 +23,8 @@ import '../../../../core/providers/team_org_providers.dart';
 import '../widgets/type_protocol_settings.dart';
 import '../widgets/registration_fields_editor.dart';
 import '../widgets/type_reminders_editor.dart';
-import '../widgets/settings_list.dart';
 import '../widgets/settings_form_items.dart';
-import '../../../../shared/widgets/layout/ionic_md.dart' show IonMd;
+import '../widgets/settings_list.dart' show IonBadge;
 import '../../../../core/providers/organisation_providers.dart' show currentOrganisationProvider;
 import '../../../../core/providers/plan_providers.dart' show planAttendanceTypesProvider;
 import '../../../../core/utils/plan_utils.dart';
@@ -36,11 +34,7 @@ import '../../../planning/presentation/widgets/plan_field_dialogs.dart' show sho
 import '../../../planning/presentation/widgets/plan_fields_editor.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/services/error_reporter.dart';
-import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
 import '../../../../shared/widgets/adaptive/adaptive.dart';
-import '../../../../shared/widgets/dialogs/ion_modal.dart' show showIonModal;
-import '../../../../shared/widgets/dialogs/ion_sheet.dart' show showIonSheet, IonSheetScaffold;
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 import '../../../../core/services/web_window.dart' show setUnloadWarning;
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../planning/presentation/widgets/rd_plan_widgets.dart';
@@ -54,30 +48,8 @@ import '../../../redesign/presentation/widgets/today/rd_today_common.dart' show 
 part 'attendance_type_edit_page_beta.dart';
 
 
-/// Ionic `types.page.ts openTypeModal()`: "+" presents the type page with
-/// `isNew: true` as a modal (iOS: card modal over the list, md: full-screen
-/// `ion-modal`, centred card on desktop). Nothing is written before the FAB
-/// creates the type. Returns true when a type was created.
-Future<bool?> showAttendanceTypeCreateModal(BuildContext context) {
-  Widget build(BuildContext _) => const AttendanceTypeEditPage.create();
-  if (useIosLook(context)) {
-    return showIosCardModal<bool>(
-      context,
-      backgroundColor: Theme.of(context).brightness == Brightness.dark
-          ? null
-          : AppColors.light,
-      builder: build,
-    );
-  }
-  return showIonModal<bool>(context, builder: build);
-}
-
 /// Attendance Type Edit Page
-///
-/// Edit an existing attendance type or – with [AttendanceTypeEditPage.create]
-/// (Ionic `isNew`) – configure and create a new one.
 class AttendanceTypeEditPage extends ConsumerStatefulWidget {
-  /// Null in the "new" mode.
   final String? typeId;
 
   const AttendanceTypeEditPage({
@@ -85,18 +57,11 @@ class AttendanceTypeEditPage extends ConsumerStatefulWidget {
     required String this.typeId,
   });
 
-  /// Ionic type.page with `isNew: true`: starts with the defaults of
-  /// [buildNewAttendanceType] and creates the type on the FAB.
-  const AttendanceTypeEditPage.create({super.key}) : typeId = null;
-
-  bool get isNew => typeId == null;
-
   @override
   ConsumerState<AttendanceTypeEditPage> createState() => _AttendanceTypeEditPageState();
 }
 
 class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage> {
-  final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _durationDaysController = TextEditingController(text: '1');
   final _planningTitleController = TextEditingController();
@@ -154,7 +119,6 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
 
   // DUTY: Dienst-Modus (Dienstplan)
   bool _dutyMode = false;
-  bool _dutyModeAtLoad = false;
   int _dutyRequired = 1;
   bool _dutySelfSignup = true;
   int? _dutyConfirmReminderDays = 2;
@@ -208,26 +172,10 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
   AttendanceType? _originalType;
   int _usageCount = 0;
 
-  /// Id of the type created in the "new" mode (for the duty view offer).
-  String? _createdId;
-  bool _isCreating = false;
-
-  bool get _isNew => widget.isNew;
-
-  /// Ionic `dismissModal`: the discard alert only once a name was entered.
-  bool get _hasNewInput => _nameController.text.trim().isNotEmpty;
-
   @override
   void initState() {
     super.initState();
-    if (_isNew) {
-      // Ionic isNew: nothing is loaded; the org plan flag starts false and
-      // is written with the insert.
-      _isDefaultOrgPlanLoaded = true;
-      _applyType(buildNewAttendanceType(''));
-    } else {
-      _loadType();
-    }
+    _loadType();
   }
 
   Future<void> _loadType() async {
@@ -304,12 +252,11 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         _hideName = type.hideName;
         _includeInAverage = type.includeInAverage;
         _dutyMode = type.dutyMode;
-        _dutyModeAtLoad = type.dutyMode;
         _dutyRequired = type.dutyRequired ?? 1;
         _dutyRequiredController.text = '$_dutyRequired';
         _dutySelfSignup = type.dutySelfSignup;
         _dutyConfirmReminderDays = type.dutyConfirmReminderDays;
-        _dutyReminderDaysUnset = _isNew;
+        _dutyReminderDaysUnset = false;
         _dutyNotifyUnderstaffed = type.dutyNotifyUnderstaffed;
         _dutyUrgentHours = type.dutyUrgentHours;
         _color = type.color ?? 'primary';
@@ -385,502 +332,8 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
       );
     }
 
-    // REDESIGN: existing types save live in the Beta look.
-    if (!_isNew && context.rdSkin != null) {
-      setUnloadWarning(this, false);
-      return _rdBuild(context);
-    }
-    // Ionic beforeunload: closing/reloading the browser tab warns too.
-    final dirty = _isNew ? _hasNewInput : _hasChanges;
-    setUnloadWarning(this, dirty);
-    return PopScope(
-      // Während des Anlegens nicht schließen (Wischen/Zurück blockiert).
-      canPop: !dirty && !_isCreating,
-      onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) _isNew ? _closeNew() : _onBackPressed();
-      },
-      child: Scaffold(
-        // UX_SETTINGS (WAVE 8): type.page.html — no title, arrow-back,
-        // red trash at the end, save via FAB (save-outline).
-        // IOS_R6: Ionic `ion-content fullscreen` under the
-        // `ion-header translucent` (no large title: always blurred)
-        // Ionic isNew (modal): no back arrow and no trash, ✕ at the end.
-        extendBodyBehindAppBar: !_isNew && useIosLook(context),
-        appBar: _isNew
-            ? AppBar(
-                automaticallyImplyLeading: false,
-                toolbarHeight: ionModalToolbarHeight(context),
-                actions: [
-                  ToolbarButtonGroup(children: [
-                    IconButton(
-                      icon: Icon(AppIcons.close),
-                      tooltip: context.l10n.commonClose,
-                      onPressed: _isCreating ? null : _closeNew,
-                    ),
-                  ]),
-                ],
-              )
-            : IonTranslucentAppBar(child: AppBar(
-          leading: settingsBackButton(context, onPressed: _onBackPressed),
-        actions: settingsToolbarActions(context, [
-          IconButton(
-            icon: Icon(AppIcons.deleteOutline, color: AppColors.danger),
-            tooltip: context.l10n.commonDelete,
-            onPressed: _deleteType,
-          ),
-        ]),
-      )),
-      // Ionic isNew: "+" FAB creates the type (always enabled).
-      floatingActionButton: _isNew
-          ? FloatingActionButton(
-              onPressed: _isCreating ? null : _create,
-              tooltip: context.l10n.typeSettingsFlutterCreateType,
-              child: Icon(AppIcons.add),
-            )
-          : TabBarFab.wrap(FloatingActionButton(
-        onPressed: _hasChanges ? _save : null,
-        tooltip: context.l10n.commonSave,
-        child: Icon(AppIcons.saveOutlined),
-      )),
-      body: Form(
-        key: _formKey,
-        onChanged: () => setState(() => _hasChanges = true),
-        child: ListView(
-          padding: EdgeInsets.fromLTRB(_pageMargin, AppDimensions.paddingM, _pageMargin, scrollEndPadding(context, base: AppDimensions.paddingM, fabRoom: _isNew ? 80 : 0)),
-          children: [
-            const IonContentTopInset(),
-            // Usage warning (not in Ionic, so only with the Beta design)
-            if (_usageCount > 0 && context.rdSkin != null) ...[
-              Card(
-                color: AppColors.warning.withValues(alpha: 0.1),
-                child: Padding(
-                  padding: const EdgeInsets.all(AppDimensions.paddingS),
-                  child: Row(
-                    children: [
-                      Icon(AppIcons.infoOutline, size: 18, color: AppColors.warning),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          context.l10n.typeSettingsFlutterUsageWarning(_usageCount),
-                          style: const TextStyle(fontSize: 12),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: AppDimensions.paddingM),
-            ],
-            // Name (Ionic: first inset group, stacked label)
-            _nameField(),
-            _gap,
-
-            // UX_SETTINGS: Ionic "Optionen" (type.page.html order): Aktiv, verfügbare
-            // Status, Standard-Status, Werke verwalten, Ganztägig/Zeiten, Name
-            // verbergen, Hervorheben, Für Ø berücksichtigen, Protokoll, Ort.
-            _section(
-              title: context.l10n.typeSettingsOptions,
-              items: [
-                  IonSwitchListTile(
-                    title: Text(context.l10n.typeSettingsActive),
-                    subtitle: Text(
-                      context.l10n.typeSettingsActiveHelper,
-                    ),
-                    value: _visible,
-                    onChanged: (value) => setState(() {
-                      _visible = value;
-                      _hasChanges = true;
-                    }),
-                    contentPadding: _rowPad,
-                  ),
-                  // UX_SETTINGS (WAVE 8): Ionic stacked ion-select (multiple)
-                  // → value row opening a checkbox list; default status as
-                  // stacked select.
-                  SettingsStackedValue(
-                    label: context.l10n.typeSettingsAvailableStatus,
-                    value: _statusOrder
-                        .where(_availableStatuses.contains)
-                        .map(_getStatusName)
-                        .join(', '),
-                    onTap: _pickAvailableStatuses,
-                    flush: _flush,
-                  ),
-                  SettingsStackedField(
-                    flush: _flush,
-                    label: context.l10n.typeSettingsDefaultStatus,
-                    builder: (decoration) => AppDropdownFormField<AttendanceStatus>(
-                      interface: AppSelectInterface.alert,
-                      header: context.l10n.typeSettingsDefaultStatus,
-                      decoration: decoration,
-                      value: _availableStatuses.contains(_defaultStatus)
-                          ? _defaultStatus
-                          : _availableStatuses.firstOrNull ?? AttendanceStatus.present,
-                      onChanged: (value) {
-                        if (value != null) {
-                          setState(() {
-                            _defaultStatus = value;
-                            _hasChanges = true;
-                          });
-                        }
-                      },
-                      items: _statusOrder
-                          .where(_availableStatuses.contains)
-                          .map((status) => DropdownMenuItem(
-                                value: status,
-                                child: Text(_getStatusName(status)),
-                              ))
-                          .toList(),
-                    ),
-                  ),
-                  // Ionic: `@if (!isGeneral)`.
-                  if (!_isGeneral)
-                  IonSwitchListTile(
-                    title: Text(context.l10n.typeSettingsManageSongs),
-                    subtitle: Text(
-                      context.l10n.typeSettingsSongsHelper,
-                    ),
-                    value: _manageSongs,
-                    onChanged: (value) => setState(() {
-                      _manageSongs = value;
-                      _hasChanges = true;
-                    }),
-                    contentPadding: _rowPad,
-                  ),
-                  IonSwitchListTile(
-                    title: Text(context.l10n.typeSettingsAllDay),
-                    subtitle: Text(
-                      context.l10n.typeSettingsAllDayHelper,
-                    ),
-                    value: _allDay,
-                    onChanged: (value) => setState(() {
-                      _allDay = value;
-                      _hasChanges = true;
-                    }),
-                    contentPadding: _rowPad,
-                  ),
-                  if (_allDay && context.rdSkin == null)
-                    // Ionic: stacked `ion-input type="number"`.
-                    SettingsStackedField(
-                      label: context.l10n.typeSettingsDefaultDays,
-                      builder: (decoration) => TextFormField(
-                        controller: _durationDaysController,
-                        keyboardType: TextInputType.number,
-                        decoration: decoration,
-                        onChanged: (value) {
-                          final parsed = int.tryParse(value);
-                          if (parsed != null && parsed > 0) {
-                            _durationDays = parsed;
-                            _hasChanges = true;
-                          }
-                        },
-                      ),
-                    )
-                  else if (_allDay)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: Row(
-                        children: [
-                          Expanded(child: Text(context.l10n.typeSettingsDefaultDays)),
-                          SizedBox(
-                            width: 60,
-                            child: TextFormField(
-                              controller: _durationDaysController,
-                              keyboardType: TextInputType.number,
-                              textAlign: TextAlign.center,
-                              decoration: const InputDecoration(
-                                isDense: true,
-                                contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                              ),
-                              onChanged: (value) {
-                                final parsed = int.tryParse(value);
-                                if (parsed != null && parsed > 0) {
-                                  _durationDays = parsed;
-                                  _hasChanges = true;
-                                }
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  else ...[
-                    ListTile(
-                      contentPadding: _rowPad,
-                      title: Text(context.l10n.typeSettingsStart),
-                      subtitle: Text(
-                        context.l10n.typeSettingsTimesHint,
-                      ),
-                      trailing: _timeValue(
-                        _formatTime(_startTime ?? const TimeOfDay(hour: 19, minute: 0)),
-                        onTap: () => _pickTime(isStart: true),
-                      ),
-                      onTap: () => _pickTime(isStart: true),
-                    ),
-                    ListTile(
-                      contentPadding: _rowPad,
-                      title: Text(context.l10n.typeSettingsEnd),
-                      trailing: _timeValue(
-                        _formatTime(_endTime ?? const TimeOfDay(hour: 20, minute: 30)),
-                        onTap: () => _pickTime(isStart: false),
-                      ),
-                      onTap: () => _pickTime(isStart: false),
-                    ),
-                  ],
-                  IonSwitchListTile(
-                    title: Text(context.l10n.typeSettingsHideName),
-                    subtitle: Text(
-                      context.l10n.typeSettingsHideNameHelper,
-                    ),
-                    value: _hideName,
-                    onChanged: (value) => setState(() {
-                      _hideName = value;
-                      _hasChanges = true;
-                    }),
-                    contentPadding: _rowPad,
-                  ),
-                  IonSwitchListTile(
-                    title: Text(context.l10n.typeSettingsHighlight),
-                    subtitle: Text(
-                      context.l10n.typeSettingsHighlightHelper,
-                    ),
-                    value: _highlight,
-                    onChanged: (value) => setState(() {
-                      _highlight = value;
-                      _hasChanges = true;
-                    }),
-                    contentPadding: _rowPad,
-                  ),
-                  IonSwitchListTile(
-                    title: Text(context.l10n.typeSettingsCountForAvg),
-                    subtitle: Text(
-                      context.l10n.typeSettingsCountForAvgHelper,
-                    ),
-                    value: _includeInAverage,
-                    onChanged: (value) => setState(() {
-                      _includeInAverage = value;
-                      _hasChanges = true;
-                    }),
-                    contentPadding: _rowPad,
-                  ),
-                  // PROTOCOL: Protokoll & Tagesordnung
-                  TypeProtocolSettingsTiles(
-                    settings: _protocol,
-                    // Ionic: "Mehr erfahren" is hidden while creating.
-                    showLearnMore: !_isNew,
-                    hasPlaceholder: hasAgendaPlaceholder(_planFields),
-                    onChanged: (v) => setState(() {
-                      _protocol = v;
-                      _hasChanges = true;
-                    }),
-                    onInsertPlaceholder: () => setState(() {
-                      if (!hasAgendaPlaceholder(_planFields)) _planFields.add(_withRowUid(agendaPlaceholderField()));
-                      _hasChanges = true;
-                    }),
-                  ),
-                  // ATTENDANCE_SIGNOUT: place / navigation
-                  IonSwitchListTile(
-                    title: Text(context.l10n.typeSettingsEnableLocation),
-                    subtitle: Text(
-                      context.l10n.typeSettingsLocationHelper,
-                    ),
-                    value: _placeEnabled,
-                    onChanged: (value) => setState(() {
-                      _placeEnabled = value;
-                      _hasChanges = true;
-                    }),
-                    contentPadding: _rowPad,
-                  ),
-                ],
-            ),
-            _gap,
-
-            // DUTY: Dienstplan
-            _buildDutySection(),
-            _gap,
-
-            // Terminerinnerungen (SETTINGS2: Ionic reminders modal)
-            _section(
-              title: context.l10n.typeSettingsEventReminders,
-              items: [
-                  IonSwitchListTile(
-                    title: Text(context.l10n.typeSettingsEventReminder),
-                    subtitle: Text(
-                      context.l10n.typeSettingsEventReminderHelper,
-                    ),
-                    value: _notification,
-                    onChanged: (value) => setState(() {
-                      _notification = value;
-                      _hasChanges = true;
-                    }),
-                    contentPadding: _rowPad,
-                  ),
-                  // Ionic: item "Erinnerungen konfigurieren" opening the sheet.
-                  if (_notification)
-                    ListTile(
-                      contentPadding: _rowPad,
-                      title: Text(context.l10n.typeSettingsConfigureReminders),
-                      subtitle: Text(_reminders.isNotEmpty
-                          ? context.l10n.typeSettingsRemindersActive(_reminders.length)
-                          : context.l10n.typeSettingsNoReminders),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          if (_reminders.isNotEmpty)
-                            IonBadge(
-                              text: '${_reminders.length}/${TypeRemindersEditor.maxReminders}',
-                              color: AppColors.primary,
-                            ),
-                          if (context.rdSkin != null)
-                            Icon(AppIcons.chevronRight, color: AppColors.mediumOf(context))
-                          else ...[
-                            const SizedBox(width: 8),
-                            const IonDetailChevron(),
-                          ],
-                        ],
-                      ),
-                      onTap: _openReminders,
-                    ),
-                ],
-            ),
-            _gap,
-
-            // Color Picker
-            // UX_SETTINGS (WAVE 8): Ionic item (h2 Farbe, h3 hint, ellipse in
-            // the colour at the end) opening a colour grid popover.
-            _section(
-              title: context.l10n.typeSettingsAppearance,
-              items: [Builder(
-                builder: (rowContext) => ListTile(
-                  contentPadding: _rowPad,
-                  title: Text(context.l10n.typeSettingsColor),
-                  subtitle: Text(context.l10n.typeSettingsColorHint),
-                  trailing: Icon(AppIcons.circle, color: ColorUtils.getColorForPicker(_color)),
-                  onTap: () => rowContext.rdSkin != null ? _pickColor() : _pickColorPopover(rowContext),
-                ),
-              )],
-            ),
-            _gap,
-
-            // Ionic "Filter": Relevante Gruppen + Zusatzfeld-Filter
-            _buildFilterSection(),
-            _gap,
-
-            // Ionic: "Ablaufplan" is always shown (default_plan is created
-            // on load), with the "+" popover in the header.
-            _buildPlanSection(),
-            _gap,
-
-            // Checkliste (Template) – only while enabled (Ionic `@if (type.checklist)`)
-            if (_checklistEnabled) ...[
-              _buildChecklistSection(),
-              _gap,
-            ],
-            // Ionic: toggle "Checkliste aktivieren" (off = checklist null)
-            _section(
-              items: [IonSwitchListTile(
-                contentPadding: _rowPad,
-                title: Text(context.l10n.typeSettingsEnableChecklist),
-                subtitle: Text(context.l10n.typeSettingsChecklistHelper),
-                value: _checklistEnabled,
-                onChanged: (v) => setState(() {
-                  _checklistEnabled = v;
-                  _checklist = [];
-                  _hasChanges = true;
-                }),
-              )],
-            ),
-            _gap,
-            // ATTENDANCE_SIGNOUT: Anmeldefelder (adjustable at any time)
-            _section(
-              title: context.l10n.typeSettingsSignupFields,
-              // F-EINST-33: Ionic `ion-badge color="medium"` with the count
-              // (only when there are fields); the Beta keeps its header.
-              action: context.rdSkin == null && _registrationFields.isNotEmpty
-                  ? Padding(
-                      padding: const EdgeInsets.only(right: 12),
-                      child: IonBadge(text: '${_registrationFields.length}', color: AppColors.mediumOf(context)),
-                    )
-                  : null,
-              items: [RegistrationFieldsEditor(
-                fields: _registrationFields,
-                onChanged: (fields) => setState(() {
-                  _registrationFields = fields;
-                  _hasChanges = true;
-                }),
-              )],
-            ),
-            _gap,
-            const SizedBox(height: 64),
-          ],
-        ),
-      ),
-    ),
-    );
-  }
-
-  /// Ionic colour popover: a grid of ellipses, the selected one on a grey
-  /// rounded background.
-  /// Ionic `ion-popover #colorPopover` (trigger = the colour item): an
-  /// `ion-grid` with three columns (`ion-col size="4"`, 1rem radius, the
-  /// current colour on `--ion-color-medium`) of 1.5rem ellipses.
-  Future<void> _pickColorPopover(BuildContext rowContext) async {
-    final box = rowContext.findRenderObject()! as RenderBox;
-    final picked = await showAppPopover<String>(
-      context: rowContext,
-      // The item is the trigger: below it (md: left edge, iOS: centred).
-      anchor: box.localToGlobal(Offset.zero) & box.size,
-      builder: (ctx) => Padding(
-        // ion-grid `--ion-grid-padding: 5px`; the popover list padding of
-        // the shared popover is not part of the Ionic grid popover.
-        padding: const EdgeInsets.symmetric(horizontal: 5),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            for (var i = 0; i < ColorUtils.availableColors.length; i += 3)
-              Row(
-                children: [
-                  for (var j = i; j < i + 3; j++)
-                    Expanded(
-                      child: j >= ColorUtils.availableColors.length
-                          ? const SizedBox.shrink()
-                          : _colorCell(ctx, ColorUtils.availableColors[j]),
-                    ),
-                ],
-              ),
-          ],
-        ),
-      ),
-    );
-    if (picked == null || !mounted) return;
-    setState(() {
-      _color = picked;
-      _hasChanges = true;
-    });
-  }
-
-  /// `ion-col` of the colour popover: padding 8 / 5 / 5 / 5, radius 1rem.
-  Widget _colorCell(BuildContext ctx, String colorName) {
-    final radius = BorderRadius.circular(16);
-    return InkWell(
-      borderRadius: radius,
-      onTap: () => Navigator.pop(ctx, colorName),
-      child: Semantics(
-        selected: _color == colorName,
-        child: Container(
-          padding: const EdgeInsets.fromLTRB(5, 8, 5, 5),
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: _color == colorName ? AppColors.mediumOf(context) : null,
-            borderRadius: radius,
-          ),
-          child: Icon(
-            AppIcons.circle,
-            size: 24,
-            color: ColorUtils.getColorForPicker(colorName),
-          ),
-        ),
-      ),
-    );
+    setUnloadWarning(this, false);
+    return _rdBuild(context);
   }
 
   /// The colour dialog of the Beta design (also attendance_type_edit_page_beta).
@@ -933,25 +386,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         builder: (ctx, setLocal) => AppAlertDialog(
           title: Text(context.l10n.typeSettingsAvailableStatus),
           contentPadding: const EdgeInsets.symmetric(vertical: 8),
-          // Ionic alert with `type: 'checkbox'` inputs (`ion-select multiple`).
-          content: AppAlertCheckboxGroup<AttendanceStatus>(
-            options: [
-              for (final status in _ionicStatusOptions)
-                AppAlertOption(
-                  status,
-                  _getStatusName(status),
-                  enabled: status != AttendanceStatus.present,
-                ),
-            ],
-            values: selected,
-            onChanged: (status, checked) => setLocal(() {
-              if (checked) {
-                selected.add(status);
-              } else if (selected.length > 1) {
-                selected.remove(status);
-              }
-            }),
-            beta: SingleChildScrollView(
+          content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -971,7 +406,6 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                   ),
               ],
             ),
-          ),
           ),
           actions: [
             TextButton(
@@ -999,113 +433,18 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
     });
   }
 
-  Widget _nameField() {
-    String? validate(String? value) {
-      if (value == null || value.trim().isEmpty) {
-        return context.l10n.typeSettingsEnterName;
-      }
-      return null;
-    }
+  EdgeInsetsGeometry? get _rowPad => EdgeInsets.zero;
 
-    if (!ionIsIos(context) && context.rdSkin != null) {
-      return TextFormField(
-        controller: _nameController,
-        decoration: InputDecoration(
-          labelText: '${context.l10n.typeSettingsName} *',
-          hintText: context.l10n.typeSettingsFlutterNamePhShort,
-        ),
-        validator: validate,
-      );
-    }
-    if (context.rdSkin == null) {
-      // EIA-01: Ionic first inset list (no header), stacked name input – the
-      // same card + item structure in both looks.
-      return SettingsListSection(icons: false, children: [
-        SettingsStackedField(
-          label: context.l10n.typeSettingsName,
-          builder: (decoration) => TextFormField(
-            controller: _nameController,
-            textCapitalization: TextCapitalization.sentences,
-            decoration: decoration,
-            validator: validate,
-          ),
-        ),
-      ]);
-    }
-    return IonInsetGroup(children: [
-      SettingsStackedField(
-        label: context.l10n.typeSettingsName,
-        builder: (decoration) => TextFormField(
-          controller: _nameController,
-          textCapitalization: TextCapitalization.sentences,
-          decoration: decoration,
-          validator: validate,
-        ),
-      ),
-    ]);
-  }
+  bool get _flush => true;
 
-  /// Row padding inside a classic group: the Beta keeps its flush rows;
-  /// iOS takes the item padding of the inset group theme, md 16 / 16.
-  EdgeInsetsGeometry? get _rowPad => context.rdSkin != null
-      ? EdgeInsets.zero
-      : (ionIsIos(context)
-          ? null
-          : const EdgeInsets.symmetric(horizontal: IonMd.itemPaddingStart));
-
-  /// Stacked rows sit flush only in the Beta (one padded group child).
-  bool get _flush => context.rdSkin != null;
-
-  /// Page side margin: Ionic inset list margin (iOS 20, md 16); the Beta
-  /// keeps 16.
-  double get _pageMargin =>
-      context.rdSkin != null ? AppDimensions.paddingM : ionListMargin(context);
-
-  /// Space between sections: the classic [SettingsListSection] brings its
-  /// own bottom margin.
-  Widget get _gap =>
-      SizedBox(height: context.rdSkin != null ? AppDimensions.paddingL : 0);
-
-  /// EIA-01/02: Ionic `ion-list [inset]` + `ion-list-header` +
-  /// `ion-item-group` with every row as its own item (inset lines between
-  /// them) in both looks. The Beta keeps the old single-child section.
-  Widget _section({String? title, Widget? action, required List<Widget> items}) {
-    if (context.rdSkin != null) {
-      return _buildSection(
+  Widget _section({String? title, Widget? action, required List<Widget> items}) =>
+      _buildSection(
         title: title,
         action: action,
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: items),
       );
-    }
-    return SettingsListSection(
-      title: title,
-      headerAction: action,
-      icons: false,
-      children: items,
-    );
-  }
 
   Widget _buildSection({String? title, required Widget child, Widget? action}) {
-    // UX_SETTINGS (WAVE 8): iOS → ion-list-header + inset item group.
-    if (ionIsIos(context)) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          if (title != null) IonListHeader(title: title, action: action),
-          IonInsetGroup(children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                IonIos.itemPaddingStart,
-                4,
-                IonIos.itemPaddingEnd,
-                4,
-              ),
-              child: child,
-            ),
-          ]),
-        ],
-      );
-    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1169,9 +508,6 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
             }),
             contentPadding: _rowPad,
           ),
-          // Ionic openDutyHelp: "Mehr erfahren" → help article duty-setup
-          // (not while creating a new type).
-          if (!_isNew)
           ListTile(
             contentPadding: _rowPad,
             leading: Icon(AppIcons.helpOutline, color: AppColors.primary),
@@ -1179,21 +515,6 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
             onTap: () => context.push('/settings/help/article/duty-setup'),
           ),
           if (_dutyMode) ...[
-            if (context.rdSkin == null)
-              // EIA-22: Ionic `ion-input type="number" labelPlacement="start"
-              // class="ion-text-end"` instead of a −/+ stepper.
-              SettingsNumberItem(
-                label: context.l10n.typeSettingsNeededPeople,
-                controller: _dutyRequiredController,
-                placeholder: '1',
-                onChanged: (value) {
-                  final parsed = int.tryParse(value.trim());
-                  if (parsed != null && parsed > 0 && parsed != _dutyRequired) {
-                    mark(() => _dutyRequired = parsed);
-                  }
-                },
-              )
-            else
             ListTile(
               contentPadding: _rowPad,
               title: Text(context.l10n.typeSettingsNeededPeople),
@@ -1268,9 +589,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
               ),
             ),
             Padding(
-              padding: context.rdSkin != null
-                  ? const EdgeInsets.only(top: AppDimensions.paddingS)
-                  : EdgeInsets.fromLTRB(16, 10, ionIsIos(context) ? IonIos.itemPaddingEnd : 16, 10),
+              padding: const EdgeInsets.only(top: AppDimensions.paddingS),
               child: Text(
                 context.l10n.typeSettingsCircleHint,
                 style: TextStyle(color: AppColors.mediumOf(context), fontSize: 13),
@@ -1279,38 +598,6 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
           ],
         ],
     );
-  }
-
-  /// DUTY: after the first Termintyp with Dienst-Modus ask once whether
-  /// "Meine Termine" should become the Dienstplan view.
-  Future<void> _offerDutyView() async {
-    final dutyRepo = ref.read(dutyRepositoryWithTenantProvider);
-    if (!_dutyMode || _dutyModeAtLoad) return;
-    _dutyModeAtLoad = true;
-    final tenant = ref.read(currentTenantProvider);
-    if (tenant == null || tenant.dutyView) return;
-    final types = ref.read(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[];
-    final ownId = widget.typeId ?? _createdId;
-    if (types.any((t) => t.dutyMode && t.id != ownId)) return;
-    final useIt = await DialogHelper.showConfirmation(
-      context,
-      title: context.l10n.typeSettingsUseDutyView,
-      message: context.l10n.typeSettingsUseDutyViewMessage,
-      confirmText: context.l10n.typeSettingsUseIt,
-      cancelText: context.l10n.typeSettingsNormalView,
-    );
-    if (!useIt || !mounted) return;
-    try {
-      await dutyRepo.setDutyView(true);
-      // SOL_FIX19: only while the tenant the view was saved for is still the
-      // current one (a switch during the dialog / save keeps the other one).
-      await ref
-          .read(currentTenantProvider.notifier)
-          .updateTenantLocalIfCurrent(tenant.id, (current) => current.copyWith(dutyView: true));
-      if (mounted) ToastHelper.showSuccess(context, context.l10n.typeSettingsDutyViewActive);
-    } catch (_) {
-      if (mounted) ToastHelper.showError(context, context.l10n.typeSettingsViewFailed);
-    }
   }
 
   /// Ionic "Filter": multi-select "Relevante Gruppen" and the extra field
@@ -1421,17 +708,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         builder: (ctx, setLocal) => AppAlertDialog(
           title: Text(context.l10n.typeSettingsRelevantGroups),
           contentPadding: const EdgeInsets.symmetric(vertical: 8),
-          // Ionic alert with `type: 'checkbox'` inputs (`ion-select multiple`).
-          content: AppAlertCheckboxGroup<int>(
-            options: [
-              for (final group in groups.where((g) => g.id != null))
-                AppAlertOption(group.id!, group.name),
-            ],
-            values: selected,
-            onChanged: (id, checked) => setLocal(() {
-              checked ? selected.add(id) : selected.remove(id);
-            }),
-            beta: SingleChildScrollView(
+          content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -1449,7 +726,6 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                   ),
               ],
             ),
-          ),
           ),
           actions: [
             TextButton(
@@ -1475,51 +751,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
     });
   }
 
-  /// Ionic reminders sheet (breakpoint 1, checkmark closes).
   Future<void> _openReminders() async {
-    if (context.rdSkin == null) {
-      // EIA-06/16: Ionic sheet modal `[breakpoints]="[0, 1]"`, toolbar
-      // title with the checkmark in slot end, `ion-content color="light"`.
-      final dark = Theme.of(context).brightness == Brightness.dark;
-      await showIonSheet<void>(
-        context,
-        backgroundColor: dark ? null : AppColors.light,
-        builder: (sheetContext, controller) => StatefulBuilder(
-          builder: (sheetContext, setSheet) => IonSheetScaffold(
-            title: context.l10n.typeSettingsReminders,
-            end: [
-              IconButton(
-                tooltip: context.l10n.commonOk,
-                icon: Icon(AppIcons.check),
-                onPressed: () => Navigator.of(sheetContext).pop(),
-              ),
-            ],
-            body: ListView(
-              controller: controller,
-              padding: EdgeInsets.fromLTRB(
-                ionListMargin(context),
-                AppDimensions.paddingM,
-                ionListMargin(context),
-                AppDimensions.paddingM + MediaQuery.paddingOf(sheetContext).bottom,
-              ),
-              children: [
-                TypeRemindersEditor(
-                  reminders: _reminders,
-                  onChanged: (list) {
-                    setState(() {
-                      _reminders = list;
-                      _hasChanges = true;
-                    });
-                    setSheet(() {});
-                  },
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-      return;
-    }
     await showModalBottomSheet<void>(
       context: context,
       useRootNavigator: true,
@@ -1594,15 +826,9 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
 
   bool get _isGeneral => ref.read(currentTenantProvider)?.type == 'general';
 
-  /// QUE-28: the value of a time row – Ionic `ion-datetime-button` (a pill
-  /// without [onTap] stands in front of a disabled `ion-datetime`). The
-  /// Beta keeps its plain text.
   Widget _timeValue(String text, {VoidCallback? onTap, Color? betaColor}) {
-    if (context.rdSkin != null) {
-      final style = Theme.of(context).textTheme.titleMedium;
-      return Text(text, style: betaColor == null ? style : style?.copyWith(color: betaColor));
-    }
-    return IonDatetimeButton(time: text, onTimeTap: onTap);
+    final style = Theme.of(context).textTheme.titleMedium;
+    return Text(text, style: betaColor == null ? style : style?.copyWith(color: betaColor));
   }
 
   Future<void> _pickTime({required bool isStart}) async {
@@ -1611,8 +837,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
       initialTime: isStart
           ? (_startTime ?? const TimeOfDay(hour: 19, minute: 0))
           : (_endTime ?? const TimeOfDay(hour: 20, minute: 30)),
-      // Ionic minuteValues="0,5,10,…,55"; the Beta keeps its minute steps.
-      minuteInterval: context.rdSkin != null ? 1 : 5,
+      minuteInterval: 1,
     );
     if (time != null && mounted) {
       setState(() {
@@ -1797,18 +1022,13 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
     );
   }
 
-  /// Ionic `ion-popover` at the "+": Feld, Notizfeld, Werk Platzhalter
-  /// (not for general tenants), Tagesordnung Platzhalter (protocol types).
   Future<void> _showPlanAddMenu(BuildContext anchorContext) async {
     final l10n = context.l10n;
-    final String? action;
-    if (context.rdSkin != null) {
-      // Beta design: its Material menu as before.
     final box = anchorContext.findRenderObject() as RenderBox;
     final overlay = Navigator.of(anchorContext).overlay!.context.findRenderObject() as RenderBox;
     final topLeft = box.localToGlobal(Offset(0, box.size.height), ancestor: overlay);
     final bottomRight = box.localToGlobal(box.size.bottomRight(Offset.zero), ancestor: overlay);
-    action = await showMenu<String>(
+    final action = await showMenu<String>(
       context: anchorContext,
       position: RelativeRect.fromRect(Rect.fromPoints(topLeft, bottomRight), Offset.zero & overlay.size),
       constraints: const BoxConstraints(minWidth: 250, maxWidth: 320),
@@ -1827,36 +1047,6 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
           ),
       ],
     );
-    } else {
-      // Bare `ion-item`s with item lines; the last entry (Notizfeld for
-      // general tenants, else the placeholders) is `lines="none"`.
-      action = await showAppPopoverMenu<String>(
-        context: anchorContext,
-        lines: true,
-        items: [
-          AppPopoverMenuItem(value: 'field', label: l10n.typeSettingsAddField),
-          AppPopoverMenuItem(
-            value: 'note',
-            label: l10n.typeSettingsAddNoteField,
-            lines: !_isGeneral,
-          ),
-          if (!_isGeneral)
-            AppPopoverMenuItem(
-              value: 'song',
-              label: l10n.typeSettingsSongPlaceholder,
-              lines: false,
-            ),
-          if (_protocol.enableProtocol)
-            AppPopoverMenuItem(
-              value: 'agenda',
-              label: l10n.typeSettingsAgendaPlaceholder,
-              icon: AppIcons.commit,
-              iconColor: AppColors.mediumOf(context),
-              lines: false,
-            ),
-        ],
-      );
-    }
     if (action == null || !mounted) return;
     switch (action) {
       case 'field':
@@ -2043,7 +1233,6 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                 decoration: decoration,
               ),
             ),
-          if (context.rdSkin != null)
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
             child: FilledButton.icon(
@@ -2051,18 +1240,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
               icon: Icon(AppIcons.addCircleOutline),
               label: IonButtonLabel(l10n.typeSettingsAddTodo),
             ),
-          )
-          else
-            // EIA-25: `ion-item lines="none"` with `ion-button expand="block"`.
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
-              child: IonButton(
-                label: l10n.typeSettingsAddTodo,
-                icon: AppIcons.addCircleOutline,
-                expand: true,
-                onPressed: _newTodoController.text.trim().isEmpty ? null : _addChecklistItem,
-              ),
-            ),
+          ),
         ],
     );
   }
@@ -2120,151 +1298,6 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
     if (hours == 0) return l10n.typeSettingsSameTime;
     if (hours < 24) return l10n.typeSettingsHoursBeforeN(hours);
     return l10n.typeSettingsDaysBeforeN(hours ~/ 24);
-  }
-
-  Future<void> _onBackPressed() async {
-    if (_hasChanges) {
-      final result = await showAppDialog<String>(
-        context: context,
-        builder: (context) => AppAlertDialog(
-          title: Text(context.l10n.rolePermUnsaved),
-          content: Text(context.l10n.rolePermUnsavedMessage),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop('cancel'),
-              child: Text(context.l10n.commonCancel),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop('discard'),
-              style: TextButton.styleFrom(foregroundColor: AppColors.danger),
-              child: Text(context.l10n.rolePermDiscard),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.of(context).pop('save'),
-              child: Text(context.l10n.commonSave),
-            ),
-          ],
-        ),
-      );
-
-      if (result == null || result == 'cancel') return;
-      if (result == 'save') {
-        await _save();
-      }
-    }
-
-    if (mounted) {
-      context.pop();
-    }
-  }
-
-  /// Ionic `dismissModal` (isNew): once a name was entered ask
-  /// "Änderungen verwerfen?", otherwise close right away.
-  Future<void> _closeNew() async {
-    // Während des Anlegens gesperrt: der Insert läuft schon.
-    if (_isCreating) return;
-    if (_hasNewInput) {
-      final discard = await DialogHelper.showConfirmation(
-        context,
-        title: context.l10n.typeSettingsDiscardChanges,
-        message: context.l10n.typeSettingsDiscardMessage,
-        confirmText: context.l10n.rolePermDiscard,
-        cancelText: context.l10n.commonCancel,
-        isDestructive: true,
-      );
-      if (!discard || !mounted || _isCreating) return;
-    }
-    // pop() ignores the PopScope; the unload warning goes with the modal.
-    setUnloadWarning(this, false);
-    Navigator.of(context).pop(false);
-  }
-
-  /// Ionic `createType` (isNew): validate, insert with the tenant, success
-  /// toast, the duty view offer, then close the modal.
-  Future<void> _create() async {
-    // Ionic validate(): name first, then at least two statuses.
-    if (_nameController.text.trim().isEmpty) {
-      ToastHelper.showError(context, context.l10n.typeSettingsEnterName);
-      return;
-    }
-    if (_availableStatuses.length < 2) {
-      ToastHelper.showError(context, context.l10n.typeSettingsTwoStatus);
-      return;
-    }
-
-    // Provider-Zugriffe vor dem await holen: danach darf `ref` nicht mehr
-    // angefasst werden (State könnte disposed sein).
-    final notifier = ref.read(attendanceTypeNotifierProvider.notifier);
-    final container = ProviderScope.containerOf(context);
-    final data = _buildTypeData();
-
-    setState(() => _isCreating = true);
-    try {
-      final created = await notifier.createTypeFromData(data);
-      container.invalidate(protocolTypesProvider);
-      container.invalidate(planAttendanceTypesProvider);
-      if (!mounted) return;
-      _createdId = created.id;
-      if (!mounted) return;
-      ToastHelper.showSuccess(context, context.l10n.typeSettingsCreated);
-      await _offerDutyView();
-      if (!mounted) return;
-      setUnloadWarning(this, false);
-      Navigator.of(context).pop(true);
-    } on DemoModeException {
-      // DEMO_GUARD: the demo warning toast was already shown.
-    } catch (e) {
-      if (mounted) {
-        ToastHelper.showError(context, context.l10n.typeSettingsCreateFailed);
-      }
-    } finally {
-      if (mounted) setState(() => _isCreating = false);
-    }
-  }
-
-  Future<void> _save() async {
-    if (!_formKey.currentState!.validate()) return;
-    // SETTINGS2: Ionic validate() — at least two available statuses
-    if (_availableStatuses.length < 2) {
-      ToastHelper.showError(
-        context,
-        context.l10n.typeSettingsTwoStatus,
-      );
-      return;
-    }
-
-    try {
-      final updates = _buildTypeData();
-
-      final updated = await ref
-          .read(attendanceTypeNotifierProvider.notifier)
-          .updateType(widget.typeId!, updates);
-      ref.invalidate(protocolTypesProvider);
-      ref.invalidate(planAttendanceTypesProvider);
-      // LOGIC_SETTINGS: Ionic shows updateFailed when the save fails
-      if (updated == null) {
-        if (mounted) {
-          ToastHelper.showError(context, context.l10n.typeSettingsUpdateFailed);
-        }
-        return;
-      }
-      // The saved type is the new baseline for the null-keeping rules of
-      // _buildTypeData (end_time, duration_days, planning_title, default_plan).
-      _originalType = updated;
-
-      if (mounted) {
-        ToastHelper.showSuccess(context, context.l10n.typeSettingsUpdated);
-        setState(() => _hasChanges = false);
-        await _offerDutyView();
-      }
-    } on DemoModeException {
-      // DEMO_GUARD: the demo warning toast was already shown.
-      return;
-    } catch (e) {
-      if (mounted) {
-        ToastHelper.showError(context, context.l10n.typeSettingsUpdateFailed);
-      }
-    }
   }
 
   /// Columns of the type as edited on the page (update and, for a new type,
@@ -2330,8 +1363,6 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         'duty_notify_understaffed': _dutyNotifyUnderstaffed,
         'duty_urgent_hours': _dutyUrgentHours,
         ..._protocol.toUpdate(),
-        // Ionic isNew: index 999 (end of the list).
-        if (_isNew) 'index': _originalType?.index ?? 999,
       };
   }
 
@@ -2340,10 +1371,8 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
       context,
       // Beta: only unused Terminarten get here (see _rdDeleteType), so no
       // Termin is deleted with it.
-      title: context.rdSkin == null ? context.l10n.typeSettingsDeleteType : context.l10n.rdTextTypeDeleteTitle,
-      message: context.rdSkin == null
-          ? context.l10n.typeSettingsDeleteTypeMessage(_originalType!.name)
-          : context.l10n.rdTextTypeDeleteMessage(_originalType!.name),
+      title: context.l10n.rdTextTypeDeleteTitle,
+      message: context.l10n.rdTextTypeDeleteMessage(_originalType!.name),
       confirmText: context.l10n.commonDelete,
       cancelText: context.l10n.commonCancel,
       // EIA-29: Ionic type.page deleteType uses `role: 'destructive'`.

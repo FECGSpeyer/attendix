@@ -166,8 +166,8 @@ void main() {
       expect(payload['timezone'], 'America/New_York');
       final page = _read('lib/features/tenant_selection/presentation/pages/tenant_create_page.dart');
       expect(page, contains('timezone: deviceTimezone()'));
-      expect(page, contains('context.l10n.dbInstanceCreated'));
-      expect(page, contains('router.go(Role.admin.defaultRoute)'));
+      expect(page, contains('context.l10n.redesignTenantsNewCreated'));
+      expect(page, contains('GoRouter.of(context).go(RedesignRoutes.today)'));
     });
   });
 

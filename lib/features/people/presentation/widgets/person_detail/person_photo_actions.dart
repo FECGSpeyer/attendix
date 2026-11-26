@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../core/config/supabase_config.dart';
 import '../../../../../core/constants/table_names.dart';
+import '../../../../../core/providers/person_detail_providers.dart' show personProvider;
 import '../../../../../core/providers/player_providers.dart';
 import '../../../../../core/providers/realtime_providers.dart';
 import '../../../../../core/providers/tenant_providers.dart';
@@ -16,7 +17,6 @@ import '../../../../../core/utils/toast_helper.dart';
 import '../../../../../data/models/person/person.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../shared/widgets/adaptive/adaptive.dart';
-import '../../pages/person_detail_page.dart' show personProvider;
 import '../person_image_picker.dart';
 
 /// Passbild of an existing person: pick, upload and store (Ionic

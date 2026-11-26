@@ -251,8 +251,8 @@ void main() {
   group('source checks', () {
     String read(String p) => File(p).readAsStringSync();
 
-    test('main shell wraps the tabs in RootBackButtonScope', () {
-      expect(read('lib/shared/widgets/layout/main_shell.dart'),
+    test('app shell wraps the tabs in RootBackButtonScope', () {
+      expect(read('lib/features/redesign/presentation/shell/rd_shell.dart'),
           contains('RootBackButtonScope('));
     });
 
@@ -269,7 +269,7 @@ void main() {
       for (final p in [
         'lib/core/services/export_service.dart',
         'lib/core/services/plan_export_service.dart',
-        'lib/features/export/presentation/pages/export_page.dart',
+        'lib/features/export/presentation/export_logic.dart',
         'lib/features/team_organization/presentation/pages/protocol_page.dart',
         'lib/features/settings/presentation/widgets/vorkurs_certificates.dart',
       ]) {
@@ -277,26 +277,22 @@ void main() {
       }
     });
 
-    test('haptics at the same places as Ionic (Light status, Medium remove)', () {
-      expect(read('lib/features/attendance/presentation/widgets/attendance_detail/attendance_person_tile.dart'),
+    test('haptics are guarded and wired in shared controls', () {
+      expect(read('lib/shared/widgets/adaptive/app_segmented_button.dart'),
           contains('HapticHelper.light()'));
-      expect(read('lib/features/attendance/presentation/pages/attendance_list_page.dart'),
-          contains('HapticHelper.medium()'));
-      expect(read('lib/features/history/presentation/pages/history_page.dart'),
+      expect(read('lib/core/utils/dialog_helper.dart'),
           contains('HapticHelper.medium()'));
       expect(read('lib/core/utils/haptic_helper.dart'), contains('try {'));
     });
 
-    test('native app ads / store promo are web-only (Ionic isNativePlatform)', () {
+    test('native app ads are web-only (Ionic isNativePlatform)', () {
       expect(read('lib/shared/widgets/dialogs/native_app_ad.dart'), contains('!kIsWeb'));
-      expect(read('lib/features/settings/presentation/widgets/app_promo_card.dart'),
-          contains('!kIsWeb'));
     });
 
-    test('update action on login + settings (Ionic installUpdate)', () {
+    test('update action on login + me page (Ionic installUpdate)', () {
       expect(read('lib/features/auth/presentation/pages/login_page.dart'),
           contains('l10n.loginInstallUpdate'));
-      expect(read('lib/features/settings/presentation/pages/settings_page.dart'),
+      expect(read('lib/features/redesign/presentation/pages/rd_me_page.dart'),
           contains('l10n.settingsInstallUpdate'));
     });
 

@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
-import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../../core/config/supabase_config.dart';
-import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../data/models/person/person.dart';
 import '../../../../../l10n/l10n.dart';
@@ -102,102 +99,12 @@ Future<ConductorChoice?> showConductorChangeDialog(
   const otherValue = -1;
   final hasOther = currentOtherConductor?.isNotEmpty == true;
   int? selected = hasOther ? otherValue : currentConductorId;
-  if (context.rdSkin != null) {
-    return _rdConductorChange(
-      context,
-      conductors: conductors,
-      selected: selected,
-      currentOtherConductor: currentOtherConductor,
-    );
-  }
-
-  final picked = await showAppDialog<int>(
-    context: context,
-    builder: (ctx) => StatefulBuilder(
-      builder: (ctx, setState) => AppAlertDialog(
-        title: Text(context.l10n.attendanceChangeConductor),
-        // Ionic alert with `type: 'radio'` inputs (attendance.page.ts
-        // changeConductor).
-        content: AppAlertRadioGroup<int>(
-          options: [
-            for (final con in conductors) AppAlertOption(con.id!, con.fullName),
-            AppAlertOption(otherValue, context.l10n.attListOtherConductor),
-          ],
-          groupValue: selected,
-          onChanged: (v) => setState(() => selected = v),
-          // Beta design: the list as before (12 px above, full width).
-          beta: Padding(
-            padding: const EdgeInsets.only(top: 12),
-            child: SizedBox(
-              width: double.maxFinite,
-              child: ListView(
-                shrinkWrap: true,
-                children: [
-                  for (final con in conductors)
-                    // ignore: deprecated_member_use
-                    RadioListTile<int>(
-                      value: con.id!,
-                      // ignore: deprecated_member_use
-                      groupValue: selected,
-                      // ignore: deprecated_member_use
-                      onChanged: (v) => setState(() => selected = v),
-                      title: Text(con.fullName),
-                    ),
-                  // ignore: deprecated_member_use
-                  RadioListTile<int>(
-                    value: otherValue,
-                    // ignore: deprecated_member_use
-                    groupValue: selected,
-                    // ignore: deprecated_member_use
-                    onChanged: (v) => setState(() => selected = v),
-                    title: Text(context.l10n.attListOtherConductor),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(context.l10n.commonCancel)),
-          FilledButton(
-            onPressed: selected == null ? null : () => Navigator.pop(ctx, selected),
-            child: Text(context.l10n.commonSave),
-          ),
-        ],
-      ),
-    ),
+  return _rdConductorChange(
+    context,
+    conductors: conductors,
+    selected: selected,
+    currentOtherConductor: currentOtherConductor,
   );
-
-  if (picked == null) return null;
-  if (picked != otherValue) {
-    final person = conductors.where((c) => c.id == picked).firstOrNull;
-    return person == null ? null : ConductorChoice(person: person);
-  }
-  if (!context.mounted) return null;
-
-  final controller = TextEditingController(text: currentOtherConductor ?? '');
-  final name = await showAppDialog<String>(
-    context: context,
-    builder: (ctx) => AppAlertDialog(
-      title: Text(context.l10n.attListEnterConductor),
-      content: AppAlertInput(
-        controller: controller,
-        autofocus: true,
-        textCapitalization: TextCapitalization.words,
-        placeholder: context.l10n.attListConductor,
-      ),
-      actions: [
-        TextButton(onPressed: () => Navigator.pop(ctx), child: Text(context.l10n.commonCancel)),
-        FilledButton(
-          onPressed: () => Navigator.pop(ctx, controller.text.trim()),
-          child: Text(context.l10n.commonSave),
-        ),
-      ],
-    ),
-  );
-  controller.dispose();
-  if (name == null || name.isEmpty) return null;
-  return ConductorChoice(otherConductor: name);
 }
 
 /// Beta (redesign) "Dirigent ändern": tapping a row picks it; "Anderer
@@ -262,22 +169,10 @@ Future<String?> showFilesFolderPicker(
   String initialPath = '',
 }) {
   final supabase = ProviderScope.containerOf(context, listen: false).read(supabaseClientProvider);
-  if (context.rdSkin == null) {
-    // Ionic files-folder-picker: [breakpoints]="[0, 1]" [initialBreakpoint]="1".
-    return showIonSheet<String>(
-      context,
-      builder: (ctx, controller) => _FilesFolderPicker(
-        supabase: supabase,
-        tenantId: tenantId,
-        initialPath: initialPath,
-        scrollController: controller,
-      ),
-    );
-  }
   return showModalBottomSheet<String>(
-    backgroundColor: context.rdSkin != null ? context.rd.bg : null,
+    backgroundColor: context.rd.bg,
     context: context,
-    useRootNavigator: true, // IOS_SHELL2: above the tab bar
+    useRootNavigator: true,
     isScrollControlled: true,
     showDragHandle: true,
     builder: (ctx) => _FilesFolderPicker(
@@ -293,15 +188,11 @@ class _FilesFolderPicker extends StatefulWidget {
     required this.supabase,
     required this.tenantId,
     required this.initialPath,
-    this.scrollController,
   });
 
   final SupabaseClient supabase;
   final int tenantId;
   final String initialPath;
-
-  /// Classic design: the controller of the breakpoint sheet.
-  final ScrollController? scrollController;
 
   @override
   State<_FilesFolderPicker> createState() => _FilesFolderPickerState();
@@ -435,109 +326,5 @@ class _FilesFolderPickerState extends State<_FilesFolderPicker> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    if (context.rdSkin != null) return _buildBeta(context);
-    final segments = _segments;
-    // Ionic: ion-toolbar with ✕ (start), title, checkmark (end, disabled at
-    // the root or while loading); second toolbar with the breadcrumbs.
-    return IonSheetScaffold(
-      title: context.l10n.folderPickerTitle,
-      start: [
-        IconButton(
-          tooltip: context.l10n.commonCancel,
-          icon: Icon(AppIcons.close),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ],
-      end: [
-        IconButton(
-          tooltip: context.l10n.folderPickerChooseThis,
-          icon: Icon(AppIcons.check),
-          onPressed: _path.isEmpty || _loading ? null : () => Navigator.pop(context, _path),
-        ),
-      ],
-      bottom: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Row(
-                children: [
-                  TextButton(onPressed: () => _navigate(''), child: Icon(AppIcons.homeOutlined)),
-                  for (var i = 0; i < segments.length; i++) ...[
-                    Icon(AppIcons.chevronRight, size: 16, color: AppColors.mediumOf(context)),
-                    TextButton(
-                      onPressed: () => _navigate(segments.sublist(0, i + 1).join('/')),
-                      child: Text(segments[i]),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-        ],
-      ),
-      body: SafeArea(
-        top: false,
-        child: ListView(
-                controller: widget.scrollController,
-                padding: EdgeInsets.zero,
-                children: [
-                  if (segments.isNotEmpty) ...[
-                    // Ionic files-folder-picker: first row in primary,
-                    // "Diesen Ordner wählen: {Ordner}", disabled while loading.
-                    ListTile(
-                      enabled: !_loading,
-                      tileColor: AppColors.primary,
-                      iconColor: Colors.white,
-                      textColor: Colors.white,
-                      leading: Icon(AppIcons.checkCircleOutline),
-                      title: Text('${context.l10n.folderPickerChooseThis}: ${segments.last}'),
-                      onTap: () => Navigator.pop(context, _path),
-                    ),
-                    ListTile(
-                      leading: Icon(AppIcons.arrowUpward),
-                      title: Text(context.l10n.folderPickerParent),
-                      onTap: () => _navigate(segments.sublist(0, segments.length - 1).join('/')),
-                    ),
-                  ],
-                  if (_loading)
-                    const Padding(
-                      padding: EdgeInsets.all(24),
-                      child: Center(child: AppSpinner()),
-                    )
-                  else ...[
-                    if (_error != null)
-                      Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Text(_error!, style: const TextStyle(color: AppColors.danger)),
-                      ),
-                    for (final folder in _folders)
-                      ListTile(
-                        leading: Icon(AppIcons.folderOutlined, color: AppColors.primary),
-                        title: Text(folder),
-                        trailing: TextButton(
-                          onPressed: () => Navigator.pop(
-                            context,
-                            _path.isEmpty ? folder : '$_path/$folder',
-                          ),
-                          child: IonButtonLabel(context.l10n.folderPickerChoose),
-                        ),
-                        onTap: () => _navigate(_path.isEmpty ? folder : '$_path/$folder'),
-                      ),
-                    if (_folders.isEmpty && _error == null)
-                      Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Text(
-                          context.l10n.folderPickerNoSubfolders,
-                          style: TextStyle(color: AppColors.mediumOf(context)),
-                        ),
-                      ),
-                  ],
-                ],
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => _buildBeta(context);
 }

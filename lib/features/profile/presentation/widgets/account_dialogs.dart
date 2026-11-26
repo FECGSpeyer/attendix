@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/config/supabase_config.dart';
-import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
@@ -14,16 +13,9 @@ import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 
-/// Shows the "Passwort ändern" dialog (Ionic settings changePassword alert).
+/// Shows the "Passwort ändern" sheet.
 Future<void> showChangePasswordDialog(BuildContext context) async {
-  // REDESIGN (E2): in the Beta a sheet from below, same checks and write.
-  final beta = ProviderScope.containerOf(context, listen: false).read(redesignEnabledProvider);
-  final changed = beta
-      ? await showRdSheet<bool>(context, const ChangePasswordDialog(beta: true))
-      : await showAppDialog<bool>(
-          context: context,
-          builder: (_) => const ChangePasswordDialog(),
-        );
+  final changed = await showRdSheet<bool>(context, const ChangePasswordDialog());
   if (changed == true && context.mounted) {
     ToastHelper.showSuccess(context, context.l10n.settingsPasswordChanged);
   }
@@ -43,12 +35,9 @@ Future<void> showChangeEmailDialog(BuildContext context) async {
   }
 }
 
-/// Dialog for changing the own password
+/// Sheet for changing the own password
 class ChangePasswordDialog extends ConsumerStatefulWidget {
-  const ChangePasswordDialog({super.key, this.beta = false});
-
-  /// Beta look (content of an [showRdSheet] sheet).
-  final bool beta;
+  const ChangePasswordDialog({super.key});
 
   @override
   ConsumerState<ChangePasswordDialog> createState() =>
@@ -100,52 +89,6 @@ class _ChangePasswordDialogState extends ConsumerState<ChangePasswordDialog> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.beta) return _buildBeta(context);
-    if (useIosLook(context)) return _buildIos(context);
-    // IOS_FORMS1 (md): Ionic md alert – the shared underlined alert inputs
-    // without icons and the uppercase text buttons "ABBRECHEN  ÄNDERN"
-    // right-aligned.
-    return AppAlertDialog(
-      title: Text(context.l10n.settingsChangePassword),
-      content: AppAlertInputGroup(
-        children: [
-          AppAlertInput(
-            controller: _passwordController,
-            obscureText: true,
-            autofocus: true,
-            placeholder: context.l10n.settingsNewPasswordPh,
-          ),
-          AppAlertInput(
-            controller: _confirmController,
-            obscureText: true,
-            placeholder: context.l10n.settingsRepeatPasswordPh,
-            onSubmitted: (_) => _submit(),
-          ),
-        ],
-      ),
-      actions: [
-        TextButton(
-          onPressed: _isLoading ? null : () => Navigator.of(context).pop(false),
-          child: Text(context.l10n.commonCancel.toUpperCase()),
-        ),
-        TextButton(
-          onPressed: _isLoading ? null : _submit,
-          child: _isLoading
-              ? const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: AppSpinner(strokeWidth: 2),
-                )
-              : Text(context.l10n.settingsChange.toUpperCase()),
-        ),
-      ],
-    );
-  }
-}
-
-/// REDESIGN (E2): "Passwort ändern" as a Beta sheet.
-extension on _ChangePasswordDialogState {
-  Widget _buildBeta(BuildContext context) {
     final p = context.rd;
     final l10n = context.l10n;
     return Padding(
@@ -202,58 +145,6 @@ extension on _ChangePasswordDialogState {
     );
   }
 }
-
-/// IOS_FORMS1: Ionic iOS `ion-alert` with two password inputs (rounded
-/// 7pt boxes with a hairline border, no icons) and the two buttons
-/// "Abbrechen | Ändern" side by side.
-extension on _ChangePasswordDialogState {
-  Widget _buildIos(BuildContext context) {
-    final l10n = context.l10n;
-    return IosAlertCard(
-      title: Text(l10n.settingsChangePassword),
-      // ios27 `.alert-message:empty { padding: 0 0 12px }` above the inputs.
-      contentPadding: const EdgeInsets.fromLTRB(16, 12, 16, 21),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          IosAlertInput(
-            controller: _passwordController,
-            placeholder: l10n.settingsNewPasswordPh,
-            obscureText: true,
-            autofocus: true,
-          ),
-          IosAlertInput(
-            controller: _confirmController,
-            placeholder: l10n.settingsRepeatPasswordPh,
-            obscureText: true,
-            onSubmitted: (_) => _submit(),
-          ),
-        ],
-      ),
-      // Two buttons → side by side (IosAlertCard lays them out).
-      actions: [
-        IosAlertButton(
-          onPressed:
-              _isLoading ? null : () => Navigator.of(context).pop(false),
-          child: Text(l10n.commonCancel),
-        ),
-        IosAlertButton(
-          onPressed: _isLoading ? null : _submit,
-          child: _isLoading
-              ? const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: AppSpinner(strokeWidth: 2),
-                )
-              : Text(l10n.settingsChange),
-        ),
-      ],
-    );
-  }
-}
-
-// PARITY_R5: IosAlertInput moved to the shared adaptive app_dialog.dart.
 
 /// Dialog for changing the own login e-mail address
 class ChangeEmailDialog extends ConsumerStatefulWidget {

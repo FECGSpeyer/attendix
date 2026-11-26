@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
-import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/shared/widgets/layout/sheet_drag.dart';
 
-import 'settings_list.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 // IOS_SETTINGS2: the Ionic settings page opens "Ausstehende Personen",
@@ -31,27 +28,6 @@ Future<T?> showSettingsSheet<T>(
   double initialBreakpoint = 1,
   bool useRootNavigator = false,
 }) {
-  if (context.rdSkin == null) {
-    // The shared Ionic sheet: `[breakpoints]="[0, 1]"` for the full sheet,
-    // `[0, 0.5, 1]` for the half sheet (which can now also be pulled shut
-    // by its content).
-    return showIonSheet<T>(
-      context,
-      useRootNavigator: useRootNavigator,
-      breakpoints: initialBreakpoint >= 1
-          ? const [0, 1]
-          : [0, initialBreakpoint, 1],
-      initialBreakpoint: initialBreakpoint >= 1 ? 1 : initialBreakpoint,
-      // The pages are Scaffolds that resize for the keyboard themselves.
-      avoidKeyboard: false,
-      builder: (context, controller) => PrimaryScrollController(
-        controller: controller,
-        // Make the inherited controller drive the sheet on every platform.
-        automaticallyInheritForPlatforms: TargetPlatform.values.toSet(),
-        child: builder(context),
-      ),
-    );
-  }
   return showModalBottomSheet<T>(
     context: context,
     // IOS_SETTINGS2: shell navigator by default, so pages pushed from the
@@ -134,7 +110,7 @@ PreferredSizeWidget settingsSheetBar(
   Widget? leading,
   List<Widget> actions = const [],
 }) {
-  if (ionIsIos(context)) {
+  if (Theme.of(context).platform == TargetPlatform.iOS) {
     return IonModalHeader(
       title: Text(title),
       leading: leading,

@@ -23,12 +23,12 @@ import '../../../../../data/models/teacher/teacher.dart';
 import '../../../../../data/models/tenant/tenant.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../people/person_extra_fields.dart'
+    show otherOrchestraOptions, personExtraFields;
 import '../../../../people/person_write.dart' show personUtcMidnightIso;
 import '../../../../people/presentation/widgets/church_picker_sheet.dart';
 import '../../../data/rd_words.dart';
 import '../manage/rd_teacher_create_sheet.dart' show showRdAddTeacherSheet;
-import '../../../../people/presentation/widgets/person_detail/allgemein_accordion.dart'
-    show otherOrchestraOptions, personExtraFields;
 import '../event/rd_form_widgets.dart';
 import '../rd_widgets.dart';
 

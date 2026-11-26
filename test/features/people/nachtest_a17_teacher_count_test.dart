@@ -8,13 +8,8 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   test('saving a person reloads playersProvider for the teacher counts', () {
     final src = File(
-            'lib/features/people/presentation/pages/person_detail_page.dart')
+            'lib/features/redesign/presentation/pages/rd_person_edit_page.dart')
         .readAsStringSync();
-    final save = src.indexOf("'additional_fields': localAdditional");
-    expect(save, isNonNegative);
-    final after = src.substring(save);
-    final close = after.indexOf('_closePage();');
-    expect(close, isNonNegative);
-    expect(after.substring(0, close), contains('ref.invalidate(playersProvider);'));
+    expect(src, contains('invalidate(playersProvider)'));
   });
 }

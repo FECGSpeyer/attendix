@@ -12,16 +12,11 @@ const _allowed = <String, String>{
   // Cross-tenant: reads and writes in another instance than the current one.
   'lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart': 'cross-tenant copy',
   'lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart': 'cross-tenant copy',
-  'lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart':
-      'person in other instances',
   // Public registration before a tenant is selected.
   'lib/features/registration/data/providers/registration_providers.dart': 'public registration',
   'lib/features/registration/presentation/pages/tenant_registration_page.dart': 'public registration',
   // Save bound to the client and tenant captured when the save started.
   'lib/features/attendance/presentation/attendance_create_writes.dart': 'captured save session',
-  // The settings map stays a literal here so db_query_columns_test checks
-  // every column it writes.
-  'lib/features/settings/presentation/pages/general_settings_page.dart': 'schema-checked literal',
 };
 
 final _query = RegExp(r"\.from\(\s*(?:'\w+'|SupabaseTable\.\w+\.tableName)\s*\)");

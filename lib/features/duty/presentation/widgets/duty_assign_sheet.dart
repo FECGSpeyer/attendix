@@ -1,16 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
-import 'package:attendix/core/theme/app_icons.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
-
-import '../../../../core/theme/app_colors.dart';
-import '../../../planning/presentation/widgets/ion_items.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// A person that can be assigned to a duty.
 class DutyCandidate {
@@ -44,27 +36,9 @@ Future<List<String>?> showDutyAssignSheet(
   required List<DutyCandidate> candidates,
   String monthLabel = '',
 }) {
-  if (ProviderScope.containerOf(context, listen: false).read(redesignEnabledProvider)) {
-    return showRdSheet<List<String>>(
-      context,
-      _DutyAssignSheet(title: title, openPlaces: openPlaces, candidates: candidates, monthLabel: monthLabel),
-    );
-  }
-  // Ionic: modalController.create({ breakpoints: [0, 0.75, 1],
-  // initialBreakpoint: 0.75 }).
-  return showIonSheet<List<String>>(
+  return showRdSheet<List<String>>(
     context,
-    breakpoints: const [0, 0.75, 1],
-    initialBreakpoint: 0.75,
-    // Ionic: ion-content color="light".
-    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-    builder: (ctx, scrollController) => _DutyAssignSheet(
-      title: title,
-      openPlaces: openPlaces,
-      candidates: candidates,
-      monthLabel: monthLabel,
-      scrollController: scrollController,
-    ),
+    _DutyAssignSheet(title: title, openPlaces: openPlaces, candidates: candidates, monthLabel: monthLabel),
   );
 }
 
@@ -74,15 +48,12 @@ class _DutyAssignSheet extends StatefulWidget {
     required this.openPlaces,
     required this.candidates,
     required this.monthLabel,
-    this.scrollController,
   });
 
   final String title;
   final int openPlaces;
   final List<DutyCandidate> candidates;
   final String monthLabel;
-  /// Null in the Beta sheet ([showRdSheet] sizes itself).
-  final ScrollController? scrollController;
 
   @override
   State<_DutyAssignSheet> createState() => _DutyAssignSheetState();
@@ -124,10 +95,8 @@ class _DutyAssignSheetState extends State<_DutyAssignSheet> {
     return '$duties$month$sameDay';
   }
 
-  /// REDESIGN: same list in the Beta sheet: title and Termin line on top,
-  /// round check marks like other Beta choices, the hint below, one primary
-  /// button.
-  Widget _buildBeta(BuildContext context) {
+  @override
+  Widget build(BuildContext context) {
     final p = context.rd;
     final l10n = context.l10n;
     return Column(
@@ -193,97 +162,6 @@ class _DutyAssignSheetState extends State<_DutyAssignSheet> {
           child: RdPrimaryButton(
             label: _confirmLabel,
             onPressed: _selected.isEmpty ? null : () => Navigator.of(context).pop(_selected.toList()),
-          ),
-        ),
-      ],
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (widget.scrollController == null) return _buildBeta(context);
-    final places = context.l10n.dutyPlacesFree(widget.openPlaces);
-    return Column(
-      children: [
-        // Ionic toolbar: close at the start, centered title with `.sub` line.
-        IonSheetHeader(
-          title: context.l10n.attendanceAssignPerson,
-          subtitle: '${widget.title} · $places',
-          start: [
-            IconButton(
-              icon: Icon(AppIcons.close),
-              tooltip: context.l10n.commonCancel,
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
-        ),
-        Expanded(
-          child: _sorted.isEmpty
-              ? Padding(
-                  padding: const EdgeInsets.all(32),
-                  child: Text(
-                    context.l10n.dutyAllAssigned,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: AppColors.mediumOf(context)),
-                  ),
-                )
-              : ListView(
-                  controller: widget.scrollController,
-                  padding: const EdgeInsets.only(bottom: 16),
-                  children: [
-                    IonInsetList(
-                      dividerIndent: 56,
-                      children: [
-                        for (final c in _sorted)
-                          Opacity(
-                            // Ionic `.dim`
-                            opacity: c.unavailableNote.isNotEmpty ? 0.55 : 1,
-                            child: CheckboxListTile(
-                              controlAffinity: ListTileControlAffinity.leading,
-                              value: _selected.contains(c.personAttendanceId),
-                              onChanged: (_) => setState(() {
-                                if (!_selected.remove(c.personAttendanceId)) {
-                                  _selected.add(c.personAttendanceId);
-                                }
-                              }),
-                              title: Text(c.name),
-                              subtitle: Text(_subtitle(c), style: TextStyle(color: AppColors.mediumOf(context))),
-                            ),
-                          ),
-                      ],
-                    ),
-                    // Ionic `.hint`
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(32, 16, 32, 0),
-                      child: Text(
-                        context.l10n.dutyAssignHint,
-                        style: TextStyle(color: AppColors.mediumOf(context), fontSize: 13, height: 1.35),
-                      ),
-                    ),
-                    if (_selected.length > widget.openPlaces)
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(32, 12, 32, 0),
-                        child: Text(
-                          context.l10n.dutyOverbooked,
-                          style: const TextStyle(color: AppColors.warningDark, fontSize: 13, height: 1.35),
-                        ),
-                      ),
-                  ],
-                ),
-        ),
-        // Ionic footer: round block button on the light background.
-        SafeArea(
-          top: false,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-            child: SizedBox(
-              width: double.infinity,
-              child: FilledButton(
-                style: FilledButton.styleFrom(shape: const StadiumBorder()),
-                onPressed: _selected.isEmpty ? null : () => Navigator.of(context).pop(_selected.toList()),
-                child: IonButtonLabel(_confirmLabel),
-              ),
-            ),
           ),
         ),
       ],

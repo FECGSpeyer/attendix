@@ -1,27 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
-import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/cross_tenant_person_providers.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
-import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/utils/toast_helper.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/repositories/cross_tenant_person_repository.dart';
 import '../../../../core/utils/date_helper.dart';
 import '../../../../l10n/l10n.dart';
-import 'ion/ion_widgets.dart';
-import 'ion/ion_date_accordion.dart';
-import 'package:ionicons/ionicons.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
-import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../redesign/presentation/widgets/members/rd_pause_sheets.dart';
 
 final _fmt = DateFormat('dd.MM.yyyy');
@@ -48,159 +38,31 @@ String buildPauseHistoryText(String reason, {DateTime? from, DateTime? until}) {
   return segments.isEmpty ? reason : '$reason (${segments.join(' ')})';
 }
 
-/// Shows the pause sheet. Returns null when cancelled. In the Beta the
-/// sheet of the new design ([showRdPauseSheet]).
+/// Shows the pause sheet. Returns null when cancelled.
 Future<PauseInput?> showPauseSheet(BuildContext context, Person person) {
-  if (RedesignRoutes.active) {
-    return showRdPauseSheet(
-      context,
-      title: context.l10n.rdPeoplePauseTitle('${person.firstName} ${person.lastName}'.trim()),
-      hint: context.l10n.rdPeoplePauseHint,
-    );
-  }
-  // Ionic pause modal: [breakpoints]="[0, 0.75, 1]" [initialBreakpoint]="0.75".
-  return showIonSheet<PauseInput>(
+  return showRdPauseSheet(
     context,
-    breakpoints: const [0, 0.75, 1],
-    initialBreakpoint: 0.75,
-    builder: (_, controller) => _PauseSheet(person: person, scrollController: controller),
+    title: context.l10n.rdPeoplePauseTitle('${person.firstName} ${person.lastName}'.trim()),
+    hint: context.l10n.rdPeoplePauseHint,
   );
 }
 
-class _PauseSheet extends StatefulWidget {
-  const _PauseSheet({required this.person, this.scrollController});
-
-  final Person person;
-  final ScrollController? scrollController;
-
-  @override
-  State<_PauseSheet> createState() => _PauseSheetState();
-}
-
-class _PauseSheetState extends State<_PauseSheet> {
-  final _reasonController = TextEditingController();
-  DateTime? _from;
-  DateTime? _until;
-
-  @override
-  void dispose() {
-    _reasonController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final p = widget.person;
-    final hasReason = _reasonController.text.trim().isNotEmpty;
-
-    // UX_PEOPLE: Ionic modal toolbar — ion-title, close ✕ in the end slot.
-    return IonSheetScaffold(
-      title: context.l10n.peoplePauseTitle('${p.firstName} ${p.lastName}'),
-      showClose: true,
-      body: SingleChildScrollView(
-        controller: widget.scrollController,
-        padding: const EdgeInsets.only(
-          left: AppDimensions.paddingM,
-          right: AppDimensions.paddingM,
-          top: AppDimensions.paddingM,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // PEO-04: ion-item + stacked label + `ion-textarea autoGrow`
-            // (no autofocus: Ionic opens the sheet without the keyboard).
-            IonInputRow(
-              label: context.l10n.peopleReasonRequired,
-              value: _reasonController.text,
-              placeholder: context.l10n.personPauseReasonPlaceholder,
-              textarea: true,
-              onChanged: (v) => setState(() => _reasonController.text = v),
-            ),
-            const SizedBox(height: AppDimensions.paddingM),
-            // Two `ion-accordion`s with an inline `ion-datetime`.
-            IonDateAccordion(
-              title: context.l10n.peoplePausedFrom,
-              valueText: _from != null ? DateFormat(dateFmt()).format(_from!) : context.l10n.peopleFromToday,
-              value: _from,
-              initialDate: today,
-              firstDate: DateTime(today.year - 5),
-              lastDate: today,
-              onChanged: (d) => setState(() => _from = d),
-              onClear: _from != null ? () => setState(() => _from = null) : null,
-            ),
-            IonDateAccordion(
-              title: context.l10n.signoutPausedUntil,
-              valueText: _until != null ? DateFormat(dateFmt()).format(_until!) : context.l10n.peopleNoEndDate,
-              value: _until,
-              initialDate: today,
-              firstDate: today,
-              lastDate: DateTime(today.year + 3),
-              onChanged: (d) => setState(() => _until = d),
-              onClear: _until != null ? () => setState(() => _until = null) : null,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: AppDimensions.paddingS),
-              child: Text(
-                context.l10n.personPauseHintAuto,
-                style: IonText.note(context).copyWith(color: AppColors.mediumOf(context)),
-              ),
-            ),
-            const SizedBox(height: AppDimensions.paddingS),
-            FilledButton.icon(
-              onPressed: hasReason
-                  ? () => Navigator.pop(
-                        context,
-                        PauseInput(
-                          reason: _reasonController.text.trim(),
-                          from: _from,
-                          until: _until,
-                        ),
-                      )
-                  : null,
-              // PEO-28: Ionic `pause-outline`.
-              icon: Icon(AppIcons.ionic ? Ionicons.pauseOutline : AppIcons.pause),
-              label: IonButtonLabel(context.l10n.peoplePause),
-              // Ionic `ion-button expand="block"` in the default primary
-              // colour (the theme's solid button); the Beta design keeps
-              // its warning button.
-              style: FilledButton.styleFrom(
-                backgroundColor: context.rdSkin != null ? AppColors.warning : null,
-                disabledBackgroundColor:
-                    context.rdSkin != null ? AppColors.warning.withValues(alpha: 0.5) : null,
-                padding:
-                    const EdgeInsets.symmetric(vertical: AppDimensions.paddingM),
-              ),
-            ),
-            const SizedBox(height: AppDimensions.paddingL),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// Full pause flow of the Ionic list/person page: sheet → pause → optionally
+/// Full pause flow: sheet → pause → optionally
 /// pause in other linked instances where the person's account is active.
 /// Returns true when the person was paused.
 Future<bool> pausePersonFlow(
   BuildContext context,
   WidgetRef ref,
   Person person, {
-  // Ionic person.page confirmPause shows no success toast (it closes).
   bool showSuccessToast = true,
 }) async {
   final repo = ref.read(playerRepositoryWithTenantProvider);
   final crossRepo = ref.read(crossTenantPersonRepositoryWithTenantProvider);
-  final beta = RedesignRoutes.active;
   final tenantId = ref.read(currentTenantIdProvider);
   final input = await showPauseSheet(context, person);
   if (input == null || !context.mounted) return false;
-  // TENANT (Beta): the group changed while the sheet was open, so write
-  // nothing (the person belongs to the old group).
-  if (beta && ref.read(currentTenantIdProvider) != tenantId) {
+  // The group changed while the sheet was open, so write nothing.
+  if (ref.read(currentTenantIdProvider) != tenantId) {
     ToastHelper.showError(context, context.l10n.rdPeopleGroupSwitched);
     return false;
   }
@@ -253,7 +115,7 @@ Future<bool> pausePersonFlow(
 
     final selected = await _askPauseInOtherTenants(context, person, others);
     if (selected == null || selected.isEmpty) return true;
-    if (beta && ref.read(currentTenantIdProvider) != tenantId) return true;
+    if (ref.read(currentTenantIdProvider) != tenantId) return true;
 
     final entry = {
       'date': DateTime.now().toUtc().toIso8601String(),
@@ -297,69 +159,9 @@ Future<List<LinkedTenantRef>?> _askPauseInOtherTenants(
   Person person,
   List<LinkedTenantRef> tenants,
 ) {
-  if (RedesignRoutes.active) {
-    return showRdPauseOthersSheet(
-      context,
-      name: '${person.firstName} ${person.lastName}'.trim(),
-      tenants: tenants,
-    );
-  }
-  final selected = <int>{};
-  return showAppDialog<List<LinkedTenantRef>>(
-    context: context,
-    builder: (ctx) => StatefulBuilder(
-      builder: (ctx, setState) => AppAlertDialog(
-        title: Text(context.l10n.peoplePauseOthers),
-        // Ionic alert: message + `type: 'checkbox'` inputs (person.page.ts).
-        content: AppAlertCheckboxGroup<int>(
-          message: Text(
-            context.l10n.peoplePauseOthersMessage('${person.firstName} ${person.lastName}'),
-          ),
-          options: [for (final t in tenants) AppAlertOption(t.id, t.name)],
-          values: selected,
-          onChanged: (id, checked) => setState(() {
-            checked ? selected.add(id) : selected.remove(id);
-          }),
-          beta: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                context.l10n.peoplePauseOthersMessage('${person.firstName} ${person.lastName}'),
-              ),
-              const SizedBox(height: AppDimensions.paddingS),
-              for (final t in tenants)
-                CheckboxListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text(t.name),
-                  value: selected.contains(t.id),
-                  onChanged: (v) => setState(() {
-                    if (v == true) {
-                      selected.add(t.id);
-                    } else {
-                      selected.remove(t.id);
-                    }
-                  }),
-                ),
-            ],
-          ),
-        ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(context.l10n.peopleSkip),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(
-              ctx,
-              tenants.where((t) => selected.contains(t.id)).toList(),
-            ),
-            child: Text(context.l10n.peoplePause),
-          ),
-        ],
-      ),
-    ),
+  return showRdPauseOthersSheet(
+    context,
+    name: '${person.firstName} ${person.lastName}'.trim(),
+    tenants: tenants,
   );
 }

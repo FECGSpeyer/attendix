@@ -4,7 +4,7 @@ import 'package:attendix/core/providers/group_providers.dart' show mergeSynonyms
 import 'package:attendix/core/services/part_vision_service.dart';
 import 'package:attendix/core/utils/choir_file_utils.dart';
 import 'package:attendix/core/utils/instrument_matcher.dart';
-import 'package:attendix/features/songs/presentation/widgets/file_upload_sheet.dart';
+import 'package:attendix/features/songs/data/file_category_guess.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image/image.dart' as img;

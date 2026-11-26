@@ -97,13 +97,13 @@ void main() {
       final expectations = {
         'lib/core/router/app_router.dart': ['TrackingEvent.login'],
         'lib/core/providers/signout_providers.dart': ['TrackingEvent.attendanceCheckIn', 'TrackingEvent.attendanceCheckOut'],
-        'lib/features/parents/presentation/pages/parents_portal_page.dart': ['TrackingEvent.parentSignIn', 'TrackingEvent.parentSignOut'],
+        'lib/features/redesign/presentation/widgets/today/rd_parent_today.dart': ['TrackingEvent.parentSignIn', 'TrackingEvent.parentSignOut'],
         'lib/features/songs/presentation/pages/song_detail_page.dart': ['TrackingEvent.songShared'],
-        'lib/features/export/presentation/pages/export_page.dart': ['TrackingEvent.reportExported'],
+        'lib/features/export/presentation/export_logic.dart': ['TrackingEvent.reportExported'],
         'lib/core/providers/player_providers.dart': ['TrackingEvent.playerAdded', 'TrackingEvent.playerUpdated', 'TrackingEvent.playerRemoved'],
         'lib/core/providers/teacher_providers.dart': ['TrackingEvent.teacherAdded', 'TrackingEvent.teacherUpdated'],
         'lib/core/providers/group_providers.dart': ['TrackingEvent.instrumentAdded', 'TrackingEvent.instrumentUpdated', 'TrackingEvent.instrumentRemoved'],
-        'lib/features/notifications/presentation/pages/notifications_page.dart': ['TrackingEvent.notificationSettingsChanged'],
+        'lib/features/redesign/presentation/pages/rd_notifications_page.dart': ['TrackingEvent.notificationSettingsChanged'],
         'lib/features/settings/presentation/pages/files_page.dart': ['TrackingEvent.fileUploaded'],
       };
       expectations.forEach((path, events) {

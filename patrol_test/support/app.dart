@@ -1,7 +1,5 @@
 import 'package:attendix/core/providers/locale_provider.dart'
     show appLanguageStorageKey;
-import 'package:attendix/core/providers/redesign_providers.dart'
-    show redesignEnabledStorageKey;
 import 'package:attendix/features/auth/presentation/pages/login_page.dart';
 import 'package:attendix/main.dart' as app;
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -16,12 +14,10 @@ const e2ePassword = 'attendix-e2e';
 
 /// Starts the real app and waits for the login page.
 ///
-/// [beta] chooses "Neues Design (Beta)" or the classic design; the app
-/// language is German, whatever the device says.
-Future<void> startApp(PatrolIntegrationTester $, {bool beta = true}) async {
+/// The app language is forced to German, whatever the device says.
+Future<void> startApp(PatrolIntegrationTester $) async {
   final prefs = await SharedPreferences.getInstance();
   await prefs.setString(appLanguageStorageKey, 'de');
-  await prefs.setBool(redesignEnabledStorageKey, beta);
   app.main();
   await $(LoginPage).waitUntilVisible(timeout: const Duration(seconds: 90));
 }
@@ -62,8 +58,7 @@ Future<void> signInAs(
   }
 }
 
-/// Finds a text in both designs: the classic design writes button labels in
-/// capitals on Android and web (like Ionic's Material mode), Beta does not.
+/// Finds a text case-insensitively.
 Finder label(String text) => find.textContaining(
   RegExp('^${RegExp.escape(text)}\$', caseSensitive: false),
 );

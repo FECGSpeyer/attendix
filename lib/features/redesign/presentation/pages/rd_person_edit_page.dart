@@ -32,6 +32,9 @@ import '../../../../core/utils/text_utils.dart' show emailsMatch;
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/church/church.dart';
 import '../../../../data/models/person/person.dart';
+import '../../../../core/providers/admin_providers.dart' show TenantUser, tenantUsersProvider;
+import '../../../../core/providers/person_detail_providers.dart'
+    show otherTenantsProvider, personAttendanceStatsProvider, personProvider;
 import '../../../../data/repositories/cross_tenant_person_repository.dart';
 import '../../../../data/repositories/extra_fields_repository.dart' show extraFieldDefaultValue;
 import '../../../../data/repositories/player_repository.dart';
@@ -41,16 +44,11 @@ import '../../../../data/services/auth_service.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../duty/presentation/pages/unavailability_page.dart' show openUnavailabilityPage;
-import '../../../people/person_stats.dart' show lateWarningThreshold;
+import '../../../people/person_stats.dart' show htmlStrongToSpan, lateWarningThreshold;
 import '../../../people/person_write.dart';
-import '../../../people/presentation/pages/person_detail_page.dart'
-    show personProvider, personAttendanceStatsProvider;
-import '../../../people/presentation/widgets/person_detail/andere_instanzen_accordion.dart' show otherTenantsProvider;
-import '../../../people/presentation/widgets/person_detail/late_warning_card.dart' show htmlStrongToSpan;
+import '../../../people/presentation/widgets/email_taken_dialog.dart' show showEmailTakenDialog;
 import '../../../people/presentation/widgets/person_detail/person_photo_actions.dart';
-import '../../../people/presentation/widgets/person_match_suggestions.dart' show showEmailTakenDialog;
 import '../../../people/presentation/widgets/person_transfer_sheet.dart' show showPersonTransferSheet;
-import '../../../settings/presentation/pages/user_management_page.dart' show TenantUser, tenantUsersProvider;
 import '../../../people/presentation/widgets/planned_absences.dart'
     show addPlannedAbsenceFlow, deletePlannedAbsenceFlow;
 import '../../data/rd_words.dart';

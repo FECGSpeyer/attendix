@@ -24,7 +24,6 @@ import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/utils/archived_attendance.dart';
 import '../../../../core/services/plan_export_service.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/plan_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/plan/plan.dart';
@@ -34,20 +33,14 @@ import '../../../team_organization/team_org_utils.dart' show planWithTopics;
 import '../../../team_organization/presentation/widgets/agenda_picker_sheet.dart';
 import '../widgets/plan_export_actions.dart';
 import '../widgets/plan_field_dialogs.dart';
-import '../widgets/plan_fields_editor.dart';
 import '../widgets/plan_song_helper.dart';
-import '../widgets/plan_view_list.dart';
 import '../widgets/rd_plan_start.dart';
 import '../widgets/rd_plan_widgets.dart';
-import '../widgets/ion_items.dart';
 import '../widgets/register_plan_sheet.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../songs/presentation/utils/song_utils.dart';
 import '../../../../core/providers/branding_providers.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
-import '../../../../shared/widgets/dialogs/ion_modal.dart';
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 import 'package:attendix/shared/widgets/layout/route_leave_guard.dart';
 import '../../../../data/repositories/plan_repository.dart';
 import '../../../../core/services/offline_queue_service.dart' show rootScaffoldMessengerKey;
@@ -55,7 +48,6 @@ import '../../../../core/config/supabase_config.dart' show currentAuthUserIdProv
 import '../../../../core/services/planning_draft_store.dart';
 import '../../../../core/services/register_plan_service.dart';
 import '../../data/planning_write_sync.dart';
-import '../../../../core/providers/redesign_providers.dart' show redesignEnabledProvider;
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../attendance/presentation/widgets/songs_selection_sheet.dart' show SongHistoryEntry, SongHistoryEntryExtension;
 import '../../../redesign/data/providers/rd_event_works_providers.dart';
@@ -90,31 +82,13 @@ typedef _PlanListOp = ({List<Plan> plans, int open})? Function(PlanAttendance at
 /// that copy, see [_PlanningPageState._indexOfRef].
 typedef _PlanRef = ({String key, int count, String? json});
 
-/// Ionic `modalController.create({ component: PlanningPage, cssClass:
-/// 'planningModal' })`: the Ablaufplan editor as `ion-modal` (full screen on
-/// phones, centred card on desktop) with its own close button.
-Future<bool?> showPlanningModal(BuildContext context, {int? attendanceId, int? planIndex}) {
-  return showIonModal<bool>(
-    context,
-    builder: (_) => PlanningPage(attendanceId: attendanceId, initialPlanIndex: planIndex),
-  );
-}
-
-/// ABL-01: opens the Ablaufplan editor from inside the app. Classic design:
-/// the Ionic modal ([showPlanningModal]: full screen on phones, centred card
-/// from 768px; no tab bar / side nav). The Beta keeps its route; the route
-/// `/planning?attendanceId=…&plan=…` also stays the entry for deep links.
+/// ABL-01: opens the Ablaufplan editor from inside the app via `/planning`.
 Future<bool?> openPlanningEditor(BuildContext context, {int? attendanceId, int? planIndex}) {
-  final beta = context.rdSkin != null ||
-      ProviderScope.containerOf(context, listen: false).read(redesignEnabledProvider);
-  if (beta) {
-    final query = [
-      if (attendanceId != null) 'attendanceId=$attendanceId',
-      if (planIndex != null && planIndex > 0) 'plan=$planIndex',
-    ].join('&');
-    return context.push<bool>(query.isEmpty ? '/planning' : '/planning?$query');
-  }
-  return showPlanningModal(context, attendanceId: attendanceId, planIndex: planIndex);
+  final query = [
+    if (attendanceId != null) 'attendanceId=$attendanceId',
+    if (planIndex != null && planIndex > 0) 'plan=$planIndex',
+  ].join('&');
+  return context.push<bool>(query.isEmpty ? '/planning' : '/planning?$query');
 }
 
 /// Ablaufplan editor of a Termin (Ionic `PlanningPage`).
@@ -230,8 +204,6 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   /// SOL_FIX26: captured while mounted, so a failed write queued by
   /// [dispose] can still show a toast.
   ScaffoldMessengerState? _messenger;
-  OverlayState? _rootOverlay;
-  bool _iosLook = false;
 
   /// REDESIGN (Beta editor, [_PlanningBeta]): collapsed blocks and the row
   /// whose duration field is open.
@@ -284,8 +256,6 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _messenger = ScaffoldMessenger.maybeOf(context);
-    _rootOverlay = Overlay.maybeOf(context, rootOverlay: true);
-    _iosLook = useIosLook(context);
   }
 
   @override
@@ -698,22 +668,11 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   /// mounted), like [ToastHelper.showError].
   void _showDetachedError(String message) {
     try {
-      final overlay = _rootOverlay;
-      if (!_iosLook && overlay != null && overlay.mounted) {
-        showIonMdToast(overlay, message, color: AppColors.danger);
-        return;
-      }
       final captured = _messenger;
       final messenger = captured != null && captured.mounted ? captured : rootScaffoldMessengerKey.currentState;
       final toastContext = messenger?.context;
       if (toastContext == null || !toastContext.mounted) return;
-      // QUE-26: iOS look – the Ionic toast in the root overlay too (the
-      // Beta keeps its SnackBar).
-      ToastHelper.showError(
-        toastContext,
-        message,
-        beta: LegacySnackBar(color: Colors.red, floating: true, icon: AppIcons.error),
-      );
+      ToastHelper.showError(toastContext, message);
     } catch (_) {
       // App already closed.
     }
@@ -801,7 +760,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       final pending = ref.read(rdPlanStartProvider);
       if (pending != null) ref.read(rdPlanStartProvider.notifier).state = null;
       final start = pending?.attendanceId == att.id ? pending?.action : null;
-      if (start != null && ref.read(redesignEnabledProvider)) {
+      if (start != null) {
         // A new Ablauf starts with that, not with the start field "Wort"
         // or the Vorlage of the Terminart.
         if (PlanUtils.allPlans(_att).isEmpty) {
@@ -1293,11 +1252,9 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       _container.invalidate(orgPlansProvider);
       // SOL_FIX29: rows loaded from the caches from now on hold every commit.
       PlanningWriteSync.markCachesRefreshed();
-      // REDESIGN: a Werk in the Ablauf belongs to the Werke of its Termin.
-      if (_container.read(redesignEnabledProvider)) {
-        for (final id in ids) {
-          unawaited(rdSyncPlanWorks(_container, id));
-        }
+      // A Werk in the Ablauf belongs to the Werke of its Termin.
+      for (final id in ids) {
+        unawaited(rdSyncPlanWorks(_container, id));
       }
     } catch (_) {
       // Container already disposed (app closed): nothing to refresh.
@@ -1333,16 +1290,6 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       return;
     }
     await _selectAttendance(_attendances[target].id);
-  }
-
-  String _attLabel(PlanAttendance a) {
-    final d = DateTime.tryParse(a.date);
-    final date = d == null
-        ? a.date
-        : DateFormat(dateFmt()).format(d);
-    final type = _typeOf(a);
-    final title = (a.typeInfo?.isNotEmpty ?? false) ? a.typeInfo! : (type?.name ?? '');
-    return '$date $title';
   }
 
   // ---------------------------------------------------------------------------
@@ -1389,35 +1336,18 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     // The start plan becomes the first plan, the new one the second.
     _markStartPlanPending();
     if (!await _flushSaves() || !mounted) return;
-    // Beta: one sheet with name, day and empty / copy.
-    RdNewPlanChoice? beta;
-    if (context.rdSkin != null) {
-      final att = _att!;
-      final plans = PlanUtils.allPlans(att);
-      beta = await showRdNewPlanSheet(
-        context,
-        days: PlanUtils.dayOptions(att),
-        initialDay: PlanUtils.nextFreeDay(att, plans),
-        copyOf: PlanUtils.planLabel(att, _planIndex.clamp(0, plans.isEmpty ? 0 : plans.length - 1), plans),
-      );
-      if (beta == null || !mounted) return;
-    }
-    final choice = beta != null ? (beta.copy ? 'copy' : 'empty') : await showAppDialog<String>(
-      context: context,
-      builder: (ctx) => AppAlertDialog(
-        title: Text(ctx.l10n.planningAddAnotherPlan),
-        content: Text(ctx.l10n.planningAddAnotherPlanMessage),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(ctx.l10n.commonCancel)),
-          TextButton(onPressed: () => Navigator.pop(ctx, 'empty'), child: Text(ctx.l10n.planningEmpty)),
-          FilledButton(onPressed: () => Navigator.pop(ctx, 'copy'), child: Text(ctx.l10n.planningCopy)),
-        ],
-      ),
+    final att = _att!;
+    final plans = PlanUtils.allPlans(att);
+    final beta = await showRdNewPlanSheet(
+      context,
+      days: PlanUtils.dayOptions(att),
+      initialDay: PlanUtils.nextFreeDay(att, plans),
+      copyOf: PlanUtils.planLabel(att, _planIndex.clamp(0, plans.isEmpty ? 0 : plans.length - 1), plans),
     );
-    if (choice == null || !mounted || _att == null) return;
+    if (beta == null || !mounted || _att == null) return;
     final attId = _attId!;
     if (!_adoptLatest(attId)) return; // SOL_FIX28 / SOL_FIX29
-    final copy = choice == 'copy';
+    final copy = beta.copy;
     final current = _att!;
     final type = _typeOf(current);
     final time = copy ? _time : PlanUtils.formatTime(type?.startTime ?? current.startTime ?? _time);
@@ -1437,10 +1367,10 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
         // SOL_FIX29: appended to the newest stored plan list (day: the next
         // free day there).
         final open = await _writePlanOp(attId, null, (att, plans, _) {
-          final day = PlanUtils.dayOptions(att).any((d) => d.day == beta?.day)
-              ? beta!.day
+          final day = PlanUtils.dayOptions(att).any((d) => d.day == beta.day)
+              ? beta.day
               : PlanUtils.nextFreeDay(att, plans);
-          final label = beta?.label ?? '';
+          final label = beta.label;
           plans.add(newPlan.copyWith(day: day, label: label.isEmpty ? null : label));
           return (plans: plans, open: plans.length - 1);
         });
@@ -1518,32 +1448,18 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
           });
         case 'day':
           final options = PlanUtils.dayOptions(current);
-          // Ionic: radio alert „Tag zuordnen“ with Abbrechen / Speichern.
-          // Beta: a sheet, one tap picks the day.
-          final int? day;
-          if (context.rdSkin != null) {
-            day = await showPlanActionSheet<int>(
-              context,
-              title: context.l10n.planningAssignDay,
-              actions: [
-                for (final o in options)
-                  PlanSheetAction(
-                    o.day,
-                    o.label,
-                    icon: o.day == list[index].day ? AppIcons.checkCircle : AppIcons.eventOutlined,
-                  ),
-              ],
-            );
-          } else {
-            final picked = await showAppRadioAlert<int>(
-              context,
-              title: context.l10n.planningAssignDay,
-              options: [for (final o in options) (o.day, o.label)],
-              initialValue: list[index].day,
-              confirmText: context.l10n.commonSave,
-            );
-            day = picked?.value;
-          }
+          final day = await showPlanActionSheet<int>(
+            context,
+            title: context.l10n.planningAssignDay,
+            actions: [
+              for (final o in options)
+                PlanSheetAction(
+                  o.day,
+                  o.label,
+                  icon: o.day == list[index].day ? AppIcons.checkCircle : AppIcons.eventOutlined,
+                ),
+            ],
+          );
           if (day == null || day == list[index].day || !mounted) return;
           await _whileBusy(() async {
             final open = await _writePlanOp(attId, planKey, (att, plans, i) {
@@ -1687,8 +1603,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   /// to add them again when all are there; empty: nothing to add).
   Future<List<PlanField>> _currentSongFieldsOrAsk() async {
     final prefix = _songPrefix(_typeOf(_att));
-    // Beta: the Werk's own length or 5 minutes; classic 20 like Ionic.
-    final time = ref.read(redesignEnabledProvider) ? PlanSongHelper.betaTime : null;
+    const time = PlanSongHelper.betaTime;
     final all = PlanSongHelper.currentSongFields(
       const [],
       history: _history,
@@ -1795,116 +1710,13 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     _changed();
   }
 
-  /// Ionic `getMissingGroups`: red "Ohne …" line under songs (not for general tenants).
-  String? _missingGroups(PlanField field) {
-    if (field.songId == null || ref.read(currentTenantProvider)?.type == 'general') return null;
-    final song = _songs.where((s) => s.id == field.songId).firstOrNull;
-    final ids = song?.instrumentIds;
-    if (ids == null || ids.isEmpty) return null;
-    return SongUtils.missingInstrumentsText(
-      ids,
-      ref.read(groupsProvider).valueOrNull ?? const [],
-      ref.read(groupCategoriesProvider).valueOrNull ?? const [],
-      playerCounts: ref.read(missingGroupsPlayerCountsProvider),
-    );
-  }
-
   /// Ionic `canAddTopics`: topics only live in the first plan of a protocol type.
   bool get _canAddTopics {
     final hasProtocol = ref.read(protocolTypeByIdProvider(_att?.typeId))?.enableProtocol ?? false;
     return _att?.id != null && _planIndex == 0 && hasProtocol && ref.read(isTeamLeaderProvider);
   }
 
-  Future<void> _showAddMenu(BuildContext anchorContext) async {
-    final role = ref.read(effectiveRoleProvider);
-    final tenant = ref.read(currentTenantProvider);
-    final isGeneral = tenant?.type == 'general';
-    final blockTemplates = ref.read(planBlockTemplatesProvider).valueOrNull ?? const <PlanBlockTemplate>[];
-    final org = ref.read(currentOrganisationProvider).valueOrNull;
-    final orgTemplates = org?.planningTemplates ?? const <Plan>[];
-    final orgFields = org?.defaultFields ?? const <PlanField>[];
-    // PROTOCOL: Tagesordnung of protocol types (topics only live in the first plan)
-    final hasProtocol = ref.read(protocolTypeByIdProvider(_att?.typeId))?.enableProtocol ?? false;
-    final canAddTopics = _att?.id != null && _planIndex == 0 && hasProtocol && ref.read(isTeamLeaderProvider);
-    final canInsertAgenda = hasProtocol && _planIndex == 0 && !_fields.any(PlanUtils.isAgendaPlaceholder);
-
-    // Ionic: ion-popover (class add-popover, max 70vh) anchored to the "+":
-    // bare `ion-item`s with item lines, `ion-item-divider` + small bold
-    // section labels, `ion-note` minutes and the template's delete button.
-    final l10n = context.l10n;
-    final action = await showAppPopoverMenu<String>(
-      context: anchorContext,
-      lines: true,
-      maxHeight: MediaQuery.of(context).size.height * 0.7,
-      items: [
-        AppPopoverMenuItem(value: 'field', label: l10n.planningAddField),
-        AppPopoverMenuItem(value: 'group', label: l10n.planningAddBlock),
-        AppPopoverMenuItem(value: 'note', label: l10n.planningAddNoteField),
-        if (!isGeneral) AppPopoverMenuItem(value: 'current', label: l10n.planningAddCurrentSongs),
-        if (!isGeneral && _songs.isNotEmpty) AppPopoverMenuItem(value: 'song', label: l10n.planningAddSong),
-        if (canAddTopics)
-          AppPopoverMenuItem(
-            value: 'topics',
-            label: l10n.attendanceAddTopics,
-            // ABL-29: Ionic list-circle-outline.
-            icon: AppIcons.listCircleOutline,
-            iconColor: AppColors.primary,
-          ),
-        if (canInsertAgenda)
-          AppPopoverMenuItem(
-            value: 'agenda',
-            label: l10n.planningInsertAgenda,
-            icon: AppIcons.commit,
-            iconColor: AppColors.mediumOf(context),
-            lines: false,
-          ),
-        if (blockTemplates.isNotEmpty) ...[
-          AppPopoverMenuItem.header(l10n.planningBlocks, ''),
-          for (final tpl in blockTemplates)
-            AppPopoverMenuItem(
-              value: 'block:${tpl.id}',
-              label: tpl.name,
-              note: l10n.planningMinShort(PlanUtils.templateMinutes(tpl)),
-              end: role.isAdmin
-                  ? AppPopoverMenuEndAction(
-                      value: 'delblock:${tpl.id}',
-                      icon: AppIcons.deleteOutline,
-                      tooltip: l10n.planningDeleteTemplate,
-                    )
-                  : null,
-            ),
-        ],
-        if (orgTemplates.isNotEmpty) ...[
-          AppPopoverMenuItem.header(l10n.planningTemplates, ''),
-          for (var i = 0; i < orgTemplates.length; i++)
-            AppPopoverMenuItem(value: 'tpl:$i', label: orgTemplates[i].title ?? ''),
-        ],
-        if (orgFields.isNotEmpty) ...[
-          AppPopoverMenuItem.header(l10n.planningFields, '', divider: orgTemplates.isEmpty),
-          for (var i = 0; i < orgFields.length; i++)
-            AppPopoverMenuItem(
-              value: 'orgfield:$i',
-              label: orgFields[i].name,
-              note: l10n.planningMinShort(orgFields[i].time),
-            ),
-        ],
-        if (_att != null) ...[
-          const AppPopoverMenuItem.divider(''),
-          AppPopoverMenuItem(
-            value: 'plan',
-            label: l10n.planningAddAnotherPlan,
-            icon: AppIcons.copyOutlined,
-            color: AppColors.mediumOf(context),
-            lines: false,
-          ),
-        ],
-      ],
-    );
-    if (action == null || !mounted) return;
-    await _runAddAction(action);
-  }
-
-  /// Runs an entry of the "+" menu (classic popover and Beta sheet).
+  /// Runs an entry of the "+" menu.
   Future<void> _runAddAction(String action) async {
     final blockTemplates = ref.read(planBlockTemplatesProvider).valueOrNull ?? const <PlanBlockTemplate>[];
     final org = ref.read(currentOrganisationProvider).valueOrNull;
@@ -2125,71 +1937,6 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     return '${d.day.toString().padLeft(2, '0')}_${d.month.toString().padLeft(2, '0')}_${d.year}';
   }
 
-  /// Ionic `showOptions`: export entries only with fields (validated on
-  /// click), the Registerprobenplan always for choir / orchestra.
-  Future<void> _showOptions() async {
-    // Exports use the editor state, so they also work when the write failed
-    // (SOL_FIX24: or the plan is invalid; the export validates on click).
-    await _flushSaves(blockInvalid: false);
-    if (!mounted) return;
-    final att = _att;
-    final tenant = ref.read(currentTenantProvider);
-    final showSectional = tenant?.type == 'choir' || tenant?.type == 'orchestra';
-    final plans = PlanUtils.allPlans(att);
-    final current = Plan(time: _time, end: _end, fields: _fields, title: _effectiveTitle);
-    final fileName = '${_effectiveTitle}_$_fileDate';
-    await showPlanExportSheet(
-      context,
-      ref,
-      title: context.l10n.personActions,
-      fileName: fileName,
-      includeBranding: ref.read(includeBrandingProvider),
-      showExports: _fields.isNotEmpty,
-      beforeExport: () => _validate(showToast: true),
-      pages: () => [
-        att == null
-            ? PlanExportPage(
-                title: _effectiveTitle,
-                subtitle: PlanUtils.longDate(DateTime.now()),
-                time: _time,
-                end: _end,
-                fields: _fields)
-            : _exportPage(att, _planIndex, current),
-      ],
-      // P10_SELF_PLAN: Ionic showOptions – PDF exportieren, (alle Pläne),
-      // 2x A5, Telegram …, then "Registerprobenplan erstellen"; no image.
-      pdfLabel: context.l10n.planningExportPdf,
-      pdf2xLabel: context.l10n.planningExportPdfA5,
-      withImage: false,
-      afterPdfActions: [
-        if (plans.length > 1)
-          PlanSheetAction('all', context.l10n.planningExportPdfAll, icon: AppIcons.pictureAsPdf),
-      ],
-      trailingActions: [
-        if (showSectional)
-          PlanSheetAction('sectional', context.l10n.planningCreateSectionalPlan, icon: AppIcons.groups),
-      ],
-      onExtraAction: (a) async {
-        // TERMINE-22: the editor may have gone while the sheet was open.
-        if (!mounted) return;
-        if (a == 'sectional') {
-          await showRegisterPlanSheet(context, attendanceDate: DateTime.tryParse(att?.date ?? ''));
-        } else if (a == 'all' && att != null) {
-          await runPlanExport(
-            context,
-            ref,
-            PlanExportAction.pdf,
-            pages: [
-              for (var i = 0; i < plans.length; i++) _exportPage(att, i, i == _planIndex ? current : plans[i]),
-            ],
-            fileName: fileName,
-            includeBranding: ref.read(includeBrandingProvider),
-          );
-        }
-      },
-    );
-  }
-
   Future<void> _resetPlan() async {
     final loadGen = _loadGen;
     final ok = await showPlanConfirm(
@@ -2254,13 +2001,6 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       });
     }
 
-    final att = _att;
-    final plans = PlanUtils.allPlans(att);
-    final labels = att == null || plans.length < 2
-        ? const <String>[]
-        : [for (var i = 0; i < plans.length; i++) PlanUtils.planLabel(att, i, plans)];
-
-    final beta = ref.watch(redesignEnabledProvider);
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) async {
@@ -2280,109 +2020,12 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
           excluding: _busy,
           child: AbsorbPointer(
             absorbing: _busy,
-            child: beta
-                ? _rdScaffold(attendancesAsync, isAdmin: role.isAdmin, blockTemplates: blockTemplates, showBeamer: showBeamer)
-                : Scaffold(
-        // Ionic: modal toolbar [Link teilen, Schließen]; actions in the FAB (…).
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          title: Text(context.l10n.attendanceCreateRunSheet),
-          // IOS_PAGES3: iOS → the end ion-buttons share one glass capsule
-          actions: [
-            ToolbarButtonGroup(children: [
-              IconButton(tooltip: context.l10n.planningShareLink, icon: Icon(AppIcons.link), onPressed: _shareLink),
-              IconButton(
-                tooltip: context.l10n.commonClose,
-                icon: Icon(AppIcons.close),
-                onPressed: () => Navigator.of(context).maybePop(),
-              ),
-            ]),
-          ],
-        ),
-        floatingActionButton: TabBarFab.wrap(FloatingActionButton(
-          tooltip: context.l10n.personActions,
-          onPressed: _showOptions,
-          child: Icon(AppIcons.moreHoriz),
-        )),
-        body: attendancesAsync.when(
-          loading: () => const Center(child: AppSpinner()),
-          error: (e, _) => Center(child: Text(context.l10n.planningFlutterErrorWith(friendlyErrorMessage(e)))),
-          // Until `_init` chose the Termin the editor is not usable (its
-          // edits would be replaced by the loaded plan).
-          // SOL_FIX2: requested Termin not reachable → error, no fallback
-          data: (_) => !_started
-              ? const Center(child: AppSpinner())
-              : _requestedNotFound
-              ? Center(child: Text(context.l10n.attendanceFlutterNotFound))
-              : ListView(
-            padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 16, fabRoom: 80)),
-            children: [
-              _buildAttendanceCard(att),
-              // Ionic: second ion-list [inset] "Ablauf" with the "+" popover
-              // trigger, the plan chips and the white item group.
-              IonInsetList(
-                dividerIndent: null,
-                headerWidget: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // ABL-09: same inset-list header as "Zugehöriger Termin".
-                    IonListHeader(
-                      inset: true,
-                      title: context.l10n.planningRunSheet,
-                      trailing: Builder(
-                        builder: (anchor) => IconButton(
-                          color: AppColors.primary,
-                          tooltip: context.l10n.planningAddField,
-                          icon: Icon(AppIcons.add),
-                          onPressed: () => _showAddMenu(anchor),
-                        ),
-                      ),
-                    ),
-                    if (labels.isNotEmpty)
-                      PlanChips(
-                        labels: labels,
-                        selected: _planIndex,
-                        onSelected: _selectPlan,
-                        trailing: IconButton(
-                          tooltip: context.l10n.planningPlanOptions,
-                          color: AppColors.mediumOf(context),
-                          icon: Icon(AppIcons.moreHoriz),
-                          onPressed: _showPlanOptions,
-                        ),
-                      ),
-                  ],
-                ),
-                children: [
-                  ListTile(
-                    title: Text(context.l10n.attendanceStartLabel),
-                    trailing: IonDatetimeChip(text: _time, onTap: _pickTime),
-                  ),
-                  const Divider(height: 1, indent: 16),
-                  PlanFieldsEditor(
-                    fields: _fields,
-                    startTime: _time,
-                    onChanged: (f) {
-                      setState(() => _fields = f);
-                      _changed();
-                    },
-                    blockTemplateNames: blockTemplates.map((t) => t.name).toSet(),
-                    onAddTopics: _canAddTopics ? _openAgendaPicker : null,
-                    fieldWarning: _missingGroups,
-                    onSaveBlockTemplate: role.isAdmin ? _saveBlockTemplate : null,
-                    beamerFileOf: showBeamer ? _beamerFileOf : null,
-                  ),
-                  if (_fields.isNotEmpty)
-                    ListTile(
-                      title: Text(context.l10n.attendanceEnd),
-                      // Ionic: disabled ion-datetime-button (read-only chip)
-                      trailing: IonDatetimeChip(text: PlanUtils.formatTime(_end)),
-                    ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
+            child: _rdScaffold(
+              attendancesAsync,
+              isAdmin: role.isAdmin,
+              blockTemplates: blockTemplates,
+              showBeamer: showBeamer,
+            ),
           ),
         ),
         if (_busy)
@@ -2391,108 +2034,6 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
             child: ColoredBox(color: Colors.black26, child: Center(child: AppSpinner())),
           ),
       ]),
-    );
-  }
-
-  Widget _buildAttendanceCard(PlanAttendance? att) {
-    final org = ref.watch(currentOrganisationProvider).valueOrNull;
-    // Ionic: ion-list [inset] with header "Zugehöriger Termin" + reset button;
-    // the items have lines="none".
-    return IonInsetList(
-      header: context.l10n.planningRelatedAttendance,
-      headerTrailing: IconButton(
-        color: AppColors.primary,
-        tooltip: context.l10n.planningResetPlan,
-        icon: Icon(AppIcons.refresh),
-        onPressed: _resetPlan,
-      ),
-      dividerIndent: null,
-      children: [
-        if (_attendances.isNotEmpty)
-          IonSelect<int>(
-            key: ValueKey(_attId),
-            label: context.l10n.planningCurrent,
-            // Ionic: `interface="modal"` (long list of events).
-            interface: AppSelectInterface.modal,
-            value: _attId,
-            items: [
-              for (final a in _attendances)
-                if (a.id != null)
-                  DropdownMenuItem(value: a.id, child: Text(_attLabel(a), overflow: TextOverflow.ellipsis)),
-            ],
-            onChanged: _selectAttendance,
-          )
-        else
-          ListTile(title: Text(context.l10n.planningFlutterNoEvents)),
-        if (att != null && (att.notes ?? '').isNotEmpty) ...[
-          const Divider(height: 1, indent: 16),
-          ListTile(
-            title: Text(context.l10n.planningAttendanceNotes,
-                style: TextStyle(fontSize: 12, color: AppColors.mediumOf(context))),
-            subtitle: Text(att.notes!),
-          ),
-        ],
-        if (att != null) ...[
-          IonSwitchListTile(
-            title: Text(context.l10n.planningShareWithMembers),
-            value: _sharePlan,
-            onChanged: (v) async {
-              setState(() => _sharePlan = v);
-              try {
-                await _updateFlags({'share_plan': v});
-              } catch (_) {
-                if (mounted) setState(() => _sharePlan = !v);
-              }
-            },
-          ),
-          if (org != null)
-            IonSwitchListTile(
-              title: Text(context.l10n.planningOrgPlan),
-              value: _isOrgPlan,
-              onChanged: (v) async {
-                setState(() => _isOrgPlan = v);
-                try {
-                  await _updateFlags({'is_org_plan': v});
-                } catch (_) {
-                  if (mounted) setState(() => _isOrgPlan = !v);
-                }
-              },
-            ),
-          IonStackedInput(
-            controller: _titleController,
-            label: context.l10n.planningHeadingLabel,
-            hint: context.l10n.planningDefaultTitle,
-            onFocusLost: _onTitleFocusLost,
-          ),
-        ],
-        // MISC2: "Branding einbeziehen" (only when logo/text configured)
-        if (ref.watch(hasBrandingProvider))
-          IonSwitchListTile(
-            title: Text(context.l10n.planningIncludeBranding),
-            value: ref.watch(includeBrandingProvider),
-            onChanged: (v) => ref.read(includeBrandingProvider.notifier).state = v,
-          ),
-        // Ionic: two small clear buttons (expand="full") side by side.
-        Row(
-          children: [
-            Expanded(
-              child: TextButton.icon(
-                onPressed: () => _navigate(-1),
-                icon: Icon(AppIcons.arrowBack, size: 18),
-                label: IonButtonLabel(context.l10n.planningPrevious),
-              ),
-            ),
-            Expanded(
-              child: TextButton.icon(
-                onPressed: () => _navigate(1),
-                iconAlignment: IconAlignment.end,
-                icon: Icon(AppIcons.arrowForward, size: 18),
-                label: IonButtonLabel(context.l10n.planningNext),
-              ),
-            ),
-          ],
-        ),
-      ],
     );
   }
 }

@@ -7,34 +7,34 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   String read(String path) => File(path).readAsStringSync();
 
-  test('people list remembers the filter per tenant (Ionic filterOpt)', () {
-    final src = read('lib/features/people/presentation/pages/people_list_page.dart');
-    expect(src, contains("'filterOpt_\${tenant.id}'"));
-    expect(src, contains("'filterOptAdd_\${tenant.id}'"));
-    expect(src, contains('_restoreOtherInstanceFilter'));
+  test('members list watches persisted list filter provider', () {
+    final src = read('lib/features/redesign/presentation/pages/rd_members_page.dart');
+    expect(src, contains('rdMembersListFilterProvider'));
   });
 
   test('teachers: only admins open the edit page, add sheet without main group', () {
-    final src = read('lib/features/teachers/presentation/pages/teachers_list_page.dart');
-    expect(src, contains('onTap: isAdmin'));
-    expect(src, contains('.where((g) => g.maingroup != true)'));
+    final listSrc = read('lib/features/redesign/presentation/pages/rd_teachers_page.dart');
+    final sheetSrc = read('lib/features/redesign/presentation/widgets/manage/rd_teacher_create_sheet.dart');
+    expect(listSrc, contains('onTap: isAdmin'));
+    expect(sheetSrc, contains('.where((g) => g.maingroup != true'));
   });
 
   test('person create asks before discarding input (Ionic dismiss)', () {
-    final src = read('lib/features/people/presentation/pages/person_create_page.dart');
-    expect(src, contains('onPressed: _close'));
-    expect(src, contains('l10n.personDiscardChanges'));
+    final src = read('lib/features/redesign/presentation/pages/rd_person_create_page.dart');
+    expect(src, contains('_confirmDiscard()'));
+    expect(src, contains('context.l10n.personDiscardChanges'));
   });
 
-  test('person more menu has the Ionic header and closes after a transfer', () {
-    final src = read('lib/features/people/presentation/pages/person_detail_page.dart');
-    expect(src, contains('title: context.l10n.personActions'));
-    expect(src, contains('if (!copy) _closePage();'));
+  test('person actions section has header and closes after a transfer', () {
+    final src = read('lib/features/redesign/presentation/pages/rd_person_edit_page.dart');
+    expect(src, contains('RdGroupLabel(l10n.personActions)'));
+    expect(src, contains('if (!copy) {'));
+    expect(src, contains('context.go(RedesignRoutes.members);'));
   });
 
   test('late warning card uses the Ionic texts', () {
     final src = read(
-        'lib/features/people/presentation/widgets/person_detail/late_warning_card.dart');
+        'lib/features/redesign/presentation/pages/rd_person_edit_page.dart');
     expect(src, contains('personLateWarningTitle'));
     expect(src, contains('personLateExcusedExtra'));
     expect(src, contains('personResetTalked'));

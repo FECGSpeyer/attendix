@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:attendix/core/constants/enums.dart';
-import 'package:attendix/features/attendance/presentation/widgets/attendance_detail/status_chip.dart';
+import 'package:attendix/features/attendance/presentation/attendance_status_labels.dart';
 import 'package:attendix/features/export/export_fields.dart';
 import 'package:attendix/features/history/history_utils.dart';
 import 'package:attendix/l10n/l10n.dart';
@@ -38,12 +38,12 @@ void main() {
 
   test('lane pages contain no hard-coded German UI literals', () {
     const files = [
-      'lib/features/attendance/presentation/pages/attendance_list_page.dart',
-      'lib/features/attendance/presentation/pages/attendance_create_page.dart',
-      'lib/features/attendance/presentation/pages/attendance_detail_page.dart',
-      'lib/features/history/presentation/pages/history_page.dart',
-      'lib/features/statistics/presentation/pages/statistics_page.dart',
-      'lib/features/export/presentation/pages/export_page.dart',
+      'lib/features/redesign/presentation/pages/rd_events_page.dart',
+      'lib/features/redesign/presentation/pages/rd_event_create_page.dart',
+      'lib/features/redesign/presentation/pages/rd_event_page.dart',
+      'lib/features/redesign/presentation/pages/rd_work_history_page.dart',
+      'lib/features/redesign/presentation/pages/rd_stats_page.dart',
+      'lib/features/redesign/presentation/pages/rd_export_page.dart',
     ];
     final literal = RegExp(r"(Text|tooltip:|title:|label:|showSuccess\(context,|showError\(context,|showWarning\(context,)\s*\(?'[^']*[äöüÄÖÜß][^']*'");
     for (final path in files) {

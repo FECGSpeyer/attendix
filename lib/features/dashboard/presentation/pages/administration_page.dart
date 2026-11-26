@@ -5,25 +5,17 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/providers/church_providers.dart';
 import '../../../../core/providers/dashboard_providers.dart';
-import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/church/church.dart';
 import '../../../../l10n/l10n.dart';
-import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
 import '../../../../shared/widgets/adaptive/adaptive.dart';
-import '../../../settings/presentation/widgets/ion_condense.dart';
-import '../../../settings/presentation/widgets/settings_list.dart';
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
-import '../../../../shared/widgets/layout/ion_form_items.dart';
-import '../../../people/presentation/widgets/ion/ion_widgets.dart' show ionLightColor;
 
 const int _gb = 1024 * 1024 * 1024;
 
@@ -111,23 +103,17 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
     );
     if (name == null || !mounted) return;
     final notifier = ref.read(churchNotifierProvider.notifier);
-    final String? id;
-    if (context.rdSkin == null) {
-      // EIB-19: Ionic `Utils.getLoadingElement()` – `ion-loading`.
-      id = await withIonLoading(context, () => notifier.createChurch(name.trim()));
-    } else {
-      final navigator = Navigator.of(context, rootNavigator: true);
-      showAppDialog<void>(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => const PopScope(
-          canPop: false,
-          child: Center(child: AppSpinner()),
-        ),
-      );
-      id = await notifier.createChurch(name.trim());
-      navigator.pop();
-    }
+    final navigator = Navigator.of(context, rootNavigator: true);
+    showAppDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const PopScope(
+        canPop: false,
+        child: Center(child: AppSpinner()),
+      ),
+    );
+    final id = await notifier.createChurch(name.trim());
+    navigator.pop();
     if (!mounted) return;
     if (id != null) {
       ToastHelper.showSuccess(context, context.l10n.adminChurchAdded);
@@ -168,11 +154,7 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
     );
     if (!confirmed || !mounted) return;
     final notifier = ref.read(administrationNotifierProvider.notifier);
-    // EIB-19: Ionic `ion-loading` "Wird zusammengeführt…" while merging.
-    final count = context.rdSkin == null
-        ? await withIonLoading(context, () => notifier.mergeChurches(pairs),
-            message: context.l10n.adminMerging)
-        : await notifier.mergeChurches(pairs);
+    final count = await notifier.mergeChurches(pairs);
     if (!mounted) return;
     if (count == null) {
       ToastHelper.showError(context, context.l10n.adminMergeFailed);
@@ -190,27 +172,6 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
     final targets = churches.where((c) => c.id != source.id).toList();
     if (targets.isEmpty) return;
     String? selected = targets.first.id;
-    if (context.rdSkin == null) {
-      // EIB-07: Ionic alert with `type: 'radio'` inputs, Abbrechen /
-      // Zusammenführen (both plain).
-      final picked = await showAppRadioAlert<String>(
-        context,
-        title: context.l10n.adminMergeWith(source.name),
-        options: [for (final c in targets) (c.id!, c.name)],
-        initialValue: selected,
-        confirmText: context.l10n.adminMerge,
-      );
-      final id = picked?.value;
-      if (id == null || !mounted) return;
-      final target = targets.firstWhere((c) => c.id == id);
-      await _merge(
-        [(id, source.id!)],
-        title: context.l10n.commonConfirm,
-        message: context.l10n.adminMergeMoveMessage(source.name, target.name),
-        confirm: context.l10n.adminMerge,
-      );
-      return;
-    }
     final targetId = await showAppDialog<String>(
       context: context,
       builder: (context) => StatefulBuilder(
@@ -265,7 +226,6 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
 
   @override
   Widget build(BuildContext context) {
-    final tenant = ref.watch(currentTenantProvider);
     final storage = ref.watch(tenantStorageInfoProvider);
     final churchesAsync = ref.watch(churchesProvider);
     final saving = ref.watch(administrationNotifierProvider).isLoading;
@@ -292,168 +252,7 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
       );
     }
 
-    if (ref.watch(redesignEnabledProvider)) {
-      return _buildBeta(context, storage, churchesAsync, churches, duplicates, saving, mergeAll);
-    }
-    final ios = ionIsIos(context);
-    // UX_SETTINGS (WAVE 8): administration.page.html — condense title,
-    // inset lists (Auswertung / Speicher / Gemeinden) on the light page.
-    return IonCondense(builder: (context, collapsed) => Scaffold(
-      // IOS_R6: Ionic `ion-content fullscreen` under the translucent header
-      extendBodyBehindAppBar: ionIsIos(context),
-      // IOS_R6: `ion-header translucent` (blur once condensed)
-      appBar: IonTranslucentAppBar(condensed: collapsed, child: AppBar(title: IonCondenseTitle(context.l10n.adminTitle, collapsed: collapsed))),
-      body: ListView(
-        // EIB-21: the Ionic inset list margin (iOS 20).
-        padding: EdgeInsets.fromLTRB(ionListMargin(context), ios ? 0 : 8, ionListMargin(context),
-            scrollEndPadding(context, base: 24)),
-        children: [
-          const IonContentTopInset(),
-          IonLargeTitle(context.l10n.adminTitle, padding: const EdgeInsets.only(bottom: 4)),
-          if (ios) const SizedBox(height: 16),
-          SettingsListSection(
-            title: context.l10n.adminEvaluation,
-            children: [
-              SettingsListTile(
-                icon: AppIcons.analyticsOutlined,
-                title: context.l10n.usageTitle,
-                onTap: () => context.push('/dashboard'),
-              ),
-            ],
-          ),
-          SettingsListSection(
-            title: context.l10n.adminStorageFor(tenant?.longName ?? ''),
-            icons: false,
-            children: [
-              // EIB-15: `ion-input labelPlacement="stacked"` in both looks.
-              IonStackedInputItem(
-                lines: false,
-                label: context.l10n.adminMaxStorage,
-                placeholder: context.l10n.adminUnlimited,
-                helper: context.l10n.adminLimitHelper,
-                controller: _limitController,
-                focusNode: _limitFocus,
-                enabled: !saving,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                onSubmitted: (_) => _saveFilesLimit(),
-              ),
-              if (storage.valueOrNull?.usedBytes != null)
-                ListTile(
-                  title: Text(context.l10n.adminCurrentlyUsed),
-                  trailing: IonNote(
-                    context.l10n.adminGb(_fmtGb(_toGb(storage.value!.usedBytes)!)),
-                  ),
-                ),
-            ],
-          ),
-          SettingsListSection(
-            title: context.l10n.adminChurchesCount(churches.length),
-            icon: AppIcons.homeOutlined,
-            children: churchesAsync.isLoading && churches.isEmpty
-                ? const [
-                    Padding(
-                      padding: EdgeInsets.all(20),
-                      child: Center(child: AppSpinner()),
-                    ),
-                  ]
-                : [
-                    if (duplicates.isNotEmpty) ...[
-                      // ion-item color="warning"
-                      // EIB-24: solid `color="warning"` in both looks.
-                      Material(
-                        color: AppColors.warning,
-                        child: ListTile(
-                          leading: Icon(AppIcons.warningAmberOutlined, color: Colors.black),
-                          title: Text(
-                            context.l10n.adminDuplicateGroups(duplicates.length),
-                            style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
-                          ),
-                          subtitle: Text(
-                            context.l10n.adminDuplicatesHint,
-                            style: const TextStyle(color: Colors.black87),
-                          ),
-                        ),
-                      ),
-                      for (final g in duplicates)
-                        ListTile(
-                          title: Text(g.target.name),
-                          subtitle: Text(context.l10n.adminTimesPresent(g.duplicates.length + 1)),
-                          trailing: Wrap(
-                            spacing: 4,
-                            children: [
-                              for (final dup in g.duplicates)
-                                // EIB-24: `ion-button size="small"
-                                // fill="outline" color="warning"`.
-                                IonButton(
-                                  small: true,
-                                  fill: IonButtonFill.outline,
-                                  color: AppColors.warning,
-                                  icon: AppIcons.mergeType,
-                                  label: context.l10n.adminMerge,
-                                  onPressed: saving
-                                      ? null
-                                      : () => _merge(
-                                            [(g.target.id!, dup.id!)],
-                                            title: context.l10n.adminMergeChurches,
-                                            message: context.l10n
-                                                .adminMergeMessage(dup.name, g.target.name),
-                                            confirm: context.l10n.adminMerge,
-                                          ),
-                                ),
-                            ],
-                          ),
-                        ),
-                      SettingsListTile(
-                        icon: AppIcons.mergeType,
-                        color: AppColors.warningDark,
-                        detail: false,
-                        title: context.l10n.adminMergeAllDuplicates,
-                        onTap: saving ? null : mergeAll,
-                      ),
-                    ],
-                    // EIB-11: `ion-accordion` with the `ion-item
-                    // slot="header" color="light"` header; the content is
-                    // a plain list (medium home icon, clear medium buttons).
-                    IonAccordionTile(
-                      headerColor: ionLightColor(context),
-                      initiallyExpanded: _showAllChurches,
-                      onExpansionChanged: (v) => _showAllChurches = v,
-                      title: Text(context.l10n.adminShowAllChurches),
-                      children: [
-                        for (final c in churches)
-                          ListTile(
-                            leading: Icon(AppIcons.homeOutlined, color: AppColors.mediumOf(context)),
-                            title: Text(c.name),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  tooltip: context.l10n.adminRenameChurch,
-                                  icon: Icon(AppIcons.editOutlined, color: AppColors.mediumOf(context)),
-                                  onPressed: saving ? null : () => _rename(c),
-                                ),
-                                IconButton(
-                                  tooltip: context.l10n.adminMerge,
-                                  icon: Icon(AppIcons.mergeType, color: AppColors.mediumOf(context)),
-                                  onPressed: saving ? null : () => _mergeManual(c, churches),
-                                ),
-                              ],
-                            ),
-                          ),
-                      ],
-                    ),
-                    SettingsListTile(
-                      icon: AppIcons.add,
-                      color: AppColors.primary,
-                      detail: false,
-                      title: context.l10n.adminAddChurch,
-                      onTap: _addChurch,
-                    ),
-                  ],
-          ),
-        ],
-      ),
-    ));
+    return _buildBeta(context, storage, churchesAsync, churches, duplicates, saving, mergeAll);
   }
 
   /// REDESIGN (E4): small sheet to set the storage limit (same check and

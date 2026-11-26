@@ -17,9 +17,6 @@ import '../../../../data/models/tenant/tenant.dart' show ExtraField;
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart';
-import '../../../../shared/widgets/dialogs/ion_sheet.dart' show showIonSheet;
-import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
-import '../../../planning/presentation/widgets/ion_items.dart' as pl show IonSelect, ionStackedInputDecoration;
 import '../../../songs/presentation/utils/song_utils.dart';
 
 /// Opens the copy dialog of the organisation-wide Werk search (Ionic
@@ -31,14 +28,6 @@ Future<void> showOrgSongCopySheet(
   required List<OrgSongTenant> orgTenants,
   void Function(int libraryId)? onCopied,
 }) {
-  // ABL-24: classic = Ionic sheet modal `[breakpoints]="[0, 1]"`.
-  if (context.rdSkin == null) {
-    return showIonSheet<void>(
-      context,
-      builder: (_, __) =>
-          OrgSongCopySheet(source: source, targets: targets, orgTenants: orgTenants, onCopied: onCopied),
-    );
-  }
   return showModalBottomSheet(
     context: context,
     useRootNavigator: true,
@@ -514,12 +503,13 @@ class _OrgSongCopySheetState extends ConsumerState<OrgSongCopySheet> {
                 ),
               ),
             ),
-            IonRadioItem<_Mode>(
-              labelEnd: true,
-              value: _Mode.existing,
-              groupValue: _mode,
+            ListTile(
+              leading: Icon(
+                _mode == _Mode.existing ? AppIcons.radioButtonChecked : AppIcons.radioButtonUnchecked,
+                color: _mode == _Mode.existing ? AppColors.primary : null,
+              ),
               title: Text(l10n.orgSongsModeExisting),
-              onChanged: _copying ? null : (v) => _onModeChange(v!),
+              onTap: _copying ? null : () => _onModeChange(_Mode.existing),
             ),
             if (_mode == _Mode.existing && _duplicates.length > 1)
               _select<int>(
@@ -537,12 +527,13 @@ class _OrgSongCopySheetState extends ConsumerState<OrgSongCopySheet> {
                       _buildOptions();
                     }),
               ),
-            IonRadioItem<_Mode>(
-              labelEnd: true,
-              value: _Mode.created,
-              groupValue: _mode,
+            ListTile(
+              leading: Icon(
+                _mode == _Mode.created ? AppIcons.radioButtonChecked : AppIcons.radioButtonUnchecked,
+                color: _mode == _Mode.created ? AppColors.primary : null,
+              ),
               title: Text(l10n.orgSongsModeNew),
-              onChanged: _copying ? null : (v) => _onModeChange(v!),
+              onTap: _copying ? null : () => _onModeChange(_Mode.created),
             ),
           ],
         ),
@@ -577,8 +568,6 @@ class _OrgSongCopySheetState extends ConsumerState<OrgSongCopySheet> {
             for (final option in _fieldOptions)
               CheckboxListTile(
                 controlAffinity: ListTileControlAffinity.leading,
-                // Ionic ios checkbox is round.
-                checkboxShape: useIosLook(context) && context.rdSkin == null ? const CircleBorder() : null,
                 value: option.checked,
                 title: Text(option.label),
                 subtitle: Column(
@@ -624,25 +613,15 @@ class _OrgSongCopySheetState extends ConsumerState<OrgSongCopySheet> {
       ),
       Padding(
         padding: const EdgeInsets.all(16),
-        // ABL-24: Ionic solid `ion-button expand="block"`.
-        child: context.rdSkin != null
-            ? ElevatedButton(
-                onPressed: _canCopy ? _copy : null,
-                style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 48)),
-                child: Text(_mode == _Mode.existing ? l10n.orgSongsCopyIntoExisting : l10n.orgSongsCopyAsNew),
-              )
-            : FilledButton(
-                onPressed: _canCopy ? _copy : null,
-                style: FilledButton.styleFrom(minimumSize: const Size(double.infinity, 48)),
-                child: IonButtonLabel(_mode == _Mode.existing ? l10n.orgSongsCopyIntoExisting : l10n.orgSongsCopyAsNew),
-              ),
+        child: ElevatedButton(
+          onPressed: _canCopy ? _copy : null,
+          style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 48)),
+          child: Text(_mode == _Mode.existing ? l10n.orgSongsCopyIntoExisting : l10n.orgSongsCopyAsNew),
+        ),
       ),
     ];
   }
 
-  /// ABL-24: `ion-item` > `ion-select` with the label at the start and the
-  /// value at the end (Ionic `interface="action-sheet"`); Beta keeps the
-  /// form field.
   Widget _select<T>(
     BuildContext context, {
     required String label,
@@ -650,30 +629,19 @@ class _OrgSongCopySheetState extends ConsumerState<OrgSongCopySheet> {
     required List<DropdownMenuItem<T>> items,
     required ValueChanged<T?>? onChanged,
   }) {
-    if (context.rdSkin != null) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        child: AppDropdownFormField<T>(
-          interface: AppSelectInterface.actionSheet,
-          value: value,
-          decoration: InputDecoration(labelText: label),
-          isExpanded: true,
-          items: items,
-          onChanged: onChanged,
-        ),
-      );
-    }
-    return pl.IonSelect<T>(
-      label: label,
-      value: value,
-      interface: AppSelectInterface.actionSheet,
-      items: items,
-      onChanged: onChanged,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: AppDropdownFormField<T>(
+        interface: AppSelectInterface.actionSheet,
+        value: value,
+        decoration: InputDecoration(labelText: label),
+        isExpanded: true,
+        items: items,
+        onChanged: onChanged,
+      ),
     );
   }
 
-  /// ABL-24: `ion-input` with its label at the start (Ionic default
-  /// `labelPlacement="start"`); Beta keeps the form field.
   Widget _inlineInput(
     BuildContext context, {
     required TextEditingController controller,
@@ -682,40 +650,15 @@ class _OrgSongCopySheetState extends ConsumerState<OrgSongCopySheet> {
     TextInputType? keyboardType,
     TextStyle? style,
   }) {
-    if (context.rdSkin != null) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        child: TextField(
-          controller: controller,
-          maxLength: maxLength,
-          keyboardType: keyboardType,
-          decoration: InputDecoration(labelText: label, counterText: ''),
-          style: style,
-          onChanged: (_) => setState(() {}),
-        ),
-      );
-    }
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        children: [
-          Text(label, style: Theme.of(context).textTheme.bodyLarge),
-          const SizedBox(width: 16),
-          Expanded(
-            child: TextField(
-              controller: controller,
-              maxLength: maxLength,
-              keyboardType: keyboardType,
-              style: style,
-              decoration: pl.ionStackedInputDecoration(label: '').copyWith(
-                labelText: null,
-                counterText: '',
-                contentPadding: const EdgeInsets.symmetric(vertical: 14),
-              ),
-              onChanged: (_) => setState(() {}),
-            ),
-          ),
-        ],
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: TextField(
+        controller: controller,
+        maxLength: maxLength,
+        keyboardType: keyboardType,
+        decoration: InputDecoration(labelText: label, counterText: ''),
+        style: style,
+        onChanged: (_) => setState(() {}),
       ),
     );
   }
@@ -729,7 +672,6 @@ class _OrgSongCopySheetState extends ConsumerState<OrgSongCopySheet> {
       child: Row(
         children: [
           Checkbox(
-            shape: useIosLook(context) && context.rdSkin == null ? const CircleBorder() : null,
             value: option.checked,
             onChanged: _copying ? null : (v) => setState(() => option.checked = v ?? false),
           ),

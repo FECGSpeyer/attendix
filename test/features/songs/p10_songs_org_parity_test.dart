@@ -7,26 +7,9 @@ String _read(String path) => File(path).readAsStringSync();
 
 /// P10_SONGS_ORG: final parity sweep (songs, team organisation, protocols).
 void main() {
-  group('Werke tab keeps its tab while a song is open (Ionic /tabs/songs-tab/:id)', () {
-    test('router registers /songs-tab/:id with the song detail page', () {
-      final router = _read('lib/core/router/app_router.dart');
-      final start = router.indexOf("path: '/songs-tab'");
-      expect(start, greaterThan(0));
-      final block = router.substring(start, router.indexOf("path: '/org-plans-tab'"));
-      expect(block, contains("name: 'songsTabDetail'"));
-      expect(block, contains('SongDetailPage(songId:'));
-    });
-
-    test('songs list opens songs from the Werke tab under /songs-tab', () {
-      final page = _read('lib/features/songs/presentation/pages/songs_list_page.dart');
-      expect(page, contains("context.push('/songs-tab/\$songId')"));
-      expect(page, contains("uri.path.startsWith('/songs-tab')"));
-    });
-  });
-
-  test('song category dialogs show the Ionic "name empty" toast', () {
-    final src = _read('lib/features/songs/presentation/widgets/song_categories_sheet.dart');
-    expect('songsCategoryNameEmpty'.allMatches(src).length, 2);
+  test('song category dialogs show the "name empty" toast', () {
+    final src = _read('lib/features/redesign/presentation/pages/rd_work_categories_page.dart');
+    expect(src, contains('songsCategoryNameEmpty'));
   });
 
   group('protocol', () {
@@ -58,8 +41,7 @@ void main() {
 
   test('task detail "Zurück" never pops an empty stack', () {
     final src = _read('lib/features/team_organization/presentation/pages/task_detail_page.dart');
-    expect(src, contains("context.canPop()"));
-    expect(src, contains("'/settings/team-organization' : RedesignRoutes.betaTarget('/signout')"));
+    expect(src, contains("rdBack(context, '/settings/team-organization')"));
   });
 
   test('topic planning refreshes the plan caches (SOL_FIX33)', () {

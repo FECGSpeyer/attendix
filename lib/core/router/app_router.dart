@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -21,86 +20,40 @@ import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/tenant_selection/presentation/pages/tenant_selection_page.dart';
 import '../../features/tenant_selection/presentation/pages/tenant_create_page.dart';
 import '../../features/tenant_selection/presentation/pages/tenant_detail_page.dart';
-import '../../shared/widgets/layout/main_shell.dart';
-import '../../shared/widgets/layout/shell_popup_observer.dart' show ShellPopupObserver;
-import '../../features/people/presentation/pages/people_list_page.dart';
-import '../../features/people/presentation/pages/person_detail_page.dart';
-import '../../features/people/presentation/pages/person_create_page.dart';
-import '../../features/attendance/presentation/pages/attendance_list_page.dart';
-import '../../features/attendance/presentation/pages/attendance_detail_page.dart';
-import '../../features/attendance/presentation/pages/attendance_create_page.dart';
-import '../../features/settings/presentation/pages/settings_page.dart';
-import '../../features/settings/presentation/pages/general_settings_page.dart';
-import '../../features/settings/presentation/pages/attendance_types_page.dart';
 import '../../features/settings/presentation/pages/attendance_type_edit_page.dart';
-import '../../features/settings/presentation/pages/user_management_page.dart';
-import '../../features/settings/presentation/pages/pending_players_page.dart';
-import '../../features/settings/presentation/pages/left_players_page.dart';
-import '../../features/settings/presentation/pages/viewers_page.dart';
-import '../../features/settings/presentation/pages/parents_page.dart';
-import '../../features/notifications/presentation/pages/notifications_page.dart';
 import '../../features/people/person_create_prefill.dart';
-import '../../features/teachers/presentation/pages/teachers_list_page.dart';
-import '../../features/export/presentation/pages/export_page.dart';
 import '../../features/songs/presentation/pages/songs_list_page.dart';
 import '../../features/songs/presentation/pages/song_detail_page.dart';
-import '../../features/songs/presentation/pages/song_create_page.dart';
-import '../../features/songs/presentation/pages/song_edit_page.dart';
-import '../../features/songs/presentation/pages/song_import_page.dart';
 import '../../features/songs/presentation/utils/song_utils.dart' show SongUtils;
-import '../../features/instruments/presentation/pages/instruments_list_page.dart';
-import '../../features/self_service/presentation/pages/self_service_overview_page.dart';
-import '../../features/self_service/presentation/pages/signout_page.dart';
-import '../../features/statistics/presentation/pages/statistics_page.dart';
 import '../../features/planning/presentation/pages/planning_page.dart';
-import '../../features/history/presentation/pages/history_page.dart';
-// TEAM_ORG: Teamorganisation replaces the old meetings pages (kept, unlinked)
+// TEAM_ORG: Teamorganisation replaces the old meetings pages
 import '../../features/team_organization/presentation/pages/agenda_item_detail_page.dart';
 import '../../features/team_organization/presentation/pages/protocol_page.dart';
 import '../../features/team_organization/presentation/pages/task_detail_page.dart';
-import '../../features/team_organization/presentation/pages/team_organization_page.dart';
 import '../../features/team_organization/presentation/pages/rd_meeting_page.dart';
 import '../../features/team_organization/presentation/pages/rd_team_page.dart';
 import '../../features/team_organization/presentation/pages/teams_config_page.dart';
-import '../../features/voice_leader/presentation/pages/voice_leader_page.dart';
-import '../../features/members/presentation/pages/members_page.dart';
 import '../../features/registration/presentation/pages/tenant_registration_page.dart';
-import '../../features/parents/presentation/pages/parents_portal_page.dart';
-import '../../features/shifts/presentation/pages/shifts_list_page.dart';
 import '../../features/shifts/presentation/pages/shift_detail_page.dart';
 import '../../data/repositories/account_repository.dart';
 import '../../features/legal/presentation/pages/legal_page.dart';
 import '../../features/legal/presentation/pages/terms_page.dart';
-import '../../features/help/presentation/pages/help_page.dart';
-import '../../features/help/presentation/pages/help_article_page.dart';
 import '../../features/assistant/presentation/pages/assistant_page.dart';
-import '../../features/help/presentation/pages/help_glossary_page.dart';
 import '../../features/settings/presentation/pages/delete_account_page.dart';
 import '../../features/settings/presentation/pages/files_page.dart';
-import '../../features/settings/presentation/pages/role_permissions_page.dart';
-import '../../features/settings/presentation/pages/extra_fields_page.dart';
-import '../../features/settings/presentation/pages/branding_page.dart';
-import '../../features/settings/presentation/pages/link_persons_page.dart';
 // END SETTINGS_EXT
 import '../../features/messages/presentation/pages/message_detail_page.dart';
-import '../../features/messages/presentation/pages/message_list_page.dart';
 import '../../features/messages/presentation/pages/auto_message_list_page.dart';
 import '../../features/messages/presentation/pages/auto_message_rule_page.dart';
 import '../providers/dashboard_providers.dart';
-import '../../features/dashboard/presentation/pages/home_dashboard_page.dart';
-import '../../features/dashboard/presentation/pages/dashboard_settings_page.dart';
 import '../../features/dashboard/presentation/pages/administration_page.dart';
 import '../../features/dashboard/presentation/pages/usage_dashboard_page.dart';
-import '../../features/settings/presentation/pages/handover_page.dart';
-import '../../features/settings/presentation/pages/handover_detail_page.dart';
+import '../../features/settings/data/handover_logic.dart' show HandoverData;
 import '../../features/public_links/presentation/pages/app_redirect_page.dart';
 import '../../features/public_links/presentation/pages/open_file_page.dart';
-import '../../features/organisation/presentation/pages/org_person_fields_page.dart';
 import '../../features/organisation/presentation/pages/org_plan_public_page.dart';
 import '../../features/organisation/presentation/pages/org_planning_templates_page.dart';
 import '../../features/organisation/presentation/pages/org_plans_page.dart';
-import '../../features/organisation/presentation/pages/org_settings_page.dart';
-import '../../features/organisation/presentation/pages/org_songs_page.dart';
 import '../../features/planning/presentation/pages/open_attendance_page.dart';
 import '../../features/planning/presentation/pages/public_planning_page.dart';
 import '../../features/planning/presentation/pages/shared_plan_page.dart';
@@ -111,9 +64,7 @@ import 'legacy_routes.dart';
 import 'attendance_detail_guard.dart';
 import 'route_access.dart';
 import '../../l10n/l10n.dart';
-import '../../shared/widgets/adaptive/ion_button_label.dart';
-// REDESIGN: new design (Beta)
-import '../providers/redesign_providers.dart';
+// Standard app design
 import 'redesign_routes.dart';
 import '../../features/redesign/presentation/shell/rd_shell.dart';
 import '../../features/redesign/presentation/pages/rd_export_page.dart';
@@ -173,8 +124,10 @@ import '../../features/redesign/presentation/pages/rd_pending_review_page.dart';
 import '../../features/redesign/data/rd_manage_logic.dart' show RdManageArea, RdManageEntry;
 import '../../features/redesign/data/rd_roles_logic.dart' show RdRoleView;
 import '../../features/redesign/presentation/pages/rd_manage_page.dart';
+import '../../features/redesign/presentation/pages/rd_help_pages.dart';
 import '../../features/redesign/presentation/widgets/rd_split_view.dart';
 import '../../features/redesign/presentation/widgets/rd_overview.dart';
+import '../../features/songs/presentation/pages/song_import_page.dart';
 
 /// Listenable that notifies when auth state changes
 /// Used by GoRouter to re-evaluate redirects without recreating the router
@@ -222,8 +175,6 @@ const Map<String, RoleCheck> _protectedRoutes = {
   // (/settings/files prüft den Zugriff selbst: abhängig von tenants.files_shared)
   // END SETTINGS_EXT
   '/settings/messages': _isAdminOrResponsible,
-  // ROLLEN-B-57: Ionic isUrlAccessAllowed('/tabs/settings/notifications').
-  '/settings/notifications': _canSeeNotifications,
   // AUTO_MESSAGES (Ionic 4.18): rules are admin/responsible only (RLS too)
   '/settings/auto-messages': _isAdminOrResponsible,
   '/settings/handover': _isAdminOrResponsible,
@@ -255,10 +206,6 @@ bool _isAdminOrResponsible(Role role) => role.isAdmin || role.isResponsible;
 bool _isConductor(Role role) => role.isConductor;
 bool _canSeePeopleTab(Role role) => role.canSeePeopleTab;
 bool _canSeeAttendanceTab(Role role) => role.canSeeAttendanceTab;
-// The Ionic rule applies to the classic design only; the Beta keeps its
-// own page reachable as before (rd_me_page decides who sees the entry).
-bool _canSeeNotifications(Role role) =>
-    RedesignRoutes.active || role.canSeeNotifications;
 /// ORG_PLANS: public plan routes reachable without login (share keys)
 const Set<String> _publicPlanRoutes = {'/plan', '/planung', '/org-plan'};
 
@@ -483,25 +430,8 @@ final routerProvider = Provider<GoRouter>((ref) {
         final role = ref.read(currentRoleProvider);
         final location = state.matchedLocation;
 
-        // REDESIGN: "Heute" and "Ich" only exist while the new design is on.
-        if (!RedesignRoutes.active && RedesignRoutes.isRedesignRoute(location)) {
-          return homeRouteFor(
-            role,
-            ref.read(currentTenantIdProvider),
-            ref.read(supabaseClientProvider).auth.currentUser?.userMetadata,
-          );
-        }
-        // REDESIGN: the old song page becomes the Werk page of the new design.
-        if (RedesignRoutes.active) {
-          final songTarget = RedesignRoutes.oldSongTarget(location);
-          if (songTarget != null) return songTarget;
-          // Old start pages and Termin links (typed links, role fallbacks
-          // like `Role.defaultRoute`, back buttons of old pages) open the
-          // pages of the new design instead of the classic ones.
-          final legacyTarget = RedesignRoutes.legacyTarget(location);
-          if (legacyTarget != null) return legacyTarget;
-        }
-        // REDESIGN: who may open the Termine of the new design.
+        final legacyTarget = RedesignRoutes.legacyTarget(location);
+        if (legacyTarget != null) return legacyTarget;
         final redesignTarget = RedesignRoutes.roleRedirect(location, role);
         if (redesignTarget != null) return redesignTarget;
 
@@ -654,11 +584,7 @@ final routerProvider = Provider<GoRouter>((ref) {
 
       // Main app shell with tabs
       ShellRoute(
-        // F-RAHMEN-08: lets the classic iOS shell hide its floating tab bar
-        // while a sheet / dialog is open on the shell navigator.
-        observers: [ShellPopupObserver()],
-        // REDESIGN: the new shell (fixed tabs) while the Beta is on.
-        builder: (context, state, child) => _AppShell(child: child),
+        builder: (context, state, child) => RdShell(child: child),
         routes: [
           // REDESIGN: "Heute", "Termine", "Mitglieder", "Werke", "Ich" and "Ich › Darstellung" (Beta)
           GoRoute(
@@ -840,7 +766,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: 'werkliste',
                 name: 'redesignWorkListImport',
-                builder: (context, state) => const SongImportPage(beta: true),
+                builder: (context, state) => const SongImportPage(),
               ),
               GoRoute(
                 path: 'import',
@@ -1127,93 +1053,12 @@ final routerProvider = Provider<GoRouter>((ref) {
               ),
             ],
           ),
-          // People/Players
-          GoRoute(
-            path: '/people',
-            name: 'people',
-            pageBuilder: (context, state) => AppPageTransitions.none(
-              child: const PeopleListPage(),
-              state: state,
-            ),
-            routes: [
-              GoRoute(
-                path: 'new',
-                name: 'personCreate',
-                builder: (context, state) => PersonCreatePage(prefill: PersonCreatePrefill.from(state.extra)),
-              ),
-              GoRoute(
-                path: ':id',
-                name: 'personDetail',
-                builder: (context, state) {
-                  final id = int.tryParse(state.pathParameters['id'] ?? '');
-                  if (id == null) {
-                    return Scaffold(
-                      body: Center(child: Text(context.l10n.coreFlutterRouterInvalidPersonId)),
-                    );
-                  }
-                  return PersonDetailPage(personId: id);
-                },
-              ),
-            ],
-          ),
-
-          // Attendance
-          GoRoute(
-            path: '/attendance',
-            name: 'attendance',
-            pageBuilder: (context, state) => AppPageTransitions.none(
-              child: const AttendanceListPage(),
-              state: state,
-            ),
-            routes: [
-              GoRoute(
-                path: 'new',
-                name: 'attendanceCreate',
-                builder: (context, state) => const AttendanceCreatePage(),
-              ),
-              GoRoute(
-                path: ':id',
-                name: 'attendanceDetail',
-                builder: (context, state) {
-                  final id = int.tryParse(state.pathParameters['id'] ?? '');
-                  if (id == null) {
-                    return Scaffold(
-                      body: Center(child: Text(context.l10n.coreFlutterRouterInvalidAttendanceId)),
-                    );
-                  }
-                  return AttendanceDetailPage(attendanceId: id);
-                },
-              ),
-            ],
-          ),
-
-          // Self-Service Overview (for players)
-          GoRoute(
-            path: '/overview',
-            name: 'selfServiceOverview',
-            pageBuilder: (context, state) => AppPageTransitions.none(
-              child: const SelfServiceOverviewPage(),
-              state: state,
-            ),
-          ),
-
-          // ATTENDANCE_SIGNOUT: "Meine Termine" of the current tenant
-          GoRoute(
-            path: '/signout',
-            name: 'signout',
-            pageBuilder: (context, state) => AppPageTransitions.none(
-              child: const SignoutPage(),
-              state: state,
-            ),
-          ),
-
           // Members (for players/helpers when showMembersList is enabled)
           GoRoute(
             path: '/members',
             name: 'members',
             pageBuilder: (context, state) => AppPageTransitions.none(
-              // REDESIGN: Spieler/Helfer get the read-only list in the new design.
-              child: const _BetaOr(beta: RdMembersPage(), classic: MembersPage()),
+              child: const RdMembersPage(),
               state: state,
             ),
           ),
@@ -1223,17 +1068,9 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: '/parents',
             name: 'parentsPortal',
             pageBuilder: (context, state) => AppPageTransitions.none(
-              // REDESIGN: Eltern get their Termine in the new design.
-              child: const _BetaOr(beta: RdEventsPage(), classic: ParentsPortalPage()),
+              child: const RdEventsPage(),
               state: state,
             ),
-          ),
-
-          // Statistics
-          GoRoute(
-            path: '/statistics',
-            name: 'statistics',
-            builder: (context, state) => const StatisticsPage(),
           ),
 
           // Planning
@@ -1252,18 +1089,11 @@ final routerProvider = Provider<GoRouter>((ref) {
             },
           ),
 
-          // History
-          GoRoute(
-            path: '/history',
-            name: 'history',
-            builder: (context, state) => const HistoryPage(),
-          ),
-
           // Export
           GoRoute(
             path: '/export',
             name: 'export',
-            builder: (context, state) => const _BetaOr(beta: RdExportPage(), classic: ExportPage()),
+            builder: (context, state) => const RdExportPage(),
           ),
 
           // Settings
@@ -1277,77 +1107,14 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/settings',
             name: 'settings',
-            pageBuilder: (context, state) => AppPageTransitions.none(
-              child: const SettingsPage(),
-              state: state,
-            ),
+            redirect: (context, state) =>
+                state.uri.path == '/settings' ? RedesignRoutes.me : null,
             routes: [
-              // REVIEW_FIX: profile lives on the settings page (ProfileHeroCard)
-              GoRoute(
-                path: 'profile',
-                name: 'profile',
-                redirect: (context, state) => '/settings',
-              ),
-              GoRoute(
-                path: 'songs',
-                name: 'songs',
-                builder: (context, state) => const SongsListPage(),
-                routes: [
-                  GoRoute(
-                    path: 'new',
-                    name: 'songCreate',
-                    builder: (context, state) => const SongCreatePage(),
-                  ),
-                  GoRoute(
-                    path: ':id',
-                    name: 'songDetail',
-                    builder: (context, state) {
-                      final id = state.pathParameters['id'];
-                      if (id == null) return const SongsListPage();
-                      return SongDetailPage(songId: id);
-                    },
-                    routes: [
-                      GoRoute(
-                        path: 'edit',
-                        name: 'songEdit',
-                        builder: (context, state) {
-                          final id = int.tryParse(state.pathParameters['id'] ?? '');
-                          if (id == null) return const SongsListPage();
-                          return SongEditPage(songId: id);
-                        },
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              GoRoute(
-                path: 'instruments',
-                name: 'instruments',
-                builder: (context, state) => const InstrumentsListPage(),
-              ),
-              GoRoute(
-                path: 'teachers',
-                name: 'teachers',
-                builder: (context, state) => const TeachersListPage(),
-              ),
-              // TEAM_ORG: Teamorganisation (replaces Besprechungen)
-              GoRoute(
-                path: 'meetings',
-                name: 'meetings',
-                redirect: (context, state) => '/settings/team-organization',
-                routes: [
-                  GoRoute(
-                    path: ':id',
-                    name: 'meetingDetail',
-                    redirect: (context, state) => '/settings/team-organization',
-                  ),
-                ],
-              ),
               // MESSAGES: Mitteilungen list (admins/responsibles, Ionic /tabs/settings/messages)
               GoRoute(
                 path: 'messages',
                 name: 'messages',
-                builder: (context, state) => const _BetaOr(beta: RdMessagesPage(), classic: MessageListPage()),
+                builder: (context, state) => const RdMessagesPage(),
               ),
               // AUTO_MESSAGES (Ionic 4.18): /tabs/settings/auto-messages(/:id)
               GoRoute(
@@ -1369,29 +1136,22 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: 'team-organization',
                 name: 'teamOrganization',
-                builder: (context, state) => TeamOrganizationPage(
+                builder: (context, state) => RdTeamPage(
                   initialTab: state.uri.queryParameters['tab'],
                 ),
               ),
               GoRoute(
                 path: 'team-organization/topics',
                 name: 'teamTopics',
-                redirect: (context, state) =>
-                    ProviderScope.containerOf(context, listen: false).read(redesignEnabledProvider)
-                        ? null
-                        : '/settings/team-organization?tab=topics',
                 builder: (context, state) => const RdTeamTopicsPage(),
               ),
               GoRoute(
                 path: 'team-organization/meeting/:attendanceId',
                 name: 'teamMeeting',
-                redirect: (context, state) {
-                  final id = int.tryParse(state.pathParameters['attendanceId'] ?? '');
-                  if (id == null) return '/settings/team-organization';
-                  return ProviderScope.containerOf(context, listen: false).read(redesignEnabledProvider)
-                      ? null
-                      : '/settings/team-organization?tab=topics';
-                },
+                redirect: (context, state) =>
+                    int.tryParse(state.pathParameters['attendanceId'] ?? '') == null
+                        ? '/settings/team-organization'
+                        : null,
                 builder: (context, state) =>
                     RdMeetingPage(attendanceId: int.parse(state.pathParameters['attendanceId']!)),
               ),
@@ -1410,7 +1170,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                 name: 'protocol',
                 redirect: (context, state) =>
                     int.tryParse(state.pathParameters['attendanceId'] ?? '') == null
-                        ? '/settings/team-organization?tab=protocols'
+                        ? '/settings/team-organization'
                         : null,
                 builder: (context, state) => ProtocolPage(
                   attendanceId: int.parse(state.pathParameters['attendanceId']!),
@@ -1419,84 +1179,47 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: 'notifications',
                 name: 'notifications',
-                // Beta: the same switches live in Ich › Benachrichtigungen.
-                builder: (context, state) =>
-                    const _BetaOr(beta: RdNotificationsPage(), classic: NotificationsPage()),
+                builder: (context, state) => const RdNotificationsPage(),
               ),
               GoRoute(
                 path: 'general',
                 name: 'general',
-                builder: (context, state) =>
-                    const _BetaOr(beta: RdGeneralSettingsPage(), classic: GeneralSettingsPage()),
-              ),
-              GoRoute(
-                path: 'users',
-                name: 'users',
-                builder: (context, state) => const UserManagementPage(),
+                builder: (context, state) => const RdGeneralSettingsPage(),
               ),
               GoRoute(
                 path: 'types',
                 name: 'attendanceTypes',
-                builder: (context, state) => const AttendanceTypesPage(),
+                redirect: (context, state) =>
+                    state.uri.path == '/settings/types' ? RedesignRoutes.attendanceTypes : null,
                 routes: [
                   GoRoute(
                     path: ':id',
                     name: 'attendanceTypeEdit',
-                    builder: (context, state) {
-                      final id = state.pathParameters['id'];
-                      if (id == null) return const AttendanceTypesPage();
-                      return AttendanceTypeEditPage(typeId: id);
-                    },
+                    builder: (context, state) => AttendanceTypeEditPage(
+                      typeId: state.pathParameters['id'] ?? '',
+                    ),
                   ),
                 ],
-              ),
-              GoRoute(
-                path: 'pending',
-                name: 'pendingPlayers',
-                builder: (context, state) => const PendingPlayersPage(),
-              ),
-              GoRoute(
-                path: 'left',
-                name: 'leftPlayers',
-                builder: (context, state) => const LeftPlayersPage(),
-              ),
-              // REVIEW_FIX: Kalender abonnieren is a dialog on the settings page
-              GoRoute(
-                path: 'calendar',
-                name: 'calendarSubscription',
-                redirect: (context, state) => '/settings',
               ),
               GoRoute(
                 path: 'voice-leader',
                 name: 'voiceLeader',
-                builder: (context, state) =>
-                    const _BetaOr(beta: RdVoiceLeaderPage(), classic: VoiceLeaderPage()),
+                builder: (context, state) => const RdVoiceLeaderPage(),
               ),
               GoRoute(
                 path: 'shifts',
                 name: 'shifts',
-                builder: (context, state) => const ShiftsListPage(),
+                redirect: (context, state) =>
+                    state.uri.path == '/settings/shifts' ? RedesignRoutes.shiftPlans : null,
                 routes: [
                   GoRoute(
                     path: ':id',
                     name: 'shiftDetail',
-                    builder: (context, state) {
-                      final id = state.pathParameters['id'];
-                      if (id == null) return const ShiftsListPage();
-                      return ShiftDetailPage(shiftId: id);
-                    },
+                    builder: (context, state) => ShiftDetailPage(
+                      shiftId: state.pathParameters['id'] ?? '',
+                    ),
                   ),
                 ],
-              ),
-              GoRoute(
-                path: 'viewers',
-                name: 'viewers',
-                builder: (context, state) => const ViewersPage(),
-              ),
-              GoRoute(
-                path: 'parents',
-                name: 'parentsManagement',
-                builder: (context, state) => const ParentsPage(),
               ),
               // ORG_PLANS: Ablaufplanung, Org-Pläne & Organisation
               GoRoute(
@@ -1519,7 +1242,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: 'org-settings',
                 name: 'orgSettings',
-                builder: (context, state) => const _BetaOr(beta: RdOrgSettingsPage(), classic: OrgSettingsPage()),
+                builder: (context, state) => const RdOrgSettingsPage(),
                 routes: [
                   GoRoute(
                     path: 'planning-templates',
@@ -1529,21 +1252,20 @@ final routerProvider = Provider<GoRouter>((ref) {
                   GoRoute(
                     path: 'person-fields',
                     name: 'orgPersonFields',
-                    builder: (context, state) => const _BetaOr(beta: RdOrgPersonFieldsPage(), classic: OrgPersonFieldsPage()),
+                    builder: (context, state) => const RdOrgPersonFieldsPage(),
                   ),
                   // Ionic 4.17.13: Werke in der Organisation suchen (?q=)
                   GoRoute(
                     path: 'songs',
                     name: 'orgSongs',
-                    builder: (context, state) => _BetaOr(
-                      beta: RdOrgSongsPage(initialQuery: state.uri.queryParameters['q']),
-                      classic: OrgSongsPage(initialQuery: state.uri.queryParameters['q']),
+                    builder: (context, state) => RdOrgSongsPage(
+                      initialQuery: state.uri.queryParameters['q'],
                     ),
                   ),
                 ],
               ),
               // ORG_PLANS end
-              // Chat-Assistent (both designs, one page)
+              // Chat-Assistent
               GoRoute(
                 path: 'assistant',
                 name: 'assistant',
@@ -1553,19 +1275,19 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: 'help',
                 name: 'help',
-                builder: (context, state) => const HelpPage(),
+                builder: (context, state) => const RdHelpPage(),
                 routes: [
                   GoRoute(
                     path: 'article/:id',
                     name: 'helpArticle',
-                    builder: (context, state) => HelpArticlePage(
+                    builder: (context, state) => RdHelpArticlePage(
                       articleId: state.pathParameters['id'] ?? '',
                     ),
                   ),
                   GoRoute(
                     path: 'glossary',
                     name: 'helpGlossary',
-                    builder: (context, state) => const HelpGlossaryPage(),
+                    builder: (context, state) => const RdHelpGlossaryPage(),
                   ),
                 ],
               ),
@@ -1583,54 +1305,36 @@ final routerProvider = Provider<GoRouter>((ref) {
                 ),
               ),
               GoRoute(
-                path: 'role-permissions',
-                name: 'rolePermissions',
-                builder: (context, state) => const RolePermissionsPage(),
-              ),
-              GoRoute(
-                path: 'general/extra-fields',
-                name: 'extraFields',
-                builder: (context, state) => const ExtraFieldsPage(),
-              ),
-              GoRoute(
                 path: 'general/branding',
                 name: 'branding',
-                builder: (context, state) => const _BetaOr(beta: RdBrandingPage(), classic: BrandingPage()),
+                builder: (context, state) => const RdBrandingPage(),
               ),
               GoRoute(
                 path: 'general/link-persons',
                 name: 'linkPersons',
-                builder: (context, state) => const _BetaOr(beta: RdLinkPersonsPage(), classic: LinkPersonsPage()),
+                builder: (context, state) => const RdLinkPersonsPage(),
               ),
               // END SETTINGS_EXT
-              GoRoute(
-                path: 'dashboard',
-                name: 'dashboardSettings',
-                builder: (context, state) => const DashboardSettingsPage(),
-              ),
               GoRoute(
                 path: 'administration',
                 name: 'administration',
                 // Ionic SuperDeveloperGuard
                 redirect: (context, state) =>
-                    ref.read(isSuperDeveloperProvider) ? null : '/settings',
+                    ref.read(isSuperDeveloperProvider) ? null : RedesignRoutes.me,
                 builder: (context, state) => const AdministrationPage(),
               ),
               // PEOPLE_IMPORT: Personenübergabe (Ionic settings/handover)
               GoRoute(
                 path: 'handover',
                 name: 'handover',
-                builder: (context, state) => const _BetaOr(beta: RdHandoverPage(), classic: HandoverPage()),
+                builder: (context, state) => const RdHandoverPage(),
                 routes: [
                   GoRoute(
                     path: 'detail',
                     name: 'handoverDetail',
                     builder: (context, state) {
                       final data = state.extra is HandoverData ? state.extra as HandoverData : null;
-                      return _BetaOr(
-                        beta: RdHandoverDetailPage(data: data),
-                        classic: HandoverDetailPage(data: data),
-                      );
+                      return RdHandoverDetailPage(data: data);
                     },
                   ),
                 ],
@@ -1638,60 +1342,14 @@ final routerProvider = Provider<GoRouter>((ref) {
             ],
           ),
 
-          // DASHBOARD: home dashboard tab (Ionic /tabs/home-dashboard)
-          GoRoute(
-            path: '/home-dashboard',
-            name: 'homeDashboard',
-            pageBuilder: (context, state) => AppPageTransitions.none(
-              child: const HomeDashboardPage(),
-              state: state,
-            ),
-          ),
           // DASHBOARD: usage analytics (Ionic /tabs/dashboard, SuperDeveloperGuard)
           GoRoute(
             path: '/dashboard',
             name: 'usageDashboard',
             redirect: (context, state) =>
-                ref.read(isSuperDeveloperProvider) ? null : '/settings',
+                ref.read(isSuperDeveloperProvider) ? null : RedesignRoutes.me,
             builder: (context, state) => const UsageDashboardPage(),
           ),
-          // SETTINGS2: optional tabs (Ionic /tabs/songs-tab, /tabs/org-plans)
-          GoRoute(
-            path: '/songs-tab',
-            name: 'songsTab',
-            pageBuilder: (context, state) => AppPageTransitions.none(
-              child: const SongsListPage(),
-              state: state,
-            ),
-            // P10_SONGS_ORG: Ionic /tabs/songs-tab/:id keeps the Werke tab
-            // selected while a song is open.
-            routes: [
-              GoRoute(
-                path: ':id',
-                name: 'songsTabDetail',
-                builder: (context, state) =>
-                    SongDetailPage(songId: state.pathParameters['id'] ?? ''),
-              ),
-            ],
-          ),
-          GoRoute(
-            path: '/org-plans-tab',
-            name: 'orgPlansTab',
-            pageBuilder: (context, state) => AppPageTransitions.none(
-              child: const OrgPlansPage(),
-              state: state,
-            ),
-            // P10_SELF_PLAN: Ionic /tabs/org-plans/planung (stays in the tab)
-            routes: [
-              GoRoute(
-                path: 'planung',
-                name: 'orgPlansTabPlanning',
-                builder: (context, state) =>
-                    const PublicPlanningPage(inApp: true, fromOrgPlans: true),
-              ),
-            ],
-          ),
-          // END SETTINGS2
         ],
       ),
       // SONGS: public routes, registered last so the wildcard share link
@@ -1733,14 +1391,14 @@ final routerProvider = Provider<GoRouter>((ref) {
           );
         },
         builder: (context, state) => SongsListPage(
-          songSharingId: state.pathParameters['songSharingId'],
+          songSharingId: state.pathParameters['songSharingId'] ?? '',
         ),
         routes: [
           GoRoute(
             path: ':songId',
             builder: (context, state) => SongDetailPage(
               songId: state.pathParameters['songId'] ?? '',
-              songSharingId: state.pathParameters['songSharingId'],
+              songSharingId: state.pathParameters['songSharingId'] ?? '',
             ),
           ),
         ],
@@ -1752,13 +1410,13 @@ final routerProvider = Provider<GoRouter>((ref) {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(AppIcons.errorOutline, size: 64, color: Colors.red),
+            const Icon(Icons.error_outline, size: 64, color: Colors.red),
             const SizedBox(height: 16),
             Text(context.l10n.coreFlutterRouterPageNotFound(state.matchedLocation)),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: () => context.go('/people'),
-              child: IonButtonLabel(context.l10n.coreFlutterRouterGoHome),
+              onPressed: () => context.go(RedesignRoutes.today),
+              child: Text(context.l10n.coreFlutterRouterGoHome),
             ),
           ],
         ),
@@ -1817,31 +1475,4 @@ class AppRoutes {
   static const String shifts = 'shifts';
   static const String shiftDetail = 'shiftDetail';
   static const String tenantDetail = 'tenantDetail';
-}
-
-/// REDESIGN: old tab shell, or the new one while "Neues Design (Beta)" is on.
-class _AppShell extends ConsumerWidget {
-  const _AppShell({required this.child});
-
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return ref.watch(redesignEnabledProvider)
-        ? RdShell(child: child)
-        : MainShell(child: child);
-  }
-}
-
-/// REDESIGN: [beta] while the new design is on, else [classic] (the
-/// Ionic-parity page). Same route, so links, pushes and role gates stay.
-class _BetaOr extends ConsumerWidget {
-  const _BetaOr({required this.beta, required this.classic});
-
-  final Widget beta;
-  final Widget classic;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) =>
-      ref.watch(redesignEnabledProvider) ? beta : classic;
 }

@@ -21,34 +21,29 @@ Future<void> showGlossaryTermPopover(
     width: size.width * 0.9 < 420 ? size.width * 0.9 : 420,
     maxHeight: size.height * 0.7,
     builder: (context) {
-      final ios = useIosLook(context);
       final onSurface = Theme.of(context).colorScheme.onSurface;
-      // ion-card-header / ion-card-content (md 16 / iOS 20 side padding).
-      final side = ios ? 20.0 : 16.0;
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Padding(
-            padding: EdgeInsets.fromLTRB(side, ios ? 12 : 8, side, 8),
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
             child: Text(
               term.term,
-              // ion-card-title: md 20/500, iOS 28/700.
               style: TextStyle(
-                fontSize: ios ? 28 : 20,
-                fontWeight: ios ? FontWeight.w700 : FontWeight.w500,
+                fontSize: 20,
+                fontWeight: FontWeight.w500,
                 color: onSurface,
               ),
             ),
           ),
           Padding(
-            padding: EdgeInsets.fromLTRB(side, 0, side, ios ? 12 : 8),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
             child: HelpMarkdown(
               data: term.definition,
-              // ion-card-content: md 14px, iOS 16px.
               style: TextStyle(
-                fontSize: ios ? 16 : 14,
+                fontSize: 14,
                 height: 1.45,
-                color: onSurface.withValues(alpha: ios ? 0.75 : 0.6),
+                color: onSurface.withValues(alpha: 0.65),
               ),
             ),
           ),

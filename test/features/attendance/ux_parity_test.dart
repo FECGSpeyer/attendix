@@ -1,8 +1,8 @@
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/attendance_providers.dart';
 import 'package:attendix/data/models/instrument/instrument.dart';
-import 'package:attendix/features/attendance/presentation/widgets/attendance_detail/attendance_grid.dart';
-import 'package:attendix/features/attendance/presentation/widgets/attendance_detail/status_chip.dart';
+import 'package:attendix/features/attendance/presentation/attendance_group_sort.dart';
+import 'package:attendix/features/attendance/presentation/attendance_status_labels.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../factories/test_factories.dart';

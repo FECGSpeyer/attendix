@@ -1,22 +1,14 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
-import 'package:attendix/shared/widgets/layout/sheet_drag.dart';
-import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/constants/app_constants.dart';
 import '../../../core/models/version_history.dart';
-import '../../../core/providers/redesign_providers.dart';
 import '../../../core/theme/redesign/rd_theme.dart';
 import '../../../features/redesign/presentation/widgets/rd_widgets.dart';
-import '../../../core/theme/app_colors.dart';
 import '../../../l10n/l10n.dart';
 import '../../../core/utils/error_message.dart';
 import '../adaptive/adaptive.dart';
-import '../../../features/auth/presentation/widgets/ion_form_list.dart';
 
 /// User-facing version history ("Was ist neu"): the continued Ionic history
 /// with the store versions, topmost entry = [AppConstants.displayVersion].
@@ -25,10 +17,7 @@ const versionHistoryUserAsset = 'assets/version_history_user.json';
 
 /// Bottom sheet showing version history (What's New)
 class VersionHistorySheet extends StatefulWidget {
-  const VersionHistorySheet({super.key, this.beta = false});
-
-  /// Beta look (content of an [showRdSheet] sheet).
-  final bool beta;
+  const VersionHistorySheet({super.key});
 
   @override
   State<VersionHistorySheet> createState() => _VersionHistorySheetState();
@@ -65,38 +54,8 @@ class _VersionHistorySheetState extends State<VersionHistorySheet> {
     }
   }
 
-  // IOS_FORMS1: Ionic "What's New" modal – sheet with breakpoints
-  // [0, .5, 1] (initial .5), `ion-content color="light"`, a light toolbar
-  // with only the title (centred on iOS, no close button) and an inset list:
-  // one grey `ion-list-header` "Version x (date)" + one white item group
-  // with a row per change for every version.
   @override
   Widget build(BuildContext context) {
-    if (widget.beta) return _buildBeta(context);
-    return AppDraggableSheet(
-      breakpoints: const [0, 0.5, 1],
-      initialBreakpoint: 0.5,
-      initialChildSize: 0.5,
-      minChildSize: 0.25,
-      maxChildSize: 1,
-      snap: true,
-      snapSizes: const [0.5],
-      expand: false,
-      builder: (context, scrollController) {
-        // The sheet shape, the Ionic handle and the toolbar (iOS and md)
-        // come from the shared sheet scaffold.
-        return IonSheetScaffold(
-          title: context.l10n.settingsWhatsNew,
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          body: _buildContent(scrollController),
-        );
-      },
-    );
-  }
-
-  /// REDESIGN (E2): "Neu in dieser Version" as a Beta sheet, one group per
-  /// version ("5.0.0 · 6.11.2026") with a row per change.
-  Widget _buildBeta(BuildContext context) {
     final p = context.rd;
     final l10n = context.l10n;
     final versions = _versionHistory?.versions ?? const <VersionEntry>[];
@@ -142,97 +101,8 @@ class _VersionHistorySheetState extends State<VersionHistorySheet> {
       ],
     );
   }
-
-  Widget _buildContent(ScrollController scrollController) {
-    if (_isLoading) {
-      return const Center(child: AppSpinner());
-    }
-
-    if (_error != null) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(AppIcons.errorOutline, size: 48, color: AppColors.danger),
-            const SizedBox(height: AppDimensions.paddingM),
-            Text(context.l10n.coreFlutterErrorWith('$_error')),
-          ],
-        ),
-      );
-    }
-
-    final versions = _versionHistory?.versions ?? [];
-
-    if (versions.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(AppIcons.history, size: 48, color: AppColors.mediumOf(context)),
-            const SizedBox(height: AppDimensions.paddingM),
-            Text(context.l10n.coreFlutterNoVersionHistory),
-          ],
-        ),
-      );
-    }
-
-    return ListView.builder(
-      controller: scrollController,
-      padding: EdgeInsets.only(
-        top: 8,
-        bottom: 16 + MediaQuery.paddingOf(context).bottom,
-      ),
-      itemCount: versions.length,
-      itemBuilder: (context, index) {
-        return _VersionSection(version: versions[index]);
-      },
-    );
-  }
-}
-
-/// One version: `ion-list-header` "Version x (date)" and an
-/// `ion-item-group` with one `ion-item` per change.
-class _VersionSection extends StatelessWidget {
-  const _VersionSection({required this.version});
-
-  final VersionEntry version;
-
-  @override
-  Widget build(BuildContext context) {
-    final header = version.date != null
-        ? '${context.l10n.loginVersion(version.version)} (${version.date})'
-        : context.l10n.loginVersion(version.version);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        IonListHeader(header),
-        IonInsetGroup(
-          children: [
-            // AUTH_R5: the Ionic app (screenshot audit) shows every change
-            // in full, wrapped over several lines – no truncation.
-            for (final change in version.changes)
-              IonItem(
-                title: Text(change, softWrap: true),
-              ),
-          ],
-        ),
-      ],
-    );
-  }
 }
 
 /// Shows the version history sheet as a bottom sheet
-Future<void> showVersionHistorySheet(BuildContext context) {
-  if (ProviderScope.containerOf(context, listen: false).read(redesignEnabledProvider)) {
-    return showRdSheet<void>(context, const VersionHistorySheet(beta: true));
-  }
-  return showModalBottomSheet(
-    context: context,
-    useRootNavigator: true, // IOS_SHELL2: above the tab bar
-    isScrollControlled: true,
-    useSafeArea: true,
-    clipBehavior: Clip.antiAlias,
-    backgroundColor: Colors.transparent,
-    builder: (context) => const VersionHistorySheet(),
-  );
-}
+Future<void> showVersionHistorySheet(BuildContext context) =>
+    showRdSheet<void>(context, const VersionHistorySheet());

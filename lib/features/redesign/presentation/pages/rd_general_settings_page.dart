@@ -21,7 +21,7 @@ import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/tenant_settings_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
-import '../../../settings/presentation/pages/general_settings_page.dart'
+import '../../../settings/data/general_settings_helpers.dart'
     show holidayRegions, initialRegistrationFields, normalizeReasons, normalizeShowAllInfoText;
 import '../../data/rd_words.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;

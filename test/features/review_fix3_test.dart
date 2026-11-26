@@ -323,18 +323,12 @@ void main() {
       verifyNever(() => registration.linkParentToTenantUser(any(), any()));
     });
 
-    test('all three pages use the shared flow', () {
-      for (final path in [
-        'lib/features/settings/presentation/pages/viewers_page.dart',
-        'lib/features/settings/presentation/pages/parents_page.dart',
-        'lib/features/settings/presentation/pages/user_management_page.dart',
-      ]) {
-        final src = _read(path);
-        expect(src, contains('.invite('), reason: path);
-        expect(src, isNot(contains('.createViewer(')), reason: path);
-        expect(src, isNot(contains('.createParent(')), reason: path);
-        expect(src, isNot(contains('linkParentToTenantUser')), reason: path);
-      }
+    test('parents/viewers page uses the shared invite flow', () {
+      final src = _read('lib/features/redesign/presentation/pages/rd_parents_page.dart');
+      expect(src, contains('.invite('));
+      expect(src, isNot(contains('.createViewer(')));
+      expect(src, isNot(contains('.createParent(')));
+      expect(src, isNot(contains('linkParentToTenantUser')));
     });
   });
 

@@ -1,10 +1,9 @@
 import 'package:attendix/core/constants/enums.dart';
-import 'package:attendix/core/providers/attendance_providers.dart';
 import 'package:attendix/core/providers/attendance_rate_filter_providers.dart';
 import 'package:attendix/core/providers/attendance_type_providers.dart';
 import 'package:attendix/core/providers/player_providers.dart';
 import 'package:attendix/core/providers/realtime_providers.dart';
-import 'package:attendix/features/people/presentation/pages/person_detail_page.dart';
+import 'package:attendix/core/providers/person_detail_providers.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -488,45 +487,42 @@ void main() {
     );
 
     test(
-      'classic next-day cutoff is preserved while beta matches detail cutoff',
+      'list percentage matches detail cutoff for upcoming events today',
       () async {
         final upcoming =
             DateTime.now()
                 .add(const Duration(hours: 4))
                 .toUtc()
                 .toIso8601String();
-        for (final setting in const {false: 50, true: 100}.entries) {
-          final data = MemberAttendanceFixture(
-            beta: setting.key,
-            rows: [
-              memberAttendanceRow(
-                id: 1,
-                date: '2026-01-10T12:00:00Z',
-                status: AttendanceStatus.present,
-              ),
-              memberAttendanceRow(
-                id: 2,
-                date: upcoming,
-                status: AttendanceStatus.absent,
-              ),
-            ],
-          );
-          addTearDown(data.dispose);
-          final container = data.createContainer();
-          addTearDown(container.dispose);
-          expect(
-            (await container.read(
-              listAttendancePercentagesProvider.future,
-            ))[100],
-            setting.value,
-          );
-          expect(
-            (await container.read(
-              personAttendanceStatsProvider(100).future,
-            ))['percentage'],
-            100,
-          );
-        }
+        final data = MemberAttendanceFixture(
+          rows: [
+            memberAttendanceRow(
+              id: 1,
+              date: '2026-01-10T12:00:00Z',
+              status: AttendanceStatus.present,
+            ),
+            memberAttendanceRow(
+              id: 2,
+              date: upcoming,
+              status: AttendanceStatus.absent,
+            ),
+          ],
+        );
+        addTearDown(data.dispose);
+        final container = data.createContainer();
+        addTearDown(container.dispose);
+        expect(
+          (await container.read(
+            listAttendancePercentagesProvider.future,
+          ))[100],
+          100,
+        );
+        expect(
+          (await container.read(
+            personAttendanceStatsProvider(100).future,
+          ))['percentage'],
+          100,
+        );
       },
     );
 

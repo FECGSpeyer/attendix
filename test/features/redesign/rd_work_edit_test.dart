@@ -93,7 +93,7 @@ Widget _editApp(
   return ProviderScope(
     overrides: [
       initialRedesignSettingsProvider.overrideWithValue(
-        const RedesignSettings(enabled: true, world: RdFarbwelt.petrol),
+        const RedesignSettings(world: RdFarbwelt.petrol),
       ),
       effectiveRoleProvider.overrideWithValue(Role.admin),
       currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),

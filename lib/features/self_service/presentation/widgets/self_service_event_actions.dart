@@ -1,19 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:attendix/core/theme/app_icons.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/enums.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../core/providers/role_permission_providers.dart';
+import '../../../../core/providers/signout_providers.dart';
+import '../../../../core/providers/song_providers.dart';
+import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/utils/attendance_songs.dart';
 import '../../../../core/utils/event_list_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
+import '../../../../data/models/person/person.dart';
+import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/sign_in_out_repository.dart';
 import '../../../../shared/widgets/event_list/event_list_widgets.dart';
 import '../../../../shared/widgets/event_list/excuse_reason_sheet.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../duty/presentation/widgets/duty_actions.dart';
+import '../../data/providers/upcoming_songs_provider.dart'
+    show signoutAttendanceSongsProvider;
+import 'plan_viewer_sheet.dart';
+import 'upcoming_songs_sheet.dart';
 
 /// Route of the Dateiablage (files module, `/settings/files?path=<folder>`).
 const String kFilesRoute = '/settings/files';
@@ -167,84 +178,6 @@ class SelfServiceEventActions {
       allowLate: _allows(att, AttendanceStatus.late),
       allowExcuse: _allows(att, AttendanceStatus.excused),
     );
-  }
-
-  /// The three buttons in one row (Zusagen / Verspätung / Absagen).
-  List<Widget> quickActionButtons(BuildContext context, CrossTenantPersonAttendance att) {
-    final qa = quickActions(att);
-    if (qa == null) return const [];
-    return [
-      EventActionButton(
-        label: context.l10n.signoutAccept,
-        active: qa.present,
-        activeColor: AppColors.success,
-        onPressed: qa.canSignin ? () => handleSigninWithFields(context, att) : null,
-      ),
-      if (qa.allowLate)
-        EventActionButton(
-          label: context.l10n.signoutLateButton,
-          active: qa.late,
-          activeColor: EventListUtils.rosa,
-          onPressed: qa.blocked ? null : () => quickSignout(context, att, isLate: true),
-        ),
-      if (qa.allowExcuse)
-        EventActionButton(
-          label: context.l10n.signoutDecline,
-          active: qa.excused,
-          activeColor: AppColors.warning,
-          onPressed: qa.blocked ? null : () => quickSignout(context, att, isLate: false),
-        ),
-    ];
-  }
-
-  /// Chips below a Termin; tappable chips act directly.
-  List<Widget> chips(
-    BuildContext context,
-    CrossTenantPersonAttendance att, {
-    bool withPlan = true,
-  }) {
-    return [
-      if (deadlineChipText(att) case final deadline?)
-        EventChip(label: deadline, danger: true),
-      if (att.notes != null && att.notes!.isNotEmpty)
-        EventChip(label: context.l10n.signoutNoteChip(att.notes!)),
-      if (songCount(att) case final count when count > 0)
-        EventChip(
-          label: context.l10n.attendanceSongsChip(count),
-          icon: AppIcons.musicNoteOutlined,
-          onTap: () => openSongs!(att),
-        ),
-      if (withPlan && att.hasPlan && openPlan != null)
-        EventChip(
-          label: context.l10n.signoutRunSheet,
-          icon: AppIcons.descriptionOutlined,
-          onTap: () => openPlan!(att),
-        ),
-      if (att.description != null && att.description!.isNotEmpty)
-        EventChip(
-          label: context.l10n.signoutInfos,
-          icon: AppIcons.infoOutline,
-          onTap: () => showEventDescriptionSheet(context, att.description!),
-        ),
-      if (att.attachmentUrl != null && att.attachmentUrl!.isNotEmpty)
-        EventChip(
-          label: att.attachmentName?.isNotEmpty == true ? att.attachmentName! : context.l10n.selfServiceAttachment,
-          icon: AppIcons.attachFile,
-          onTap: () => openEventAttachment(att.attachmentUrl!),
-        ),
-      if (hasFilesFolder(att))
-        EventChip(
-          label: context.l10n.signoutFiles,
-          icon: AppIcons.folderOutlined,
-          onTap: () => openFilesFolder(context, att),
-        ),
-      if (att.place != null && att.place!.isNotEmpty)
-        EventChip(
-          label: context.l10n.signoutRoute,
-          icon: AppIcons.navigationOutlined,
-          onTap: () => openEventNavigation(context, att.place!),
-        ),
-    ];
   }
 
   /// Absagen / Verspätung with the reason sheet.
@@ -470,19 +403,16 @@ class SelfServiceEventActions {
       return;
     }
 
-    // SEL-06: Ionic `actionSheetController.create({ buttons })` – no header
-    // and no icons (Beta keeps its title, meta line and icons).
-    final classic = context.rdSkin == null;
     final selected = await showAppActionSheet<SelfServiceActionType>(
       context,
-      title: classic ? null : att.eventTitle,
-      message: classic ? null : att.eventMeta(withDate: true),
+      title: att.eventTitle,
+      message: att.eventMeta(withDate: true),
       cancelDestructive: true,
       actions: [
         for (final action in actions)
           AppActionSheetAction(
             value: action.type,
-            icon: classic ? null : action.type.icon,
+            icon: action.type.icon,
             label: action.type.label(context.l10n),
           ),
       ],
@@ -768,4 +698,74 @@ class _SingleFieldDialogState extends State<_SingleFieldDialog> {
       ],
     );
   }
+}
+
+/// Sign in/out flows of self-service Termine for [tenant] and [player].
+SelfServiceEventActions signoutEventActions(
+  BuildContext context,
+  WidgetRef ref, {
+  required Tenant? tenant,
+  required Person? player,
+}) {
+  final notifier = ref.read(signoutNotifierProvider.notifier);
+  final canAccessFiles = ref.read(canAccessFilesProvider);
+  return SelfServiceEventActions(
+    absenceReasons: EventListUtils.absenceReasonsOf(tenant?.absenceReasons),
+    lateReasons: EventListUtils.lateReasonsOf(tenant?.lateReasons),
+    showAllAttendances: tenant?.showAllAttendances ?? false,
+    signIn: (att, note) async {
+      if (att.isDutyRequested && att.attendanceId != null) {
+        await confirmDutyAction(context, ref, att.id!, att.attendanceId!);
+        return null;
+      }
+      return notifier.signIn(att, notes: note);
+    },
+    signOut: (att, reason, isLate) =>
+        notifier.signOut([att.id!], reason, isLate: isLate),
+    updateNote: (att, note) => notifier.updateNote(att.id!, note),
+    saveRegistrationAnswers: (att, answers) =>
+        notifier.saveRegistrationAnswers(att.id!, answers),
+    openPlan: (att) => showPlanViewerSheet(
+      context,
+      attendance: att,
+      playerInstrumentId: player?.instrument,
+      memberSongs: ref.read(songsProvider).valueOrNull ?? const [],
+    ),
+    songCountOf: (att) => _songsOf(ref, att).length,
+    openSongs: (att) => showAttendanceSongsSheet(
+      context,
+      title: att.eventTitle,
+      subtitle: _songsSubtitle(att),
+      entries: _songsOf(ref, att),
+      instrumentId: player?.instrument,
+      onOpenPlan: att.hasPlan
+          ? () => showPlanViewerSheet(
+                context,
+                attendance: att,
+                playerInstrumentId: player?.instrument,
+                memberSongs: ref.read(songsProvider).valueOrNull ?? const [],
+              )
+          : null,
+    ),
+    currentTenantId: tenant?.id,
+    canAccessFiles: (att) => canAccessFilesInTenant(
+      tenantId: att.tenantId,
+      currentTenantId: tenant?.id,
+      currentTenantAccess: canAccessFiles,
+      userTenants: att.tenantId == tenant?.id
+          ? const []
+          : (ref.read(userTenantsProvider).valueOrNull ?? const []),
+    ),
+  );
+}
+
+List<AttendanceSong> _songsOf(WidgetRef ref, CrossTenantPersonAttendance att) {
+  final id = att.attendanceId;
+  if (id == null) return const [];
+  return ref.read(signoutAttendanceSongsProvider).valueOrNull?[id] ?? const [];
+}
+
+String _songsSubtitle(CrossTenantPersonAttendance att) {
+  final date = EventListUtils.parse(att.date);
+  return date == null ? '' : DateFormat(dateFmt()).format(date);
 }

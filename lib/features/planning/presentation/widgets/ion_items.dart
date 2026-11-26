@@ -6,30 +6,13 @@ import 'package:flutter/services.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart'
-    show IonTranslucentAppBar, IonContentTopInset; // PARITY_R5, IOS_R6
-import '../../../../shared/widgets/layout/ionic_ios.dart' as ios27
-    show IonIos, IonDetailChevron, IonSearchbar, IonLargeTitle;
+    show IonTranslucentAppBar, IonContentTopInset, IonLargeTitle;
 import '../../../../shared/widgets/display/ion_badge_text.dart';
-import '../../../../shared/widgets/layout/ionic_md.dart';
 
-// UX_PLANNING (wave 8): page-structure building blocks that mirror the Ionic
-// components as rendered in iOS mode (the app on an iPhone). They are used by
-// the planning, team organisation, duty and shift pages. On other platforms
-// they keep the Material look (Ionic md mode).
-
-/// True when the app renders like Ionic iOS mode (iPhone app and iPhone Safari).
-/// Same as the shared adaptive [useIosLook]. `ion-segment` in the page
-/// content is the shared adaptive [IonSegment].
-bool isIonIos(BuildContext context) => useIosLook(context);
-
-/// Ionic `ion-list-header` with optional trailing note/button. iOS
-/// (IOS27_SWEEP): in a plain list the core header – min(1.375rem, 56.1px)
-/// = 23.375pt bold in step-850 (#262626, dark #d9d9d9); in an inset list
-/// ([inset], ionic-theme-ios27 structured list) the 17pt semibold label in
-/// `rgba(medium, .75)` with margin 8 / 4 / 4.
+/// Section header with optional trailing note/button.
 class IonListHeader extends StatelessWidget {
   const IonListHeader({
     super.key,
@@ -42,84 +25,36 @@ class IonListHeader extends StatelessWidget {
   });
 
   final String title;
-
-  /// Custom label content (styled like [title]).
   final Widget? titleWidget;
   final Widget? trailing;
-
-  /// Label color (Ionic e.g. `.is-overdue` → danger).
   final Color? color;
   final EdgeInsetsGeometry padding;
-
-  /// Header of an `ion-list [inset]="true"` (see [IonInsetList]).
   final bool inset;
 
   @override
   Widget build(BuildContext context) {
-    final rd = context.rdSkin;
-    if (rd != null) {
-      // Beta-Skin: uppercase group label (inset) / section heading.
-      final style = inset ? RdType.eyebrow(color ?? rd.text2) : RdType.section(rd).copyWith(color: color);
-      return Padding(
-        padding: inset ? const EdgeInsets.fromLTRB(4, 4, 4, 6) : const EdgeInsets.fromLTRB(20, 16, 4, 8),
-        child: Row(
-          children: [
-            Expanded(
-              child: Semantics(
-                header: true,
-                child: titleWidget != null
-                    ? DefaultTextStyle.merge(style: style, child: titleWidget!)
-                    : Text(inset ? title.toUpperCase() : title, style: style),
-              ),
-            ),
-            if (trailing != null) trailing!,
-          ],
-        ),
-      );
-    }
-    final theme = Theme.of(context);
-    final ios = isIonIos(context);
-    final dark = theme.brightness == Brightness.dark;
-    final style = ios
-        ? (inset
-            ? ios27.IonIos.listHeaderStyle(context, color: color)
-            : TextStyle(
-                fontSize: 1.375 * ios27.IonIos.rem,
-                fontWeight: FontWeight.w700,
-                color: color ?? (dark ? const Color(0xFFD9D9D9) : const Color(0xFF262626)),
-              ))
-        // MD_SWEEP: md-ion-list-inset header (16px semibold medium-tint)
-        // / plain md list header (14px, text colour).
-        : (inset
-            ? IonMd.insetListHeaderStyle(theme.brightness, color: color)
-            : IonMd.listHeaderStyle(theme.brightness, color: color));
-    return ConstrainedBox(
-      constraints: BoxConstraints(
-          minHeight: ios ? 40 : IonMd.listHeaderMinHeight),
-      child: Padding(
-        // ios27 inset header: 16pt header padding + 4pt label margin
-        // inside the 16pt list margin; label margin 8 / 4 (md the same).
-        padding: inset ? const EdgeInsets.fromLTRB(20, 8, 4, 4) : padding,
-        child: Row(
-          crossAxisAlignment:
-              ios ? CrossAxisAlignment.end : CrossAxisAlignment.center,
-          children: [
-            Expanded(
+    final rd = context.rd;
+    final style = inset ? RdType.eyebrow(color ?? rd.text2) : RdType.section(rd).copyWith(color: color);
+    return Padding(
+      padding: inset ? const EdgeInsets.fromLTRB(4, 4, 4, 6) : const EdgeInsets.fromLTRB(20, 16, 4, 8),
+      child: Row(
+        children: [
+          Expanded(
+            child: Semantics(
+              header: true,
               child: titleWidget != null
                   ? DefaultTextStyle.merge(style: style, child: titleWidget!)
-                  : Text(title, style: style),
+                  : Text(inset ? title.toUpperCase() : title, style: style),
             ),
-            if (trailing != null) trailing!,
-          ],
-        ),
+          ),
+          if (trailing != null) trailing!,
+        ],
       ),
     );
   }
 }
 
-/// Ionic `ion-list [inset]="true"` with an optional `ion-list-header`:
-/// the header sits on the grey page background, the items in a rounded white
-/// group separated by inset lines.
+/// Inset grouped list with an optional [IonListHeader].
 class IonInsetList extends StatelessWidget {
   const IonInsetList({
     super.key,
@@ -135,18 +70,14 @@ class IonInsetList extends StatelessWidget {
   final String? header;
   final Widget? headerTrailing;
   final Color? headerColor;
-
-  /// Replaces the default [IonListHeader] (e.g. a header with an edit icon).
   final Widget? headerWidget;
   final List<Widget> children;
-
-  /// Start of the item lines (Ionic `lines="inset"` starts at the label).
-  /// `null` hides the lines (Ionic `lines="none"`).
   final double? dividerIndent;
   final EdgeInsetsGeometry margin;
 
   @override
   Widget build(BuildContext context) {
+    final rd = context.rd;
     final head = headerWidget ??
         (header != null
             ? IonListHeader(title: header!, trailing: headerTrailing, color: headerColor, inset: true)
@@ -159,54 +90,27 @@ class IonInsetList extends StatelessWidget {
         children: [
           if (head != null) head,
           if (children.isNotEmpty)
-            // MD_SWEEP: md inset group – radius 16, item background, no
-            // shadow, 1px lines.
-            if (context.rdSkin case final rd?)
-              // Beta-Skin: grouped list of the new design.
-              DecoratedBox(
-                decoration: BoxDecoration(
-                  color: rd.surface,
-                  borderRadius: BorderRadius.circular(rd.listRadius),
-                  boxShadow: rd.cardShadow,
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(rd.listRadius),
-                  child: Material(
-                    type: MaterialType.transparency,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        for (var i = 0; i < children.length; i++) ...[
-                          if (i > 0 && dividerIndent != null) Divider(height: 1, thickness: 1, color: rd.line),
-                          children[i],
-                        ],
+            DecoratedBox(
+              decoration: BoxDecoration(
+                color: rd.surface,
+                borderRadius: BorderRadius.circular(rd.listRadius),
+                boxShadow: rd.cardShadow,
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(rd.listRadius),
+                child: Material(
+                  type: MaterialType.transparency,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      for (var i = 0; i < children.length; i++) ...[
+                        if (i > 0 && dividerIndent != null) Divider(height: 1, thickness: 1, color: rd.line),
+                        children[i],
                       ],
-                    ),
+                    ],
                   ),
                 ),
-              )
-            else
-            Card(
-              margin: EdgeInsets.zero,
-              elevation: 0,
-              color: isIonIos(context)
-                  ? null
-                  : IonMd.itemBackground(Theme.of(context).brightness),
-              clipBehavior: Clip.antiAlias,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(
-                      isIonIos(context) ? 10 : IonMd.groupRadius)),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  for (var i = 0; i < children.length; i++) ...[
-                    if (i > 0 && dividerIndent != null)
-                      Divider(height: 1, thickness: isIonIos(context) ? 0.5 : 1, indent: dividerIndent),
-                    children[i],
-                  ],
-                ],
               ),
             ),
         ],
@@ -215,9 +119,7 @@ class IonInsetList extends StatelessWidget {
   }
 }
 
-/// Ionic `ion-badge` (iOS: max(13px, .8125rem) = 13.81pt bold, line-height
-/// 1, radius 10). Text uses the color's contrast (black on warning, white
-/// otherwise).
+/// Coloured badge pill.
 class IonBadge extends StatelessWidget {
   const IonBadge({super.key, required this.label, required this.color, this.textColor});
 
@@ -230,29 +132,19 @@ class IonBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        // MD_SWEEP: badge.md.css – padding 3 4 4 4, radius 4.
-        padding: isIonIos(context)
-            ? const EdgeInsets.symmetric(horizontal: 8, vertical: 3)
-            : IonMd.badgePadding,
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
         decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(
-                isIonIos(context) ? 10 : IonMd.badgeRadius)),
+          color: color,
+          borderRadius: BorderRadius.circular(10),
+        ),
         child: Text(
           label,
-          // PARITY_R8: ion-badge is bold (700) in both modes
-          style: isIonIos(context)
-              ? ionBadgeTextStyle(
-                  color: textColor ?? contrastOf(color),
-                  fontSize: 0.8125 * ios27.IonIos.rem,
-                )
-              : ionBadgeTextStyle(color: textColor ?? contrastOf(color)),
+          style: ionBadgeTextStyle(color: textColor ?? contrastOf(color)),
         ),
       );
 }
 
-/// Ionic `ion-note` in an item end slot: grey text (iOS: max(16px, 1rem)
-/// = 17pt step-350, #a6a6a6 / dark #595959).
+/// Secondary note text in an item end slot.
 class IonNote extends StatelessWidget {
   const IonNote(this.text, {super.key, this.style});
 
@@ -262,32 +154,20 @@ class IonNote extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text(
         text,
-        style: (isIonIos(context)
-                ? TextStyle(
-                    color: ios27.IonIos.note(Theme.of(context).brightness),
-                    fontSize: ios27.IonIos.noteFontSize,
-                  )
-                // MD_SWEEP: md item note .6875rem step-600.
-                : TextStyle(
-                    color: IonMd.note(Theme.of(context).brightness),
-                    fontSize: IonMd.itemNoteFontSize,
-                  ))
-            .merge(style),
+        style: TextStyle(color: context.rd.text2, fontSize: 14).merge(style),
       );
 }
 
-/// Ionic iOS `detail` chevron of a button item.
+/// Trailing detail chevron of a tappable row.
 class IonDetailIcon extends StatelessWidget {
   const IonDetailIcon({super.key});
 
   @override
-  Widget build(BuildContext context) => isIonIos(context)
-      ? const ios27.IonDetailChevron()
-      // MD_SWEEP: md detail icon – 20px, text colour at .25.
-      : Icon(AppIcons.chevronRight,
-          size: 20,
-          color: IonMd.text(Theme.of(context).brightness)
-              .withValues(alpha: 0.25));
+  Widget build(BuildContext context) => Icon(
+        AppIcons.chevronRight,
+        size: 20,
+        color: context.rd.text2.withValues(alpha: 0.6),
+      );
 }
 
 /// Ionic empty/hint state (icon, optional bold line, grey text, optional action).
@@ -361,7 +241,7 @@ class IonSearchbar extends StatefulWidget {
   final TextEditingController? controller;
   final ValueChanged<String> onChanged;
 
-  /// Defaults to the ios27 host padding 8 (iOS) / 12, 8, 12, 4 (md).
+  /// Optional host padding around the search field.
   final EdgeInsetsGeometry? padding;
 
   @override
@@ -381,30 +261,53 @@ class _IonSearchbarState extends State<IonSearchbar> {
 
   @override
   Widget build(BuildContext context) {
-    final ios = isIonIos(context);
+    final rd = context.rd;
     return Padding(
-      padding: widget.padding ??
-          (ios ? const EdgeInsets.all(8) : IonMd.searchbarPadding),
-      child: ios
-          // IOS27_SWEEP: the shared ios27 glass searchbar
-          ? ios27.IonSearchbar(
-              controller: _controller,
-              hintText: widget.placeholder,
-              onChanged: widget.onChanged,
-            )
-          // MD_SWEEP: the shared Ionic md searchbar.
-          : IonMdSearchbar(
-              controller: _controller,
-              hintText: widget.placeholder,
-              onChanged: widget.onChanged,
-              padding: EdgeInsets.zero,
+      padding: widget.padding ?? const EdgeInsets.fromLTRB(12, 8, 12, 4),
+      child: ValueListenableBuilder<TextEditingValue>(
+        valueListenable: _controller,
+        builder: (context, value, _) => TextField(
+          controller: _controller,
+          onChanged: widget.onChanged,
+          textAlignVertical: TextAlignVertical.center,
+          decoration: InputDecoration(
+            hintText: widget.placeholder,
+            hintStyle: TextStyle(color: rd.text2),
+            prefixIcon: Icon(AppIcons.search, size: 20, color: rd.text2),
+            suffixIcon: value.text.isEmpty
+                ? null
+                : IconButton(
+                    tooltip: context.l10n.commonClose,
+                    icon: Icon(AppIcons.close, size: 18, color: rd.text2),
+                    onPressed: () {
+                      _controller.clear();
+                      widget.onChanged('');
+                    },
+                  ),
+            isDense: true,
+            filled: true,
+            fillColor: rd.soft,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
             ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
 
-/// Ionic `ion-segment` in a header toolbar: the iOS segmented control on
-/// iOS, a Material [TabBar] elsewhere. Drives a [TabController].
+/// Segmented control in a header toolbar driving a [TabController].
 class IonSegmentBar extends StatefulWidget implements PreferredSizeWidget {
   const IonSegmentBar({super.key, required this.controller, required this.labels});
 
@@ -446,19 +349,6 @@ class _IonSegmentBarState extends State<IonSegmentBar> {
 
   @override
   Widget build(BuildContext context) {
-    if (!isIonIos(context)) {
-      // MD_SWEEP: the shared md ion-segment (UPPERCASE 14px medium labels,
-      // 48px buttons at most 360 wide, centred, 2px primary indicator).
-      return IonSegment<int>(
-        items: [
-          for (var i = 0; i < widget.labels.length; i++)
-            IonSegmentItem<int>(value: i, label: Text(widget.labels[i])),
-        ],
-        value: widget.controller.index,
-        onChanged: (v) => widget.controller.animateTo(v),
-      );
-    }
-    // Shared adaptive `ion-segment` (IOS_LOOK).
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
       child: IonSegment<int>(
@@ -764,28 +654,26 @@ class _IonCondenseScaffoldState extends State<IonCondenseScaffold> {
 
   @override
   Widget build(BuildContext context) {
-    final ios = isIonIos(context);
+    final ios = Theme.of(context).platform == TargetPlatform.iOS;
     return Scaffold(
       backgroundColor: widget.backgroundColor,
-      floatingActionButton: TabBarFab.wrap(widget.floatingActionButton),
-      // IOS_R6: Ionic `ion-content fullscreen` under the translucent header
+      floatingActionButton: widget.floatingActionButton,
       extendBodyBehindAppBar: ios,
-      // IOS_R6: `ion-header translucent` (blur once condensed)
       appBar: IonTranslucentAppBar(
         condensed: _condensed,
         background: widget.backgroundColor,
         child: AppBar(
-        leading: widget.leading,
-        automaticallyImplyLeading: widget.automaticallyImplyLeading,
-        title: ios
-            ? AnimatedOpacity(
-                opacity: _condensed ? 1 : 0,
-                duration: const Duration(milliseconds: 150),
-                child: Text(widget.title),
-              )
-            : Text(widget.title),
-        actions: widget.actions,
-      ),
+          leading: widget.leading,
+          automaticallyImplyLeading: widget.automaticallyImplyLeading,
+          title: ios
+              ? AnimatedOpacity(
+                  opacity: _condensed ? 1 : 0,
+                  duration: const Duration(milliseconds: 150),
+                  child: Text(widget.title),
+                )
+              : Text(widget.title),
+          actions: widget.actions,
+        ),
       ),
       body: ios
           ? NotificationListener<ScrollNotification>(
@@ -796,10 +684,8 @@ class _IonCondenseScaffoldState extends State<IonCondenseScaffold> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // IOS_R6: room for the translucent toolbar
                     const IonContentTopInset(),
-                    // IOS27_SWEEP: ios27 large title (36.125pt bold)
-                    ios27.IonLargeTitle(widget.title),
+                    IonLargeTitle(widget.title),
                   ],
                 ),
               ),
@@ -809,9 +695,7 @@ class _IonCondenseScaffoldState extends State<IonCondenseScaffold> {
   }
 }
 
-/// Ionic `ion-chip` (filled tint or outline, 0.5 opacity when disabled).
-/// iOS (IOS27_SWEEP, core ios chip): coloured fill 8 %, outline border
-/// 32 %, 14.875pt (.875rem), disabled .4.
+/// Filled or outline chip.
 class IonChip extends StatelessWidget {
   const IonChip({
     super.key,
@@ -827,25 +711,19 @@ class IonChip extends StatelessWidget {
   final Color color;
   final bool outline;
   final bool disabled;
-
-  /// `ion-icon` before the label (20 px, the chip's text colour).
   final IconData? icon;
   final VoidCallback? onTap;
 
-  Widget _label(bool ios) => Text(label,
-      style: TextStyle(
-          fontSize: ios ? 0.875 * ios27.IonIos.rem : IonMd.chipFontSize,
-          height: ios ? null : 20 / 14,
-          color: ios ? color : IonMd.shade(color)));
+  Widget _label() => Text(
+        label,
+        style: TextStyle(fontSize: 14, height: 20 / 14, color: color),
+      );
 
   @override
   Widget build(BuildContext context) {
     final shape = StadiumBorder(
       side: outline ? BorderSide(color: color.withValues(alpha: 0.32)) : BorderSide.none,
     );
-    final ios = isIonIos(context);
-    // MD_SWEEP: md coloured chip – base at .08, text in the shade colour,
-    // disabled .4 (chip.md.css).
     return Opacity(
       opacity: disabled ? 0.4 : 1,
       child: Material(
@@ -857,14 +735,13 @@ class IonChip extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             child: icon == null
-                ? _label(ios)
+                ? _label()
                 : Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // chip.scss: icon 20px, margin -4 / 8 / -4 / -4.
-                      Icon(icon, size: 20, color: ios ? color : IonMd.shade(color)),
+                      Icon(icon, size: 20, color: color),
                       const SizedBox(width: 4),
-                      Flexible(child: _label(ios)),
+                      Flexible(child: _label()),
                     ],
                   ),
           ),

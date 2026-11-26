@@ -7,22 +7,22 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('localizedHelpContentService', () {
-    test('German keeps the original content', () {
+    test('German uses the standard app navigation wording', () {
       final de = localizedHelpContentService('de');
       expect(de.articles.length, allHelpArticles.length);
       expect(de.articles.first.title, helpArticles.first.title);
       expect(de.categories.first.label, helpCategories.first.label);
     });
 
-    test('Beta replaces the articles on where things are, in both languages', () {
-      final de = localizedHelpContentService('de', beta: true);
-      final en = localizedHelpContentService('en', beta: true);
+    test('Standard navigation articles use Heute/Today wording in both languages', () {
+      final de = localizedHelpContentService('de');
+      final en = localizedHelpContentService('en');
       expect(de.articles.length, allHelpArticles.length);
       expect(de.getArticle('gs-navigation')!.body, contains('**Heute**'));
       expect(de.getArticle('gs-navigation')!.body, isNot(contains('Dashboard')));
+      expect(de.getArticle('gs-navigation')!.body, isNot(contains('Neues Design (Beta)')));
       expect(en.getArticle('gs-navigation')!.body, contains('**Today**'));
-      // Every other article stays.
-      expect(de.getArticle('gs-overview')!.body, localizedHelpContentService('de').getArticle('gs-overview')!.body);
+      expect(en.getArticle('gs-navigation')!.body, isNot(contains('New design (beta)')));
     });
 
     test('English translates titles and keeps German glossary names as alias', () {

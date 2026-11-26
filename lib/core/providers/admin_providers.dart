@@ -2,9 +2,51 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../config/supabase_config.dart'
     show AccountScopeKey, currentAuthUserIdProvider;
+import '../constants/enums.dart';
 
 import '../../data/repositories/admin_repository.dart';
 import 'tenant_providers.dart';
+import 'user_registration_providers.dart';
+
+/// User entry within a tenant.
+class TenantUser {
+  final String id;
+  final int tenantId;
+  final String userId;
+  final int role;
+  final int? personId;
+  final String? email;
+
+  const TenantUser({
+    required this.id,
+    required this.tenantId,
+    required this.userId,
+    required this.role,
+    this.personId,
+    this.email,
+  });
+
+  factory TenantUser.fromJson(Map<String, dynamic> json) {
+    return TenantUser(
+      id: json['id']?.toString() ?? '',
+      tenantId: json['tenantId'] ?? json['tenant_id'] ?? 0,
+      userId: json['userId'] ?? json['user_id'] ?? '',
+      role: json['role'] ?? 99,
+      personId: json['personId'] ?? json['person_id'],
+      email: json['email'],
+    );
+  }
+
+  Role get roleEnum => Role.fromValue(role);
+}
+
+/// Provider for tenant users.
+final tenantUsersProvider = FutureProvider<List<TenantUser>>((ref) async {
+  final repo = ref.watch(userRegistrationRepositoryWithTenantProvider);
+  if (!repo.hasTenantId) return [];
+  final rows = await repo.getTenantUserRows();
+  return rows.map(TenantUser.fromJson).toList();
+});
 
 /// SETTINGS2: Admin repository with tenant context.
 final adminRepositoryWithTenantProvider = Provider<AdminRepository>((ref) {

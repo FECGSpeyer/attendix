@@ -18,7 +18,7 @@ import 'package:attendix/features/redesign/presentation/pages/rd_archive_page.da
 import 'package:attendix/features/redesign/presentation/pages/rd_parents_page.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_pending_page.dart';
 import 'package:attendix/features/redesign/presentation/widgets/manage/rd_manage_list.dart' show rdLoadedValue;
-import 'package:attendix/features/settings/presentation/pages/left_players_page.dart' show leftPlayersProvider;
+import 'package:attendix/features/settings/data/left_players_actions.dart' show leftPlayersProvider;
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

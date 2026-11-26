@@ -77,7 +77,7 @@ Widget _app(Role role, MockPlayerRepository repo) {
   );
   return ProviderScope(
     overrides: [
-      initialRedesignSettingsProvider.overrideWithValue(const RedesignSettings(enabled: true, world: RdFarbwelt.petrol)),
+      initialRedesignSettingsProvider.overrideWithValue(const RedesignSettings(world: RdFarbwelt.petrol)),
       currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),
       effectiveRoleProvider.overrideWithValue(role),
       playerRepositoryWithTenantProvider.overrideWithValue(repo),

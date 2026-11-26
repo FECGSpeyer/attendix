@@ -7,7 +7,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/utils/choir_file_utils.dart';
 import '../../../../core/utils/instrument_matcher.dart';
-import '../../../songs/presentation/widgets/file_upload_sheet.dart' show guessFileCategory;
+import '../../../songs/data/file_category_guess.dart' show guessFileCategory;
 import 'rd_import_logic.dart';
 
 /// REDESIGN: suggestions of the KI for the questions of "Noten importieren".

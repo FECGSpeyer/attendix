@@ -1,22 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/auto_message_providers.dart';
-import '../../../../core/providers/redesign_providers.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/auto_message/auto_message.dart';
 import '../../../../data/repositories/base_repository.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart';
-import '../../../../shared/widgets/dialogs/ion_modal.dart' show showIonModal;
-import '../../../../shared/widgets/layout/ion_form_items.dart';
 import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
 import '../../../redesign/presentation/widgets/today/rd_today_common.dart';
-import '../../../settings/presentation/widgets/settings_list.dart';
 import '../auto_message_texts.dart';
 
 /// Opens the answer dialog for a Termin message. Returns the new state
@@ -27,15 +20,6 @@ Future<String?> openAttendanceResponse(
   required String termin,
   required String kind,
 }) {
-  final beta = ProviderScope.containerOf(context, listen: false).read(redesignEnabledProvider);
-  if (!beta) {
-    // TER-29: Ionic default `ion-modal` – full screen on phones, from 768px
-    // a centred card.
-    return showIonModal<String>(
-      context,
-      builder: (_) => AttendanceResponsePage(messageId: messageId, termin: termin, kind: kind),
-    );
-  }
   return Navigator.of(context, rootNavigator: true).push<String>(
     MaterialPageRoute(
       fullscreenDialog: true,
@@ -107,8 +91,8 @@ class _AttendanceResponsePageState extends ConsumerState<AttendanceResponsePage>
     }
   }
 
-  /// Beta (redesign) layout: same fields, Beta building blocks.
-  Widget _buildBeta(BuildContext context) {
+  @override
+  Widget build(BuildContext context) {
     final p = context.rd;
     final l10n = context.l10n;
     return RdPage(
@@ -164,89 +148,6 @@ class _AttendanceResponsePageState extends ConsumerState<AttendanceResponsePage>
         const SizedBox(height: 20),
         RdPrimaryButton(label: l10n.autoMessagesRespSend, loading: _sending, onPressed: _sending ? null : _send),
       ],
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (context.rdSkin != null) return _buildBeta(context);
-    final l10n = context.l10n;
-    return Scaffold(
-      appBar: AppBar(
-        leading: Align(
-          alignment: AlignmentDirectional.centerStart,
-          child: ToolbarButtonGroup(
-            children: [
-              TextButton(
-                onPressed: _sending ? null : () => Navigator.of(context).pop(),
-                child: IonButtonLabel(l10n.commonCancel),
-              ),
-            ],
-          ),
-        ),
-        leadingWidth: useIosLook(context) ? 150 : 100,
-        title: Text(l10n.autoMessagesRespTitle),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(AppDimensions.paddingM),
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: Text(
-              widget.termin,
-              textAlign: TextAlign.center,
-              style: TextStyle(color: AppColors.mediumOf(context)),
-            ),
-          ),
-          IonSegment<String>(
-            items: [
-              IonSegmentItem(value: 'reason', label: Text(l10n.autoMessagesRespHadReason)),
-              IonSegmentItem(value: 'was_present', label: Text(l10n.autoMessagesRespWasThere)),
-            ],
-            value: _kind,
-            onChanged: (v) => setState(() => _kind = v),
-          ),
-          const SizedBox(height: 12),
-          if (_kind == 'reason') ...[
-            IonListHeader(title: l10n.autoMessagesRespReason),
-            AutoMessageChipWrap(
-              children: [
-                for (final r in autoMessageResponseReasons)
-                  AutoMessageChip(
-                    label: l10n.autoMessageReason(r),
-                    selected: _reason == r,
-                    onTap: () => setState(() => _reason = r),
-                  ),
-              ],
-            ),
-            SettingsListSection(
-              icons: false,
-              children: [
-                // TER-29: `ion-textarea labelPlacement="stacked"`.
-                IonStackedInputItem(
-                  lines: false,
-                  label: l10n.autoMessagesRespText,
-                  controller: _textController,
-                  textarea: true,
-                  maxLength: 500,
-                  textCapitalization: TextCapitalization.sentences,
-                ),
-              ],
-            ),
-            AutoMessageHint(l10n.autoMessagesRespHint),
-          ] else
-            AutoMessageHint(l10n.autoMessagesRespWasThereHint),
-          const SizedBox(height: 8),
-          FilledButton(
-            onPressed: _sending ? null : _send,
-            style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(48)),
-            child:
-                _sending
-                    ? const SizedBox(width: 20, height: 20, child: AppSpinner(strokeWidth: 2))
-                    : IonButtonLabel(l10n.autoMessagesRespSend),
-          ),
-        ],
-      ),
     );
   }
 }

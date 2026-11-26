@@ -45,12 +45,9 @@ void main() {
       expect(result[2]!.toSet(), {7, 8});
     });
 
-    test('page keeps fully staffed and other-type duties in the computation', () {
-      final src = File('lib/features/duty/presentation/pages/duty_distribute_page.dart').readAsStringSync();
-      expect(src, isNot(contains('t.occupied < t.required')));
-      expect(src, contains('open: max(0, t.required - t.occupied)'));
-      expect(src, contains('repo.getUpcomingDutyTermine(dutyTypes'));
-      expect(src, contains('_otherTermine.where'));
+    test('duty staffing checks upcoming duties across all duty types', () {
+      final src = File('lib/features/duty/presentation/widgets/duty_staffing_section.dart').readAsStringSync();
+      expect(src, contains('repo.getUpcomingDutyTermine('));
     });
   });
 

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -13,7 +12,6 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../people/presentation/widgets/import_widgets.dart';
 import '../../../../core/providers/demo_providers.dart'; // DEMO_GUARD
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/layout/ionic_ios.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../core/router/redesign_routes.dart';
@@ -26,11 +24,7 @@ enum _Step { file, mapping, preview }
 ///
 /// Returns `true` via Navigator.pop when at least one song was imported.
 class SongImportPage extends ConsumerStatefulWidget {
-  const SongImportPage({super.key, this.beta = false});
-
-  /// Beta "Werkliste importieren": the same steps as a page of the Werke
-  /// tab ("‹ Werke", one button per step) instead of the full-screen modal.
-  final bool beta;
+  const SongImportPage({super.key});
 
   @override
   ConsumerState<SongImportPage> createState() => _SongImportPageState();
@@ -196,7 +190,6 @@ class _SongImportPageState extends ConsumerState<SongImportPage> {
   }
 
   void _leave(bool imported) {
-    if (!widget.beta) return Navigator.of(context).pop(imported ? true : null);
     context.canPop() ? context.pop(imported ? true : null) : context.go(RedesignRoutes.works);
   }
 
@@ -223,9 +216,8 @@ class _SongImportPageState extends ConsumerState<SongImportPage> {
         ),
       );
 
-  /// Beta: step 1 as a Beta page (template as a row, one button), steps 2
-  /// and 3 keep the shared mapping and preview with one button below.
-  Widget _buildBeta(BuildContext context) {
+  @override
+  Widget build(BuildContext context) {
     final p = context.rd;
     final l10n = context.l10n;
     final title = Semantics(header: true, child: Text(l10n.redesignWorksAddImport, style: RdType.title(p)));
@@ -333,64 +325,6 @@ class _SongImportPageState extends ConsumerState<SongImportPage> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    if (widget.beta) return _buildBeta(context);
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(context.l10n.songsImportSongs),
-        automaticallyImplyLeading: false,
-        // IOS_PAGES3: iOS → ✕ in a Liquid Glass circle (ion-buttons end)
-        actions: [
-          ToolbarButtonGroup(children: [
-            IconButton(
-              icon: Icon(AppIcons.close, semanticLabel: context.l10n.commonClose),
-              onPressed: _busy ? null : () => Navigator.of(context).pop(),
-            ),
-          ]),
-        ],
-      ),
-      body: Stack(
-        children: [
-          switch (_step) {
-            _Step.file => ImportFileStep(
-                intro: context.l10n.songsImportIntro,
-                onPickFile: _pickFile,
-                onDownloadTemplate: _downloadTemplate,
-              ),
-            _Step.mapping => ImportMappingStep(
-                fileName: _fileName,
-                rowCount: _rawRows.length,
-                intro: context.l10n.songsMappingIntro,
-                headers: _headers,
-                mapping: _mapping,
-                options: _options,
-                onChanged: (header, key) => setState(() => _mapping[header] = key),
-                missingHint: context.l10n.songsMapNumberName,
-                canProceed: mappingSongHasRequired(_mapping),
-              ),
-            _Step.preview => _buildPreview(),
-          },
-          if (_busy) _busyOverlay(),
-        ],
-      ),
-      bottomNavigationBar: switch (_step) {
-        _Step.file => null,
-        _Step.mapping => ImportBottomBar(
-            onBack: () => setState(() => _step = _Step.file),
-            primaryLabel: context.l10n.commonNext,
-            onPrimary:
-                mappingSongHasRequired(_mapping) && !_busy ? _proceedToPreview : null,
-          ),
-        _Step.preview => ImportBottomBar(
-            onBack: () => setState(() => _step = _Step.mapping),
-            primaryLabel: context.l10n.peopleImportCount(_importable.length),
-            onPrimary: _busy || _importable.isEmpty ? null : _startImport,
-          ),
-      },
-    );
-  }
-
   Widget _buildPreview() {
     final errorCount = _mappedRows.where((r) => r.errors.isNotEmpty).length;
     final duplicateCount =
@@ -409,22 +343,19 @@ class _SongImportPageState extends ConsumerState<SongImportPage> {
           errors: errorCount,
         ),
         const SizedBox(height: AppDimensions.paddingS),
-        // Ionic ion-list inset (iOS radius, inset hairlines)
-        IonInsetList(
-          margin: EdgeInsets.zero,
-          grouped: false,
+        RdGroupedList(
           children: [
-              for (final row in _mappedRows)
-                Opacity(
-                  opacity: row.isImportable ? 1 : 0.6,
-                  child: ListTile(
-                    leading: ImportRowStatusIcon(status: row.status),
-                    title: Text(row.displayTitle),
-                    subtitle: row.errors.isEmpty && row.warnings.isEmpty
-                        ? null
-                        : ImportRowMessages(errors: row.errors, warnings: row.warnings),
-                  ),
+            for (final row in _mappedRows)
+              Opacity(
+                opacity: row.isImportable ? 1 : 0.6,
+                child: ListTile(
+                  leading: ImportRowStatusIcon(status: row.status),
+                  title: Text(row.displayTitle),
+                  subtitle: row.errors.isEmpty && row.warnings.isEmpty
+                      ? null
+                      : ImportRowMessages(errors: row.errors, warnings: row.warnings),
                 ),
+              ),
           ],
         ),
       ],

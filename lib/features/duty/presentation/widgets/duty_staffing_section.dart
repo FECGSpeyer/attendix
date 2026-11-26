@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/attendance_detail_providers.dart';
 import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/duty_providers.dart';
 import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/providers/self_service_providers.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/duty_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -18,12 +15,7 @@ import '../../../../data/models/duty/person_unavailability.dart';
 import 'duty_actions.dart';
 import 'duty_assign_sheet.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/adaptive_platform.dart' show useIosLook;
-import '../../../../shared/widgets/layout/ionic_md.dart' show IonMd;
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/ion_button.dart';
-import '../../../../shared/widgets/adaptive/ion_button_label.dart';
-import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../shared/widgets/adaptive/app_action_sheet.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
@@ -87,182 +79,17 @@ class _DutyStaffingSectionState extends ConsumerState<DutyStaffingSection> {
     final available = dutyAvailable(players);
     final presentUnassigned = dutyPresentUnassigned(players);
     final unavailable = players.where(isCancelled).toList();
-    final fillColor = dutyFillColor(dutyFill(players, _required));
-    final l10n = context.l10n;
-    final neededText = l10n.attendanceNeeded(_required);
-    if (ref.watch(redesignEnabledProvider)) {
-      return _buildBeta(
-        players: players,
-        occupants: occupants,
-        available: available,
-        presentUnassigned: presentUnassigned,
-        unavailable: unavailable,
-        canManage: canManage,
-        canViewNotes: canViewNotes,
-        myPersonId: myPersonId,
-      );
-    }
-
-    // PARITY_R9: an `ion-item-group` of Ionic's inset list, not an
-    // ion-card – md shows a flat block with radius 16 and no shadow.
-    final ios = useIosLook(context);
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM, vertical: AppDimensions.paddingXS),
-      elevation: ios ? null : 0,
-      shape: ios ? null : IonMd.insetGroupShape,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          ListTile(
-            leading: Icon(AppIcons.headsetMicOutlined, color: AppColors.primary),
-            title: Row(
-              children: [
-                Text(l10n.attendanceStaffing, style: const TextStyle(fontWeight: FontWeight.w600)),
-                const SizedBox(width: 8),
-                DutyPill(text: '${occupants.length}/$_required', color: fillColor),
-              ],
-            ),
-            subtitle: Text(neededText),
-            trailing: canManage
-                ? Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: Icon(AppIcons.remove),
-                        tooltip: l10n.attendanceFewerPeopleNeeded,
-                        onPressed: _required <= 1 || _busy ? null : () => _changeRequired(-1),
-                      ),
-                      Text('$_required'),
-                      IconButton(
-                        icon: Icon(AppIcons.add),
-                        tooltip: l10n.attendanceMorePeopleNeeded,
-                        onPressed: _busy ? null : () => _changeRequired(1),
-                      ),
-                    ],
-                  )
-                : null,
-          ),
-          const Divider(height: 1),
-          for (final pa in occupants) ...[
-            ListTile(
-              dense: true,
-              title: Text(pa.fullName),
-              subtitle: pa.dutyState == DutyState.self ? Text(l10n.attendanceSelfSignedUp) : null,
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  DutyPill(
-                    text: pa.dutyState == DutyState.requested ? l10n.attendanceRequested : l10n.attendanceConfirmed,
-                    color: pa.dutyState == DutyState.requested ? AppColors.warningDark : AppColors.successDark,
-                  ),
-                  if (canManage)
-                    IconButton(
-                      icon: Icon(AppIcons.cancelOutlined, color: AppColors.mediumOf(context)),
-                      tooltip: l10n.attendanceUnassign,
-                      onPressed: () => _unassign(pa),
-                    ),
-                ],
-              ),
-            ),
-            if (pa.dutyState == DutyState.requested && myPersonId != null && pa.personId == myPersonId)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text('${l10n.signoutYouAreAssigned} · ${l10n.signoutPleaseConfirm}',
-                          style: TextStyle(color: AppColors.mediumOf(context), fontSize: 13)),
-                    ),
-                    // Ionic: `size="small" fill="outline" color="medium"`
-                    // and `size="small" color="success"`.
-                    if (context.rdSkin == null) ...[
-                      IonButton(
-                        label: l10n.signoutCannot,
-                        fill: IonButtonFill.outline,
-                        color: AppColors.mediumOf(context),
-                        small: true,
-                        onPressed: () => declineDutyAction(context, ref, pa.id!, _attendanceId),
-                      ),
-                      const SizedBox(width: 8),
-                      IonButton(
-                        label: l10n.commonConfirm,
-                        color: AppColors.success,
-                        small: true,
-                        onPressed: () => confirmDutyAction(context, ref, pa.id!, _attendanceId),
-                      ),
-                    ] else ...[
-                    OutlinedButton(
-                      onPressed: () => declineDutyAction(context, ref, pa.id!, _attendanceId),
-                      child: IonButtonLabel(l10n.signoutCannot),
-                    ),
-                    const SizedBox(width: 8),
-                    FilledButton(
-                      style: FilledButton.styleFrom(backgroundColor: AppColors.success),
-                      onPressed: () => confirmDutyAction(context, ref, pa.id!, _attendanceId),
-                      child: IonButtonLabel(l10n.commonConfirm),
-                    ),
-                    ],
-                  ],
-                ),
-              ),
-          ],
-          if (canManage)
-            ListTile(
-              leading: Icon(AppIcons.personAddAltOutlined, color: AppColors.primary),
-              title: Text(l10n.attendanceAssignPerson, style: const TextStyle(color: AppColors.primary)),
-              onTap: _busy ? null : () => _openAssign(players, occupants.length),
-            ),
-          if (canManage && presentUnassigned.isNotEmpty) ...[
-            _divider(l10n.attendancePresentNotAssigned),
-            for (final pa in presentUnassigned)
-              ListTile(
-                dense: true,
-                title: Text(pa.fullName),
-                trailing: OutlinedButton(
-                  onPressed: _busy ? null : () => _assign([pa.id!], players),
-                  child: IonButtonLabel(l10n.attendanceAssign),
-                ),
-              ),
-          ],
-          if (canManage && available.isNotEmpty) ...[
-            _divider(l10n.attendanceAvailable),
-            for (final pa in available)
-              ListTile(
-                dense: true,
-                title: Text(pa.fullName),
-                trailing: OutlinedButton(
-                  onPressed: _busy ? null : () => _assign([pa.id!], players),
-                  child: IonButtonLabel(l10n.attendanceAssign),
-                ),
-              ),
-          ],
-          if (unavailable.isNotEmpty) ...[
-            _divider(l10n.signoutCannot),
-            for (final pa in unavailable)
-              ListTile(
-                dense: true,
-                title: Text(pa.fullName),
-                subtitle: switch (dutyStaffingNote(pa.notes,
-                    canViewNotes: canViewNotes, noteAddedLabel: l10n.attendanceNoteAdded)) {
-                  final note? => Text(note),
-                  null => null,
-                },
-                trailing: DutyPill(
-                  text: (pa.dutyState ?? '').isNotEmpty ? l10n.attendanceDeclined : l10n.attendanceSignedOut,
-                  color: AppColors.mediumOf(context),
-                ),
-              ),
-          ],
-        ],
-      ),
+    return _buildBeta(
+      players: players,
+      occupants: occupants,
+      available: available,
+      presentUnassigned: presentUnassigned,
+      unavailable: unavailable,
+      canManage: canManage,
+      canViewNotes: canViewNotes,
+      myPersonId: myPersonId,
     );
   }
-
-  Widget _divider(String label) => Container(
-        color: AppColors.mediumOf(context).withAlpha(20),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-        child: Text(label, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
-      );
 
   Future<void> _changeRequired(int delta) async {
     final next = (_required + delta) < 1 ? 1 : _required + delta;

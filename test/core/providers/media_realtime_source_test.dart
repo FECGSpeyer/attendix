@@ -5,8 +5,10 @@ import 'package:flutter_test/flutter_test.dart';
 /// MEDIA_REALTIME: source-analysis checks for realtime wiring and haptics.
 void main() {
   final realtime = File('lib/core/providers/realtime_providers.dart').readAsStringSync();
-  final settings =
-      File('lib/features/settings/presentation/pages/settings_page.dart').readAsStringSync();
+  final members =
+      File('lib/features/redesign/presentation/pages/rd_members_page.dart').readAsStringSync();
+  final pending =
+      File('lib/features/redesign/presentation/pages/rd_pending_page.dart').readAsStringSync();
 
   group('Multi-Tenant Security: realtime providers', () {
     test('every postgres channel filters by tenantId', () {
@@ -29,24 +31,21 @@ void main() {
     });
   });
 
-  test('settings pending card uses the realtime provider (Ionic pending-player-changes)', () {
-    expect(settings, contains('ref.watch(realtimePendingPlayersProvider)'));
-    expect(settings, isNot(contains('ref.watch(pendingPlayersProvider)')));
+  test('members and pending pages use the realtime provider (Ionic pending-player-changes)', () {
+    expect(members, contains('ref.watch(realtimePendingPlayersProvider)'));
+    expect(members, isNot(contains('ref.watch(pendingPlayersProvider)')));
+    expect(pending, contains('ref.watch(realtimePendingPlayersProvider)'));
+    expect(pending, isNot(contains('ref.watch(pendingPlayersProvider)')));
   });
 
-  test('haptics on people remove/pause and history delete (Ionic Haptics.impact)', () {
-    final people =
-        File('lib/features/people/presentation/pages/people_list_page.dart').readAsStringSync();
-    final history =
-        File('lib/features/history/presentation/pages/history_page.dart').readAsStringSync();
-    expect(
-      RegExp(r'_removePlayer\(Person person\) async \{\s*HapticHelper\.medium\(\)').hasMatch(people),
-      isTrue,
-    );
-    expect(
-      RegExp(r'_showPauseDialog\(Person person\) async \{\s*HapticHelper\.light\(\)').hasMatch(people),
-      isTrue,
-    );
-    expect(history, contains('HapticHelper.medium()'));
+  test('haptics on destructive confirmations and attendance recording', () {
+    final dialog = File('lib/core/utils/dialog_helper.dart').readAsStringSync();
+    final event =
+        File('lib/features/redesign/presentation/pages/rd_event_page.dart').readAsStringSync();
+    final eventEdit =
+        File('lib/features/redesign/presentation/pages/rd_event_edit_page.dart').readAsStringSync();
+    expect(dialog, contains('if (isDestructive) HapticHelper.medium();'));
+    expect(event, contains('HapticHelper.light();'));
+    expect(eventEdit, contains('HapticHelper.medium();'));
   });
 }

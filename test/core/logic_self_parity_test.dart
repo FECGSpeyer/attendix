@@ -193,10 +193,10 @@ void main() {
       expect(body, contains('DutyNotifyType.understaffed'));
     });
 
-    test('viewer cannot distribute duties or open the Termin detail', () {
-      final src = read('lib/features/attendance/presentation/pages/attendance_list_page.dart');
-      expect(src, contains('(role.isAdmin || role.isResponsible) && ref.watch(hasDutyTypesProvider)'));
-      expect(src, contains('if (!ref.read(effectiveRoleProvider).canAddAttendance) return;'));
+    test('viewer cannot open the Termin detail', () {
+      final src = read('lib/features/redesign/presentation/pages/rd_events_page.dart');
+      expect(src, contains('final canOpen = role.canAddAttendance;'));
+      expect(src, contains('onTap: a.id != null && canOpen'));
     });
 
     test('attendance list has no 50-row limit and loads since season start', () {
@@ -205,9 +205,12 @@ void main() {
       expect(src, contains("attendanceListStartDate(tenant.seasonStart)"));
     });
 
-    test('parents portal consumes the pending attendance id', () {
-      final src = read('lib/features/parents/presentation/pages/parents_portal_page.dart');
-      expect(src, contains('pendingAttendanceIdProvider'));
+    test('parents view consumes the pending attendance id', () {
+      final src = read('lib/features/redesign/presentation/pages/rd_events_page.dart');
+      final start = src.indexOf('void _openParentPending()');
+      expect(start, isNot(-1));
+      final body = src.substring(start, start + 600);
+      expect(body, contains('pendingAttendanceIdProvider'));
     });
   });
 }

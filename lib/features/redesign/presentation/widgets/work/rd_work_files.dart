@@ -27,7 +27,7 @@ import '../../../../../shared/widgets/adaptive/app_dialog.dart';
 import '../../../../../shared/widgets/adaptive/app_select.dart';
 import '../../../../songs/presentation/utils/song_utils.dart';
 import '../../../../songs/presentation/widgets/file_drop/file_drop_target.dart';
-import '../../../../songs/presentation/widgets/file_upload_sheet.dart' show learnableTerm;
+import '../../../../songs/data/file_category_guess.dart' show learnableTerm;
 import '../../../../songs/presentation/widgets/song_file_opener.dart';
 import '../../../data/import/rd_import_ai.dart' show rdImportAiProvider;
 import '../../../data/import/rd_import_logic.dart' show RdImportCategory, RdImportPlan, RdImportQuestion;

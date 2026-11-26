@@ -1,7 +1,3 @@
-// Beta-Skin: the old (Ionic) building blocks draw the new design while the
-// Beta theme is active and keep the Ionic look without it.
-import 'package:attendix/core/theme/app_icons.dart';
-import 'package:attendix/core/theme/app_theme.dart';
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/l10n/l10n.dart';
@@ -13,11 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-ThemeData _beta() => buildRdTheme(RdFarbwelt.nachtblau, Brightness.light).copyWith(platform: TargetPlatform.iOS);
-ThemeData _ionic() => AppTheme.forPlatform(Brightness.light, TargetPlatform.iOS, web: false);
+ThemeData _theme() => buildRdTheme(RdFarbwelt.nachtblau, Brightness.light).copyWith(platform: TargetPlatform.iOS);
 
-Widget _app(ThemeData theme, Widget home) => MaterialApp(
-      theme: theme,
+Widget _app(Widget home) => MaterialApp(
+      theme: _theme(),
       locale: const Locale('de'),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
@@ -33,25 +28,19 @@ Widget _dialog() => AppAlertDialog(
     );
 
 void main() {
-  // ICONS: the Beta keeps the Material icons.
-  setUpAll(() => AppIcons.ionic = false);
-  tearDownAll(() => AppIcons.ionic = true);
-
-  test('rdSkin is set only by the Beta theme', () {
-    expect(_beta().extension<RdTokens>(), isNotNull);
-    expect(_ionic().extension<RdTokens>(), isNull);
+  test('buildRdTheme attaches RdTokens', () {
+    expect(_theme().extension<RdTokens>(), isNotNull);
   });
 
-  testWidgets('list header: uppercase group label in the Beta', (tester) async {
-    await tester.pumpWidget(_app(_beta(), const Scaffold(body: IonListHeader('Allgemein'))));
+  testWidgets('list header renders uppercase group label', (tester) async {
+    await tester.pumpWidget(_app(const Scaffold(body: IonListHeader('Allgemein'))));
     expect(find.text('ALLGEMEIN'), findsOneWidget);
-    await tester.pumpWidget(_app(_ionic(), const Scaffold(body: IonListHeader('Allgemein'))));
-    await tester.pump(const Duration(seconds: 1)); // theme animation
-    expect(find.text('Allgemein'), findsOneWidget);
-  }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
+  });
 
-  testWidgets('inset list: Farbwelt surface and list radius in the Beta', (tester) async {
-    await tester.pumpWidget(_app(_beta(), Scaffold(body: IonInsetList(children: [IonItem(title: const Text('A'), onTap: () {}, detail: true)]))));
+  testWidgets('inset list uses Farbwelt surface and list radius', (tester) async {
+    await tester.pumpWidget(
+      _app(Scaffold(body: IonInsetList(children: [IonItem(title: const Text('A'), onTap: () {}, detail: true)]))),
+    );
     final p = rdPalette(RdFarbwelt.nachtblau, Brightness.light);
     final box = tester.widget<Container>(find.descendant(of: find.byType(IonInsetList), matching: find.byType(Container)).first);
     final deco = box.decoration! as BoxDecoration;
@@ -60,19 +49,15 @@ void main() {
     expect(find.byIcon(Icons.chevron_right), findsOneWidget);
   });
 
-  testWidgets('alert: new-design buttons in the Beta, iOS pills without', (tester) async {
-    await tester.pumpWidget(_app(_beta(), Scaffold(body: _dialog())));
+  testWidgets('alert uses filled primary and outlined cancel buttons', (tester) async {
+    await tester.pumpWidget(_app(Scaffold(body: _dialog())));
     expect(find.byType(FilledButton), findsOneWidget);
     expect(find.byType(OutlinedButton), findsOneWidget);
-    expect(find.byType(IosAlertButton), findsNothing);
-    await tester.pumpWidget(_app(_ionic(), Scaffold(body: _dialog())));
-    await tester.pump(const Duration(seconds: 1)); // theme animation
-    expect(find.byType(IosAlertButton), findsNWidgets(2));
-  }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
+  });
 
-  testWidgets('action sheet: grouped rows and outlined cancel in the Beta', (tester) async {
+  testWidgets('action sheet renders grouped rows and outlined cancel', (tester) async {
     late BuildContext ctx;
-    await tester.pumpWidget(_app(_beta(), Builder(builder: (c) {
+    await tester.pumpWidget(_app(Builder(builder: (c) {
       ctx = c;
       return const Scaffold();
     })));
@@ -84,12 +69,11 @@ void main() {
     }
     expect(find.text('Löschen'), findsOneWidget);
     expect(find.widgetWithText(OutlinedButton, 'Abbrechen'), findsOneWidget);
-    expect(find.byType(IosAlertButton), findsNothing);
   });
 
-  testWidgets('segments stay keyboard-focusable in the Beta', (tester) async {
+  testWidgets('segments stay keyboard-focusable', (tester) async {
     var picked = 0;
-    await tester.pumpWidget(_app(_beta(), Scaffold(
+    await tester.pumpWidget(_app(Scaffold(
       body: AppSegmentedButton<int>(
         segments: const [ButtonSegment(value: 0, label: Text('PDF')), ButtonSegment(value: 1, label: Text('Excel'))],
         selected: const {0},
@@ -100,7 +84,6 @@ void main() {
     await tester.tap(find.text('Excel'));
     expect(picked, 1);
 
-    // Tab moves focus to a segment, Enter selects it.
     picked = -1;
     await tester.sendKeyEvent(LogicalKeyboardKey.tab);
     await tester.pump();
@@ -109,8 +92,8 @@ void main() {
     expect(picked, isNot(-1));
   });
 
-  testWidgets('locked switches look locked in the Beta', (tester) async {
-    final theme = _beta();
+  testWidgets('locked switches look locked', (tester) async {
+    final theme = _theme();
     final track = theme.switchTheme.trackColor!;
     expect(track.resolve({WidgetState.selected, WidgetState.disabled})!.a, lessThan(track.resolve({WidgetState.selected})!.a));
   });

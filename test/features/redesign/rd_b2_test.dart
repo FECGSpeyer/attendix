@@ -2,16 +2,15 @@
 // wählen in the Beta design. The old views keep their logic.
 import 'package:attendix/core/providers/attendance_type_providers.dart';
 import 'package:attendix/core/providers/duty_providers.dart';
-import 'package:attendix/core/providers/redesign_providers.dart';
 import 'package:attendix/core/providers/tenant_providers.dart';
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/data/models/church/church.dart';
 import 'package:attendix/data/models/duty/person_unavailability.dart';
 import 'package:attendix/data/models/person/person.dart';
-import 'package:attendix/features/people/presentation/widgets/church_picker_sheet.dart';
-import 'package:attendix/features/people/presentation/widgets/person_detail/person_detail.dart'
+import 'package:attendix/features/people/person_history_helpers.dart'
     show filterHistoryBySeason, historyWithoutEntry;
+import 'package:attendix/features/people/presentation/widgets/church_picker_sheet.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_unavailability_page.dart';
 import 'package:attendix/features/redesign/presentation/widgets/event/rd_absence_sheet.dart';
 import 'package:attendix/l10n/l10n.dart';
@@ -77,7 +76,7 @@ void main() {
     const churches = [Church(id: 'a', name: 'FECG Speyer'), Church(id: 'b', name: 'Gemeinde Lahr')];
     await tester.pumpWidget(
       _app(
-        [redesignEnabledProvider.overrideWithValue(true)],
+        const [],
         Builder(
           builder:
               (context) => TextButton(

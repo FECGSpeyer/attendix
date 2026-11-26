@@ -95,18 +95,6 @@ void main() {
       expect(isUnassignedDutyAttendance(openDuty), isTrue);
       expect(isUnassignedDutyAttendance(rehearsal), isFalse);
     });
-
-    test('signout page uses the filtered view and keeps "Vergangene" outside the toggle', () {
-      final src = File('lib/features/self_service/presentation/pages/signout_page.dart').readAsStringSync();
-      expect(src, contains('applySignoutDutyView(raw, useDutyView: useDutyView)'));
-      expect(src, contains('otherTermineCount: data.allUpcoming.length'));
-      expect(src, contains('otherTermineNames: otherTermineNames(data)'));
-      final toggle = src.indexOf('if (!useDutyView || _showOtherTermine) ...[');
-      final past = src.indexOf('..._buildPast(data, actions)');
-      final toggleEnd = src.indexOf('],', src.indexOf('..._buildUpcoming(data, actions)'));
-      expect(toggle, greaterThan(0));
-      expect(past, greaterThan(toggleEnd));
-    });
   });
 
   group('Datum ändern (Ionic promptAttendanceDateChange)', () {
@@ -128,8 +116,8 @@ void main() {
       expect(src, isNot(contains("context.push('/attendance/\${current.id}')")));
     });
 
-    test('attendance detail reuses the shared date change', () {
-      final src = File('lib/features/attendance/presentation/pages/attendance_detail_page.dart').readAsStringSync();
+    test('event edit reuses the shared date change', () {
+      final src = File('lib/features/redesign/presentation/pages/rd_event_edit_page.dart').readAsStringSync();
       expect(src, contains('promptAttendanceDateChange('));
       expect(src, isNot(contains('int calendarDayDifference(')));
     });

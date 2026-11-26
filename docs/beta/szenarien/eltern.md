@@ -8,9 +8,6 @@ Kinder und sieht deren Termine und Anwesenheit.
 **Reiter:** Heute, Termine, Ich. „Mitglieder“ und „Werke“ gibt es für Eltern
 nicht.
 
-Der Reiter „Termine“ zeigt für Eltern die Elternseite. Sie sieht noch aus wie
-im klassischen Design, die Reiter und „Heute“ sind im neuen Design.
-
 | Bereich | Szenarien |
 |---------|-----------|
 | [Kinder an- und abmelden](#kinder-an--und-abmelden) | E-01 bis E-05 |

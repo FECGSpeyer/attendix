@@ -29,11 +29,12 @@ import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart' show AppActionSheetAction, showAppActionSheet;
 import '../../../../shared/widgets/event_list/excuse_reason_sheet.dart' show registrationAnswerText;
-import '../../../attendance/presentation/person_attendance_writes.dart';
-import '../../../attendance/presentation/widgets/attendance_detail/attendance_grid.dart'
+import '../../../attendance/presentation/attendance_group_sort.dart'
     show mainGroupIdOf, sortPersonsByGroup;
-import '../../../attendance/presentation/widgets/attendance_detail/status_chip.dart'
+import '../../../attendance/presentation/attendance_permissions.dart' show canMutateAttendanceDetail;
+import '../../../attendance/presentation/attendance_status_labels.dart'
     show ionicStatusLabel;
+import '../../../attendance/presentation/person_attendance_writes.dart';
 import '../../data/providers/rd_events_providers.dart' show rdUpcomingCountsProvider;
 import '../../data/providers/rd_today_providers.dart';
 import '../../data/rd_event_logic.dart';
@@ -47,7 +48,6 @@ import '../../../../core/services/export_service.dart';
 import '../../../attendance/presentation/attendance_add_persons.dart';
 import '../../../attendance/presentation/attendance_extra_actions.dart';
 import '../../../../core/providers/profile_providers.dart';
-import '../../../attendance/presentation/pages/attendance_detail_page.dart' show canMutateAttendanceDetail;
 import '../../../duty/presentation/widgets/duty_staffing_section.dart';
 import '../../../team_organization/presentation/widgets/attendance_protocol_section.dart';
 import '../widgets/event/rd_event_answers.dart';

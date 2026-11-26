@@ -24,14 +24,6 @@ void main() {
     await see($, 'Hallo Mia');
   });
 
-  patrolTest('N-02 Mich anmelden (klassisch)', tags: ['pr', 'mobil'], (
-    $,
-  ) async {
-    await startApp($, beta: false);
-    await signInAs($, 'mitglied');
-    await see($, RegExp('Shalom Mia'));
-  });
-
   patrolTest('N-02 Falsches Passwort wird abgelehnt', tags: ['mobil'], (
     $,
   ) async {
@@ -39,16 +31,6 @@ void main() {
     await signIn($, email: 'admin@attendix.test', password: 'falsch-falsch');
     await _expectRefusal($);
   });
-
-  patrolTest(
-    'N-02 Falsches Passwort wird abgelehnt (klassisch)',
-    tags: ['mobil'],
-    ($) async {
-      await startApp($, beta: false);
-      await signIn($, email: 'admin@attendix.test', password: 'falsch-falsch');
-      await _expectRefusal($);
-    },
-  );
 
   patrolTest('N-05 Angemeldet, aber noch in keiner Gruppe', ($) async {
     await startApp($);

@@ -7,7 +7,7 @@ import 'package:attendix/data/models/storage/storage_entry.dart';
 import 'package:attendix/data/models/tenant/tenant.dart';
 import 'package:attendix/data/repositories/extra_fields_repository.dart';
 import 'package:attendix/data/repositories/files_repository.dart';
-import 'package:attendix/features/settings/presentation/pages/extra_fields_page.dart';
+import 'package:attendix/features/settings/data/extra_fields_helpers.dart';
 import 'package:attendix/features/settings/presentation/pages/files_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:attendix/core/providers/debug_providers.dart' show effectiveRoleProvider;
@@ -182,11 +182,6 @@ void main() {
       expect(extraFieldDefaultValue('boolean'), isTrue);
       expect(extraFieldDefaultValue('number'), 0);
       expect(extraFieldDefaultValue('text', defaultValue: 'x'), 'x');
-    });
-
-    test('Validierung', () {
-      expect(validateExtraFields(const [ExtraField(id: 'a', name: 'A', type: 'select', options: [])]), isNotNull);
-      expect(validateExtraFields(const [ExtraField(id: 'a', name: 'A', type: 'text')]), isNull);
     });
 
     test('JSON behält visibleToPlayers/displayMode', () {

@@ -83,7 +83,7 @@ void main() {
 
   group('Source wiring', () {
     final service = File('lib/core/services/export_service.dart').readAsStringSync();
-    final page = File('lib/features/export/presentation/pages/export_page.dart').readAsStringSync();
+    final page = File('lib/features/export/presentation/export_logic.dart').readAsStringSync();
 
     test('both list PDFs go through the shared branding header', () {
       expect(service, contains("import 'pdf_branding.dart';"));

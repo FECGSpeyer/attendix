@@ -18,7 +18,7 @@ import 'package:attendix/features/redesign/data/rd_roles_logic.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_role_permissions_page.dart';
 import 'package:attendix/features/redesign/presentation/widgets/manage/rd_manage_entries.dart';
 import 'package:attendix/features/redesign/presentation/widgets/rd_widgets.dart';
-import 'package:attendix/features/settings/presentation/pages/user_management_page.dart';
+import 'package:attendix/core/providers/admin_providers.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

@@ -1,4 +1,3 @@
-import 'package:attendix/core/theme/app_icons.dart';
 import 'dart:io';
 
 import 'package:attendix/core/constants/enums.dart';
@@ -14,6 +13,7 @@ import 'package:attendix/core/utils/plan_utils.dart';
 import 'package:attendix/data/models/plan/plan.dart';
 import 'package:attendix/data/repositories/plan_repository.dart';
 import 'package:attendix/features/planning/presentation/pages/planning_page.dart';
+import 'package:attendix/features/redesign/presentation/widgets/rd_widgets.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -117,6 +117,7 @@ void main() {
           planAttendanceTypesProvider.overrideWith((ref) async => const []),
           planBlockTemplatesProvider.overrideWith((ref) async => const []),
           planSongsProvider.overrideWith((ref) async => const []),
+          songCollectionsProvider.overrideWith((ref) async => null),
           currentSongsProvider.overrideWith((ref) async => const []),
           groupsProvider.overrideWith((ref) async => const []),
           groupCategoriesProvider.overrideWith((ref) async => const []),
@@ -160,7 +161,7 @@ void main() {
     }
 
     Future<void> close(WidgetTester tester) async {
-      await tester.tap(find.byIcon(AppIcons.close));
+      await tester.tap(find.byType(RdBackLink));
       await tester.pumpAndSettle();
     }
 

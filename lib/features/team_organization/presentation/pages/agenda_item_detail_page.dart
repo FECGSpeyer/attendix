@@ -8,7 +8,6 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/providers/plan_providers.dart';
 import '../../../../core/providers/player_providers.dart';
-import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
@@ -23,7 +22,6 @@ import '../widgets/tasks_tab.dart' show TeamOrgBadge, priorityColor, outcomeColo
 import '../widgets/quick_create_attendance.dart';
 import '../utils/route_return_reload.dart';
 import '../../../../core/services/error_reporter.dart';
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// How many upcoming Termine "Einplanen" offers.
@@ -312,30 +310,19 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage>
     final item = _loadFailed ? null : itemAsync.valueOrNull;
     if (item != null && isLeader && _fresh) _fill(item);
     final l10n = context.l10n;
-    // Beta: "Speichern" sits in the bar like in the other forms, no FAB.
-    final beta = ref.watch(redesignEnabledProvider);
     final canSave = isLeader && (item != null || _isNew);
 
     return Scaffold(
       appBar: AppBar(
         title: Text(_isNew ? l10n.agendaNewTopic : l10n.agendaTopic),
         actions: [
-          if (!_isNew && item != null && isLeader && !beta)
-            // DAS-02: Ionic `ion-buttons slot="end"` (iOS glass capsule).
-            ToolbarButtonGroup(children: [
-              IconButton(
-                tooltip: l10n.agendaDeleteTopic,
-                icon: Icon(AppIcons.deleteOutline, color: AppColors.danger),
-                onPressed: _delete,
-              ),
-            ])
-          else if (!_isNew && item != null && isLeader)
+          if (!_isNew && item != null && isLeader)
             IconButton(
               tooltip: l10n.agendaDeleteTopic,
               icon: Icon(AppIcons.deleteOutline, color: AppColors.danger),
               onPressed: _delete,
             ),
-          if (beta && canSave)
+          if (canSave)
             TextButton(
               key: const ValueKey('rd-topic-save'),
               onPressed: _saving ? null : _save,
@@ -343,13 +330,6 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage>
             ),
         ],
       ),
-      floatingActionButton: TabBarFab.wrap(!beta && canSave
-          ? FloatingActionButton(
-              tooltip: l10n.commonSave,
-              onPressed: _saving ? null : _save,
-              child: Icon(AppIcons.saveOutlined),
-            )
-          : null),
       // P10_SONGS_ORG: keep the form while the item reloads after a save.
       body: !_fresh || (itemAsync.isLoading && !itemAsync.hasValue)
           ? const Center(child: AppSpinner())
@@ -369,10 +349,7 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage>
                   ),
                 )
               : ListView(
-                  padding: EdgeInsets.only(
-                      bottom: isLeader && !beta
-                          ? scrollEndPadding(context, base: 16, fabRoom: 80)
-                          : scrollEndPadding(context, base: 32)),
+                  padding: const EdgeInsets.only(bottom: 32),
                   children: [
                     if (isLeader) ..._leaderForm() else ..._readOnly(item!),
                     if (item != null && item.proposer.fullName.isNotEmpty)
@@ -412,13 +389,8 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage>
       ..sort((a, b) => a.fullName.toLowerCase().compareTo(b.fullName.toLowerCase()));
     final responsibleValid = _responsibleId == null || persons.any((p) => p.id == _responsibleId);
     final l10n = context.l10n;
-    // Beta: only what a topic needs. A new topic is open anyway, the
-    // priority is not used there, and the duration is picked like the rest.
-    final beta = ref.watch(redesignEnabledProvider);
     final minutes = num.tryParse(_duration.text.trim())?.round() ?? 0;
     final durations = {5, 10, 15, 20, 30, 45, 60, if (minutes > 0) minutes}.toList()..sort();
-    // Ionic: inset list (stacked title + description), then an inset list
-    // with popover selects and the inline duration input.
     return [
       IonInsetList(
         children: [
@@ -434,7 +406,7 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage>
       ),
       IonInsetList(
         children: [
-          if (!beta || !_isNew)
+          if (!_isNew)
           IonSelect<String>(
             label: l10n.agendaStatus,
             value: _status,
@@ -442,15 +414,6 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage>
                 .map((s) => DropdownMenuItem(value: s, child: Text(topicStatusLabels[s]!)))
                 .toList(),
             onChanged: (v) => setState(() => _status = v ?? 'open'),
-          ),
-          if (!beta)
-          IonSelect<String>(
-            label: l10n.agendaPriority,
-            value: _priority,
-            items: const ['high', 'medium', 'low']
-                .map((p) => DropdownMenuItem(value: p, child: Text(priorityLabels[p]!)))
-                .toList(),
-            onChanged: (v) => setState(() => _priority = v ?? 'medium'),
           ),
           IonSelect<int?>(
             label: l10n.agendaResponsible,
@@ -463,23 +426,15 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage>
             ],
             onChanged: (v) => setState(() => _responsibleId = v),
           ),
-          if (beta)
-            IonSelect<int?>(
-              key: const ValueKey('rd-topic-duration'),
-              label: l10n.agendaDurationPerSession,
-              value: minutes > 0 ? minutes : null,
-              items: [
-                DropdownMenuItem<int?>(value: null, child: Text(l10n.agendaDefault)),
-                for (final m in durations) DropdownMenuItem<int?>(value: m, child: Text(l10n.teamOrgMinutes(m))),
-              ],
-              onChanged: (v) => setState(() => _duration.text = v?.toString() ?? ''),
-            )
-          else
-          IonInlineInput(
-            controller: _duration,
+          IonSelect<int?>(
+            key: const ValueKey('rd-topic-duration'),
             label: l10n.agendaDurationPerSession,
-            hint: l10n.agendaDefault,
-            keyboardType: TextInputType.number,
+            value: minutes > 0 ? minutes : null,
+            items: [
+              DropdownMenuItem<int?>(value: null, child: Text(l10n.agendaDefault)),
+              for (final m in durations) DropdownMenuItem<int?>(value: m, child: Text(l10n.teamOrgMinutes(m))),
+            ],
+            onChanged: (v) => setState(() => _duration.text = v?.toString() ?? ''),
           ),
         ],
       ),

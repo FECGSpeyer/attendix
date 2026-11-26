@@ -36,10 +36,9 @@ void main() {
     });
 
     test('detail page no longer uses the unknown attendance-images bucket', () {
-      // Shared with the Beta Termin (attendance_extra_actions.dart).
-      final page = read('lib/features/attendance/presentation/pages/attendance_detail_page.dart');
+      final page = read('lib/features/redesign/presentation/pages/rd_event_page.dart');
       final shared = read('lib/features/attendance/presentation/attendance_extra_actions.dart');
-      expect(page, contains('addAttendancePhoto(context, ref, widget.attendanceId)'));
+      expect(page, isNot(contains('attendance-images')));
       expect(shared, isNot(contains('attendance-images')));
       expect(shared, contains('repo.uploadAttendanceImage(attendanceId, bytes)'));
     });
@@ -47,23 +46,25 @@ void main() {
 
   group('M2 group change keeps future person_attendances', () {
     test('person detail disables the group branch of the sync', () {
-      final page = read('lib/features/people/presentation/pages/person_detail_page.dart');
+      final page = read('lib/features/redesign/presentation/pages/rd_person_edit_page.dart');
       final call = body(page, 'syncPlayerWithUpcomingAttendances(', 400);
-      expect(call, contains('oldInstrument: _selectedGroupId'));
+      expect(call, contains('oldInstrument: (_person ?? person).instrument'));
     });
   });
 
   group('M3 critical rules have no enabled switch (Ionic / edge function)', () {
-    test('sheet always saves enabled rules, no switch', () {
-      final sheet = read('lib/features/settings/presentation/widgets/critical_rule_sheet.dart');
-      expect(sheet, isNot(contains('SwitchListTile')));
-      expect(sheet, contains('enabled: true'));
+    test('rule editor always saves enabled rules, no switch', () {
+      final page = read('lib/features/redesign/presentation/pages/rd_critical_rule_page.dart');
+      expect(page, isNot(contains('SwitchListTile')));
+      expect(page, contains('enabled: true'));
     });
 
     test('enabled flag is ignored when reading rules', () {
-      expect(read('lib/features/people/presentation/pages/person_detail_page.dart'),
+      expect(read('lib/features/redesign/presentation/pages/rd_person_edit_page.dart'),
           isNot(contains('rule.enabled')));
-      expect(read('lib/features/settings/presentation/widgets/critical_rule_card.dart'),
+      expect(read('lib/features/redesign/presentation/pages/rd_critical_members_page.dart'),
+          isNot(contains('rule.enabled')));
+      expect(read('lib/features/redesign/data/providers/rd_critical_providers.dart'),
           isNot(contains('rule.enabled')));
     });
   });
@@ -299,7 +300,7 @@ void main() {
   });
 
   test('F3 admins lift expired pauses when opening the people list', () {
-    final page = read('lib/features/people/presentation/pages/people_list_page.dart');
+    final page = read('lib/features/redesign/presentation/pages/rd_members_page.dart');
     final check = body(page, 'Future<void> _checkAndUnpause()', 500);
     expect(check, contains('role.isAdmin || role.isResponsible'));
     expect(check, contains('checkAndUnpausePlayers()'));
@@ -307,15 +308,15 @@ void main() {
 
   test('F4 account deletion without an instance', () {
     final page = read('lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart');
-    // UX_AUTH: like Ionic, a user without an instance lands on the
-    // (non-dismissable) register page whose account menu offers the deletion.
-    expect(page, contains('TenantCreatePage(canDismiss: false)'));
+    expect(page, contains('const RdNoGroupPage()'));
+    final noGroup = read('lib/features/redesign/presentation/pages/rd_no_group_page.dart');
+    expect(noGroup, contains('redesignTenantsDeleteAccount'));
+    expect(noGroup, contains('confirmDeleteAccountWithoutGroup(context, ref)'));
+    expect(noGroup, isNot(contains("context.push('/register')")));
+    expect(noGroup, contains("context.push('/tenants/new')"));
     final create = read('lib/features/tenant_selection/presentation/pages/tenant_create_page.dart');
-    expect(create, contains('registerDeleteAccount'));
+    expect(create, contains('registerDeleteConfirm'));
     expect(create, contains('accountNotifierProvider.notifier).deleteAccount()'));
-    // "Neue Instanz" opens the tenant creation, not the (redirected) sign-up.
-    expect(page, isNot(contains("context.push('/register')")));
-    expect(page, contains("context.push('/tenants/new')"));
   });
 
   test('F6 web update check like Ionic (start, visibility, hourly)', () {
@@ -325,10 +326,11 @@ void main() {
     expect(html, contains('60 * 60 * 1000'));
   });
 
-  test('F7 parents portal note label is localized', () {
-    final page = read('lib/features/parents/presentation/pages/parents_portal_page.dart');
-    expect(page, isNot(contains("'Notiz: ")));
-    expect(page, contains('signoutNoteChip('));
+  test('F7 parents views have no hardcoded German note label', () {
+    expect(read('lib/features/redesign/presentation/widgets/event/rd_parent_event_card.dart'),
+        isNot(contains("'Notiz: ")));
+    expect(read('lib/features/redesign/presentation/widgets/today/rd_parent_today.dart'),
+        isNot(contains("'Notiz: ")));
   });
 
   group('NIEDRIG', () {

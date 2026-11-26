@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:attendix/core/providers/redesign_providers.dart';
-import 'package:attendix/core/router/redesign_routes.dart';
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_appearance_page.dart';
@@ -20,7 +19,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// and the iOS home screen icon that follows the Farbwelt.
 void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));
-  tearDown(() => RedesignRoutes.active = false);
 
   group('AttendixLogo', () {
     test('the traced outlines sit where the Ionic icon has them', () {
@@ -70,11 +68,10 @@ void main() {
   });
 
   group('home screen icon', () {
-    test('only in the new design, only when it follows the Farbwelt', () {
-      const on = RedesignSettings(enabled: true, world: RdFarbwelt.konzertsaal);
+    test('follows the Farbwelt when enabled', () {
+      const on = RedesignSettings(world: RdFarbwelt.konzertsaal);
       expect(on.appIconName, 'AppIconKonzertsaal');
       expect(on.copyWith(world: RdFarbwelt.petrol).appIconName, isNull);
-      expect(on.copyWith(enabled: false).appIconName, isNull);
       expect(on.copyWith(appIcon: false).appIconName, isNull);
     });
 
@@ -115,9 +112,7 @@ void main() {
       addTearDown(container.dispose);
       final notifier = container.read(redesignSettingsProvider.notifier);
 
-      await notifier.setWorld(RdFarbwelt.konzertsaal); // old design: default icon stays
-      expect(calls, isEmpty);
-      await notifier.setEnabled(true);
+      await notifier.setWorld(RdFarbwelt.konzertsaal);
       expect(calls, ['AppIconKonzertsaal']);
       await notifier.setMode(RdBrightnessMode.dark);
       expect(calls, hasLength(1));
@@ -127,9 +122,7 @@ void main() {
       await notifier.setWorld(RdFarbwelt.klar);
       expect(calls, hasLength(2));
       await notifier.setAppIcon(true);
-      expect(calls.last, 'AppIconKlar');
-      await notifier.setEnabled(false);
-      expect(calls, ['AppIconKonzertsaal', null, 'AppIconKlar', null]);
+      expect(calls, ['AppIconKonzertsaal', null, 'AppIconKlar']);
 
       expect((await loadInitialRedesignSettings()).appIcon, isTrue);
       await notifier.setAppIcon(false);
@@ -142,7 +135,6 @@ void main() {
       final notifier = container.read(redesignSettingsProvider.notifier);
       // No mock handler: a call would throw MissingPluginException (caught,
       // but the notifier must not even try).
-      await notifier.setEnabled(true);
       await notifier.setWorld(RdFarbwelt.nachtblau);
       expect(container.read(redesignSettingsProvider).appIconName, 'AppIconNachtblau');
     });
@@ -156,7 +148,7 @@ void main() {
     Widget app(bool showAppIcon) => ProviderScope(
           overrides: [
             initialRedesignSettingsProvider.overrideWithValue(
-              const RedesignSettings(enabled: true, world: RdFarbwelt.nachtblau),
+              const RedesignSettings(world: RdFarbwelt.nachtblau),
             ),
           ],
           child: Consumer(

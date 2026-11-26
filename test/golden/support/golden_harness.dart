@@ -6,8 +6,6 @@ import 'package:attendix/core/providers/connectivity_provider.dart';
 import 'package:attendix/core/providers/redesign_providers.dart';
 import 'package:attendix/core/services/account_switch/saved_account.dart';
 import 'package:attendix/core/services/teams/teams_service.dart';
-import 'package:attendix/core/theme/app_icons.dart';
-import 'package:attendix/core/theme/app_theme.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:attendix/shared/widgets/debug/debug_role_fab.dart';
@@ -21,23 +19,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'golden_backend.dart';
 
-/// The three looks of the app.
+/// Visual theme configuration for golden snapshots.
 enum GoldenLook {
-  /// Classic design as on an iPhone (Ionic iOS mode).
-  classicIos('ios'),
-
-  /// Classic design as on Android and in the browser (Ionic md mode).
-  classicMd('md'),
-
-  /// New design (Beta).
+  /// Standard app design.
   beta('beta');
 
   const GoldenLook(this.prefix);
 
-  /// First part of the image name: `ios_login.png`.
+  /// First part of the image name: `beta_heute.png`.
   final String prefix;
-
-  bool get isBeta => this == GoldenLook.beta;
 }
 
 const goldenPhone = Size(390, 844);
@@ -79,11 +69,7 @@ Future<void> pumpGolden(
   DebugRoleFab.hidden = true;
   addTearDown(() => DebugRoleFab.hidden = false);
 
-  final previousIcons = AppIcons.ionic;
-  AppIcons.ionic = !look.isBeta;
-  addTearDown(() => AppIcons.ionic = previousIcons);
-
-  final platform = look == GoldenLook.classicMd ? TargetPlatform.android : TargetPlatform.iOS;
+  const platform = TargetPlatform.iOS;
   final routes = [
     GoRoute(path: path, builder: (_, __) => page),
     // Links of the page lead nowhere.
@@ -107,20 +93,15 @@ Future<void> pumpGolden(
         isInTeamsProvider.overrideWithValue(false),
         // Online; the plugin behind it does not exist in a test.
         connectivityProvider.overrideWith((ref) => const Stream<bool>.empty()),
-        initialRedesignSettingsProvider.overrideWithValue(RedesignSettings(enabled: look.isBeta)),
+        initialRedesignSettingsProvider.overrideWithValue(const RedesignSettings()),
         // No further accounts on this device (the store needs the app config).
         savedAccountsProvider.overrideWith((ref) => Stream.value(const <SavedAccount>[])),
         ...overrides,
       ],
       child: Consumer(
         builder: (context, ref, _) {
-          final ThemeData theme;
-          if (look.isBeta) {
-            theme = buildRdTheme(ref.watch(redesignSettingsProvider).world, brightness)
-                .copyWith(platform: platform);
-          } else {
-            theme = AppTheme.forPlatform(brightness, platform);
-          }
+          final theme = buildRdTheme(ref.watch(redesignSettingsProvider).world, brightness)
+              .copyWith(platform: platform);
           return MaterialApp.router(
             debugShowCheckedModeBanner: false,
             locale: const Locale('de'),

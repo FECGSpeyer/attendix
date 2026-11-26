@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -20,8 +19,6 @@ import 'agenda_picker_sheet.dart';
 import 'quick_create_attendance.dart';
 import 'tasks_tab.dart' show TeamOrgBadge, TeamOrgListSkeleton, priorityColor;
 import '../../../../shared/widgets/adaptive/adaptive.dart';
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
-import '../../../../shared/widgets/dialogs/ion_sheet.dart' show showIonSheet, IonSheetScaffold;
 
 /// Tab "Themen": leadership reviews suggestions, plans the next Termin and
 /// keeps the Themenspeicher; members suggest topics and see their suggestions.
@@ -79,10 +76,8 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
         for (final att in upcoming.take(8))
           AppActionSheetAction(
             value: att.id,
-            // Ionic: the current Termin carries the text suffix " ✓".
-            icon: att.id == current?.id && context.rdSkin != null ? AppIcons.check : null,
-            label: _attendanceTitle(att, types) +
-                (att.id == current?.id && context.rdSkin == null ? ' ✓' : ''),
+            icon: att.id == current?.id ? AppIcons.check : null,
+            label: _attendanceTitle(att, types),
           ),
         if (current != null)
           AppActionSheetAction(
@@ -328,20 +323,6 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
           );
         });
 
-    if (context.rdSkin == null) {
-      await showIonSheet<void>(
-        context,
-        breakpoints: const [0, 1],
-        initialBreakpoint: 1,
-        builder: (ctx, controller) => IonSheetScaffold(
-          title: ctx.l10n.teamOrgSuggestions,
-          start: [IonCloseButton(onPressed: () => Navigator.of(ctx).pop())],
-          backgroundColor: Theme.of(ctx).scaffoldBackgroundColor,
-          body: list(ctx, controller),
-        ),
-      );
-      return;
-    }
     await showModalBottomSheet<void>(
       context: context,
       useRootNavigator: true, // IOS_SHELL2: above the tab bar
@@ -415,7 +396,7 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
             onRefresh: () => reloadTeamOrgTab(ref, 'topics'),
             child: ListView(
               physics: const AlwaysScrollableScrollPhysics(),
-              padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 16, fabRoom: 72)),
+              padding: EdgeInsets.only(bottom: 16 + 72 + MediaQuery.paddingOf(context).bottom),
               children: [
                 // Neue Vorschläge (Ionic `.proposal-banner`)
                 if (buckets.pending.isNotEmpty)
@@ -571,12 +552,12 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
     return Scaffold(
       // PARITY_R5: page colour of the team-org page shows through.
       backgroundColor: Colors.transparent,
-      floatingActionButton: TabBarFab.wrap(FloatingActionButton(
+      floatingActionButton: FloatingActionButton(
         heroTag: 'team-org-add-topic',
         tooltip: l10n.teamOrgCreateTopic,
         onPressed: () => context.push('/settings/agenda-items/new'),
         child: Icon(AppIcons.add),
-      )),
+      ),
       // Ionic reload(): after a failed load the content stays (none →
       // empty), a red toast reports it, pull-to-refresh keeps working.
       body: itemsAsync.when(
@@ -593,26 +574,14 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
 
 /// "Thema vorschlagen": the member's suggestion sheet.
 Future<void> showSuggestTopicSheet(BuildContext context) async {
-  final bool? result;
-  if (context.rdSkin == null) {
-    // Ionic: sheet modal `[breakpoints]="[0, 1]"` `[initialBreakpoint]="1"`,
-    // "Abbrechen" in `slot="start"`, `ion-content color="light"`.
-    result = await showIonSheet<bool>(
-      context,
-      breakpoints: const [0, 1],
-      initialBreakpoint: 1,
-      builder: (_, controller) => _SuggestSheet(scrollController: controller),
-    );
-  } else {
-    result = await showModalBottomSheet<bool>(
-      context: context,
-      useRootNavigator: true, // IOS_SHELL2: above the tab bar
-      isScrollControlled: true,
-      useSafeArea: true,
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      builder: (_) => const _SuggestSheet(),
-    );
-  }
+  final result = await showModalBottomSheet<bool>(
+    context: context,
+    useRootNavigator: true,
+    isScrollControlled: true,
+    useSafeArea: true,
+    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+    builder: (_) => const _SuggestSheet(),
+  );
   if (result == true && context.mounted) ToastHelper.showSuccess(context, context.l10n.teamOrgSuggestionSent);
 }
 
@@ -714,10 +683,7 @@ class _MemberTopics extends ConsumerWidget {
 }
 
 class _SuggestSheet extends ConsumerStatefulWidget {
-  const _SuggestSheet({this.scrollController});
-
-  /// Set in the classic design ([showIonSheet]).
-  final ScrollController? scrollController;
+  const _SuggestSheet();
 
   @override
   ConsumerState<_SuggestSheet> createState() => _SuggestSheetState();
@@ -788,26 +754,6 @@ class _SuggestSheetState extends ConsumerState<_SuggestSheet> {
       onPressed: _title.text.trim().isEmpty || _sending ? null : _send,
       child: IonButtonLabel(l10n.teamOrgSendSuggestion),
     );
-    if (widget.scrollController != null) {
-      // Classic: the block button sits in the content (`ion-padding-horizontal`).
-      return IonSheetScaffold(
-        title: l10n.teamOrgSuggestTopic,
-        start: [TextButton(onPressed: () => Navigator.of(context).pop(), child: IonButtonLabel(l10n.commonCancel))],
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        body: ListView(
-          controller: widget.scrollController,
-          padding: const EdgeInsets.only(bottom: 24),
-          children: [
-            hint,
-            fields,
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-              child: SizedBox(width: double.infinity, child: button),
-            ),
-          ],
-        ),
-      );
-    }
     return Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: Column(

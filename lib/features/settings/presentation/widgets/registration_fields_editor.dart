@@ -9,11 +9,6 @@ import '../../../../shared/widgets/common/swipe_actions.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/app_select.dart';
 import '../../../../shared/widgets/adaptive/ion_button_label.dart';
-import '../../../../shared/widgets/adaptive/ion_button.dart';
-import '../../../../shared/widgets/layout/ionic_md.dart';
-import '../../../../core/theme/redesign/rd_theme.dart';
-import 'settings_form_items.dart';
-import 'settings_list.dart';
 
 /// Editor for the "Anmeldefelder" of an attendance type
 /// (Ionic `type.page.html` registration_fields section).
@@ -80,7 +75,6 @@ class _RegistrationFieldsEditorState extends State<RegistrationFieldsEditor> {
 
   @override
   Widget build(BuildContext context) {
-    if (context.rdSkin == null) return _buildClassic(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -148,109 +142,6 @@ class _RegistrationFieldsEditorState extends State<RegistrationFieldsEditor> {
           onPressed: _add,
           icon: Icon(AppIcons.addCircleOutline),
           label: IonButtonLabel(context.l10n.typeSettingsAddField),
-        ),
-      ],
-    );
-  }
-
-  /// EIA-25: classic design – Ionic items of the "Anmeldefelder" group:
-  /// stacked inputs / select without a box, `ion-button expand="block"`,
-  /// inset lines between the rows.
-  Widget _buildClassic(BuildContext context) {
-    final ios = ionIsIos(context);
-    final pad = ios ? null : const EdgeInsets.symmetric(horizontal: IonMd.itemPaddingStart);
-    final rows = <Widget>[
-      if (widget.fields.isEmpty)
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Text(
-            context.l10n.typeSettingsNoSignupFields,
-            textAlign: TextAlign.center,
-            style: TextStyle(color: AppColors.mediumOf(context), fontSize: 14),
-          ),
-        ),
-      for (var i = 0; i < widget.fields.length; i++)
-        SwipeActions.delete(
-          key: ValueKey('reg-field-${widget.fields[i].id}-$i'),
-          onDelete: () => widget.onChanged([...widget.fields]..removeAt(i)),
-          child: ListTile(
-            contentPadding: pad,
-            title: Text(widget.fields[i].label),
-            subtitle: Text([
-              _typeLabel(context, widget.fields[i].type),
-              if (widget.fields[i].options?.isNotEmpty ?? false) widget.fields[i].options!.join(', '),
-            ].join(' · ')),
-          ),
-        ),
-      SettingsStackedField(
-        label: context.l10n.typeSettingsFieldLabel,
-        hint: context.l10n.typeSettingsFieldLabelPh,
-        builder: (decoration) => TextField(
-          controller: _labelController,
-          decoration: decoration,
-          onChanged: (_) => setState(() {}),
-        ),
-      ),
-      SettingsStackedField(
-        label: context.l10n.typeSettingsType,
-        builder: (decoration) => AppDropdownFormField<String>(
-          interface: AppSelectInterface.alert,
-          // F-EINST-33: Ionic alert header = the select's label "Typ".
-          header: context.l10n.typeSettingsType,
-          value: _type,
-          decoration: decoration,
-          items: [
-            for (final t in const [
-              RegistrationFieldType.text,
-              RegistrationFieldType.boolean,
-              RegistrationFieldType.select,
-              RegistrationFieldType.multiSelect,
-            ])
-              DropdownMenuItem(value: t, child: Text(_typeLabel(context, t))),
-          ],
-          onChanged: (v) => setState(() => _type = v ?? RegistrationFieldType.text),
-        ),
-      ),
-      if (_needsOptions)
-        SettingsStackedField(
-          label: context.l10n.typeSettingsOptionsComma,
-          hint: context.l10n.typeSettingsOptionsPh,
-          builder: (decoration) => TextField(
-            controller: _optionsController,
-            decoration: decoration,
-          ),
-        ),
-    ];
-    final line = ios
-        ? Divider(
-            height: 0.5,
-            thickness: 0.5,
-            indent: IonIos.itemPaddingStart,
-            endIndent: IonIos.itemPaddingEnd,
-            color: IonIos.line(context),
-          )
-        : const Divider(
-            height: IonMd.lineWidth,
-            thickness: IonMd.lineWidth,
-            indent: IonMd.itemPaddingStart,
-          );
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        for (var i = 0; i < rows.length; i++) ...[
-          // Ionic: the "no fields" note is `lines="none"`.
-          if (i > 0 && !(i == 1 && widget.fields.isEmpty)) line,
-          rows[i],
-        ],
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
-          child: IonButton(
-            label: context.l10n.typeSettingsAddField,
-            icon: AppIcons.addCircleOutline,
-            expand: true,
-            // Ionic: disabled while the label is empty.
-            onPressed: _labelController.text.trim().isEmpty ? null : _add,
-          ),
         ),
       ],
     );

@@ -75,7 +75,7 @@ Widget _app({bool canCreate = true, List<Attendance>? history}) {
   return ProviderScope(
     overrides: [
       initialRedesignSettingsProvider.overrideWithValue(
-        const RedesignSettings(enabled: true, world: RdFarbwelt.petrol),
+        const RedesignSettings(world: RdFarbwelt.petrol),
       ),
       effectiveRoleProvider.overrideWithValue(Role.admin),
       canCreateAttendanceProvider.overrideWithValue(canCreate),
@@ -349,15 +349,12 @@ void main() {
   group('source', () {
     final page = File('lib/features/redesign/presentation/pages/rd_event_create_page.dart').readAsStringSync();
     final writes = File('lib/features/attendance/presentation/attendance_create_writes.dart').readAsStringSync();
-    final oldPage = File('lib/features/attendance/presentation/pages/attendance_create_page.dart').readAsStringSync();
     final router = File('lib/core/router/app_router.dart').readAsStringSync();
 
-    test('both UIs create through the shared write path with permission check', () {
-      for (final src in [page, oldPage]) {
-        expect(src, contains('AttendanceCreateWriter(ref)'));
-        expect(src, contains('confirmCanCreateAttendance('));
-        expect(src, contains('DemoGuard.blocked()'));
-      }
+    test('creates through the shared write path with permission check', () {
+      expect(page, contains('AttendanceCreateWriter(ref)'));
+      expect(page, contains('confirmCanCreateAttendance('));
+      expect(page, contains('DemoGuard.blocked()'));
     });
 
     test('writes are tenant-scoped', () {

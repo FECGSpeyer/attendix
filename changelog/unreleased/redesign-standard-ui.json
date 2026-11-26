@@ -1,0 +1,7 @@
+{
+  "bump": "minor",
+  "changes": [
+    "✨ Neues Design als alleinigen Standard aktiviert und alte Ansicht samt Umschaltern entfernt",
+    "🧹 Classic-Routen, Classic-Widgets, Classic-Themes und ionicons-Abhängigkeit bereinigt"
+  ]
+}

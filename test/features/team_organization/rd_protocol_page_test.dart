@@ -1,4 +1,3 @@
-import 'package:attendix/core/providers/redesign_providers.dart';
 import 'package:attendix/core/providers/team_org_providers.dart';
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
@@ -86,7 +85,6 @@ Future<void> _open(WidgetTester tester, Size size) async {
   addTearDown(tester.view.reset);
   await tester.pumpWidget(ProviderScope(
     overrides: [
-      redesignEnabledProvider.overrideWithValue(true),
       isTeamLeaderProvider.overrideWithValue(true),
       agendaItemsProvider.overrideWith((ref) async => _topics),
       protocolTypesProvider.overrideWith((ref) async => const [ProtocolType(id: 'lt', name: 'Besprechung')]),

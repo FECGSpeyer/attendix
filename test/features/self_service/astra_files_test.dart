@@ -80,22 +80,17 @@ void main() {
     });
   });
 
-  group('source: overview opens other-tenant files via the tenant switch', () {
-    final overview = File(
-            'lib/features/self_service/presentation/pages/self_service_overview_page.dart')
-        .readAsStringSync();
+  group('source: self-service opens other-tenant files via the tenant switch', () {
     final actions = File(
             'lib/features/self_service/presentation/widgets/self_service_event_actions.dart')
         .readAsStringSync();
     final openFile =
         File('lib/features/public_links/presentation/pages/open_file_page.dart').readAsStringSync();
 
-    test('overview checks the permission in the Termin tenant', () {
-      expect(overview, contains('canAccessFilesInTenant('));
-      expect(overview, contains('tenantId: att.tenantId'));
-      expect(overview, contains('currentTenantId: currentTenantId'));
-      expect(overview, isNot(contains('canAccessFiles && att.tenantId == currentTenantId')));
-      expect(overview, contains('actions.openFilesFolder(context, att)'));
+    test('signoutEventActions checks the permission in the Termin tenant', () {
+      expect(actions, contains('canAccessFilesInTenant('));
+      expect(actions, contains('tenantId: att.tenantId'));
+      expect(actions, contains('currentTenantId: tenant?.id'));
     });
 
     test('other tenant goes through /open-file (switch), own tenant pushes files', () {

@@ -1,6 +1,4 @@
-import 'package:attendix/core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import 'package:flutter/material.dart';
-import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -8,7 +6,6 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/services/teams/teams_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/tenant/tenant.dart';
-import '../../../planning/presentation/widgets/ion_items.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 
@@ -143,45 +140,17 @@ class _TenantRadioList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Ionic iOS ion-radio: label left, primary checkmark on the selected row.
-    if (isIonIos(context)) {
-      return Column(
-        children: [
-          for (var i = 0; i < tenants.length; i++) ...[
-            if (i > 0) const Divider(height: 1, indent: 16),
-            ListTile(
-              title: Text(tenants[i].longName.isNotEmpty ? tenants[i].longName : tenants[i].shortName),
-              trailing: tenants[i].id != null && tenants[i].id == selectedId
-                  ? Icon(AppIcons.check, color: AppColors.primary)
-                  : null,
-              onTap: tenants[i].id == null ? null : () => onChanged(tenants[i].id),
-            ),
-          ],
-        ],
-      );
-    }
     return Column(
       children: [
         for (final tenant in tenants)
-          if (context.rdSkin != null)
-            RadioListTile<int>(
-              value: tenant.id ?? -1,
-              groupValue: selectedId,
-              onChanged: tenant.id == null ? null : onChanged,
-              title: Text(
-                tenant.longName.isNotEmpty ? tenant.longName : tenant.shortName,
-              ),
-            )
-          else
-            // ion-radio (default placement): label first, control at the end.
-            IonRadioItem<int>(
-              value: tenant.id ?? -1,
-              groupValue: selectedId,
-              onChanged: tenant.id == null ? null : onChanged,
-              title: Text(
-                tenant.longName.isNotEmpty ? tenant.longName : tenant.shortName,
-              ),
+          RadioListTile<int>(
+            value: tenant.id ?? -1,
+            groupValue: selectedId,
+            onChanged: tenant.id == null ? null : onChanged,
+            title: Text(
+              tenant.longName.isNotEmpty ? tenant.longName : tenant.shortName,
             ),
+          ),
       ],
     );
   }

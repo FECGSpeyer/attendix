@@ -14,7 +14,7 @@ import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/player_absence/player_absence.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
-import 'attendance_detail/status_chip.dart' show ionicStatusLabel;
+import '../attendance_status_labels.dart' show ionicStatusLabel;
 
 /// SOL_FIX35: whole calendar days between the local dates of [from] and
 /// [to]. Computed on UTC date values, so a DST change in between (e.g.
@@ -116,9 +116,6 @@ Future<bool> promptAttendanceDateChange(
           firstDate: DateTime(1900),
           lastDate: DateTime(2200),
           helpText: context.l10n.dateDialogChangeDate,
-          // md look: the alert's native date input (calendar with buttons).
-          overlay: IonDatetimeOverlay.buttons,
-          showTitle: true,
         )
       : await showAppDateAlert(
           context,

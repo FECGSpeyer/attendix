@@ -9,7 +9,6 @@ import 'package:attendix/core/providers/debug_providers.dart';
 import 'package:attendix/core/providers/group_providers.dart';
 import 'package:attendix/core/providers/organisation_providers.dart';
 import 'package:attendix/core/providers/plan_providers.dart';
-import 'package:attendix/core/providers/redesign_providers.dart';
 import 'package:attendix/core/providers/song_providers.dart';
 import 'package:attendix/core/providers/team_org_providers.dart';
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
@@ -68,7 +67,6 @@ void main() {
     final container = createTestContainer(
       tenant: TestFactories.createTenant(id: 1),
       overrides: [
-        redesignEnabledProvider.overrideWithValue(true),
         planRepositoryWithTenantProvider.overrideWithValue(repo),
         planAttendancesProvider.overrideWith((ref) async => [att]),
         orgPlansProvider.overrideWith((ref) async => const []),

@@ -10,7 +10,6 @@ import '../../../../core/config/supabase_config.dart';
 import '../../../../core/providers/plan_providers.dart';
 import '../../../../core/services/plan_export_service.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../core/utils/plan_utils.dart';
 import '../../../../data/repositories/public_plan_repository.dart';
 import '../../../planning/presentation/widgets/plan_export_actions.dart';
@@ -19,8 +18,6 @@ import '../../../planning/presentation/widgets/plan_view_list.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart';
-import '../../../../shared/widgets/dialogs/ion_modal.dart' show showIonModal;
-import '../../../../shared/widgets/loading/skeleton_base.dart' show SkeletonText;
 
 /// Public list of all org plans via `/org-plan?key=<public_plan_key>`
 /// (Ionic `OrgPlanPublicPage`). No login required.
@@ -219,17 +216,13 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
   Widget _planCard(OrgPlanEntry e, {bool initiallyExpanded = false, bool past = false}) {
     final live = !past && _live.contains(e.key);
     final liveNow = !past && _isLiveNow(e);
-    final classic = context.rdSkin == null;
     final title = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (e.tenantLabel.isNotEmpty)
           Text(
-            classic ? e.tenantLabel.toUpperCase() : e.tenantLabel,
-            // ABL-20: Ionic `.org-name` 0.75rem, 600, uppercase, 0.04em.
-            style: classic
-                ? TextStyle(fontSize: 12, fontWeight: FontWeight.w600, letterSpacing: 0.48, color: AppColors.mediumOf(context))
-                : TextStyle(fontSize: 12, color: AppColors.mediumOf(context)),
+            e.tenantLabel,
+            style: TextStyle(fontSize: 12, color: AppColors.mediumOf(context)),
           ),
         Text(PlanUtils.longDate(e.dateTime)),
       ],
@@ -237,11 +230,8 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
     final liveToggle = liveNow
         ? IconButton(
             tooltip: context.l10n.planningFlutterLive,
-            // ABL-20: Ionic radio / radio-outline (classic); Beta unchanged.
             icon: Icon(
-                classic
-                    ? (live ? AppIcons.sensors : AppIcons.sensorsOutlined)
-                    : (live ? AppIcons.radioButtonChecked : AppIcons.radioButtonUnchecked),
+                live ? AppIcons.radioButtonChecked : AppIcons.radioButtonUnchecked,
                 color: live ? AppColors.danger : AppColors.primary),
             onPressed: () => setState(() => live ? _live.remove(e.key) : _live.add(e.key)),
           )
@@ -259,48 +249,22 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
         plan: e.plan,
         date: e.dateTime,
         liveMode: live,
-        badges: classic,
-        allDone: classic && past,
+        badges: false,
+        allDone: false,
       ),
     ];
-    if (classic) {
-      // ABL-05: one ion-list [inset] per plan with an ion-accordion; the
-      // live button sits before the accordion chevron.
-      return IonInsetList(
-        margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-        children: [
-          IonAccordionTile(
-            key: PageStorageKey('org-plan-${e.key}-$past'),
-            initiallyExpanded: initiallyExpanded,
-            title: title,
-            trailing: liveToggle,
-            children: children,
-          ),
-        ],
-      );
-    }
     return Card(
       margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
       clipBehavior: Clip.antiAlias,
-      child: context.rdSkin != null
-          ? ExpansionTile(
-              key: PageStorageKey('org-plan-${e.key}-$past'),
-              initiallyExpanded: initiallyExpanded,
-              shape: const Border(),
-              collapsedShape: const Border(),
-              title: title,
-              trailing: liveToggle,
-              children: children,
-            )
-          // ion-accordion: the live toggle sits in the header item next to
-          // the accordion chevron.
-          : IonAccordionTile(
-              key: PageStorageKey('org-plan-${e.key}-$past'),
-              initiallyExpanded: initiallyExpanded,
-              title: title,
-              trailing: liveToggle,
-              children: children,
-            ),
+      child: ExpansionTile(
+        key: PageStorageKey('org-plan-${e.key}-$past'),
+        initiallyExpanded: initiallyExpanded,
+        shape: const Border(),
+        collapsedShape: const Border(),
+        title: title,
+        trailing: liveToggle,
+        children: children,
+      ),
     );
   }
 
@@ -316,107 +280,47 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
             children: [for (final e in _past) _planCard(e, past: true)],
           ),
         );
-    // ABL-15: Ionic history `ion-modal` (full screen on phones, centred
-    // card from 768px). The Beta keeps its full-screen page.
-    if (context.rdSkin == null) {
-      showIonModal<void>(context, builder: page);
-      return;
-    }
     Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(
       fullscreenDialog: true,
       builder: page,
     ));
   }
 
-  /// ABL-18: classic = one ToolbarButtonGroup; Beta keeps loose buttons.
-  Widget _headerButtons(List<Widget> buttons) => context.rdSkin != null
-      ? Row(mainAxisSize: MainAxisSize.min, children: buttons)
-      : ToolbarButtonGroup(children: buttons);
-
-  /// ABL-20: Ionic skeleton list while loading (three items, h2 55 % / p 35 %).
-  Widget _skeleton() => IonInsetList(
-        margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-        children: [
-          for (var i = 0; i < 3; i++)
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SkeletonText(widthFactor: 0.55, height: 16),
-                  SizedBox(height: 6),
-                  SkeletonText(widthFactor: 0.35, height: 12),
-                ],
-              ),
-            ),
-        ],
-      );
-
-  /// ABL-20: Ionic state item (`ion-list [inset]` > item lines="none" > `p`).
-  Widget _stateItem(String text) => IonInsetList(
-        margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Text(text, style: TextStyle(color: AppColors.mediumOf(context), fontSize: 14)),
-          ),
-        ],
-      );
-
-  /// Classic body: skeleton, state items and one inset list per plan.
-  Widget _classicBody(List<Widget> top) {
-    if (_loading) return ListView(children: [...top, _skeleton()]);
-    if (_notFound) return ListView(children: [...top, _stateItem(context.l10n.plansLinkInvalid)]);
-    return IonRefresher(
-      onRefresh: _loadPlans,
-      child: ListView(
-        padding: const EdgeInsets.only(bottom: 24),
-        children: [
-          ...top,
-          if (_upcoming.isEmpty) _stateItem(context.l10n.plansNoUpcomingPlans),
-          for (var i = 0; i < _upcoming.length; i++) _planCard(_upcoming[i], initiallyExpanded: i == 0),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
+    final ios = Theme.of(context).platform == TargetPlatform.iOS;
     final title =
         _orgName.isNotEmpty ? _orgName : context.l10n.plansFlutterOrgPlansTitle;
-    // IOS_R6: Ionic `ion-header collapse="condense"` (large title on iOS)
     final top = [const IonContentTopInset(), IonLargeTitle(title)];
     return CondenseHeader(
       builder: (context, condensed) => Scaffold(
-      // IOS_R6: Ionic `ion-content fullscreen` under the translucent header
-      extendBodyBehindAppBar: isIosLook(context),
-      // IOS_R6: `ion-header translucent` (blur once condensed)
+      extendBodyBehindAppBar: ios,
       appBar: IonTranslucentAppBar(
         condensed: condensed,
         child: AppBar(
         automaticallyImplyLeading: false,
         title: CondenseTitle(condensed: condensed, child: Text(title)),
-        // ABL-18: one `ion-buttons slot="end"` (iOS: one glass capsule).
         actions: [
-          _headerButtons([
-            IconButton(
-              tooltip: context.l10n.plansSubscribeCalendar,
-              icon: Icon(AppIcons.calendarMonthOutlined),
-              onPressed: _subscribeCalendar,
-            ),
-            if (_past.isNotEmpty)
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
               IconButton(
-                tooltip: context.l10n.plansPastPlans,
-                icon: Icon(AppIcons.schedule),
-                onPressed: _showHistory,
+                tooltip: context.l10n.plansSubscribeCalendar,
+                icon: Icon(AppIcons.calendarMonthOutlined),
+                onPressed: _subscribeCalendar,
               ),
-          ]),
+              if (_past.isNotEmpty)
+                IconButton(
+                  tooltip: context.l10n.plansPastPlans,
+                  icon: Icon(AppIcons.schedule),
+                  onPressed: _showHistory,
+                ),
+            ],
+          ),
         ],
       ),
       ),
-      body: context.rdSkin == null
-          ? _classicBody(top)
-          : _loading && !isIosLook(context)
+      body: _loading && !ios
           ? const Center(child: AppSpinner())
           : _loading
           ? ListView(children: [

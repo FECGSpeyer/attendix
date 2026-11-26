@@ -1,8 +1,7 @@
-import 'package:attendix/core/providers/redesign_providers.dart';
 import 'package:attendix/core/providers/team_org_providers.dart';
 import 'package:attendix/data/models/team_org/team_org.dart';
 import 'package:attendix/features/team_organization/presentation/pages/rd_meeting_page.dart';
-import 'package:attendix/features/team_organization/presentation/pages/team_organization_page.dart';
+import 'package:attendix/features/team_organization/presentation/pages/rd_team_page.dart';
 import 'package:attendix/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,7 +14,6 @@ const _anna = PersonRef(id: 2, firstName: 'Anna', lastName: 'Berg');
 
 Widget _app({String? tab, bool leader = true, bool circle = true, Widget? home}) => ProviderScope(
       overrides: [
-        redesignEnabledProvider.overrideWithValue(true),
         isTeamLeaderProvider.overrideWithValue(leader),
         inTeamCircleProvider.overrideWithValue(circle),
         teamPersonProvider.overrideWith((ref) async => TestFactories.createPerson(id: 1)),
@@ -44,7 +42,7 @@ Widget _app({String? tab, bool leader = true, bool circle = true, Widget? home})
         locale: const Locale('de'),
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        home: home ?? TeamOrganizationPage(initialTab: tab),
+        home: home ?? RdTeamPage(initialTab: tab),
       ),
     );
 

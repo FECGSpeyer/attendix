@@ -32,7 +32,6 @@ import '../../../team_organization/presentation/widgets/rd_new_meeting_sheet.dar
 import '../../data/rd_create_logic.dart';
 import '../../data/rd_type_flags.dart';
 import '../../../../shared/widgets/adaptive/app_dialog.dart';
-import '../../../../shared/widgets/adaptive/adaptive_platform.dart';
 import '../widgets/event/rd_create_sheets.dart';
 import '../widgets/manage/rd_manage_entries.dart' show rdManageAccessProvider;
 import '../widgets/event/rd_form_widgets.dart';
@@ -235,7 +234,7 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
       hour: int.tryParse(parts.first) ?? 19,
       minute: parts.length > 1 ? int.tryParse(parts[1]) ?? 0 : 0,
     );
-    final iosLook = useIosLook(context);
+    final iosLook = Theme.of(context).platform == TargetPlatform.iOS;
     var picked = await showAppTimePicker(
       context: context,
       initialTime: initial,

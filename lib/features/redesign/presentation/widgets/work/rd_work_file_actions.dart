@@ -344,7 +344,7 @@ Future<void> rdShowWorkMenu(
         backgroundColor: button.rd.bg,
         builder:
             (_) =>
-                SafeArea(top: false, child: CopyToTenantSheet(song: song, availableTenants: copyTargets, beta: true)),
+                SafeArea(top: false, child: CopyToTenantSheet(song: song, availableTenants: copyTargets)),
       );
     case _WorkAction.groupPdfs:
       await printGroupPdfs(context: button, ref: ref, song: song, files: files, groups: groups);

@@ -5,13 +5,7 @@ import 'dart:io';
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/self_service_providers.dart';
 import 'package:attendix/core/services/cross_tenant_service.dart';
-import 'package:attendix/core/theme/app_theme.dart';
 import 'package:attendix/data/models/attendance/attendance.dart';
-import 'package:attendix/shared/widgets/adaptive/adaptive.dart';
-import 'package:attendix/shared/widgets/adaptive/ion_toolbar_segment.dart';
-import 'package:attendix/shared/widgets/event_list/event_list_widgets.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
@@ -207,85 +201,5 @@ void main() {
     test('tenant label is longName before shortName', () {
       expect(body, contains("select('id, shortName, longName, seasonStart')"));
     });
-  });
-
-  group('iOS look of the Termin pages', () {
-    Widget app(Widget body) => MaterialApp(
-          theme: AppTheme.light,
-          home: Builder(
-            builder: (context) => Scaffold(
-              backgroundColor: eventPageBackground(context),
-              body: body,
-            ),
-          ),
-        );
-
-    testWidgets('iOS: plain rows on the white page, no card', (tester) async {
-      await tester.pumpWidget(app(const EventListCard(
-        plain: true,
-        children: [Text('a'), Text('b')],
-      )));
-      expect(find.byType(Card), findsNothing);
-      expect(find.byType(Divider), findsOneWidget);
-      final scaffold = tester.widget<Scaffold>(find.byType(Scaffold));
-      expect(scaffold.backgroundColor, Colors.white);
-    }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
-
-    testWidgets('Material: plain white list on the white page (Ionic md)',
-        (tester) async {
-      await tester.pumpWidget(app(const EventListCard(
-        plain: true,
-        children: [Text('a')],
-      )));
-      expect(find.byType(Card), findsNothing);
-      final scaffold = tester.widget<Scaffold>(find.byType(Scaffold));
-      expect(scaffold.backgroundColor, Colors.white);
-    }, variant: TargetPlatformVariant.only(TargetPlatform.android));
-
-    testWidgets('Material: non-plain list keeps the card', (tester) async {
-      await tester.pumpWidget(app(const EventListCard(
-        children: [Text('a')],
-      )));
-      expect(find.byType(Card), findsOneWidget);
-    }, variant: TargetPlatformVariant.only(TargetPlatform.android));
-
-    Widget segment(ValueChanged<String> onChanged) => IonToolbarSegment<String>(
-          items: const [
-            IonSegmentItem(value: 'chronological', label: Text('Chronologisch')),
-            IonSegmentItem(value: 'byTenant', label: Text('Nach Instanz')),
-          ],
-          value: 'chronological',
-          onChanged: onChanged,
-        );
-
-    testWidgets('iOS: neutral centred toolbar segment', (tester) async {
-      String? picked;
-      await tester.pumpWidget(app(Align(
-        alignment: Alignment.topCenter,
-        child: segment((v) => picked = v),
-      )));
-      expect(find.byType(SegmentedButton<String>), findsNothing);
-      final a = tester.getRect(find.text('Chronologisch'));
-      final b = tester.getRect(find.text('Nach Instanz'));
-      // centred and narrower than the screen
-      final mid = (a.left + b.right) / 2;
-      expect(mid, closeTo(400, 30));
-      // (test font: 1em glyphs, 15pt labels + 13pt padding → ≈420 of 800)
-      expect(b.right - a.left, lessThan(500));
-      // black labels
-      final style = tester.widget<RichText>(find.descendant(
-          of: find.text('Chronologisch'), matching: find.byType(RichText)).first);
-      expect(style.text.style?.color, AppTheme.light.colorScheme.onSurface);
-      await tester.tap(find.text('Nach Instanz'));
-      expect(picked, 'byTenant');
-    }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
-
-    testWidgets('Material: full-width Ionic md segment', (tester) async {
-      await tester.pumpWidget(app(segment((_) {})));
-      // IOS_THEME2: Ionic md segment – uppercase tabs, no Material box.
-      expect(find.byType(SegmentedButton<String>), findsNothing);
-      expect(find.byType(IonSegment<String>), findsOneWidget);
-      expect(find.text('CHRONOLOGISCH'), findsOneWidget);
-    }, variant: TargetPlatformVariant.only(TargetPlatform.android));
   });
 }

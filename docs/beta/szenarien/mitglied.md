@@ -402,17 +402,6 @@ Nicht in allgemeinen Gruppen.
   1. Tippe auf „Sprache“ und wähle eine.
 - **Ergebnis:** Die App zeigt alle Texte in der gewählten Sprache.
 
-### M-31 Das neue Design aus- und wieder einschalten
-
-- **Wo:** Ich › „Neues Design (Beta)“
-- **Schritte:**
-  1. Schalte „Neues Design (Beta)“ aus.
-  2. Zum Zurückkehren schaltest du es in den Einstellungen des klassischen
-     Designs wieder ein.
-- **Ergebnis:** Die App zeigt das klassische Design. Deine Daten bleiben
-  gleich.
-- **Gut zu wissen:** Der Schalter gilt nur auf diesem Gerät.
-
 ### M-32 Hilfe finden
 
 - **Wo:** Ich › „Hilfe“

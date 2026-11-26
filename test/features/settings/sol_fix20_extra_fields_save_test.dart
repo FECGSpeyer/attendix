@@ -1,16 +1,17 @@
-// SOL_FIX20: Sol review of 8270c82 – the Zusatzfelder page stayed editable
-// while its multi-step save ran, and the value cleanup used the lists as
-// changed meanwhile instead of the definitions actually stored.
-import 'package:attendix/core/theme/app_icons.dart';
+// SOL_FIX20: extra fields multi-step save cleans up values with the stored
+// definitions snapshot, skips synced song libraries, aborts before any write
+// when song settings fail to load, and keeps legacy text default `false`.
 import 'dart:async';
 
 import 'package:attendix/core/providers/church_providers.dart';
 import 'package:attendix/core/providers/files_providers.dart';
 import 'package:attendix/core/providers/tenant_providers.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:attendix/data/models/tenant/tenant.dart';
 import 'package:attendix/data/repositories/extra_fields_repository.dart';
 import 'package:attendix/data/repositories/song_repository.dart';
-import 'package:attendix/features/settings/presentation/pages/extra_fields_page.dart';
+import 'package:attendix/features/settings/data/extra_fields_helpers.dart';
+import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -78,7 +79,7 @@ void main() {
 
   setUp(() => SharedPreferences.setMockInitialValues({}));
 
-  testWidgets('saving blocks edits and cleans up with the saved snapshot', (tester) async {
+  test('saving cleans up with the saved snapshot and skips synced song library', () async {
     late _DelayedExtraFieldsRepository repo;
     final tenant = TestFactories.createTenant(id: 1).copyWith(
       additionalFields: const [a, b],
@@ -97,48 +98,33 @@ void main() {
     );
     addTearDown(container.dispose);
 
-    await tester.pumpWidget(UncontrolledProviderScope(
-      container: container,
-      child: const MaterialApp(home: ExtraFieldsPage()),
-    ));
-    await tester.pumpAndSettle();
-    expect(find.text('A'), findsOneWidget);
-    expect(find.text('B'), findsOneWidget);
+    final saving = saveExtraFieldDefinitions(
+      container.read,
+      container.read(extraFieldsRepositoryWithTenantProvider),
+      personFields: const [a, b],
+      songFields: const [],
+      churchIds: const [],
+    );
 
-    await tester.tap(find.byIcon(AppIcons.check));
-    await tester.pump();
-
-    // Ionic loading overlay "Felder werden gespeichert..."
-    expect(find.byKey(const ValueKey('extra-fields-saving')), findsOneWidget);
-    expect(find.text('Felder werden gespeichert...'), findsOneWidget);
+    await Future<void>.delayed(Duration.zero);
     expect(repo.savedPersonIds, ['a', 'b']);
 
-    // Try to delete field A while the save is running: blocked, no dialog.
-    await tester.tap(find.byIcon(AppIcons.deleteOutline).first, warnIfMissed: false);
-    // The spinner keeps animating – no pumpAndSettle while saving.
-    await tester.pump(const Duration(milliseconds: 500));
-    expect(find.text('Löschen'), findsNothing);
-    expect(find.text('A'), findsOneWidget);
-
     repo.gate.complete();
-    await tester.pumpAndSettle();
+    await saving;
 
     // Synced library of tenant 7: its songs belong to the source tenant and
-    // are not cleaned with this tenant's song fields (deviates from Ionic).
+    // are not cleaned with this tenant's song fields.
     expect(repo.log, ['save', 'sanitize:player']);
-    // The cleanup keeps exactly the definitions that were stored.
     expect(repo.sanitized['player'], ['a', 'b']);
     expect(repo.songTenantId, isNull);
-    expect(find.byKey(const ValueKey('extra-fields-saving')), findsNothing);
     expect(
       container.read(currentTenantProvider)?.additionalFields?.map((f) => f.id),
       ['a', 'b'],
     );
   });
 
-  // Ionic ionModalDidDismiss → closeEditExtraFieldModal: closing the edit
-  // sheet (X) applies the edits; a legacy text default `false` shows empty
-  // and is stored as `false`, not as the string 'false'.
+  // Closing the edit sheet (X) applies the edits; a legacy text default `false`
+  // shows empty and is stored as `false`, not as the string 'false'.
   testWidgets('closing the edit sheet applies the changes', (tester) async {
     late _DelayedExtraFieldsRepository repo;
     const legacy = ExtraField(id: 'c', name: 'C', type: 'text', defaultValue: false);
@@ -157,13 +143,34 @@ void main() {
     );
     addTearDown(container.dispose);
 
+    ExtraField? edited;
     await tester.pumpWidget(UncontrolledProviderScope(
       container: container,
-      child: const MaterialApp(home: ExtraFieldsPage()),
+      child: MaterialApp(
+        locale: const Locale('de'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Scaffold(
+          body: Consumer(
+            builder: (context, ref, _) => TextButton(
+              onPressed: () async {
+                edited = await showExtraFieldSheet(
+                  context,
+                  ref,
+                  target: ExtraFieldTarget.person,
+                  fields: () => const [legacy],
+                  existing: legacy,
+                );
+              },
+              child: const Text('open'),
+            ),
+          ),
+        ),
+      ),
     ));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byIcon(AppIcons.editOutlined));
+    await tester.tap(find.text('open'));
     await tester.pumpAndSettle();
     expect(find.text('false'), findsNothing);
     expect(find.text('Übernehmen'), findsNothing);
@@ -171,12 +178,20 @@ void main() {
     await tester.enterText(find.widgetWithText(TextField, 'C'), 'C2');
     await tester.tap(find.byIcon(AppIcons.close));
     await tester.pumpAndSettle();
-    expect(find.text('C2'), findsOneWidget);
 
-    await tester.tap(find.byIcon(AppIcons.check));
-    await tester.pump();
+    expect(edited, isNotNull);
+    expect(edited!.name, 'C2');
+    expect(edited!.defaultValue, false);
+
+    final saving = saveExtraFieldDefinitions(
+      container.read,
+      repo,
+      personFields: [edited!],
+      songFields: const [],
+      churchIds: const [],
+    );
     repo.gate.complete();
-    await tester.pumpAndSettle();
+    await saving;
 
     final saved = repo.savedPersonFields!.single;
     expect(saved.name, 'C2');
@@ -186,7 +201,7 @@ void main() {
   // Sol review PR #303: if the song settings (song_source_tenant_id) cannot
   // be loaded, the save aborts before any write instead of cleaning up the
   // own song library.
-  testWidgets('song settings load error aborts before any write', (tester) async {
+  test('song settings load error aborts before any write', () async {
     late _DelayedExtraFieldsRepository repo;
     final tenant = TestFactories.createTenant(id: 1).copyWith(
       additionalFields: const [a],
@@ -203,16 +218,17 @@ void main() {
     );
     addTearDown(container.dispose);
 
-    await tester.pumpWidget(UncontrolledProviderScope(
-      container: container,
-      child: const MaterialApp(home: ExtraFieldsPage()),
-    ));
-    await tester.pumpAndSettle();
-
-    await tester.tap(find.byIcon(AppIcons.check));
-    await tester.pumpAndSettle();
+    await expectLater(
+      saveExtraFieldDefinitions(
+        container.read,
+        container.read(extraFieldsRepositoryWithTenantProvider),
+        personFields: const [a],
+        songFields: const [],
+        churchIds: const [],
+      ),
+      throwsException,
+    );
 
     expect(repo.log, isEmpty);
-    expect(find.byKey(const ValueKey('extra-fields-saving')), findsNothing);
   });
 }

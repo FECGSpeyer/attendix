@@ -140,5 +140,3 @@ Die häufigsten Gründe:
    Dienstplan keine „Offenen Dienste“ und ohne Teamorganisation kein „Team“.
 4. **Du bist in dieser Gruppe nicht als Mitglied eingetragen.** Dann gibt es
    keine eigene Zusage und keine eigene Anwesenheit.
-5. **Das falsche Design ist an.** Diese Doku gilt nur mit „Neues Design
-   (Beta)“.

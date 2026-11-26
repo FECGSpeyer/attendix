@@ -46,7 +46,7 @@ import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/manage/rd_manage_entries.dart'
     show rdManageIcon, rdManageRecentProvider, rdManageTitle, rdMissingAccountsProvider, rdOpenManageEntry;
 import '../../data/rd_manage_logic.dart' show RdManageEntry;
-import '../../../settings/presentation/pages/settings_page.dart' show createMissingAccounts;
+import '../../../settings/data/account_provisioning_actions.dart' show createMissingAccounts;
 import '../../../../core/utils/helper_member.dart';
 
 /// REDESIGN: tab "Mitglieder" (canvas "Menschen"). Dirigent and Beobachter:

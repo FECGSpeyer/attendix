@@ -5,13 +5,7 @@ import '../../../../core/providers/song_providers.dart';
 import '../../../../core/utils/plan_utils.dart';
 import '../../../../data/models/plan/plan.dart';
 import '../../../../data/models/song/song.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart' show IonCloseButton;
-import '../../../../shared/widgets/dialogs/ion_modal.dart';
-import 'ion_items.dart';
 import 'rd_plan_widgets.dart';
-import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../redesign/data/rd_collections_logic.dart';
 
 /// The Werke planned for [att] ([own]: the Termin of the open Ablauf).
@@ -232,80 +226,12 @@ Future<PlanWorksPick?> showPlanWorksPicker(
   }
   if (!context.mounted) return null;
   final plannable = known ? rdPlannableWorks(songs, collections) : rdWorksIn(songs, null);
-  if (context.rdSkin != null) {
-    return showRdPlanSongPicker(
-      context,
-      plannable,
-      currentIds: currentIds,
-      inPlanIds: inPlanIds,
-      collections: collections,
-      offerAllCurrent: offerAllCurrent,
-    );
-  }
-  // ABL-15: Ionic `ion-modal` (full screen on phones, centred card from
-  // 768px) instead of a full-screen page.
-  final song = await showIonModal<Song>(
+  return showRdPlanSongPicker(
     context,
-    builder: (_) => _SongPicker(songs: plannable),
+    plannable,
+    currentIds: currentIds,
+    inPlanIds: inPlanIds,
+    collections: collections,
+    offerAllCurrent: offerAllCurrent,
   );
-  return song == null ? null : (song: song, allCurrent: false);
-}
-
-class _SongPicker extends StatefulWidget {
-  const _SongPicker({required this.songs});
-  final List<Song> songs;
-
-  @override
-  State<_SongPicker> createState() => _SongPickerState();
-}
-
-class _SongPickerState extends State<_SongPicker> {
-  String _query = '';
-
-  @override
-  Widget build(BuildContext context) {
-    final q = _query.trim().toLowerCase();
-    final filtered = widget.songs.where((s) {
-      if (q.isEmpty) return true;
-      final label = '${s.prefix ?? ''}${s.number ?? ''} ${s.name} ${s.composer ?? ''}'.toLowerCase();
-      return label.contains(q);
-    }).toList();
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text(context.l10n.planningChooseSong),
-        actions: const [IonCloseButton()],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(52),
-          child: IonSearchbar(
-            placeholder: context.l10n.attListSearchSong,
-            onChanged: (v) => setState(() => _query = v),
-          ),
-        ),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.only(bottom: 16),
-        children: [
-          if (filtered.isEmpty && q.isNotEmpty)
-            IonInsetList(children: [
-              ListTile(
-                title: Text(context.l10n.attListNoSongsFound,
-                    textAlign: TextAlign.center, style: TextStyle(color: AppColors.mediumOf(context), fontSize: 14)),
-              ),
-            ]),
-          if (filtered.isNotEmpty)
-            IonInsetList(children: [
-              for (final s in filtered)
-                ListTile(
-                  title: Text('${s.prefix ?? ''}${s.number ?? ''} ${s.name}'),
-                  subtitle: (s.composer ?? '').isNotEmpty
-                      ? Text(s.composer!, style: TextStyle(color: AppColors.mediumOf(context)))
-                      : null,
-                  onTap: () => Navigator.pop(context, s),
-                ),
-            ]),
-        ],
-      ),
-    );
-  }
 }

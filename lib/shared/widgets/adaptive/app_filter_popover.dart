@@ -3,8 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_icons.dart';
-import '../../../core/theme/redesign/rd_theme.dart';
-import 'adaptive_platform.dart';
 import 'app_popover_menu.dart';
 import 'app_select.dart';
 import 'ion_switch.dart';
@@ -157,11 +155,9 @@ Future<void> showAppFilterPopover({
   required List<AppFilterRow> Function() rows,
   double? width,
 }) {
-  final ios = useIosLook(context) && context.rdSkin == null;
   return showAppPopover<void>(
     context: context,
-    // 16rem: 272pt with the 17pt iOS root font, 256px in md mode.
-    width: width ?? (ios ? 272 : 256),
+    width: width ?? 256,
     builder: (_) => _FilterPopoverBody(rows: rows),
   );
 }
@@ -231,9 +227,6 @@ class _FilterPopoverBodyState extends State<_FilterPopoverBody> {
   }
 }
 
-bool _ios(BuildContext context) =>
-    useIosLook(context) && context.rdSkin == null;
-
 class _RowLabel extends StatelessWidget {
   const _RowLabel(this.text, {this.muted = false});
 
@@ -247,17 +240,15 @@ class _RowLabel extends StatelessWidget {
       text,
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
-      // ion-item 1rem: 17pt on the iPhone, 16px in md mode.
       style: TextStyle(
-        fontSize: _ios(context) ? 17 : 16,
+        fontSize: 16,
         color: muted ? onSurface.withValues(alpha: 0.45) : onSurface,
       ),
     );
   }
 }
 
-/// `ion-item lines="none"` of the filter popover: the small start icon,
-/// the content and an optional end slot.
+/// Filter popover row: start icon, content and optional end slot.
 class _Row extends StatelessWidget {
   const _Row({
     required this.icon,
@@ -273,27 +264,21 @@ class _Row extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ios = _ios(context);
-    final theme = Theme.of(context);
-    final onSurface = theme.colorScheme.onSurface;
+    final onSurface = Theme.of(context).colorScheme.onSurface;
     return InkWell(
-      splashFactory: ios ? NoSplash.splashFactory : null,
-      highlightColor: ios ? IosGlass.itemActivated(theme.brightness) : null,
       onTap: onTap,
       child: ConstrainedBox(
-        constraints: BoxConstraints(minHeight: ios ? 44 : 48),
+        constraints: const BoxConstraints(minHeight: 48),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(
             children: [
-              // `size="small"`: 18px; md icons in an item are rgba(text, .54).
               Icon(
                 icon,
                 size: 18,
-                color: ios ? onSurface : onSurface.withValues(alpha: 0.54),
+                color: onSurface.withValues(alpha: 0.54),
               ),
-              // iOS: the label / select starts 76pt from the popover's edge.
-              SizedBox(width: ios ? 42 : 32),
+              const SizedBox(width: 32),
               Expanded(child: child),
               if (end != null) ...[const SizedBox(width: 8), end!],
             ],
@@ -336,10 +321,7 @@ class _ValueRowState extends State<_ValueRow> {
         children: [
           Expanded(child: _RowLabel(widget.text, muted: widget.placeholder)),
           const SizedBox(width: 6),
-          if (_ios(context))
-            const IonSelectIcon()
-          else
-            Icon(AppIcons.arrowDropDown, color: Theme.of(context).hintColor),
+          Icon(AppIcons.arrowDropDown, color: Theme.of(context).hintColor),
         ],
       ),
     );
@@ -361,16 +343,12 @@ class _CheckRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ios = _ios(context);
-    final theme = Theme.of(context);
     return Semantics(
       checked: checked,
       child: InkWell(
-        splashFactory: ios ? NoSplash.splashFactory : null,
-        highlightColor: ios ? IosGlass.itemActivated(theme.brightness) : null,
         onTap: onTap,
         child: ConstrainedBox(
-          constraints: BoxConstraints(minHeight: ios ? 44 : 48),
+          constraints: const BoxConstraints(minHeight: 48),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(

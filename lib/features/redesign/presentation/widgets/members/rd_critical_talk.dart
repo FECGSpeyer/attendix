@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../core/constants/enums.dart';
+import '../../../../../core/providers/person_detail_providers.dart' show personProvider;
 import '../../../../../core/providers/player_providers.dart';
 import '../../../../../core/providers/realtime_providers.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
@@ -13,7 +14,6 @@ import '../../../../../data/models/person/person.dart';
 import '../../../../../data/repositories/player_repository.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../people/person_write.dart' show personProblemSolvedColumns, personProblemSolvedEntry;
-import '../../../../people/presentation/pages/person_detail_page.dart' show personProvider;
 import '../../../data/providers/rd_critical_providers.dart';
 import '../../../data/rd_critical_logic.dart';
 import '../manage/rd_settings_sheets.dart' show RdListNote;

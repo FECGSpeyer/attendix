@@ -23,10 +23,10 @@ import '../../../../data/repositories/extra_fields_repository.dart' show extraFi
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/layout/route_leave_guard.dart';
+import '../../../people/person_extra_fields.dart' show personExtraFields;
 import '../../../people/person_write.dart';
-import '../../../people/presentation/widgets/person_detail/allgemein_accordion.dart' show personExtraFields;
+import '../../../people/presentation/widgets/email_taken_dialog.dart' show showEmailTakenDialog;
 import '../../../people/presentation/widgets/person_image_picker.dart';
-import '../../../people/presentation/widgets/person_match_suggestions.dart' show showEmailTakenDialog;
 import '../widgets/manage/rd_settings_sheets.dart' show RdListNote;
 import '../widgets/manage/rd_manage_entries.dart' show rdManageAccessProvider;
 import '../widgets/event/rd_form_widgets.dart';

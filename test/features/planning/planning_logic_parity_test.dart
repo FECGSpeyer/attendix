@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
-import 'package:attendix/core/providers/plan_providers.dart';
 import 'package:attendix/core/services/plan_export_service.dart';
 import 'package:attendix/core/utils/attendance_percentage_utils.dart';
 import 'package:attendix/core/services/register_plan_service.dart';
@@ -175,7 +174,7 @@ void main() {
 
     test('editor, viewer and PDF use the TOP display name', () {
       for (final path in [
-        'lib/features/planning/presentation/widgets/plan_fields_editor.dart',
+        'lib/features/planning/presentation/widgets/plan_fields_editor_beta.dart',
         'lib/features/planning/presentation/widgets/plan_view_list.dart',
         'lib/core/services/plan_export_service.dart',
       ]) {

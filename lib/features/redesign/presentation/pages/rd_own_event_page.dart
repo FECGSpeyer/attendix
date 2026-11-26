@@ -9,7 +9,6 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/utils/event_list_utils.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../self_service/presentation/pages/signout_page.dart' show signoutEventActions;
 import '../../../self_service/presentation/widgets/self_service_event_actions.dart';
 import '../../data/providers/rd_phase_tick_provider.dart';
 import '../../data/rd_event_phase.dart';

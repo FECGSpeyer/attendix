@@ -9,7 +9,6 @@ import '../router/app_router.dart' show routerProvider;
 import '../services/account_switch/account_switch_service.dart';
 import '../services/account_switch/auth_token_api.dart';
 import '../services/account_switch/saved_accounts_store.dart';
-import 'redesign_providers.dart';
 import 'tenant_providers.dart';
 
 /// ACCOUNT_SWITCH: account switcher of the new design (Beta).
@@ -140,30 +139,25 @@ final accountSwitchBootstrapProvider = Provider<void>((ref) {
       ).catchError((_) => false));
     }
     // A recovery session only updates a saved account, it never adds one.
-    final add = state.event != AuthChangeEvent.passwordRecovery &&
-        ref.read(redesignEnabledProvider);
+    final add = state.event != AuthChangeEvent.passwordRecovery;
     rememberSession(session, add: add);
   }
 
   final current = auth.currentSession;
   if (current != null) {
-    rememberSession(current, add: ref.read(redesignEnabledProvider));
+    rememberSession(current, add: true);
   }
   final sub = auth.onAuthStateChange.listen(handle, onError: (_) {});
   ref.onDispose(sub.cancel);
 
-  // Turning the new design or developer mode on remembers the signed-in
-  // account right away.
+  // Turning developer mode on remembers the signed-in account right away.
   void rememberCurrent() {
     final session = auth.currentSession;
-    if (session != null && ref.read(redesignEnabledProvider) && ref.read(developerModeProvider)) {
+    if (session != null && ref.read(developerModeProvider)) {
       enqueue(() => service.remember(session));
     }
   }
 
-  ref.listen<bool>(redesignEnabledProvider, (_, enabled) {
-    if (enabled) rememberCurrent();
-  });
   ref.listen<bool>(developerModeProvider, (_, enabled) {
     if (enabled) rememberCurrent();
   });

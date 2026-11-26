@@ -1,14 +1,14 @@
-# Für Entwickler: So ist die Beta gebaut
+# Für Entwickler: Aufbau der Oberfläche
 
 [Zurück zur Übersicht](README.md)
 
-Diese Seite erklärt, wie das neue Design (Beta) im Code aufgebaut ist und
-welche Regeln für Änderungen gelten. Wie die App aus Sicht der Nutzer
-funktioniert, steht im [Überblick](ueberblick.md), bei den
-[Rollen](rollen.md) und in den [Szenarien](szenarien/README.md).
+Diese Seite erklärt, wie die Oberfläche im Code aufgebaut ist und welche
+Regeln für Änderungen gelten. Wie die App aus Sicht der Nutzer funktioniert,
+steht im [Überblick](ueberblick.md), bei den [Rollen](rollen.md) und in den
+[Szenarien](szenarien/README.md).
 
-- [Zwei Designs, eine App](#zwei-designs-eine-app)
-- [Der Schalter](#der-schalter)
+- [Design und Architektur](#design-und-architektur)
+- [Einstellungen zur Darstellung](#einstellungen-zur-darstellung)
 - [Wo der Code liegt](#wo-der-code-liegt)
 - [Routen und Weiterleitungen](#routen-und-weiterleitungen)
 - [Rahmen, Reiter und Breiten](#rahmen-reiter-und-breiten)
@@ -17,54 +17,40 @@ funktioniert, steht im [Überblick](ueberblick.md), bei den
 - [Texte](#texte)
 - [Logik und Daten](#logik-und-daten)
 - [Tests](#tests)
-- [Prüfliste für einen Beta-PR](#prüfliste-für-einen-beta-pr)
+- [Prüfliste für einen PR](#prüfliste-für-einen-pr)
 - [Weitere technische Doku](#weitere-technische-doku)
 
 ---
 
-## Zwei Designs, eine App
+## Design und Architektur
 
-Attendix hat zwei Oberflächen über denselben Daten:
+Das Redesign ist das einzige und standardmäßige Design der App.
 
-- **Klassisch:** sieht aus und bedient sich wie die frühere Ionic-App. Es ist
-  der Standard und bleibt so, wie es ist.
-- **Neues Design (Beta):** wird am Gerät eingeschaltet. Jede neue Bedienung
-  entsteht hier, für alle Rollen.
-
-Beide teilen sich Models (`lib/data/models`), Repositories
+Alle Seiten teilen sich Models (`lib/data/models`), Repositories
 (`lib/data/repositories`), Provider (`lib/core/providers`) und die Rechte der
-Rollen. Die Beta ist eine zweite Darstellung, keine zweite App. Deshalb gilt:
+Rollen. Beim Speichern gilt: Was die App speichert (z. B. über
+`rd_type_flags.dart`), bleibt mit der bestehenden Datenbankstruktur kompatibel.
 
-- Eine Änderung an der Beta darf das klassische Design nicht verändern.
-- Die Beta zeigt keiner Rolle mehr als das klassische Design.
-- Was die Beta speichert, muss die klassische Ansicht und die Ionic-App lesen
-  können. Beispiel: `rd_type_flags.dart` schaltet an der Terminart Ort und
-  Werke ein, sobald ein Termin sie in der Beta bekommt.
-
-## Der Schalter
+## Einstellungen zur Darstellung
 
 `lib/core/providers/redesign_providers.dart`
 
-- Der Schalter liegt nur auf dem Gerät (SharedPreferences, Schlüssel
-  `redesign.enabled`), nie in der Datenbank. Farbwelt, Hell/Dunkel und das
-  App-Icon liegen daneben.
+- Farbwelt, Hell/Dunkel und App-Icon liegen nur auf dem Gerät
+  (SharedPreferences), nie in der Datenbank.
 - `loadInitialRedesignSettings()` läuft in `main()` vor `runApp`, damit schon
   das erste Bild den richtigen Rahmen und die richtigen Farben hat.
-- `redesignEnabledProvider` sagt Widgets, ob die Beta an ist.
-- `RedesignRoutes.active` spiegelt den Wert für reine Funktionen ohne Riverpod,
-  zum Beispiel für die Wahl der Startseite.
 
 ## Wo der Code liegt
 
 ```
 lib/
 ├── core/
-│   ├── providers/redesign_providers.dart   # Schalter, Farbwelt, Hell/Dunkel
-│   ├── router/redesign_routes.dart         # Routen und Rollenprüfung der Beta
+│   ├── providers/redesign_providers.dart   # Farbwelt, Hell/Dunkel, App-Icon
+│   ├── router/redesign_routes.dart         # Routen und Rollenprüfung
 │   └── theme/redesign/                     # rd_palette.dart, rd_theme.dart
 ├── features/redesign/
 │   ├── data/                               # rd_*_logic.dart, rd_words.dart, …
-│   │   └── providers/                      # Provider nur für die Beta
+│   │   └── providers/                      # Bereichs-Provider
 │   └── presentation/
 │       ├── shell/                          # Rahmen, Reiter, Seitenleiste
 │       ├── pages/                          # eine Datei je Seite: rd_*_page.dart
@@ -72,28 +58,24 @@ lib/
 └── l10n/fragments/                         # Texte, eine Datei je Bereich
 ```
 
-Alles, was nur zur Beta gehört, trägt die Vorsilbe `rd_` (Dateien) und `Rd`
-(Klassen). Seiten anderer Features, die es noch nicht neu gibt, öffnet die Beta
-weiter (zum Beispiel die Elternseite). Sie bekommen dort den
-[Beta-Skin](#bausteine-des-designs).
+Seiten im Ordner `features/redesign/` tragen weiterhin die Vorsilbe `rd_`
+(Dateien) und `Rd` (Klassen).
 
 ## Routen und Weiterleitungen
 
 `lib/core/router/redesign_routes.dart`, eingehängt in
 `lib/core/router/app_router.dart`.
 
-- Die Beta hat eigene, deutsche Pfade: `/heute`, `/termine`, `/mitglieder`,
-  `/werke`, `/ich`, darunter `/ich/verwaltung/…`. Pfade werden nie von Hand
+- Die Hauptpfade sind deutsch: `/heute`, `/termine`, `/mitglieder`, `/werke`,
+  `/ich`, darunter `/ich/verwaltung/…`. Pfade werden nie von Hand
   zusammengesetzt, sondern über `RedesignRoutes` gebaut
   (`RedesignRoutes.event(id)`, `RedesignRoutes.person(id)`).
-- `_AppShell` wählt den Rahmen: `RdShell` in der Beta, sonst `MainShell`.
-- `_BetaOr(beta: …, classic: …)` zeigt auf derselben Route die Beta-Seite oder
-  die klassische. So bleiben Links, Pushes und Rollenprüfungen gleich.
-- `betaTarget()` und `legacyTarget()` leiten alte Ziele um, solange die Beta an
-  ist: `/attendance/:id` wird zum Termin der Beta, `/people` zu `/mitglieder`,
-  `/settings` zu `/ich`. Benachrichtigungen und Pushes landen dadurch im
-  richtigen Design.
-- `roleRedirect(location, role)` prüft jede Beta-Route gegen die Rolle. Wer
+- `RdShell` ist der einzige App-Rahmen.
+- `betaTarget()` und `legacyTarget()` leiten alte Links und Pushes
+  (`/attendance/:id`, `/people`, `/settings` …) automatisch auf die neuen
+  Ziele um. Benachrichtigungen und Pushes landen dadurch immer auf der
+  richtigen Seite.
+- `roleRedirect(location, role)` prüft jede Route gegen die Rolle. Wer
   eine neue Seite anlegt, die nicht jede Rolle sehen darf, trägt sie dort ein.
   Ein ausgeblendeter Knopf allein reicht nicht, weil Links und die Adresszeile
   im Browser die Seite sonst trotzdem öffnen.
@@ -160,11 +142,9 @@ Regeln durch, und jede Abfrage filtert nach `tenantId` (siehe `CLAUDE.md`).
   `widgets/manage/rd_manage_list.dart` (Rücklink zur Verwaltung, großer Titel,
   ein Satz Erklärung, gruppierte Liste, Plus, •••). Die Vorlage zeigt nur. Laden,
   Speichern und Rechte bleiben bei der Seite.
-- **Beta-Skin:** `context.rdSkin` ist gesetzt, solange das Beta-Theme aktiv
-  ist. Die alten Bausteine zeichnen sich dann im neuen Design. So sehen auch
-  alte Seiten, Blätter und Dialoge, die aus der Beta erreichbar sind, wie die
-  Beta aus.
-- **Icons:** Die Beta nutzt Material-Icons, das klassische Design Ionicons.
+- **Theme & Tokens:** `context.rd` liefert die `RdPalette`, `buildRdTheme(...)`
+  konfiguriert das gesamte Material-Theme inklusive der mitgenutzten Feature-Seiten.
+- **Icons:** Die App nutzt Material-Icons.
 
 Leitlinien für neue Seiten:
 
@@ -195,7 +175,7 @@ Leitlinien für neue Seiten:
   `rdWords…`-Text, zum Beispiel `l10n.rdWordsCategory(kind)`.
 - **Anrede:** Die Beta duzt.
 - **Doku:** Texte, die diese Doku zitiert, prüft die CI gegen `app_de.arb`
-  (siehe [unten](#prüfliste-für-einen-beta-pr)).
+  (siehe [unten](#prüfliste-für-einen-pr)).
 
 ## Logik und Daten
 
@@ -215,11 +195,8 @@ Leitlinien für neue Seiten:
 
 ## Tests
 
-- Tests der Beta liegen in `test/features/redesign/`.
-- Ein Widget-Test schaltet die Beta ein, indem er
-  `initialRedesignSettingsProvider` mit
-  `RedesignSettings(enabled: true)` überschreibt und die App mit
-  `buildRdTheme(…)` aufbaut (Beispiel: `rd_pages_test.dart`).
+- Tests der Oberfläche liegen in `test/features/redesign/`.
+- Ein Widget-Test baut die App mit `buildRdTheme(…)` auf.
 - Logik-Dateien bekommen Unit-Tests, Seiten nur dort Widget-Tests, wo ein
   Fehler wahrscheinlich und teuer ist. Nicht jede Zeile braucht einen Test.
 - Lokal reichen die Tests zu dem, was geändert wurde. Die ganze Suite läuft in
@@ -233,22 +210,20 @@ Leitlinien für neue Seiten:
 
 Mehr zur Test-Infrastruktur: [`test/README.md`](../../test/README.md).
 
-## Prüfliste für einen Beta-PR
+## Prüfliste für einen PR
 
-1. Das klassische Design ist unverändert. Neue Bedienung steht hinter
-   `redesignEnabledProvider` oder in `features/redesign/`.
-2. Neue Routen stehen in `RedesignRoutes` und, wenn nicht jede Rolle sie sehen
+1. Neue Routen stehen in `RedesignRoutes` und, wenn nicht jede Rolle sie sehen
    darf, in `roleRedirect`.
-3. Rechte kommen aus den vorhandenen Abfragen. Keine Rolle sieht mehr als
+2. Rechte kommen aus den vorhandenen Abfragen. Keine Rolle sieht mehr als
    vorher.
-4. Texte stehen in `lib/l10n/fragments/`, die ARB-Dateien sind neu erzeugt.
+3. Texte stehen in `lib/l10n/fragments/`, die ARB-Dateien sind neu erzeugt.
    Wörter für Teile der Gruppe kommen aus `rdWords…`.
-5. Die Seite funktioniert schmal und breit, hell und dunkel.
-6. Ändert sich, wie eine Aufgabe abläuft, ist das Szenario in `docs/beta/`
+4. Die Seite funktioniert schmal und breit, hell und dunkel.
+5. Ändert sich, wie eine Aufgabe abläuft, ist das Szenario in `docs/beta/`
    angepasst. Neue Aufgaben haben ein neues Szenario mit der nächsten freien
    Nummer. Gibt es zu dem Szenario einen Ablauf in `patrol_test/` (die Nummer
    steht im Namen), ist er mit angepasst.
-7. Das Prüfskript ist grün:
+6. Das Prüfskript ist grün:
 
    ```bash
    python3 tool/docs/check_app_texts.py --strict
@@ -256,7 +231,7 @@ Mehr zur Test-Infrastruktur: [`test/README.md`](../../test/README.md).
 
    Es meldet zitierte Texte, die es in der App nicht mehr gibt, Nummern von
    Szenarien ohne Überschrift und Links ins Leere.
-8. Der PR hat eine Datei unter `changelog/unreleased/` und erhöht keine
+7. Der PR hat eine Datei unter `changelog/unreleased/` und erhöht keine
    Version (siehe `CLAUDE.md`).
 
 ## Weitere technische Doku

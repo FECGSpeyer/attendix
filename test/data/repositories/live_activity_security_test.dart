@@ -12,7 +12,7 @@ void main() {
   setUpAll(() {
     repo = File('lib/data/repositories/live_activity_repository.dart').readAsStringSync();
     service = File('lib/core/services/live_activity_service.dart').readAsStringSync();
-    page = File('lib/features/notifications/presentation/pages/notifications_page.dart').readAsStringSync();
+    page = File('lib/features/redesign/presentation/pages/rd_notifications_page.dart').readAsStringSync();
   });
 
   Iterable<String> queries(String source, String table) => RegExp(
@@ -105,9 +105,8 @@ void main() {
   group('Notifications page toggle', () {
     test('only shown with the native side, Ionic keys', () {
       expect(page, contains('hasNativePlugin'));
-      expect(page, contains('context.l10n.notifLiveActivity'));
-      expect(page, contains('context.l10n.notifLiveActivityHelperIos'));
-      expect(page, contains('config.liveActivity != false'));
+      expect(page, contains('l10n.notifLiveActivity'));
+      expect(page, contains('l10n.notifLiveActivityHelperIos'));
     });
   });
 

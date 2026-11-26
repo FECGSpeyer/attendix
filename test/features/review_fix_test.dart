@@ -2,7 +2,7 @@ import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/attendance_providers.dart';
 import 'package:attendix/core/providers/tenant_providers.dart';
 import 'package:attendix/core/utils/date_helper.dart';
-import 'package:attendix/features/attendance/presentation/pages/attendance_detail_page.dart';
+import 'package:attendix/features/attendance/presentation/attendance_permissions.dart';
 import 'package:attendix/features/auth/data/auth_flow_service.dart';
 import 'package:attendix/features/auth/data/auth_link_listener.dart';
 import 'package:attendix/features/auth/data/auth_redirect_path.dart';

@@ -1,6 +1,5 @@
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/assistant_providers.dart';
-import 'package:attendix/core/providers/redesign_providers.dart';
 import 'package:attendix/core/providers/tenant_providers.dart';
 import 'package:attendix/data/models/attendance/attendance.dart';
 import 'package:attendix/features/assistant/data/assistant_command.dart';
@@ -51,7 +50,6 @@ Widget _app(Widget home,
         if (voice != null) assistantVoiceProvider.overrideWithValue(voice),
         assistantEnabledProvider.overrideWithValue(enabled),
         currentRoleProvider.overrideWithValue(role),
-        redesignEnabledProvider.overrideWithValue(false),
         assistantChatNotifierProvider.overrideWith(() => fake ?? _FakeChat(chat ?? const AssistantChatState())),
       ],
       child: MaterialApp(

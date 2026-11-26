@@ -5,15 +5,11 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/church/church.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/widgets/ion_form_list.dart';
-import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
-import '../../../../shared/widgets/dialogs/ion_modal.dart';
-import '../../../../shared/widgets/layout/ionic_ios.dart' show IonSearchbar;
 
-/// Opens the searchable church picker (Ionic church `ion-modal` of the
-/// settings master data and of tenant-register): toolbar with the field name
-/// and "Schließen", a searchbar toolbar, then an inset list with
-/// "Nicht gelistet" first and a checkmark on the selected church.
+/// Opens the searchable church picker: toolbar with the field name and
+/// "Schließen", a searchbar toolbar, then an inset list with "Nicht gelistet"
+/// first and a checkmark on the selected church.
 ///
 /// Returns the selected church id, `''` for "Nicht gelistet", or null when
 /// closed without a choice.
@@ -26,19 +22,6 @@ Future<String?> showChurchPicker(
   required String notListedLabel,
   required String noChurchLabel,
 }) {
-  final picker = ChurchPicker(
-    title: title,
-    churches: churches,
-    selectedId: selectedId,
-    searchHint: searchHint,
-    notListedLabel: notListedLabel,
-    noChurchLabel: noChurchLabel,
-  );
-  // SEL-17: Ionic default `ion-modal` (full screen on phones, centred card
-  // on wide screens) instead of a bottom sheet; Beta keeps its sheet.
-  if (context.rdSkin == null) {
-    return showIonModal<String>(context, builder: (_) => picker);
-  }
   return showModalBottomSheet<String>(
     context: context,
     useRootNavigator: true, // IOS_SHELL2: above the tab bar
@@ -83,13 +66,6 @@ class ChurchPicker extends StatefulWidget {
 
 class _ChurchPickerState extends State<ChurchPicker> {
   String _search = '';
-  final _searchController = TextEditingController();
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -115,19 +91,11 @@ class _ChurchPickerState extends State<ChurchPicker> {
             ),
           ]),
         ],
-        // second toolbar: ion-searchbar
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(context.rdSkin == null ? 58 : 52),
+          preferredSize: const Size.fromHeight(52),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-            child: context.rdSkin == null
-                // SEL-17: the shared Ionic searchbar (second toolbar).
-                ? IonSearchbar(
-                    controller: _searchController,
-                    hintText: widget.searchHint,
-                    onChanged: (v) => setState(() => _search = v),
-                  )
-                : SizedBox(
+            child: SizedBox(
               height: 38,
               child: TextField(
                 autofocus: false,

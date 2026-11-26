@@ -4,6 +4,12 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/constants/enums.dart';
+import '../../../../core/providers/person_detail_providers.dart'
+    show
+        personAttendanceStatsProvider,
+        personHistoryProvider,
+        personProvider,
+        upcomingAttendancesProvider;
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
@@ -13,17 +19,14 @@ import '../../../../core/utils/demo_guard.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart' show showAppConfirm;
-import '../../../people/presentation/pages/person_detail_page.dart'
-    show personProvider, personAttendanceStatsProvider, personHistoryProvider;
-import '../../../people/presentation/widgets/person_detail/person_detail.dart'
+import '../../../people/person_history_helpers.dart'
     show
         filterHistoryBySeason,
         historyEntryBody,
         historyEntryTitle,
         historyWithoutEntry,
         showAllHistoryProvider,
-        showOldHistoryNote,
-        upcomingAttendancesProvider;
+        showOldHistoryNote;
 import '../widgets/manage/rd_settings_sheets.dart' show showRdChoiceSheet;
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard, rdOwnStatusPill;

@@ -8,7 +8,7 @@ import '../../../../core/utils/handover_request.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
-import '../../../settings/presentation/pages/handover_page.dart';
+import '../../../settings/data/handover_logic.dart';
 import '../../data/rd_words.dart';
 import '../widgets/manage/rd_settings_sheets.dart';
 import '../widgets/rd_widgets.dart';

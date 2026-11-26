@@ -86,16 +86,15 @@ void main() {
       );
     });
 
-    test('person detail save uses all three shift fields', () {
+    test('person edit save uses all three shift fields', () {
       final page =
-          _read('lib/features/people/presentation/pages/person_detail_page.dart');
+          _read('lib/features/redesign/presentation/pages/rd_person_edit_page.dart');
       final idx = page.indexOf('if (shiftAssignmentChanged(');
       expect(idx, isNot(-1));
       final call = page.substring(idx, page.indexOf('updateShiftAssignmentsForPerson', idx));
-      expect(call, contains('oldShiftName: person.shiftName'));
-      expect(call, contains('oldShiftStart: person.shiftStart'));
-      expect(call, contains('newShiftStart: _shiftStart'));
-      expect(page, isNot(contains('if (_selectedShiftId != person.shiftId)')));
+      expect(call, contains('oldShiftName: before.shiftName'));
+      expect(call, contains('oldShiftStart: before.shiftStart'));
+      expect(call, contains('newShiftStart:'));
     });
   });
 }

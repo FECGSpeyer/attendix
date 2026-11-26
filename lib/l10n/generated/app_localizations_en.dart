@@ -13059,7 +13059,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rdTypeLookHideNameHint =>
-      'Events without their own title then show the date instead of the type name (classic view and parents).';
+      'Events without their own title then show the date instead of the type name (parents).';
 
   @override
   String get rdTypeLookHighlightHint =>
@@ -17092,13 +17092,6 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
-
-  @override
-  String get redesignMeBeta => 'New design (beta)';
-
-  @override
-  String get redesignMeBetaHint =>
-      'On this device only. You can switch it off any time.';
 
   @override
   String get redesignMeCalendar => 'Subscribe to calendar';

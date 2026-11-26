@@ -14,12 +14,34 @@ import '../../../../data/models/plan/plan.dart';
 import '../../../../data/repositories/org_plan_repository.dart' show orgPlanRepositoryProvider;
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
-import '../../../organisation/presentation/pages/org_person_fields_page.dart'
-    show numberFieldDefaultText, orgFieldId, orgFieldTypeName, orgFieldTypes;
 import '../widgets/event/rd_form_widgets.dart';
 import '../widgets/manage/rd_manage_list.dart';
 import '../widgets/manage/rd_settings_sheets.dart';
 import '../widgets/rd_widgets.dart';
+
+/// Types of an org extra field with their names.
+Map<String, String> orgFieldTypes(AppLocalizations l10n) => <String, String>{
+      'text': l10n.typeSettingsText,
+      'textarea': l10n.extraFieldsTextarea,
+      'number': l10n.extraFieldsNumber,
+      'date': l10n.attendanceDate,
+      'boolean': l10n.extraFieldsYesNo,
+      'select': l10n.extraFieldsSelect,
+    };
+
+String orgFieldTypeName(AppLocalizations l10n, String type) => orgFieldTypes(l10n)[type] ?? l10n.commonUnknown;
+
+/// Field id of an org-wide extra field (Ionic `org_<orgId>_<name>`).
+String orgFieldId(int orgId, String name) =>
+    'org_${orgId}_${name.toLowerCase().replaceAll(RegExp(r'\s+'), '_').replaceAll(RegExp(r'[^a-z0-9_]'), '')}';
+
+/// Stores the edited default value for numeric org extra fields as a trimmed
+/// string (or `''` when cleared/invalid, matching Ionic TextValueAccessor).
+String numberFieldDefaultText(String text) {
+  final trimmed = text.trim();
+  final value = num.tryParse(trimmed);
+  return value != null && value.isFinite ? trimmed : '';
+}
 
 Future<void>? _orgFieldWrites;
 

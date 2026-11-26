@@ -1,26 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import '../../../core/theme/redesign/rd_theme.dart';
-import '../adaptive/adaptive.dart';
 
-/// Ionic `ion-modal` breakpoint: on screens at least 768 × 600 a modal is a
-/// centred card (600 × 500), below that it covers the whole screen.
+import '../../../core/theme/redesign/rd_theme.dart';
+import '../adaptive/app_dialog.dart' show showAppDialog;
+
+/// Breakpoint at which a modal is shown as a centred card (600 × 500/600)
+/// instead of a full-screen dialog route.
 bool isIonModalCard(Size size) => size.width >= 768 && size.height >= 600;
 
-/// Ionic `ion-modal` card height: 500px, 600px from a 768px high screen
-/// (`@media (min-width: 768px) and (min-height: 768px)`).
+/// Modal card height: 500px, or 600px on screens at least 768px tall.
 double ionModalCardHeight(Size size) => size.height >= 768 ? 600 : 500;
 
-/// PERSONEN-92: the size Ionic's modal media queries see – the WINDOW. The
-/// classic shell hands the pages next to the fixed side panel a narrower
-/// [MediaQuery] size and puts the real window size in an
-/// [IonWindowSizeScope]; without that scope this is the MediaQuery size.
+/// Window size seen by modal breakpoints.
 Size ionModalWindowSize(BuildContext context) =>
     context.getInheritedWidgetOfExactType<IonWindowSizeScope>()?.size ??
     MediaQuery.sizeOf(context);
 
-/// Carries the window size below a shell that narrows [MediaQuery] (see
-/// [ionModalWindowSize]).
+/// Carries the window size below a shell that narrows [MediaQuery].
 class IonWindowSizeScope extends InheritedWidget {
   const IonWindowSizeScope({super.key, required this.size, required super.child});
 
@@ -30,14 +25,8 @@ class IonWindowSizeScope extends InheritedWidget {
   bool updateShouldNotify(IonWindowSizeScope oldWidget) => size != oldWidget.size;
 }
 
-/// Presents [builder] like a default Ionic `ion-modal`
-/// (`modalController.create({ component })`):
-/// - desktop/tablet ([isIonModalCard]): a centred [width] × [height] card over
-///   the dimmed current page ([height] defaults to [ionModalCardHeight]),
-/// - phone: a full-screen dialog route.
-///
-/// The built widget is usually a [Scaffold] with its own app bar and close
-/// button; it pops itself via `Navigator.pop(context, result)`.
+/// Presents [builder] as a centred card on wide screens (>= 768 × 600) or a
+/// full-screen dialog route on phones.
 Future<T?> showIonModal<T>(
   BuildContext context, {
   required WidgetBuilder builder,
@@ -48,8 +37,7 @@ Future<T?> showIonModal<T>(
   final size = ionModalWindowSize(context);
   final cardHeight = height ?? ionModalCardHeight(size);
   if (isIonModalCard(size)) {
-    final ios = useIosLook(context);
-    final rd = context.rdSkin;
+    final rd = context.rd;
     return showAppDialog<T>(
       context: context,
       useRootNavigator: true,
@@ -57,15 +45,9 @@ Future<T?> showIonModal<T>(
       builder: (ctx) => Dialog(
         insetPadding: const EdgeInsets.all(16),
         clipBehavior: Clip.antiAlias,
-        // PARITY_R3: Ionic md desktop modal `--border-radius: 2px` with a
-        // `0 28px 48px rgba(0,0,0,.4)` shadow; iOS 10px.
-        elevation: ios || rd != null ? null : 24,
-        // Beta-Skin: the page colour and radius of the new design.
-        backgroundColor: rd?.bg,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(rd != null ? 20 : (ios ? 10 : 2))),
-        child: SizedBox(
-            width: width, height: cardHeight, child: builder(ctx)),
+        backgroundColor: rd.bg,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: SizedBox(width: width, height: cardHeight, child: builder(ctx)),
       ),
     );
   }
@@ -74,16 +56,8 @@ Future<T?> showIonModal<T>(
   );
 }
 
-/// PARITY_R3: Ionic `ion-modal` sizes for sheet modals (and
-/// `showModalBottomSheet`) app-wide. Wraps the app's navigator
-/// (`MaterialApp.builder`).
-///
-/// - Ionic md/iOS at ≥ 768 × 600 (`@media (min-width: 768px) and
-///   (min-height: 600px) { --width: 600px }`): sheets are 600 px wide,
-///   centred and anchored at the bottom; md uses `--border-radius: 2px`
-///   there.
-/// - below: sheets span the full width (Ionic `--width: 100%`; Material 3
-///   would cap them at 640).
+/// Applies responsive sheet modal widths (600px on wide screens, full width on
+/// phones) app-wide. Wraps the app's navigator (`MaterialApp.builder`).
 class IonModalTheme extends StatelessWidget {
   const IonModalTheme({super.key, required this.child});
 
@@ -94,119 +68,15 @@ class IonModalTheme extends StatelessWidget {
     final theme = Theme.of(context);
     final wide = isIonModalCard(MediaQuery.sizeOf(context));
     final sheet = theme.bottomSheetTheme;
-    // Beta-Skin: the new design keeps its rounded sheets on every platform.
-    final ios = theme.platform == TargetPlatform.iOS || context.rdSkin != null;
     return Theme(
       data: theme.copyWith(
         bottomSheetTheme: sheet.copyWith(
           constraints: wide
               ? const BoxConstraints(maxWidth: 600)
               : const BoxConstraints(),
-          shape: !ios && wide
-              ? const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(2)))
-              : sheet.shape,
-          clipBehavior: !ios && wide ? Clip.antiAlias : sheet.clipBehavior,
         ),
       ),
       child: child,
     );
   }
-}
-
-/// Ionic `modalController.create({ component: <Page>, presentingElement })`
-/// for whole pages (e.g. PersonPage / AttendancePage from the dashboard or
-/// the people list):
-/// - iOS phone: card modal ([showIosCardModal]) over the shrunk page,
-/// - md phone: full screen, desktop/tablet: centred card ([showIonModal]).
-///
-/// The page sees [IonPageModalScope.isIn] = true (Ionic `isModal`: close X
-/// instead of back). Like Ionic ("navigate behind the modal, so close it
-/// first") the modal closes itself as soon as the app navigates to another
-/// location while it is open – a `context.push` / `go` from inside the page
-/// therefore lands on the target page instead of behind the modal.
-Future<T?> showPageModal<T>(
-  BuildContext context, {
-  required WidgetBuilder builder,
-  Color? iosBackgroundColor,
-  bool barrierDismissible = true,
-}) {
-  final router = GoRouter.maybeOf(context);
-  Widget wrap(BuildContext ctx) => IonPageModalScope(
-        child: _CloseOnNavigation(router: router, child: builder(ctx)),
-      );
-  if (useIosLook(context) && !isIonModalCard(ionModalWindowSize(context))) {
-    return showIosCardModal<T>(
-      context,
-      backgroundColor: iosBackgroundColor,
-      barrierDismissible: barrierDismissible,
-      builder: wrap,
-    );
-  }
-  return showIonModal<T>(context, builder: wrap, barrierDismissible: barrierDismissible);
-}
-
-/// Marks a page that is shown by [showPageModal] (Ionic `isModal`).
-class IonPageModalScope extends InheritedWidget {
-  const IonPageModalScope({super.key, required super.child});
-
-  /// Whether [context] lies inside a page opened by [showPageModal].
-  static bool isIn(BuildContext context) =>
-      context.getInheritedWidgetOfExactType<IonPageModalScope>() != null;
-
-  @override
-  bool updateShouldNotify(IonPageModalScope oldWidget) => false;
-}
-
-/// Closes the surrounding modal route when the router location changes.
-class _CloseOnNavigation extends StatefulWidget {
-  const _CloseOnNavigation({required this.router, required this.child});
-
-  final GoRouter? router;
-  final Widget child;
-
-  @override
-  State<_CloseOnNavigation> createState() => _CloseOnNavigationState();
-}
-
-class _CloseOnNavigationState extends State<_CloseOnNavigation> {
-  String? _location;
-
-  /// Location plus the top route entry: a `push` (also into a ShellRoute)
-  /// adds an entry with its own page key even where the URI stays the same.
-  String? _current() {
-    final config = widget.router?.routerDelegate.currentConfiguration;
-    if (config == null) return null;
-    final last = config.isEmpty ? null : config.last;
-    return '${config.uri}|${config.matches.length}|${last?.pageKey.value}';
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _location = _current();
-    widget.router?.routerDelegate.addListener(_onRouteChanged);
-  }
-
-  @override
-  void dispose() {
-    widget.router?.routerDelegate.removeListener(_onRouteChanged);
-    super.dispose();
-  }
-
-  void _onRouteChanged() {
-    final now = _current();
-    if (now == _location) return;
-    _location = now;
-    // Not while the router rebuilds the navigator's pages.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      final route = ModalRoute.of(context);
-      if (route == null || !route.isActive) return;
-      route.navigator?.removeRoute(route);
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) => widget.child;
 }

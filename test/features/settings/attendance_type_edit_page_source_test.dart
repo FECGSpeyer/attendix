@@ -60,7 +60,10 @@ void main() {
       // Null-keeping rules (end_time, duration_days) compare with
       // _originalType; a stale one turns 20:30 back into null on the
       // next all-day save without leaving the page.
-      final save = _extractMethodBody(pageSource, '_save')!;
+      final betaSource = File(
+        'lib/features/settings/presentation/pages/attendance_type_edit_page_beta.dart',
+      ).readAsStringSync();
+      final save = _extractMethodBody(betaSource, '_rdSave')!;
       final nullCheck = save.indexOf('if (updated == null)');
       final baseline = save.indexOf('_originalType = updated;');
       expect(nullCheck, greaterThan(-1));

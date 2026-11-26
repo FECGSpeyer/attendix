@@ -95,32 +95,22 @@ void main() {
       }
     });
 
-    test('people list, export and bulk edit use organisation fields (I2/I3)',
-        () {
-      final list = read(
-          'lib/features/people/presentation/pages/people_list_page.dart');
-      expect(list, contains('mergeSharedPersonFieldValues('));
-      expect(list, contains('personListExtraFieldsProvider'));
-      final export =
-          read('lib/features/export/presentation/pages/export_page.dart');
+    test('event, export and bulk edit use organisation fields (I2/I3)', () {
+      final event = read('lib/features/redesign/presentation/pages/rd_event_page.dart');
+      expect(event, contains('hydrateSharedPersonFieldValues('));
+      final export = read('lib/features/export/presentation/export_logic.dart');
       expect(export, contains('hydrateSharedPersonFieldValues('));
-      final bulk =
-          read('lib/features/people/presentation/pages/bulk_edit_page.dart');
+      final bulk = read('lib/features/redesign/presentation/widgets/members/rd_member_bulk.dart');
       expect(bulk, contains('updateSharedFieldValues('));
-      expect(bulk, contains('personListExtraFieldsProvider'));
     });
   });
 
-  test('general settings writes no withExcuses / critical_rules enabled (D6)',
-      () {
-    final src = read(
-        'lib/features/settings/presentation/pages/general_settings_page.dart');
-    final update = RegExp(r"\.from\('tenants'\)\.update\(\{.*?\}\)\.eq\(",
-            dotAll: true)
-        .firstMatch(src)!
-        .group(0)!;
-    expect(update, isNot(contains("'withExcuses'")));
-    expect(update, isNot(contains("'enabled'")));
+  test('general settings writes no withExcuses / critical_rules enabled (D6)', () {
+    final src = read('lib/features/redesign/presentation/pages/rd_general_settings_page.dart');
+    expect(src, isNot(contains("'withExcuses'")));
+    final repo = read('lib/data/repositories/tenant_settings_repository.dart');
+    expect(repo, isNot(contains("'withExcuses'")));
+    expect(repo, isNot(contains("'enabled'")));
   });
 
   test('profile image URL is stored without ?v= (D7)', () {

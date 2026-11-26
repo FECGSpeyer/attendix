@@ -18,7 +18,6 @@ import '../../../../../l10n/l10n.dart';
 import '../../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../messages/presentation/auto_message_texts.dart';
 import '../../../../messages/presentation/pages/message_compose_page.dart';
-import '../../../../settings/presentation/widgets/settings_list.dart';
 
 /// One person of the Termin as the panel needs it.
 class AutoMessagePanelPerson {
@@ -183,24 +182,7 @@ abstract class AutoMessagePanelLook {
   Widget answers(BuildContext context, {required String title, required List<AutoMessageAnswer> answers});
 }
 
-class _IonicLook extends AutoMessagePanelLook {
-  const _IonicLook();
-
-  @override
-  Widget banner(
-    BuildContext context, {
-    required IconData icon,
-    required String title,
-    String? subtitle,
-    (String, VoidCallback)? action,
-  }) => _Banner(icon: icon, title: title, subtitle: subtitle, action: action);
-
-  @override
-  Widget answers(BuildContext context, {required String title, required List<AutoMessageAnswer> answers}) =>
-      SettingsListSection(title: title, children: [for (final a in answers) _ResponseRow(answer: a)]);
-}
-
-/// On a Termin (admins/responsibles, Ionic 4.18 `app-auto-message-panel`):
+/// On a Termin (admins/responsibles):
 /// what the automatic messages do for it ("geht um 23:30 raus" / "ging an
 /// 4 Personen", Diesmal aussetzen) and the members' answers to confirm or
 /// reject. Shown once the Termin has started.
@@ -210,7 +192,7 @@ class AutoMessagePanel extends ConsumerStatefulWidget {
     required this.attendance,
     required this.attendanceType,
     required this.people,
-    this.look = const _IonicLook(),
+    required this.look,
     this.leading = const [],
   });
 
@@ -424,140 +406,6 @@ class _AutoMessagePanelState extends ConsumerState<AutoMessagePanel> {
                 ),
             ],
           ),
-    );
-  }
-}
-
-/// Ionic `.banner`: primary-bordered card with icon, bold text, hint and an
-/// outline button.
-class _Banner extends StatelessWidget {
-  const _Banner({required this.icon, required this.title, this.subtitle, this.action});
-
-  final IconData icon;
-  final String title;
-  final String? subtitle;
-  final (String, VoidCallback)? action;
-
-  @override
-  Widget build(BuildContext context) {
-    final ios = ionIsIos(context);
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      decoration: BoxDecoration(
-        color: ios ? IonIos.itemBackground(context) : Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 2),
-            child: Icon(icon, size: 20, color: AppColors.primary),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(fontSize: 14.4, fontWeight: FontWeight.w700, height: 1.35),
-                ),
-                if (subtitle != null)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 2),
-                    child: Text(
-                      subtitle!,
-                      style: TextStyle(fontSize: 12.8, color: AppColors.mediumOf(context)),
-                    ),
-                  ),
-                if (action != null)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 6),
-                    child: OutlinedButton(
-                      onPressed: action!.$2,
-                      style: OutlinedButton.styleFrom(
-                        visualDensity: VisualDensity.compact,
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                      ),
-                      child: IonButtonLabel(action!.$1),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// One answer: icon per kind, name, reason, buttons side by side
-/// (Ionic 06a659fc) or the decided state.
-class _ResponseRow extends StatelessWidget {
-  const _ResponseRow({required this.answer});
-
-  final AutoMessageAnswer answer;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final a = answer;
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(
-            a.wasPresent ? AppIcons.backHandOutlined : AppIcons.chatBubbleOutline,
-            color: AppColors.mediumOf(context),
-            size: 22,
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(a.name, style: const TextStyle(fontWeight: FontWeight.w600)),
-                const SizedBox(height: 2),
-                Text(a.detail, style: TextStyle(fontSize: 14, color: AppColors.mediumOf(context))),
-                if (a.pending)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        FilledButton(
-                          onPressed: a.busy ? null : () => a.onDecide(true),
-                          style: FilledButton.styleFrom(visualDensity: VisualDensity.compact),
-                          child: IonButtonLabel(a.acceptLabel),
-                        ),
-                        OutlinedButton(
-                          onPressed: a.busy ? null : () => a.onDecide(false),
-                          style: OutlinedButton.styleFrom(
-                            visualDensity: VisualDensity.compact,
-                            foregroundColor: AppColors.mediumOf(context),
-                          ),
-                          child: IonButtonLabel(l10n.autoMessagesReject),
-                        ),
-                      ],
-                    ),
-                  )
-                else
-                  Padding(
-                    padding: const EdgeInsets.only(top: 4),
-                    child: Text(
-                      a.stateText ?? '',
-                      style: TextStyle(fontSize: 12.8, color: AppColors.mediumOf(context)),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

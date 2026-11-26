@@ -4,29 +4,31 @@ import 'dart:io';
 
 import 'package:attendix/core/providers/legal_providers.dart';
 import 'package:attendix/core/services/teams/teams_service.dart';
-import 'package:attendix/core/theme/app_colors.dart';
-import 'package:attendix/core/theme/app_theme.dart';
+import 'package:attendix/core/theme/redesign/rd_palette.dart';
+import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/features/auth/presentation/pages/login_page.dart';
 import 'package:attendix/features/auth/presentation/pages/register_page.dart';
 import 'package:attendix/features/legal/presentation/widgets/legal_content_view.dart';
-import 'package:attendix/features/planning/presentation/pages/public_planning_page.dart';
+import 'package:attendix/shared/widgets/adaptive/adaptive.dart';
 import 'package:attendix/shared/widgets/common/error_state_view.dart';
 import 'package:attendix/shared/widgets/dialogs/ion_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-/// UX_PRELOGIN: pre-login screens behave like the Ionic login / register
-/// modal / legal modal / public planner.
+/// Pre-login screens: login, register modal, legal modal, public planner.
 void main() {
   Widget app(Widget child) => ProviderScope(
         overrides: [isInTeamsProvider.overrideWithValue(false)],
-        child: MaterialApp(theme: AppTheme.light, home: child),
+        child: MaterialApp(
+          theme: buildRdTheme(RdFarbwelt.petrol, Brightness.light),
+          home: child,
+        ),
       );
 
-  ElevatedButton button(WidgetTester tester, String label) =>
-      tester.widget<ElevatedButton>(
-          find.ancestor(of: find.text(label), matching: find.byType(ElevatedButton)));
+  ButtonStyleButton button(WidgetTester tester, String label) =>
+      tester.widget<ButtonStyleButton>(
+          find.ancestor(of: find.text(label), matching: find.byWidgetPredicate((w) => w is ButtonStyleButton)));
 
   Future<void> setPhone(WidgetTester tester) async {
     tester.view.physicalSize = const Size(390, 844);
@@ -41,13 +43,13 @@ void main() {
       await tester.pumpWidget(app(const LoginPage()));
       await tester.pumpAndSettle();
 
-      expect(button(tester, 'ANMELDEN').onPressed, isNull);
+      expect(button(tester, 'Anmelden').onPressed, isNull);
       await tester.enterText(find.byType(TextFormField).at(0), 'a@b.de');
       await tester.pump();
-      expect(button(tester, 'ANMELDEN').onPressed, isNull);
+      expect(button(tester, 'Anmelden').onPressed, isNull);
       await tester.enterText(find.byType(TextFormField).at(1), 'secret');
       await tester.pump();
-      expect(button(tester, 'ANMELDEN').onPressed, isNotNull);
+      expect(button(tester, 'Anmelden').onPressed, isNotNull);
     });
 
     testWidgets('e-mail and password share one AutofillGroup (password suggestions)',
@@ -74,41 +76,29 @@ void main() {
       await tester.tap(find.text('Code per E-Mail'));
       await tester.pumpAndSettle();
 
-      expect(button(tester, 'CODE SENDEN').onPressed, isNull);
+      expect(button(tester, 'Code senden').onPressed, isNull);
       await tester.enterText(find.byType(TextFormField).first, 'a@b.de');
       await tester.pump();
-      expect(button(tester, 'CODE SENDEN').onPressed, isNotNull);
+      expect(button(tester, 'Code senden').onPressed, isNotNull);
     });
 
-    testWidgets('"Passwort vergessen?" opens the reset alert with the e-mail',
+    testWidgets('"Passwort vergessen?" opens the reset sheet with the e-mail',
         (tester) async {
       await setPhone(tester);
       await tester.pumpWidget(app(const LoginPage()));
       await tester.pumpAndSettle();
       await tester.enterText(find.byType(TextFormField).first, 'a@b.de');
-      await tester.tap(find.text('PASSWORT VERGESSEN?'));
+      await tester.tap(find.text('Passwort vergessen?'));
       await tester.pumpAndSettle();
 
-      // md alert: underlined input, uppercase text buttons, no filled button
-      expect(find.byType(AlertDialog), findsOneWidget);
       expect(find.text('Passwort zurücksetzen'), findsOneWidget);
-      // PARITY_R3: Ionic md alert buttons are UPPERCASE
-      expect(find.text('ABBRECHEN'), findsOneWidget);
-      expect(find.text('ZURÜCKSETZEN'), findsOneWidget);
-      expect(find.text('ABBRECHEN'), findsOneWidget);
-      expect(find.text('ZURÜCKSETZEN'), findsOneWidget);
-      expect(
-          find.descendant(
-              of: find.byType(AlertDialog),
-              matching: find.byType(ElevatedButton)),
-          findsNothing);
-      final field = tester.widget<TextField>(find.descendant(
-          of: find.byType(AlertDialog), matching: find.byType(TextField)));
+      expect(find.text('Link senden'), findsOneWidget);
+      final field = tester.widget<TextField>(find.byType(TextField).last);
       expect(field.controller!.text, 'a@b.de');
 
-      await tester.tap(find.text('ABBRECHEN'));
+      await tester.binding.handlePopRoute();
       await tester.pumpAndSettle();
-      expect(find.byType(AlertDialog), findsNothing);
+      expect(find.text('Passwort zurücksetzen'), findsNothing);
     });
 
     test('errors are toasts, no inline error box; reset is a dialog', () {
@@ -209,33 +199,12 @@ void main() {
     });
   });
 
-  group('Theme: disabled buttons (Ionic opacity .5)', () {
-    testWidgets('disabled ElevatedButton/FilledButton use primary at 50%',
-        (tester) async {
-      await tester.pumpWidget(MaterialApp(
-        theme: AppTheme.light,
-        home: const Scaffold(
-          body: Column(children: [
-            ElevatedButton(onPressed: null, child: Text('e')),
-            FilledButton(onPressed: null, child: Text('f')),
-          ]),
-        ),
-      ));
-      for (final label in ['e', 'f']) {
-        final material = tester.widget<Material>(find
-            .ancestor(of: find.text(label), matching: find.byType(Material))
-            .first);
-        expect(material.color, AppColors.primary.withValues(alpha: 0.5));
-      }
-    });
-  });
-
-  group('Public planner (Ionic public-planning)', () {
-    testWidgets('IonDatetimeChip shows the plain value', (tester) async {
+  group('Public planner', () {
+    testWidgets('IonDatetimeButton shows the plain value', (tester) async {
       var tapped = false;
       await tester.pumpWidget(MaterialApp(
         home: Scaffold(
-          body: IonDatetimeChip(text: '09:35', onTap: () => tapped = true),
+          body: IonDatetimeButton(date: '09:35', onDateTap: () => tapped = true),
         ),
       ));
       expect(find.text('09:35'), findsOneWidget);
@@ -243,14 +212,14 @@ void main() {
       expect(tapped, isTrue);
     });
 
-    test('times without "Uhr", add menu is an anchored popover', () {
+    test('times without "Uhr", add menu opens the Beta add sheet', () {
       final src = File(
               'lib/features/planning/presentation/pages/public_planning_page.dart')
           .readAsStringSync();
       expect(src, isNot(contains('attendanceTimeOClock')));
       final addMenu = src.substring(src.indexOf('Future<void> _showAddMenu('));
       expect(addMenu.substring(0, addMenu.indexOf('if (action == null')),
-          allOf(contains('showAppPopoverMenu<String>('), isNot(contains('showPlanActionSheet'))));
+          contains('_rdAddMenu('));
     });
   });
 

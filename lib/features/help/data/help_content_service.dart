@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/providers/locale_provider.dart';
-import '../../../core/providers/redesign_providers.dart';
 import 'fuse_search.dart';
 import 'help_content.dart';
 import 'help_content_app.dart';
@@ -89,12 +88,8 @@ class HelpContentService {
 /// Help content in the UI language (Ionic `localizeHelp`): untranslated
 /// entries stay German; translated glossary terms keep their German name as
 /// alias so `[[Begriff]]` links in German articles still resolve.
-///
-/// [beta]: the articles on where things are follow the new design
-/// ([betaHelpArticles]).
-HelpContentService localizedHelpContentService(String language, {bool beta = false}) {
+HelpContentService localizedHelpContentService(String language) {
   final service = _languageHelpContentService(language);
-  if (!beta) return service;
   final versions = language == 'en' ? betaHelpArticlesEn : betaHelpArticles;
   return HelpContentService(
     categories: service.categories,
@@ -152,8 +147,5 @@ HelpContentService _languageHelpContentService(String language) {
 /// Help content service (German content ported from Ionic, English
 /// translation from Ionic content/en), following the UI language.
 final helpContentServiceProvider = Provider<HelpContentService>(
-  (ref) => localizedHelpContentService(
-    ref.watch(localeProvider).languageCode,
-    beta: ref.watch(redesignEnabledProvider),
-  ),
+  (ref) => localizedHelpContentService(ref.watch(localeProvider).languageCode),
 );

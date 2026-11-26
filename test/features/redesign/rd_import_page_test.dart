@@ -200,7 +200,7 @@ List<Override> _overrides(_FakeFiles files, _FakeSongs songs, _FakeGroupNotifier
     [
       if (drive != null) rdDriveApiProvider.overrideWithValue(RdDriveApi(drive.call)),
       rdImportAiProvider.overrideWithValue(ai ?? _noAi),
-      initialRedesignSettingsProvider.overrideWithValue(const RedesignSettings(enabled: true, world: RdFarbwelt.petrol)),
+      initialRedesignSettingsProvider.overrideWithValue(const RedesignSettings(world: RdFarbwelt.petrol)),
       effectiveRoleProvider.overrideWithValue(Role.admin),
       currentTenantIdProvider.overrideWithValue(7),
       rdGroupKindProvider.overrideWithValue('orchestra'),

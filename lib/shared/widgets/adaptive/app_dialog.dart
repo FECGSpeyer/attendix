@@ -1,21 +1,15 @@
-import 'package:flutter/material.dart';
 import 'package:attendix/core/theme/app_icons.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/redesign/rd_palette.dart';
 import '../../../core/theme/redesign/rd_theme.dart';
 import '../../../l10n/l10n.dart';
-import 'adaptive_platform.dart';
-import 'app_alert_inputs.dart';
 import 'app_pickers.dart';
 import 'ion_button_label.dart';
 
-/// IOS_LOOK: [showDialog] with the Ionic overlay backdrop.
-///
-/// Same parameters and return value as [showDialog]. On iOS the backdrop
-/// uses Ionic's iOS theme opacity (`--backdrop-opacity: .2`); the dialog
-/// itself decides its look (use [AppAlertDialog] for alerts).
+/// Shows an app dialog with the standard overlay backdrop.
 Future<T?> showAppDialog<T>({
   required BuildContext context,
   required WidgetBuilder builder,
@@ -28,14 +22,11 @@ Future<T?> showAppDialog<T>({
   Offset? anchorPoint,
   TraversalEdgeBehavior? traversalEdgeBehavior,
 }) {
-  final ios = useIosLook(context);
   return showDialog<T>(
     context: context,
     builder: builder,
     barrierDismissible: barrierDismissible,
-    // MD_SWEEP: md overlays dim with `--backdrop-opacity: .32`.
-    barrierColor:
-        barrierColor ?? (ios ? const Color(0x33000000) : const Color(0x52000000)),
+    barrierColor: barrierColor ?? const Color(0x52000000),
     barrierLabel: barrierLabel,
     useSafeArea: useSafeArea,
     useRootNavigator: useRootNavigator,
@@ -45,22 +36,8 @@ Future<T?> showAppDialog<T>({
   );
 }
 
-/// IOS_LOOK: drop-in replacement for [AlertDialog] that looks like
-/// `ion-alert`.
-///
-/// - iOS: Ionic iOS 27 alert – frosted rounded card (280–320pt wide), bold
-///   17pt title and grey message aligned left, any content (text fields,
-///   lists …) below, and the actions as full-width grey pill buttons stacked
-///   vertically in the given order (black semibold label, destructive ones
-///   red). A single action stays one pill.
-/// - elsewhere: a plain Material [AlertDialog] with exactly the given
-///   parameters (Ionic md alert).
-///
-/// The actions keep their callbacks: a [TextButton] / [ElevatedButton] /
-/// [FilledButton] / [OutlinedButton] is rendered as an iOS pill with the
-/// same `onPressed` (null = disabled) and child. A button styled with the
-/// error/danger colour becomes a destructive (red) action. Other widgets are
-/// shown as they are.
+/// Redesign alert dialog: rounded surface card, bold title, muted message, and
+/// 48pt filled/outlined action buttons (3+ actions stacked).
 class AppAlertDialog extends StatelessWidget {
   const AppAlertDialog({
     super.key,
@@ -99,115 +76,7 @@ class AppAlertDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final rd = context.rdSkin;
-    if (rd != null) return _rdAlert(context, rd);
-    // Alerts with inputs: a bare [AppAlertInput] is an input group of one;
-    // groups bring the Ionic `.alert-message` / `.alert-*-group` paddings.
-    Widget? content = this.content;
-    if (content is AppAlertInput) {
-      content = AppAlertInputGroup(children: [content]);
-    }
-    final grouped = content is AppAlertGroupContent;
-    if (!useIosLook(context)) {
-      // PARITY_R3: Ionic md `ion-alert` – 4px radius, 20/500 title,
-      // grey 16px message, flat UPPERCASE primary text buttons aligned
-      // right; 3+ buttons stacked (`alert-button-group-vertical`).
-      final theme = Theme.of(context);
-      final mdActions = [
-        for (final a in actions ?? const <Widget>[])
-          if (a is! Spacer) mdAlertActionFrom(context, a),
-      ];
-      final inset = (insetPadding ??
-              const EdgeInsets.symmetric(horizontal: 48, vertical: 24))
-          .resolve(Directionality.of(context));
-      // PWA_PARITY: Ionic md `ion-alert` is at most 560px wide; a Material
-      // AlertDialog grows with its text (≈930px on desktop).
-      final dialog = AlertDialog(
-        icon: icon,
-        title: title,
-        content: content,
-        actions: mdActions.isEmpty
-            ? null
-            : [MdAlertButtonGroup(children: mdActions)],
-        // A group brings the Ionic paddings: [contentPadding] then only
-        // counts for Beta.
-        contentPadding: grouped
-            ? EdgeInsets.zero
-            : contentPadding ??
-                EdgeInsets.fromLTRB(24, title == null ? 20 : 0, 24, 20),
-        titlePadding: titlePadding ??
-            EdgeInsets.fromLTRB(24, 20, 24, content == null ? 20 : 15),
-        actionsPadding: actionsPadding ?? const EdgeInsets.all(8),
-        actionsAlignment: actionsAlignment,
-        insetPadding: insetPadding ??
-            const EdgeInsets.symmetric(horizontal: 48, vertical: 24),
-        // A group scrolls its inputs / options itself.
-        scrollable: !grouped && scrollable,
-        backgroundColor: backgroundColor,
-        shape: shape ??
-            const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(4))),
-        titleTextStyle: titleTextStyle ??
-            TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w500,
-              color: theme.colorScheme.onSurface,
-            ),
-        contentTextStyle: contentTextStyle ??
-            TextStyle(
-              fontSize: 16,
-              height: 1.4,
-              // MD_SWEEP: step-550 – #737373, md dark #949494.
-              color: theme.brightness == Brightness.dark
-                  ? const Color(0xFF949494)
-                  : const Color(0xFF737373),
-            ),
-        semanticLabel: semanticLabel,
-      );
-      return Center(
-        child: ConstrainedBox(
-          constraints:
-              BoxConstraints(maxWidth: _ionMdAlertMaxWidth + inset.horizontal),
-          child: dialog,
-        ),
-      );
-    }
-    return IosAlertCard(
-      icon: icon,
-      title: title,
-      content: content,
-      contentPadding: grouped ? EdgeInsets.zero : contentPadding,
-      scrollable: !grouped && scrollable,
-      semanticLabel: semanticLabel,
-      actions: [
-        for (final a in actions ?? const <Widget>[])
-          if (a is! Spacer) iosAlertActionFrom(context, a),
-      ],
-    );
-  }
-}
-
-/// Content of an [AppAlertDialog] that lays out the Ionic alert groups
-/// itself (`.alert-message` + `.alert-input-group` / `.alert-radio-group` /
-/// `.alert-checkbox-group`): in the classic looks the dialog adds no content
-/// padding (its `contentPadding` then only counts for Beta). Implemented by
-/// [AppAlertInputGroup], `AppAlertRadioGroup` and `AppAlertCheckboxGroup`.
-///
-/// Each group has a `beta` widget: the content of the dialog in the Beta
-/// design, when that differs from the group's default Beta layout.
-abstract interface class AppAlertGroupContent {
-  /// The plain message text, if any (the iOS card is as wide as its text).
-  String? get alertMessageText;
-}
-
-/// Ionic md `ion-alert` max width (alert.md.vars `$alert-md-max-width`).
-const double _ionMdAlertMaxWidth = 560;
-
-extension on AppAlertDialog {
-  /// Beta-Skin: the dialog of the new design on every platform – white card
-  /// (radius 20), bold title, grey message, the actions as 48pt buttons (the
-  /// last one filled, a destructive one red; three or more stacked).
-  Widget _rdAlert(BuildContext context, RdPalette rd) {
+    final rd = context.rd;
     final list = [
       for (final a in actions ?? const <Widget>[])
         if (a is! Spacer) a,
@@ -244,49 +113,57 @@ extension on AppAlertDialog {
                   ],
                 ),
             ],
-      contentPadding: contentPadding ?? EdgeInsets.fromLTRB(22, title == null ? 22 : 0, 22, 18),
-      titlePadding: titlePadding ?? EdgeInsets.fromLTRB(22, 22, 22, content == null ? 18 : 10),
+      contentPadding:
+          contentPadding ?? EdgeInsets.fromLTRB(22, title == null ? 22 : 0, 22, 18),
+      titlePadding:
+          titlePadding ?? EdgeInsets.fromLTRB(22, 22, 22, content == null ? 18 : 10),
       actionsPadding: actionsPadding ?? const EdgeInsets.fromLTRB(16, 0, 16, 16),
-      insetPadding: insetPadding ?? const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+      insetPadding:
+          insetPadding ?? const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
       scrollable: scrollable,
       backgroundColor: backgroundColor ?? rd.surface,
-      shape: shape ?? RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      titleTextStyle: titleTextStyle ?? TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: rd.text),
-      contentTextStyle: contentTextStyle ?? TextStyle(fontSize: 15, height: 1.35, color: rd.text2),
+      shape:
+          shape ?? RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      titleTextStyle: titleTextStyle ??
+          TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: rd.text),
+      contentTextStyle: contentTextStyle ??
+          TextStyle(fontSize: 15, height: 1.35, color: rd.text2),
       semanticLabel: semanticLabel,
     );
   }
 }
 
-/// Beta-Skin: converts a Material dialog action into a button of the new
-/// design ([filled]: primary, else outlined; a destructive action red).
-Widget rdAlertActionFrom(BuildContext context, RdPalette rd, Widget action, {required bool filled}) {
-  final VoidCallback? onPressed;
-  final bool destructive;
-  final bool autofocus;
-  Widget? raw;
-  if (action is IosAlertButton) {
-    onPressed = action.onPressed;
-    destructive = action.destructive;
-    autofocus = false;
-    raw = action.child;
-  } else if (action is ButtonStyleButton) {
-    const states = <WidgetState>{};
-    final fg = action.style?.foregroundColor?.resolve(states);
-    final bg = action.style?.backgroundColor?.resolve(states);
-    final error = Theme.of(context).colorScheme.error;
-    onPressed = action.onPressed;
-    destructive = _isDanger(fg, error) || (action is! TextButton && _isDanger(bg, error));
-    autofocus = action.autofocus;
-    raw = action.child;
-  } else {
+/// Marker interface implemented by alert option/input groups.
+abstract interface class AppAlertGroupContent {
+  String? get alertMessageText;
+}
+
+/// Converts a Material dialog action into a styled dialog button
+/// ([filled]: primary, else outlined; destructive actions are red).
+Widget rdAlertActionFrom(
+  BuildContext context,
+  RdPalette rd,
+  Widget action, {
+  required bool filled,
+}) {
+  if (action is! ButtonStyleButton) {
     return action;
   }
+  const states = <WidgetState>{};
+  final fg = action.style?.foregroundColor?.resolve(states);
+  final bg = action.style?.backgroundColor?.resolve(states);
+  final error = Theme.of(context).colorScheme.error;
+  final onPressed = action.onPressed;
+  final destructive =
+      _isDanger(fg, error) || (action is! TextButton && _isDanger(bg, error));
+  final autofocus = action.autofocus;
+  final raw = action.child;
   final child = switch (raw) {
     final IonButtonLabel l => l.toText(context),
     final c => c ?? const SizedBox.shrink(),
   };
-  final shape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(rd.buttonRadius));
+  final shape =
+      RoundedRectangleBorder(borderRadius: BorderRadius.circular(rd.buttonRadius));
   const text = TextStyle(fontSize: 16, fontWeight: FontWeight.w600);
   if (filled) {
     return FilledButton(
@@ -321,9 +198,7 @@ Widget rdAlertActionFrom(BuildContext context, RdPalette rd, Widget action, {req
   );
 }
 
-/// IOS_LOOK: [SimpleDialog] replacement – on iOS an [IosAlertCard] with the
-/// options as list rows (ion-alert with radio/plain buttons), otherwise the
-/// Material [SimpleDialog].
+/// Drop-in wrapper for [SimpleDialog].
 class AppSimpleDialog extends StatelessWidget {
   const AppSimpleDialog({super.key, this.title, this.children});
 
@@ -332,128 +207,7 @@ class AppSimpleDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Beta-Skin: the themed Material dialog of the new design.
-    if (!useIosLook(context) || context.rdSkin != null) {
-      return SimpleDialog(title: title, children: children);
-    }
-    return IosAlertCard(
-      title: title,
-      contentPadding: const EdgeInsets.fromLTRB(8, 0, 8, 12),
-      scrollable: true,
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: children ?? const [],
-      ),
-      actions: const [],
-    );
-  }
-}
-
-/// Converts a Material dialog action into an iOS alert pill button.
-Widget iosAlertActionFrom(BuildContext context, Widget action) {
-  if (action is ButtonStyleButton) {
-    final style = action.style;
-    const states = <WidgetState>{};
-    final fg = style?.foregroundColor?.resolve(states);
-    final bg = style?.backgroundColor?.resolve(states);
-    final error = Theme.of(context).colorScheme.error;
-    final destructive = _isDanger(fg, error) ||
-        (action is! TextButton && _isDanger(bg, error));
-    return IosAlertButton(
-      onPressed: action.onPressed,
-      destructive: destructive,
-      // PARITY_R3: ionic-theme-ios27 (iPhone Safari 26): weight 600.
-      // MD_BUTTONS: an [IonButtonLabel] becomes the plain [Text] the pill
-      // measures (iOS keeps the text as written).
-      child: switch (action.child) {
-        final IonButtonLabel l => l.toText(context),
-        final c => c ?? const SizedBox.shrink(),
-      },
-    );
-  }
-  return action;
-}
-
-/// PARITY_R3: converts a Material dialog action into an Ionic md alert
-/// button: a flat primary text button with an UPPERCASE label (Ionic md
-/// `.alert-button`: 14px, weight 500, `text-transform: uppercase`, padding
-/// 10px, 2px radius). Filled/elevated buttons become text buttons too –
-/// Ionic md alerts only have flat buttons.
-Widget mdAlertActionFrom(BuildContext context, Widget action) {
-  if (action is! ButtonStyleButton) return action;
-  final primary = Theme.of(context).colorScheme.primary;
-  Widget child = action.child ?? const SizedBox.shrink();
-  // MD_BUTTONS: an [IonButtonLabel] child is already uppercase in md.
-  if (child is IonButtonLabel) {
-    child = child.toText(context, textAlign: TextAlign.end);
-  } else if (child is Text && child.data != null) {
-    child = Text(
-      ionUppercase(child.data!),
-      key: child.key,
-      style: child.style,
-      textAlign: TextAlign.end,
-      maxLines: child.maxLines,
-      overflow: child.overflow,
-    );
-  }
-  return TextButton(
-    onPressed: action.onPressed,
-    onLongPress: action.onLongPress,
-    focusNode: action.focusNode,
-    autofocus: action.autofocus,
-    style: TextButton.styleFrom(
-      foregroundColor: primary,
-      disabledForegroundColor: primary.withValues(alpha: 0.38),
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      padding: const EdgeInsets.all(10),
-      minimumSize: const Size(48, 36),
-      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      alignment: Alignment.centerRight,
-      shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(2))),
-      textStyle: const TextStyle(
-        fontSize: 14,
-        height: 20 / 14,
-        fontWeight: FontWeight.w500,
-      ),
-    ),
-    child: child,
-  );
-}
-
-/// PARITY_R3: Ionic md `.alert-button-group`: one or two buttons sit in a
-/// right-aligned row (8px apart, wrapping upwards when they do not fit –
-/// `flex-wrap: wrap-reverse`), three or more are stacked full width with
-/// right-aligned labels (`.alert-button-group-vertical`).
-class MdAlertButtonGroup extends StatelessWidget {
-  const MdAlertButtonGroup({super.key, required this.children});
-
-  final List<Widget> children;
-
-  @override
-  Widget build(BuildContext context) {
-    if (children.length > 2) {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          for (final c in children)
-            Padding(padding: const EdgeInsets.only(right: 8), child: c),
-        ],
-      );
-    }
-    return Padding(
-      padding: const EdgeInsets.only(right: 8),
-      child: OverflowBar(
-        alignment: MainAxisAlignment.end,
-        spacing: 8,
-        overflowAlignment: OverflowBarAlignment.end,
-        overflowDirection: VerticalDirection.up,
-        children: children,
-      ),
-    );
+    return SimpleDialog(title: title, children: children);
   }
 }
 
@@ -469,451 +223,8 @@ bool _isDanger(Color? c, Color error) {
       hsv.value > 0.4;
 }
 
-/// Ionic iOS 26 `ion-alert` card. Used by [AppAlertDialog]; usable directly
-/// for custom alerts.
-class IosAlertCard extends StatelessWidget {
-  const IosAlertCard({
-    super.key,
-    this.icon,
-    this.title,
-    this.message,
-    this.content,
-    this.contentPadding,
-    this.scrollable = false,
-    this.semanticLabel,
-    required this.actions,
-  });
-
-  final Widget? icon;
-  final Widget? title;
-
-  /// Plain message under the title (alternative to [content]).
-  final String? message;
-  final Widget? content;
-  final EdgeInsetsGeometry? contentPadding;
-  final bool scrollable;
-  final String? semanticLabel;
-  final List<Widget> actions;
-
-  /// ionic-theme-ios27 `ion-alert`: `--width: auto`, `--min-width: 280px`,
-  /// `--max-width: 320px` – the card is as wide as its widest line of
-  /// title / message text (plus the 30pt side padding), at least 280pt.
-  /// An alert with inputs only (`.alert-input` has the intrinsic width of a
-  /// 20 character input, < 280pt) stays 280pt wide.
-  static const double width = 280;
-
-  /// Upper bound of the auto width (ios27 `--max-width`).
-  static const double maxWidth = 320;
-
-  /// PARITY_R5: ios27 `.alert-title` 1rem / line-height 1.21 and
-  /// `.alert-message` .94rem / 1.19 with the iOS root font of 17px
-  /// (Ionic `--ion-dynamic-font: -apple-system-body`).
-  static const double titleFontSize = 17;
-  static const double messageFontSize = 16;
-
-  /// PARITY_R5: card width for the given title / message text on a screen
-  /// [screenWidth] wide (shrink-to-fit between 280 and 320, never wider
-  /// than the screen minus 16pt on each side).
-  static double widthFor({
-    String? title,
-    String? message,
-    double screenWidth = double.infinity,
-    TextScaler textScaler = TextScaler.noScaling,
-  }) {
-    double line(String? text, TextStyle style) {
-      if (text == null || text.isEmpty) return 0;
-      var widest = 0.0;
-      for (final l in text.split('\n')) {
-        final painter = TextPainter(
-          text: TextSpan(text: l, style: style),
-          textDirection: TextDirection.ltr,
-          textScaler: textScaler,
-          maxLines: 1,
-        )..layout();
-        if (painter.width > widest) widest = painter.width;
-        painter.dispose();
-      }
-      return widest;
-    }
-
-    final content = [
-      line(title, const TextStyle(
-          fontSize: titleFontSize, fontWeight: FontWeight.w600)),
-      line(message, const TextStyle(fontSize: messageFontSize)),
-    ].reduce((a, b) => a > b ? a : b);
-    final natural = (content + 60).clamp(width, maxWidth);
-    return natural.clamp(200.0, (screenWidth - 32).clamp(200.0, maxWidth));
-  }
-
-  static String? _plainText(Widget? w) => w is Text ? w.data : null;
-
-  @override
-  Widget build(BuildContext context) {
-    if (context.rdSkin != null) {
-      // Beta-Skin: the dialog of the new design (AppAlertDialog).
-      final hasMessage = message != null && message!.isNotEmpty;
-      return AppAlertDialog(
-        icon: icon,
-        title: title,
-        content: content != null && hasMessage
-            ? Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [Text(message!), const SizedBox(height: 14), content!],
-              )
-            : content ?? (hasMessage ? Text(message!) : null),
-        contentPadding: contentPadding,
-        scrollable: scrollable,
-        semanticLabel: semanticLabel,
-        actions: actions,
-      );
-    }
-    final theme = Theme.of(context);
-    final b = theme.brightness;
-    final textColor = theme.colorScheme.onSurface;
-    // IOS27_SWEEP: ios27 `.alert-message` colour
-    // `var(--ion-text-color-step-600, var(--ion-color-step-400, #999))` –
-    // #999999 in light mode, the app's dark step-400 #666666.
-    final messageColor = iosAlertMessageColor(b);
-    final mq = MediaQuery.of(context);
-    final cardWidth = widthFor(
-      title: _plainText(title),
-      message: message ??
-          switch (content) {
-            final AppAlertGroupContent g => g.alertMessageText,
-            final c => _plainText(c),
-          },
-      screenWidth: mq.size.width,
-      textScaler: mq.textScaler,
-    );
-
-    final titleStyle = TextStyle(
-      fontSize: titleFontSize,
-      height: 1.21,
-      fontWeight: FontWeight.w600,
-      color: textColor,
-    );
-    final messageStyle = TextStyle(
-        fontSize: messageFontSize, height: 1.19, color: messageColor);
-
-    final hasMessage = message != null && message!.isNotEmpty;
-    Widget? body;
-    if (content != null && hasMessage) {
-      // PARITY_R5: `.alert-message` above the `.alert-input-group` (alert
-      // with message and inputs).
-      body = Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(30, 0, 30, 20),
-            child: Text(message!),
-          ),
-          Padding(
-            padding:
-                contentPadding ?? const EdgeInsets.fromLTRB(30, 0, 30, 20),
-            child: content,
-          ),
-        ],
-      );
-      body = DefaultTextStyle.merge(style: messageStyle, child: body);
-    } else {
-      body = content ?? (hasMessage ? Text(message!) : null);
-      if (body != null) {
-        body = DefaultTextStyle.merge(style: messageStyle, child: body);
-        body = Padding(
-          padding:
-              contentPadding ?? const EdgeInsets.fromLTRB(30, 0, 30, 20),
-          child: body,
-        );
-      }
-    }
-    if (body != null) {
-      body = scrollable
-          ? Flexible(child: SingleChildScrollView(child: body))
-          : Flexible(child: body);
-    }
-
-    final children = <Widget>[
-      if (icon != null)
-        Padding(
-          padding: const EdgeInsets.only(top: 20),
-          child: IconTheme.merge(
-            data: IconThemeData(color: theme.colorScheme.primary, size: 28),
-            child: icon!,
-          ),
-        ),
-      if (title != null)
-        Padding(
-          padding: EdgeInsets.fromLTRB(30, icon != null ? 10 : 22, 30,
-              body != null ? 7 : 19),
-          child: DefaultTextStyle.merge(style: titleStyle, child: title!),
-        )
-      else
-        const SizedBox(height: 18),
-      if (body != null) body,
-      if (actions.isNotEmpty)
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-          child: _IosAlertButtonGroup(actions: actions),
-        ),
-    ];
-
-    return AnimatedPadding(
-      padding: mq.viewInsets + const EdgeInsets.symmetric(vertical: 24),
-      duration: const Duration(milliseconds: 100),
-      curve: Curves.decelerate,
-      child: MediaQuery.removeViewInsets(
-        removeLeft: true,
-        removeTop: true,
-        removeRight: true,
-        removeBottom: true,
-        context: context,
-        child: Center(
-          child: _PopIn(
-            child: Semantics(
-              scopesRoute: true,
-              explicitChildNodes: true,
-              namesRoute: true,
-              label: semanticLabel,
-              child: SizedBox(
-                width: cardWidth,
-                child: Material(
-                  type: MaterialType.transparency,
-                  // IOS27_SWEEP: `api.glass-overlay-surface` – rgba(glass,
-                  // .67) (dark .52), 0.5pt rgba(text, .18) border,
-                  // 0 12px 32px shadow, blur 20.
-                  child: IosGlassSurface(
-                    borderRadius: const BorderRadius.all(Radius.circular(36)),
-                    overlay: true,
-                    blur: 20,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: children,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// PARITY_R3: iOS `.alert-button-group` – exactly two buttons sit side by
-/// side (each `min-width: calc(50% - 4px)`, 8px gap) as long as both labels
-/// fit into half the width (`flex-wrap: wrap` otherwise puts them on two
-/// lines); one or three and more buttons are stacked
-/// (`.alert-button-group-vertical`).
-class _IosAlertButtonGroup extends StatelessWidget {
-  const _IosAlertButtonGroup({required this.actions});
-
-  final List<Widget> actions;
-
-  Widget _stacked() => Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          for (var i = 0; i < actions.length; i++) ...[
-            if (i > 0) const SizedBox(height: 8),
-            actions[i],
-          ],
-        ],
-      );
-
-  @override
-  Widget build(BuildContext context) {
-    if (actions.length != 2 || actions.any((a) => a is! IosAlertButton)) {
-      return _stacked();
-    }
-    final scaler = MediaQuery.textScalerOf(context);
-    final direction = Directionality.of(context);
-    return LayoutBuilder(builder: (context, constraints) {
-      final half = (constraints.maxWidth - 8) / 2;
-      final fits = actions.every((a) {
-        final w = (a as IosAlertButton).labelWidth(scaler, direction);
-        return w == null || w <= half;
-      });
-      if (!fits) return _stacked();
-      return Row(
-        children: [
-          Expanded(child: actions[0]),
-          const SizedBox(width: 8),
-          Expanded(child: actions[1]),
-        ],
-      );
-    });
-  }
-}
-
-/// IOS27_SWEEP: secondary text of iOS alerts and action sheets
-/// (`.alert-message`, `.action-sheet-sub-title`): #999999, dark #666666.
-Color iosAlertMessageColor(Brightness b) =>
-    b == Brightness.dark ? const Color(0xFF666666) : const Color(0xFF999999);
-
-/// Grey full-width pill button of an iOS alert / action sheet.
-/// IOS27_SWEEP: ionic-theme-ios27 `glass-background-overlay-button` –
-/// step-200 (#cccccc, dark #333333), radius 24, min-height 48, 17pt labels
-/// in the text colour; `role: 'destructive'` in
-/// `--ios-theme-destructive-color` (#ea292d, dark #ff686b).
-class IosAlertButton extends StatelessWidget {
-  const IosAlertButton({
-    super.key,
-    required this.onPressed,
-    required this.child,
-    this.destructive = false,
-    this.bold = true,
-    this.minHeight = 48,
-    this.icon,
-  });
-
-  final VoidCallback? onPressed;
-  final Widget child;
-  final bool destructive;
-  final bool bold;
-  final double minHeight;
-  final Widget? icon;
-
-  /// Ionic iOS 26/27 theme `.alert-button { padding: 12px }`.
-  static const double _hPadding = 12;
-
-  /// ios27 `border-radius: 24px` (half of the 48pt min-height).
-  static double radiusFor(double minHeight) => minHeight < 48 ? minHeight / 2 : 24;
-
-  TextStyle _labelStyle(Color? color) => TextStyle(
-        fontSize: 17,
-        fontWeight: bold ? FontWeight.w600 : FontWeight.w500,
-        // PWA_PARITY: no inherited tracking, it is not part of [labelWidth]
-        // and wrapped "Zum App Store" inside the half-width button.
-        letterSpacing: 0,
-        color: color,
-      );
-
-  /// Natural width of the button (label + padding) when its child is a
-  /// plain [Text]; null when it cannot be measured (e.g. a spinner).
-  double? labelWidth(TextScaler scaler, TextDirection direction) {
-    final c = child;
-    if (c is! Text || c.data == null) return null;
-    final painter = TextPainter(
-      text: TextSpan(text: c.data, style: _labelStyle(null).merge(c.style)),
-      textDirection: direction,
-      textScaler: scaler,
-      maxLines: 1,
-    )..layout();
-    final w = painter.width + 2 * _hPadding + (icon == null ? 0 : 28);
-    painter.dispose();
-    return w;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final b = theme.brightness;
-    final color =
-        destructive ? IosGlass.destructive(b) : theme.colorScheme.onSurface;
-    final enabled = onPressed != null;
-    final radius = BorderRadius.circular(radiusFor(minHeight));
-    return Opacity(
-      opacity: enabled ? 1 : 0.4,
-      child: Material(
-        color: IosGlass.overlayButton(b),
-        borderRadius: radius,
-        child: InkWell(
-          borderRadius: radius,
-          splashFactory: NoSplash.splashFactory,
-          highlightColor: IosGlass.overlayButtonActivated(b),
-          onTap: onPressed == null
-              ? null
-              : () {
-                  try {
-                    HapticFeedback.selectionClick();
-                  } catch (_) {}
-                  onPressed!();
-                },
-          child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: minHeight),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: _hPadding, vertical: 8),
-              child: Center(
-                child: IconTheme.merge(
-                  data: IconThemeData(color: color, size: 20),
-                  child: DefaultTextStyle.merge(
-                    textAlign: TextAlign.center,
-                    style: _labelStyle(color),
-                    child: icon == null
-                        ? child
-                        : Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              icon!,
-                              const SizedBox(width: 8),
-                              Flexible(child: child),
-                            ],
-                          ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// ion-alert iOS enter animation: scale 1.1 → 1 with fade.
-class _PopIn extends StatelessWidget {
-  const _PopIn({required this.child});
-
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return TweenAnimationBuilder<double>(
-      tween: Tween(begin: 0, end: 1),
-      duration: const Duration(milliseconds: 200),
-      curve: Curves.easeOut,
-      child: child,
-      builder: (context, t, child) => Transform.scale(
-        scale: 1.1 - 0.1 * t,
-        child: child,
-      ),
-    );
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Convenience alerts (ion-alert with OK / confirm / prompt)
-// ---------------------------------------------------------------------------
-
-/// ion-alert with a message and one "OK" button.
-Future<void> showAppAlert(
-  BuildContext context, {
-  required String title,
-  String? message,
-  String? okText,
-}) {
-  return showAppDialog<void>(
-    context: context,
-    builder: (ctx) => AppAlertDialog(
-      title: Text(title),
-      content: message == null ? null : Text(message),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(ctx).pop(),
-          child: Text(okText ?? ctx.l10n.commonOk),
-        ),
-      ],
-    ),
-  );
-}
-
-/// ion-alert with "Abbrechen" (role cancel) and a confirm button
-/// (destructive = red). Returns true when confirmed.
+/// Confirm dialog with cancel and confirm actions (destructive = red).
+/// Returns true when confirmed.
 Future<bool> showAppConfirm(
   BuildContext context, {
   required String title,
@@ -946,8 +257,7 @@ Future<bool> showAppConfirm(
   return result ?? false;
 }
 
-/// ion-alert with one text input. Returns the entered text, or null when
-/// cancelled.
+/// Prompt dialog with a single text input.
 Future<String?> showAppPrompt(
   BuildContext context, {
   required String title,
@@ -1011,70 +321,6 @@ class _PromptDialogState extends State<_PromptDialog> {
 
   @override
   Widget build(BuildContext context) {
-    if (context.rdSkin != null) return _buildBeta(context);
-    // Ionic `ion-alert` with one input (`type: 'text'` / `'textarea'`):
-    // optional message, the alert input of the look, two buttons.
-    final textarea = widget.maxLines > 1;
-    final message = widget.message;
-    return AppAlertDialog(
-      title: Text(widget.title),
-      content: AppAlertInputGroup(
-        message: message == null ? null : Text(message),
-        children: [
-          AppAlertInput(
-            controller: _controller,
-            placeholder: widget.hint,
-            keyboardType: widget.keyboardType,
-            autofocus: true,
-            textarea: textarea,
-            onSubmitted: textarea
-                ? null
-                : (_) => Navigator.of(context).pop(_controller.text),
-          ),
-        ],
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(null),
-          child: Text(widget.cancelText),
-        ),
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(_controller.text),
-          child: Text(widget.confirmText),
-        ),
-      ],
-    );
-  }
-
-  /// Beta: unchanged.
-  Widget _buildBeta(BuildContext context) {
-    if (useIosLook(context) && widget.maxLines == 1) {
-      // PARITY_R5: Ionic iOS `ion-alert` with one input: optional message,
-      // `.alert-input-group` (16/0/16/21) with the bordered input, the two
-      // buttons side by side.
-      return IosAlertCard(
-        title: Text(widget.title),
-        message: widget.message,
-        contentPadding: const EdgeInsets.fromLTRB(16, 0, 16, 21),
-        content: IosAlertInput(
-          controller: _controller,
-          placeholder: widget.hint,
-          keyboardType: widget.keyboardType,
-          autofocus: true,
-          onSubmitted: (_) => Navigator.of(context).pop(_controller.text),
-        ),
-        actions: [
-          IosAlertButton(
-            onPressed: () => Navigator.of(context).pop(null),
-            child: Text(widget.cancelText),
-          ),
-          IosAlertButton(
-            onPressed: () => Navigator.of(context).pop(_controller.text),
-            child: Text(widget.confirmText),
-          ),
-        ],
-      );
-    }
     return AppAlertDialog(
       title: Text(widget.title),
       content: Column(
@@ -1108,129 +354,7 @@ class _PromptDialogState extends State<_PromptDialog> {
   }
 }
 
-/// IOS_FORMS1 / PARITY_R5: text input of an iOS `ion-alert`
-/// (`.alert-input`): `font-size: 1rem` = 17pt with the iOS root font
-/// (`-apple-system-body`), 7pt padding and radius, 0.55pt grey border on
-/// the page background, 10pt above each input.
-class IosAlertInput extends StatelessWidget {
-  const IosAlertInput({
-    super.key,
-    required this.controller,
-    this.placeholder,
-    this.obscureText = false,
-    this.autofocus = false,
-    this.keyboardType,
-    this.onSubmitted,
-    this.readOnly = false,
-    this.onTap,
-    this.minLines,
-    this.maxLines = 1,
-    this.textCapitalization = TextCapitalization.none,
-    this.onChanged,
-    this.enabled,
-    this.inputFormatters,
-    this.focusNode,
-    this.textInputAction,
-    this.autofillHints,
-    this.autocorrect = true,
-  });
-
-  final TextEditingController controller;
-  final String? placeholder;
-  final bool obscureText;
-  final bool autofocus;
-  final TextInputType? keyboardType;
-  final ValueChanged<String>? onSubmitted;
-
-  /// `type: 'textarea'` inputs grow with their text ([maxLines] > 1).
-  final int? minLines;
-  final int? maxLines;
-  final TextCapitalization textCapitalization;
-  final ValueChanged<String>? onChanged;
-  final bool? enabled;
-  final List<TextInputFormatter>? inputFormatters;
-  final FocusNode? focusNode;
-  final TextInputAction? textInputAction;
-  final Iterable<String>? autofillHints;
-  final bool autocorrect;
-
-  /// A read-only field that reacts to [onTap] (e.g. the date input of
-  /// [showAppDateAlert]).
-  final bool readOnly;
-  final VoidCallback? onTap;
-
-  /// `.alert-input { font-size: 1rem }` on iOS.
-  static const double fontSize = 17;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final dark = theme.brightness == Brightness.dark;
-    final border = OutlineInputBorder(
-      borderRadius: BorderRadius.circular(7),
-      borderSide: BorderSide(
-        color: dark ? const Color(0xFF404040) : const Color(0xFFBFBFBF),
-        width: 0.55,
-      ),
-    );
-    return Padding(
-      padding: const EdgeInsets.only(top: 10),
-      child: TextField(
-        controller: controller,
-        obscureText: obscureText,
-        autofocus: autofocus,
-        keyboardType: keyboardType,
-        onSubmitted: onSubmitted,
-        readOnly: readOnly,
-        onTap: onTap,
-        minLines: minLines,
-        maxLines: maxLines,
-        textCapitalization: textCapitalization,
-        onChanged: onChanged,
-        enabled: enabled,
-        inputFormatters: inputFormatters,
-        focusNode: focusNode,
-        textInputAction: textInputAction,
-        autofillHints: autofillHints,
-        autocorrect: autocorrect,
-        style:
-            TextStyle(fontSize: fontSize, color: theme.colorScheme.onSurface),
-        decoration: InputDecoration(
-          hintText: placeholder,
-          hintStyle: TextStyle(
-            fontSize: fontSize,
-            color: dark ? const Color(0xFF8C8C8C) : const Color(0xFF999999),
-          ),
-          isDense: true,
-          filled: true,
-          fillColor: dark ? Colors.black : Colors.white,
-          contentPadding: const EdgeInsets.all(7),
-          border: border,
-          enabledBorder: border,
-          focusedBorder: border,
-          disabledBorder: border,
-        ),
-      ),
-    );
-  }
-}
-
-/// One text input of an Ionic `ion-alert` (`inputs: [{type, placeholder}]`)
-/// for every look, so all alerts with inputs show the same fields:
-///
-/// - iOS: [IosAlertInput] (white, 0.55pt border, radius 7, 17pt);
-/// - md: Ionic md `.alert-input` – no box, a 1px line below (2px primary
-///   while focused), 14px text (`font: inherit` of the md alert);
-/// - Beta: the field of the new design ([betaDecoration], default: only the
-///   [placeholder] as hint).
-///
-/// Like in Ionic the field has no label and no icon, only the
-/// [placeholder]; a field that needs a caption (editing existing values)
-/// gets it from the dialog.
-///
-/// Use it as the `content` of an [AppAlertDialog] (one input) or inside an
-/// [AppAlertInputGroup] (message and/or several inputs): the dialog then
-/// uses the Ionic `.alert-input-group` paddings.
+/// Text input used inside an [AppAlertDialog] / [AppAlertInputGroup].
 class AppAlertInput extends StatelessWidget {
   const AppAlertInput({
     super.key,
@@ -1264,14 +388,8 @@ class AppAlertInput extends StatelessWidget {
   final int? minLines;
   final int? maxLines;
   final TextCapitalization textCapitalization;
-
-  /// Ionic `type: 'textarea'`: in the classic looks the field is two lines
-  /// high like the HTML `<textarea>` of the alert (it grows up to four);
-  /// [minLines] / [maxLines] then only count for the Beta field.
   final bool textarea;
   final bool obscureText;
-
-  /// A read-only field that reacts to [onTap] (e.g. a date input).
   final bool readOnly;
   final VoidCallback? onTap;
   final ValueChanged<String>? onChanged;
@@ -1281,129 +399,34 @@ class AppAlertInput extends StatelessWidget {
   final TextInputAction? textInputAction;
   final Iterable<String>? autofillHints;
   final bool autocorrect;
-
-  /// Beta only: the decoration of the field in the new design (label,
-  /// icons …). The classic looks never show it.
   final InputDecoration? betaDecoration;
 
   @override
   Widget build(BuildContext context) {
-    if (context.rdSkin != null) {
-      return TextField(
-        controller: controller,
-        autofocus: autofocus,
-        keyboardType: keyboardType,
-        onSubmitted: onSubmitted,
-        minLines: minLines,
-        maxLines: maxLines,
-        textCapitalization: textCapitalization,
-        obscureText: obscureText,
-        readOnly: readOnly,
-        onTap: onTap,
-        onChanged: onChanged,
-        enabled: enabled,
-        inputFormatters: inputFormatters,
-        focusNode: focusNode,
-        textInputAction: textInputAction,
-        autofillHints: autofillHints,
-        autocorrect: autocorrect,
-        decoration: betaDecoration ?? InputDecoration(hintText: placeholder),
-      );
-    }
-    final minRows = textarea ? 2 : minLines;
-    final maxRows = textarea ? 4 : maxLines;
-    if (useIosLook(context)) {
-      return IosAlertInput(
-        controller: controller,
-        placeholder: placeholder,
-        autofocus: autofocus,
-        keyboardType: keyboardType,
-        onSubmitted: onSubmitted,
-        minLines: minRows,
-        maxLines: maxRows,
-        textCapitalization: textCapitalization,
-        obscureText: obscureText,
-        readOnly: readOnly,
-        onTap: onTap,
-        onChanged: onChanged,
-        enabled: enabled,
-        inputFormatters: inputFormatters,
-        focusNode: focusNode,
-        textInputAction: textInputAction,
-        autofillHints: autofillHints,
-        autocorrect: autocorrect,
-      );
-    }
-    final theme = Theme.of(context);
-    final dark = theme.brightness == Brightness.dark;
-    // Ionic md `.alert-input`: `border-bottom: 1px solid step-150`,
-    // `margin: 5px 0`, `padding: 10px 0`, `font: inherit` (the alert's
-    // 0.875rem); focused 2px primary.
-    final line = UnderlineInputBorder(
-      borderSide: BorderSide(
-        color: dark ? const Color(0xFF363636) : const Color(0xFFD9D9D9),
-      ),
-    );
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5),
-      child: TextField(
-        controller: controller,
-        autofocus: autofocus,
-        keyboardType: keyboardType,
-        onSubmitted: onSubmitted,
-        minLines: minRows,
-        maxLines: maxRows,
-        textCapitalization: textCapitalization,
-        obscureText: obscureText,
-        readOnly: readOnly,
-        onTap: onTap,
-        onChanged: onChanged,
-        enabled: enabled,
-        inputFormatters: inputFormatters,
-        focusNode: focusNode,
-        textInputAction: textInputAction,
-        autofillHints: autofillHints,
-        autocorrect: autocorrect,
-        style: TextStyle(
-            fontSize: mdFontSize, color: theme.colorScheme.onSurface),
-        decoration: InputDecoration(
-          hintText: placeholder,
-          hintStyle: TextStyle(
-            fontSize: mdFontSize,
-            color: dark ? const Color(0xFF8C8C8C) : const Color(0xFF999999),
-          ),
-          isDense: true,
-          filled: false,
-          contentPadding: const EdgeInsets.symmetric(vertical: 10),
-          border: line,
-          enabledBorder: line,
-          disabledBorder: line,
-          focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: theme.colorScheme.primary, width: 2),
-          ),
-        ),
-      ),
+    return TextField(
+      controller: controller,
+      autofocus: autofocus,
+      keyboardType: keyboardType,
+      onSubmitted: onSubmitted,
+      minLines: minLines,
+      maxLines: maxLines,
+      textCapitalization: textCapitalization,
+      obscureText: obscureText,
+      readOnly: readOnly,
+      onTap: onTap,
+      onChanged: onChanged,
+      enabled: enabled,
+      inputFormatters: inputFormatters,
+      focusNode: focusNode,
+      textInputAction: textInputAction,
+      autofillHints: autofillHints,
+      autocorrect: autocorrect,
+      decoration: betaDecoration ?? InputDecoration(hintText: placeholder),
     );
   }
-
-  /// Ionic md `ion-alert { font-size: 0.875rem }`, inherited by the input.
-  static const double mdFontSize = 14;
 }
 
-/// The `.alert-message` + `.alert-input-group` of an Ionic alert with
-/// inputs: use it as the `content` of an [AppAlertDialog].
-///
-/// - iOS: the [message] on the title's 30pt edge, the inputs 16pt from the
-///   card edge (`.alert-input-group { padding: 0 16px 21px }`);
-/// - md: the [message] under the title, the inputs with
-///   `padding: 20px 24px`;
-/// - Beta: a plain [Column] with the [message] and the [children], exactly
-///   as written ([betaCrossAxisAlignment]; gaps of the new design via
-///   [AppAlertBetaGap]).
-///
-/// [children] are [AppAlertInput]s; other widgets (a caption, an error
-/// line, a switch) are laid out in the same column. Like Ionic's validation
-/// (`alert.message = …; return false`) an error text belongs in [message].
+/// Column of alert message and inputs/widgets for an [AppAlertDialog].
 class AppAlertInputGroup extends StatelessWidget
     implements AppAlertGroupContent {
   const AppAlertInputGroup({
@@ -1414,13 +437,9 @@ class AppAlertInputGroup extends StatelessWidget
     this.beta,
   });
 
-  /// Usually a [Text].
   final Widget? message;
   final List<Widget> children;
   final CrossAxisAlignment betaCrossAxisAlignment;
-
-  /// Beta only: shown instead of the column (a dialog whose Beta content
-  /// is laid out differently).
   final Widget? beta;
 
   @override
@@ -1431,43 +450,18 @@ class AppAlertInputGroup extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
+    final beta = this.beta;
+    if (beta != null) return beta;
     final message = this.message;
-    if (context.rdSkin != null) {
-      final beta = this.beta;
-      if (beta != null) return beta;
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: betaCrossAxisAlignment,
-        children: [if (message != null) message, ...children],
-      );
-    }
-    final ios = useIosLook(context);
     return Column(
       mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        ...appAlertMessageSlot(context, message),
-        Flexible(
-          child: SingleChildScrollView(
-            padding: ios
-                ? const EdgeInsets.fromLTRB(16, 0, 16, 21)
-                : const EdgeInsets.fromLTRB(24, 20, 24, 20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: children,
-            ),
-          ),
-        ),
-      ],
+      crossAxisAlignment: betaCrossAxisAlignment,
+      children: [if (message != null) message, ...children],
     );
   }
 }
 
-/// Ionic alert `header` + `subHeader` (`.alert-title` + `.alert-sub-title`)
-/// as the `title` of an [AppAlertDialog]. iOS (ios27): the sub header grey,
-/// 0.94rem, 5pt under the title; md: 16px in the text colour. Beta shows
-/// only the [title] (its dialogs keep the sub header in their content).
+/// Dialog title wrapper (ignores legacy subHeader).
 class AppAlertTitle extends StatelessWidget {
   const AppAlertTitle(this.title, {super.key, this.subHeader});
 
@@ -1475,83 +469,20 @@ class AppAlertTitle extends StatelessWidget {
   final String? subHeader;
 
   @override
-  Widget build(BuildContext context) {
-    final sub = subHeader;
-    if (context.rdSkin != null || sub == null || sub.isEmpty) {
-      return Text(title);
-    }
-    final theme = Theme.of(context);
-    final ios = useIosLook(context);
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(title),
-        Padding(
-          padding: const EdgeInsets.only(top: 5),
-          child: Text(
-            sub,
-            style: ios
-                ? TextStyle(
-                    fontSize: IosAlertCard.messageFontSize,
-                    height: 1.19,
-                    fontWeight: FontWeight.w400,
-                    color: iosAlertMessageColor(theme.brightness),
-                  )
-                : TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400,
-                    color: theme.colorScheme.onSurface,
-                  ),
-          ),
-        ),
-      ],
-    );
-  }
+  Widget build(BuildContext context) => Text(title);
 }
 
-/// The `.alert-message` of an Ionic alert above an input / radio /
-/// checkbox group (classic looks). iOS (ios27): `padding: 0 30px 20px`, an
-/// empty message still takes 12pt (`.alert-message:empty`); md:
-/// `padding: 0 24px 20px`, nothing when empty.
-List<Widget> appAlertMessageSlot(BuildContext context, Widget? message) {
-  final ios = useIosLook(context);
-  if (message == null) return [if (ios) const SizedBox(height: 12)];
-  return [
-    Padding(
-      padding: ios
-          ? const EdgeInsets.fromLTRB(30, 0, 30, 20)
-          : const EdgeInsets.fromLTRB(24, 0, 24, 20),
-      child: message,
-    ),
-  ];
-}
-
-/// A vertical gap that only exists in the Beta design (inside an
-/// [AppAlertInputGroup]); the classic looks use the Ionic input margins.
+/// Vertical spacing helper inside an [AppAlertInputGroup].
 class AppAlertBetaGap extends StatelessWidget {
   const AppAlertBetaGap(this.height, {super.key});
 
   final double height;
 
   @override
-  Widget build(BuildContext context) =>
-      context.rdSkin != null ? SizedBox(height: height) : const SizedBox.shrink();
+  Widget build(BuildContext context) => SizedBox(height: height);
 }
 
-/// Style of an alert button with the Ionic `role: 'destructive'` (red on
-/// iOS; md alert buttons are always primary). Beta keeps its own colours:
-/// null there.
-ButtonStyle? appAlertDestructiveStyle(BuildContext context) =>
-    context.rdSkin != null
-        ? null
-        : TextButton.styleFrom(
-            foregroundColor: Theme.of(context).colorScheme.error);
-
-/// Ionic `ion-alert` with one `type: 'date'` input (e.g. "Datum ändern",
-/// "{Typ} anlegen"): title, message, the date field (tapping it opens the
-/// date picker) and "Abbrechen" / [confirmText]. Returns the chosen day,
-/// or null when cancelled.
+/// Alert dialog with a date picker input field.
 Future<DateTime?> showAppDateAlert(
   BuildContext context, {
   required String title,
@@ -1617,7 +548,6 @@ class _DateAlertState extends State<_DateAlert> {
       initialDate: _value,
       firstDate: widget.firstDate,
       lastDate: widget.lastDate,
-      overlay: IonDatetimeOverlay.buttons, // native date input in Ionic
     );
     if (picked == null || !mounted) return;
     setState(() {
@@ -1631,37 +561,6 @@ class _DateAlertState extends State<_DateAlert> {
     final l10n = context.l10n;
     void cancel() => Navigator.of(context).pop();
     void confirm() => Navigator.of(context).pop(_value);
-    if (context.rdSkin == null) {
-      // Ionic alert with a `type: 'date'` input: the alert input of the
-      // look (iOS bordered, md underline), no icon.
-      final message = widget.message;
-      return AppAlertDialog(
-        title: Text(widget.title),
-        content: AppAlertInputGroup(
-          message: message == null ? null : Text(message),
-          children: [
-            AppAlertInput(controller: _text, readOnly: true, onTap: _pick),
-          ],
-        ),
-        actions: [
-          TextButton(onPressed: cancel, child: Text(l10n.commonCancel)),
-          TextButton(onPressed: confirm, child: Text(widget.confirmText)),
-        ],
-      );
-    }
-    // Beta: unchanged.
-    if (useIosLook(context)) {
-      return IosAlertCard(
-        title: Text(widget.title),
-        message: widget.message,
-        contentPadding: const EdgeInsets.fromLTRB(16, 0, 16, 21),
-        content: IosAlertInput(controller: _text, readOnly: true, onTap: _pick),
-        actions: [
-          IosAlertButton(onPressed: cancel, child: Text(l10n.commonCancel)),
-          IosAlertButton(onPressed: confirm, child: Text(widget.confirmText)),
-        ],
-      );
-    }
     return AppAlertDialog(
       title: Text(widget.title),
       content: Column(
@@ -1676,7 +575,9 @@ class _DateAlertState extends State<_DateAlert> {
             controller: _text,
             readOnly: true,
             onTap: _pick,
-            decoration: InputDecoration(suffixIcon: Icon(AppIcons.calendarTodayOutlined)),
+            decoration: InputDecoration(
+              suffixIcon: Icon(AppIcons.calendarTodayOutlined),
+            ),
           ),
         ],
       ),
@@ -1688,21 +589,13 @@ class _DateAlertState extends State<_DateAlert> {
   }
 }
 
-/// Result of [showAppRadioAlert]: [value] is the checked radio when the
-/// confirm button was tapped (null if none was checked).
+/// Result of [showAppRadioAlert].
 class AppRadioAlertResult<T> {
   const AppRadioAlertResult(this.value);
   final T? value;
 }
 
-/// Ionic `ion-alert` with `type: 'radio'` inputs: title, [subtitle] (the
-/// alert message), the options as a radio list ([initialValue] checked),
-/// "Abbrechen" (role cancel) and a confirm button. The choice only counts
-/// with the confirm button: returns an [AppRadioAlertResult] on confirm
-/// (value null when nothing is checked), null when cancelled or dismissed.
-/// [cancelDestructive] shows the cancel button red on iOS (Ionic
-/// `role: 'destructive'`); [barrierDismissible] false = Ionic
-/// `backdropDismiss: false`.
+/// Radio alert dialog with options, cancel and confirm buttons.
 Future<AppRadioAlertResult<T>?> showAppRadioAlert<T>(
   BuildContext context, {
   required String title,
@@ -1762,96 +655,73 @@ class _RadioAlertState<T> extends State<_RadioAlert<T>> {
     void cancel() => Navigator.of(context).pop();
     void confirm() => Navigator.of(context).pop(AppRadioAlertResult<T>(_value));
     final maxHeight = MediaQuery.sizeOf(context).height * 0.5;
-    final rd = context.rdSkin;
-    if (rd != null) {
-      // Beta-Skin: message and options on the title's 22pt edge, the
-      // checked option primary with a checkmark.
-      final message = widget.message;
-      return AppAlertDialog(
-        title: Text(widget.title),
-        contentPadding: const EdgeInsets.only(bottom: 14),
-        content: ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: maxHeight),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                if (message != null && message.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(22, 0, 22, 8),
-                    child: Text(message),
-                  ),
-                for (final (value, label) in widget.options)
-                  Semantics(
-                    checked: value == _value,
-                    inMutuallyExclusiveGroup: true,
-                    child: InkWell(
-                      onTap: () => setState(() => _value = value),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 22),
-                        child: Container(
-                          constraints: const BoxConstraints(minHeight: 48),
-                          padding: const EdgeInsets.symmetric(vertical: 11),
-                          decoration: BoxDecoration(
-                            border: Border(top: BorderSide(color: rd.line, width: 0.5)),
+    final rd = context.rd;
+    final message = widget.message;
+    return AppAlertDialog(
+      title: Text(widget.title),
+      contentPadding: const EdgeInsets.only(bottom: 14),
+      content: ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: maxHeight),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (message != null && message.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(22, 0, 22, 8),
+                  child: Text(message),
+                ),
+              for (final (value, label) in widget.options)
+                Semantics(
+                  checked: value == _value,
+                  inMutuallyExclusiveGroup: true,
+                  child: InkWell(
+                    onTap: () => setState(() => _value = value),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 22),
+                      child: Container(
+                        constraints: const BoxConstraints(minHeight: 48),
+                        padding: const EdgeInsets.symmetric(vertical: 11),
+                        decoration: BoxDecoration(
+                          border: Border(
+                            top: BorderSide(color: rd.line, width: 0.5),
                           ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  label,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    height: 1.3,
-                                    fontWeight: value == _value ? FontWeight.w600 : FontWeight.w400,
-                                    color: value == _value ? rd.primary : rd.text,
-                                  ),
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                label,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  height: 1.3,
+                                  fontWeight: value == _value
+                                      ? FontWeight.w600
+                                      : FontWeight.w400,
+                                  color: value == _value ? rd.primary : rd.text,
                                 ),
                               ),
-                              const SizedBox(width: 12),
-                              value == _value
-                                  ? Icon(Icons.check, size: 22, color: rd.primary)
-                                  : const SizedBox(width: 22),
-                            ],
-                          ),
+                            ),
+                            const SizedBox(width: 12),
+                            value == _value
+                                ? Icon(Icons.check, size: 22, color: rd.primary)
+                                : const SizedBox(width: 22),
+                          ],
                         ),
                       ),
                     ),
                   ),
-              ],
-            ),
+                ),
+            ],
           ),
         ),
-        actions: [
-          IosAlertButton(
-            onPressed: cancel,
-            destructive: widget.cancelDestructive,
-            child: Text(cancelText),
-          ),
-          IosAlertButton(onPressed: confirm, child: Text(confirmText)),
-        ],
-      );
-    }
-    // Classic: the Ionic `.alert-radio-group` of the look (iOS: label +
-    // checkmark at the end; md: radio circle at the start).
-    final message = widget.message;
-    return AppAlertDialog(
-      title: Text(widget.title),
-      content: AppAlertRadioGroup<T>(
-        message: message == null || message.isEmpty ? null : Text(message),
-        options: [
-          for (final (value, label) in widget.options)
-            AppAlertOption<T>(value, label),
-        ],
-        groupValue: _value,
-        onChanged: (v) => setState(() => _value = v),
       ),
       actions: [
         TextButton(
           onPressed: cancel,
           style: widget.cancelDestructive
-              ? appAlertDestructiveStyle(context)
+              ? TextButton.styleFrom(foregroundColor: AppColors.danger)
               : null,
           child: Text(cancelText),
         ),

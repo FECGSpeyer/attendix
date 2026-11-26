@@ -1,23 +1,15 @@
-import 'package:attendix/core/theme/app_icons.dart';
-import 'dart:io';
-
 import 'package:attendix/core/constants/enums.dart';
-import 'package:attendix/data/models/attendance/attendance.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:attendix/data/models/instrument/instrument.dart';
-import 'package:attendix/features/attendance/presentation/pages/attendance_detail_page.dart';
-import 'package:attendix/features/attendance/presentation/widgets/attendance_detail/attendance_grid.dart';
-import 'package:attendix/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart';
-import 'package:attendix/features/attendance/presentation/widgets/attendance_detail/status_chip.dart';
+import 'package:attendix/features/attendance/presentation/attendance_group_sort.dart';
+import 'package:attendix/features/attendance/presentation/attendance_permissions.dart';
 import 'package:attendix/shared/widgets/adaptive/adaptive.dart';
-import 'package:attendix/shared/widgets/layout/ion_stacked_field.dart';
-import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonDetailChevron;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../factories/test_factories.dart';
 import '../../helpers/widget_test_helpers.dart';
 
-/// IOS_DETAIL: attendance detail page in Ionic iOS look.
 void main() {
   Widget ios(Widget child) => Builder(
         builder: (ctx) => Theme(
@@ -26,7 +18,7 @@ void main() {
         ),
       );
 
-  group('sortPersonsByGroup (Ionic Utils.sortPlayers)', () {
+  group('sortPersonsByGroup', () {
     test('a group with sort_order comes before groups without one', () {
       final groups = [
         const Group(id: 1, name: 'Alt'),
@@ -91,121 +83,13 @@ void main() {
     expect(isDeadlineReadonly(future.copyWith(deadline: '2026-07-14T19:00:00Z'), now: now), isFalse);
   });
 
-  test('description link like Ionic: Helfer yes, viewer/player no', () {
+  test('description link permissions: Helfer yes, viewer/player no', () {
     expect(canEditAttendanceDescription(Role.admin), isTrue);
     expect(canEditAttendanceDescription(Role.responsible), isTrue);
     expect(canEditAttendanceDescription(Role.helper), isTrue);
     expect(canEditAttendanceDescription(Role.voiceLeaderHelper), isTrue);
     expect(canEditAttendanceDescription(Role.viewer), isFalse);
     expect(canEditAttendanceDescription(Role.player), isFalse);
-  });
-
-  widgetTest('iOS status badge is a pill, not a circle', (tester) async {
-    await tester.pumpApp(ios(const Center(child: AttendanceStatusBadge(status: AttendanceStatus.present))));
-    final size = tester.getSize(find.byType(AttendanceStatusBadge));
-    expect(size.width, greaterThanOrEqualTo(28));
-    expect(size.height, lessThan(22));
-    expect(size.width - size.height, greaterThan(6));
-  });
-
-  widgetTest('Allgemein (iOS): Anmeldefrist toggle and description link', (tester) async {
-    final attendance = TestFactories.createAttendance(id: 7, date: '2099-01-10');
-    await tester.pumpApp(ios(Scaffold(
-      body: SingleChildScrollView(
-        child: GeneralInfoAccordion(
-          attendance: attendance,
-          attendanceType: null,
-          onTypeInfoChanged: (_) {},
-          onNotesChanged: (_) {},
-          onStartTimeSelect: () {},
-          onEndTimeSelect: () {},
-          onDeadlineToggle: (_) {},
-          onDeadlineSelect: () {},
-          onExportExcel: () {},
-          onEditDescription: () {},
-        ),
-      ),
-    )));
-    await tester.tap(find.text('Allgemein'));
-    await tester.pumpAndSettle();
-    expect(find.text('Anmeldefrist setzen'), findsOneWidget);
-    expect(find.text('Beschreibung & Anhang bearbeiten'), findsOneWidget);
-    expect(find.byType(Switch), findsOneWidget);
-    // Info-Text / Notizen: plain rows, no outlined Material field
-    expect(find.text('Info-Text'), findsOneWidget);
-    expect(find.text('Notizen'), findsOneWidget);
-  });
-
-  widgetTest('Allgemein (MD): stacked fields use borderless IonStackedField like Ionic',
-      (tester) async {
-    final attendance = TestFactories.createAttendance(id: 7, date: '2099-01-10');
-    await tester.pumpApp(Builder(
-      builder: (ctx) => Theme(
-        data: Theme.of(ctx).copyWith(platform: TargetPlatform.android),
-        child: Scaffold(
-          body: SingleChildScrollView(
-            child: GeneralInfoAccordion(
-              attendance: attendance,
-              attendanceType: null,
-              onTypeInfoChanged: (_) {},
-              onNotesChanged: (_) {},
-              onStartTimeSelect: () {},
-              onEndTimeSelect: () {},
-              onDeadlineToggle: (_) {},
-              onDeadlineSelect: () {},
-              onExportExcel: () {},
-              onEditDescription: () {},
-            ),
-          ),
-        ),
-      ),
-    ));
-    await tester.tap(find.text('Allgemein'));
-    await tester.pumpAndSettle();
-
-    expect(find.byType(IonStackedField), findsNWidgets(2));
-    expect(find.text('Info-Text'), findsOneWidget);
-    expect(find.text('Notizen'), findsOneWidget);
-    final fields = tester.widgetList<TextField>(
-      find.descendant(
-        of: find.byType(IonStackedField),
-        matching: find.byType(TextField),
-      ),
-    );
-    expect(fields, hasLength(2));
-    for (final field in fields) {
-      expect(field.decoration!.filled, isFalse);
-      expect(field.decoration!.border, InputBorder.none);
-    }
-    expect(tester.takeException(), isNull);
-  });
-
-  widgetTest('Allgemein: accordion state is not restored from page storage', (tester) async {
-    final attendance = TestFactories.createAttendance(id: 7, date: '2099-01-10');
-    Widget build(Key key) => ios(Scaffold(
-          body: SingleChildScrollView(
-            child: GeneralInfoAccordion(
-              key: key,
-              attendance: attendance,
-              attendanceType: null,
-              onTypeInfoChanged: (_) {},
-              onNotesChanged: (_) {},
-              onStartTimeSelect: () {},
-              onEndTimeSelect: () {},
-              onDeadlineToggle: (_) {},
-              onDeadlineSelect: () {},
-              onExportExcel: () {},
-            ),
-          ),
-        ));
-    await tester.pumpApp(build(const ValueKey(1)));
-    await tester.tap(find.text('Allgemein'));
-    await tester.pumpAndSettle();
-    expect(find.text('Anmeldefrist setzen'), findsOneWidget);
-    // re-created (e.g. page re-entered) → collapsed again like Ionic
-    await tester.pumpApp(build(const ValueKey(2)));
-    await tester.pumpAndSettle();
-    expect(find.text('Anmeldefrist setzen'), findsNothing);
   });
 
   group('showAppPopoverMenu', () {
@@ -225,27 +109,12 @@ void main() {
           ]),
         );
 
-    widgetTest('iOS: chevron on sub menu entries, returns the value', (tester) async {
-      String? result;
-      await tester.pumpApp(ios(host((v) => result = v)));
-      await tester.tap(find.byIcon(AppIcons.moreVert));
-      await tester.pumpAndSettle();
-      expect(find.byType(PopupMenuItem<String>), findsNothing);
-      // IOS27_SWEEP: the ios27 detail chevron (IonDetailChevron)
-      expect(find.byType(IonDetailChevron), findsOneWidget);
-      await tester.tap(find.text('Legende'));
-      await tester.pumpAndSettle();
-      expect(result, 'legend');
-    });
-
-    widgetTest('Material: Ionic md popover card, returns the value', (tester) async {
+    widgetTest('chevron on sub menu entries, returns the value', (tester) async {
       String? result;
       await tester.pumpApp(host((v) => result = v));
       await tester.tap(find.byIcon(AppIcons.moreVert));
       await tester.pumpAndSettle();
-      // PARITY_R3: own md popover (no Material popup menu items)
       expect(find.byType(PopupMenuItem<String>), findsNothing);
-      // IOS_THEME2: Ionic md popover shows the sub menu chevron too.
       expect(find.byIcon(AppIcons.chevronRight), findsOneWidget);
       await tester.tap(find.text('Status-Filter'));
       await tester.pumpAndSettle();
@@ -293,31 +162,17 @@ void main() {
         expect(find.text('Anwesend'), findsOneWidget);
         await tester.tap(find.text('Anwesend'));
         await tester.pumpAndSettle();
-        // both popovers still open, parent entry updated
         expect(filter, {'Anwesend'});
         expect(find.text('Filter aktiv (1)'), findsOneWidget);
         expect(
           tester.widget<Checkbox>(find.byType(Checkbox).first).value,
           isTrue,
         );
-        // another parent entry closes the nested popover and returns its value
         await tester.tap(find.text('Legende'));
         await tester.pumpAndSettle();
         expect(result, 'legend');
         expect(find.text('Anwesend'), findsNothing);
       });
     }
-  });
-
-  test('detail page: Ionic group order + popover menu wiring (source)', () {
-    final src = File('lib/features/attendance/presentation/pages/attendance_detail_page.dart').readAsStringSync();
-    expect(src, contains('mainGroupId: mainGroupIdOf(groups)'));
-    expect(src, contains('showAppPopoverMenu<String>('));
-    expect(src, isNot(contains('PopupMenuButton<String>(')));
-    expect(src, contains("highlight: _statusFilter.isNotEmpty, submenu: true"));
-    expect(src, contains("context.l10n.attendanceView, submenu: true"));
-    // PARITY_R3: nested popovers instead of bottom sheets
-    expect(src, contains('submenuItems: _statusFilterSubItems'));
-    expect(src, contains('submenuItems: _viewSubItems'));
   });
 }

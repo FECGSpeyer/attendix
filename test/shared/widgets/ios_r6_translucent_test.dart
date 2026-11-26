@@ -2,12 +2,14 @@ import 'dart:io';
 
 import 'package:attendix/core/services/native/native_platform.dart';
 import 'package:attendix/core/theme/app_theme.dart';
+import 'package:attendix/core/theme/redesign/rd_palette.dart';
+import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/shared/widgets/layout/ionic_ios.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-/// IOS_R6: shared Ionic iOS `ion-header translucent` toolbar, content inset
-/// under it, platform refresher and iOS swipe-back transitions.
+/// Shared translucent iOS toolbar, content inset, adaptive refresher and
+/// iOS swipe-back page transitions.
 void main() {
   final ios = TargetPlatformVariant.only(TargetPlatform.iOS);
 
@@ -17,10 +19,11 @@ void main() {
     ValueNotifier<bool>? listenable,
   }) =>
       MaterialApp(
-        theme: theme ?? AppTheme.light,
+        theme: theme ?? buildRdTheme(RdFarbwelt.petrol, Brightness.light),
         home: Builder(
           builder: (context) => Scaffold(
-            extendBodyBehindAppBar: isIosLook(context),
+            extendBodyBehindAppBar:
+                Theme.of(context).platform == TargetPlatform.iOS,
             appBar: IonTranslucentAppBar(
               condensed: condensed,
               condensedListenable: listenable,
@@ -40,16 +43,20 @@ void main() {
         ),
       );
 
-  // A zero-height first list child is dropped by the sliver list.
   double insetHeight(WidgetTester tester) {
     final finder = find.byType(IonContentTopInset);
     return finder.evaluate().isEmpty ? 0 : tester.getSize(finder).height;
   }
 
-  // PERF_GLASS: the condensed bar is a solid tint, no live blur.
   final tint = find.descendant(
-      of: find.byType(IonTranslucentBarBackground),
-      matching: find.byType(DecoratedBox));
+    of: find.byType(IonTranslucentAppBar),
+    matching: find.byWidgetPredicate(
+      (w) =>
+          w is DecoratedBox &&
+          w.decoration is BoxDecoration &&
+          (w.decoration as BoxDecoration).border != null,
+    ),
+  );
 
   group('IonTranslucentAppBar', () {
     testWidgets('iOS condensed: solid tint over transparent bar, content under it',
@@ -61,7 +68,6 @@ void main() {
           .descendant(of: find.byType(AppBar), matching: find.byType(Material))
           .first);
       expect(material.color, Colors.transparent);
-      // body extends behind the bar: inset = status bar + toolbar
       final barHeight = tester.getSize(find.byType(AppBar)).height;
       expect(insetHeight(tester), barHeight);
       final refresher = tester.widget<RefreshIndicator>(
@@ -79,13 +85,15 @@ void main() {
       expect(material.shape, const Border());
     }, variant: ios);
 
-    testWidgets('iOS dark: the condensed bar is the solid dark page colour',
+    testWidgets('iOS dark: condensed bar uses the dark Farbwelt page colour',
         (tester) async {
-      final dark = AppTheme.dark;
+      final dark = buildRdTheme(RdFarbwelt.petrol, Brightness.dark);
       await tester.pumpWidget(page(condensed: true, theme: dark));
       final box = tester.widget<DecoratedBox>(tint);
-      expect((box.decoration as BoxDecoration).color,
-          dark.scaffoldBackgroundColor.withValues(alpha: 1));
+      final expected = rdPalette(RdFarbwelt.petrol, Brightness.dark)
+          .bg
+          .withValues(alpha: 0.96);
+      expect((box.decoration as BoxDecoration).color, expected);
     }, variant: ios);
 
     testWidgets('condensedListenable toggles the tint', (tester) async {
@@ -99,10 +107,10 @@ void main() {
       expect(tint, findsOneWidget);
     }, variant: ios);
 
-    testWidgets('md: plain AppBar, no blur, no inset, default refresher',
+    testWidgets('Android: plain AppBar, no blur, no inset, default refresher',
         (tester) async {
       await tester.pumpWidget(page(condensed: true));
-      expect(find.byType(IonTranslucentBarBackground), findsNothing);
+      expect(tint, findsNothing);
       expect(find.byType(BackdropFilter), findsNothing);
       expect(insetHeight(tester), 0);
       final refresher = tester.widget<RefreshIndicator>(
@@ -112,7 +120,7 @@ void main() {
   });
 
   group('iOS swipe-back', () {
-    test('theme pins the iOS slide (no swipe) on iOS, Zoom on Android', () {
+    test('theme pins the iOS slide on iOS, Zoom on Android', () {
       final iosTheme =
           AppTheme.forPlatform(Brightness.light, TargetPlatform.iOS);
       final mdTheme =
@@ -123,7 +131,6 @@ void main() {
           isA<ZoomPageTransitionsBuilder>());
     });
 
-    // Ionic: `swipeBackEnabled: false` (app.module.ts) – kept on the web.
     testWidgets('web: edge swipe does not pop a pushed page', (tester) async {
       final navKey = GlobalKey<NavigatorState>();
       await tester.pumpWidget(MaterialApp(
@@ -146,7 +153,6 @@ void main() {
       expect(find.text('Detail'), findsOneWidget);
     }, variant: ios);
 
-    // SWIPE_BACK: the installed iOS app swipes back from the left edge.
     Future<void> pushAndSwipe(WidgetTester tester, {bool canPop = true}) async {
       final navKey = GlobalKey<NavigatorState>();
       final base = AppTheme.light;
@@ -212,37 +218,10 @@ void main() {
     }, variant: ios);
   });
 
-  // Cheap regression guard: every page Ionic renders with
-  // `ion-header translucent` + `ion-content fullscreen` uses the shared bar.
-  test('translucent Ionic pages use IonTranslucentAppBar + fullscreen body',
-      () {
+  test('translucent pages use IonTranslucentAppBar + fullscreen body', () {
     const pages = [
-      'lib/features/songs/presentation/pages/songs_list_page.dart',
-      'lib/features/songs/presentation/pages/song_detail_page.dart',
-      'lib/features/parents/presentation/pages/parents_portal_page.dart',
-      'lib/features/settings/presentation/pages/settings_page.dart',
-      'lib/features/settings/presentation/pages/general_settings_page.dart',
-      'lib/features/settings/presentation/pages/extra_fields_page.dart',
-      'lib/features/settings/presentation/pages/role_permissions_page.dart',
-      'lib/features/settings/presentation/pages/attendance_types_page.dart',
-      'lib/features/settings/presentation/pages/attendance_type_edit_page.dart',
-      'lib/features/settings/presentation/pages/handover_page.dart',
-      'lib/features/settings/presentation/pages/handover_detail_page.dart',
-      'lib/features/organisation/presentation/pages/org_settings_page.dart',
-      'lib/features/organisation/presentation/pages/org_plans_page.dart',
       'lib/features/organisation/presentation/pages/org_plan_public_page.dart',
-      'lib/features/organisation/presentation/pages/org_person_fields_page.dart',
-      'lib/features/organisation/presentation/pages/org_planning_templates_page.dart',
-      'lib/features/notifications/presentation/pages/notifications_page.dart',
-      'lib/features/dashboard/presentation/pages/administration_page.dart',
-      'lib/features/dashboard/presentation/pages/home_dashboard_page.dart',
-      'lib/features/dashboard/presentation/pages/dashboard_settings_page.dart',
-      'lib/features/help/presentation/pages/help_page.dart',
-      'lib/features/help/presentation/pages/help_article_page.dart',
-      'lib/features/help/presentation/pages/help_glossary_page.dart',
       'lib/features/legal/presentation/pages/terms_page.dart',
-      'lib/features/registration/presentation/pages/tenant_registration_page.dart',
-      // shifts + public planning share IonCondenseScaffold
       'lib/features/planning/presentation/widgets/ion_items.dart',
     ];
     for (final path in pages) {
@@ -250,7 +229,6 @@ void main() {
       expect(src, contains('IonTranslucentAppBar('), reason: path);
       expect(src, contains('extendBodyBehindAppBar:'), reason: path);
       expect(src, contains('IonContentTopInset()'), reason: path);
-      expect(src, isNot(contains('condenseBarColor(')), reason: path);
     }
   });
 }

@@ -3,7 +3,7 @@ import 'dart:math' as math;
 import '../../../../core/utils/choir_file_utils.dart' show kChoirAllNote;
 import '../../../../core/utils/instrument_matcher.dart';
 import '../../../../data/models/song/song.dart';
-import '../../../songs/presentation/widgets/file_upload_sheet.dart' show FileCategoryGuess, guessFileCategory, learnableTerm;
+import '../../../songs/data/file_category_guess.dart' show FileCategoryGuess, guessFileCategory, learnableTerm;
 import '../rd_work_files_logic.dart' show rdMaxUploadBytes;
 
 /// REDESIGN: "Noten importieren" (Werke aus einer ZIP von Google Drive,

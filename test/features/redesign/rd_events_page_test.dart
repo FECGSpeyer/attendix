@@ -96,7 +96,7 @@ Widget _app(
   return ProviderScope(
     overrides: [
       initialRedesignSettingsProvider.overrideWithValue(
-        const RedesignSettings(enabled: true, world: RdFarbwelt.petrol),
+        const RedesignSettings(world: RdFarbwelt.petrol),
       ),
       effectiveRoleProvider.overrideWithValue(role),
       isApplicantProvider.overrideWithValue(false),

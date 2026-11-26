@@ -1,18 +1,6 @@
-# Überblick: So ist die Beta aufgebaut
+# Überblick: So ist die App aufgebaut
 
 [Zurück zur Übersicht](README.md)
-
-## Das neue Design einschalten
-
-Das neue Design ist freiwillig und gilt nur für das Gerät, auf dem du es
-einschaltest. Auf einem anderen Gerät bleibt die App, wie sie war.
-
-- **Einschalten:** im klassischen Design in den Einstellungen bei „Neues Design
-  (Beta)“.
-- **Ausschalten:** „Ich“ › „Neues Design (Beta)“.
-
-Daten gehen dabei nicht verloren. Beide Designs zeigen dieselben Termine,
-Mitglieder und Werke.
 
 ## Die fünf Reiter
 

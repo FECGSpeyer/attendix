@@ -11,33 +11,21 @@ import '../../../../data/repositories/files_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/dialogs/ion_modal.dart' show showIonModal;
-import '../../../../shared/widgets/layout/ionic_ios.dart' show IonInsetList;
-import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../data/file_move.dart';
-import 'settings_list.dart';
 
-/// Ionic 4.19.1 `FilesMoveModalComponent`: picks the target folder for
-/// moving entries of the Dateiablage from the folder structure shown as an
-/// expandable tree (plus "new folder" right in the dialog). Returns the
-/// target path (relative to the tenant root, '' = root) or null.
+/// Picks the target folder for moving entries of the Dateiablage from the folder
+/// structure shown as an expandable tree (plus "new folder" right in the dialog).
+/// Returns the target path (relative to the tenant root, '' = root) or null.
 Future<String?> showFilesMoveModal(
   BuildContext context, {
   required FilesRepository repo,
   required List<StorageEntry> items,
   required String currentPath,
 }) {
-  Widget build(BuildContext _) =>
-      FilesMoveModal(repo: repo, items: items, currentPath: currentPath);
-  if (useIosLook(context)) {
-    return showIosCardModal<String>(
-      context,
-      backgroundColor: Theme.of(context).brightness == Brightness.dark
-          ? null
-          : AppColors.light,
-      builder: build,
-    );
-  }
-  return showIonModal<String>(context, builder: build);
+  return showIonModal<String>(
+    context,
+    builder: (_) => FilesMoveModal(repo: repo, items: items, currentPath: currentPath),
+  );
 }
 
 class _FolderNode {
@@ -188,13 +176,11 @@ class _FilesMoveModalState extends State<FilesMoveModal> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final ios = ionIsIos(context);
     final count = widget.items.length;
     final nodes = _visibleNodes;
 
     final tiles = [for (final node in nodes) _buildNode(context, node)];
     return Scaffold(
-      backgroundColor: ios ? Colors.transparent : null,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         // WERKE-75: 110 was too narrow, "Abbrechen" wrapped inside the button.
@@ -207,15 +193,11 @@ class _FilesMoveModalState extends State<FilesMoveModal> {
           ),
         ),
         title: Text(l10n.filesMoveTitle(count)),
-        // WER-16: Ionic title centred in iOS, at the start in md.
-        centerTitle: ios || context.rdSkin != null,
+        centerTitle: true,
         actions: [
           IconButton(
             tooltip: l10n.filesCreateFolder,
-            // Ionic `folder-open-outline` (Beta: as before).
-            icon: Icon(context.rdSkin != null
-                ? AppIcons.createNewFolderOutlined
-                : AppIcons.folderOpenOutlined),
+            icon: Icon(AppIcons.createNewFolderOutlined),
             onPressed: _createFolder,
           ),
         ],
@@ -232,24 +214,15 @@ class _FilesMoveModalState extends State<FilesMoveModal> {
           ),
           Padding(
             padding: const EdgeInsets.all(AppDimensions.paddingM),
-            child: ios
-                ? IonInsetGroup(children: tiles)
-                : context.rdSkin == null
-                // WER-16: md `ion-list [inset]` instead of a Material card.
-                ? IonInsetList(
-                    margin: EdgeInsets.zero,
-                    dividerIndent: 56,
-                    children: tiles,
-                  )
-                : Card(
-                    margin: EdgeInsets.zero,
-                    child: Column(children: [
-                      for (var i = 0; i < tiles.length; i++) ...[
-                        tiles[i],
-                        if (i < tiles.length - 1) const Divider(height: 1, indent: 56),
-                      ],
-                    ]),
-                  ),
+            child: Card(
+              margin: EdgeInsets.zero,
+              child: Column(children: [
+                for (var i = 0; i < tiles.length; i++) ...[
+                  tiles[i],
+                  if (i < tiles.length - 1) const Divider(height: 1, indent: 56),
+                ],
+              ]),
+            ),
           ),
         ],
       ),

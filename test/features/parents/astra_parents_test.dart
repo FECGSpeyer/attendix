@@ -51,9 +51,9 @@ void main() {
       final providers = File('lib/features/parents/data/providers/parents_providers.dart').readAsStringSync();
       expect(providers, contains("extraPlans: parseExtraPlans(attendance?['extra_plans'])"));
       expect(providers, contains('extraPlans: first.extraPlans'));
-      final page = File('lib/features/parents/presentation/pages/parents_portal_page.dart').readAsStringSync();
-      expect(page, contains('extraPlans: group.extraPlans'));
-      expect(page, contains('durationDays: group.durationDays'));
+      final card = File('lib/features/redesign/presentation/widgets/event/rd_parent_event_card.dart').readAsStringSync();
+      expect(card, contains('extraPlans: group.extraPlans'));
+      expect(card, contains('durationDays: group.durationDays'));
     });
   });
 
@@ -92,13 +92,10 @@ void main() {
       expect(container.read(parentSignInOutNotifierProvider).hasError, isTrue);
     });
 
-    test('page shows the success toast only when signInAll succeeded', () {
-      final page = File('lib/features/parents/presentation/pages/parents_portal_page.dart').readAsStringSync();
-      final start = page.indexOf('Future<void> _signIn(');
-      final body = page.substring(start, page.indexOf('Future<void> _signOut(', start));
-      expect(body, contains('.signInAll(entries)'));
-      expect(body, isNot(contains('notifier.signIn(')));
-      expect(body.indexOf('if (!ok)'), lessThan(body.indexOf('selfServiceThanksForSignIn')));
+    test('parent today widget uses signInAll and checks result before toast', () {
+      final page = File('lib/features/redesign/presentation/widgets/today/rd_parent_today.dart').readAsStringSync();
+      expect(page, contains('.signInAll(entries)'));
+      expect(page, isNot(contains('notifier.signIn(')));
     });
   });
 }

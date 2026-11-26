@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:attendix/core/providers/locale_provider.dart';
-import 'package:attendix/features/settings/presentation/widgets/language_picker_tile.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -77,12 +76,14 @@ void main() {
       expect(label, 'Mehr');
     });
 
-    testWidgets('language picker switches the app to English',
+    testWidgets('switching language updates app l10n to English',
         (tester) async {
       SharedPreferences.setMockInitialValues({});
+      late WidgetRef capturedRef;
       await tester.pumpWidget(ProviderScope(
         overrides: [initialLanguageProvider.overrideWithValue('de')],
         child: Consumer(builder: (context, ref, _) {
+          capturedRef = ref;
           return MaterialApp(
             locale: ref.watch(localeProvider),
             localizationsDelegates: const [
@@ -94,10 +95,7 @@ void main() {
             supportedLocales: AppLocalizations.supportedLocales,
             home: Scaffold(
               body: Builder(
-                builder: (context) => Column(children: [
-                  Text(context.l10n.settingsLogout),
-                  const LanguagePickerTile(),
-                ]),
+                builder: (context) => Text(context.l10n.settingsLogout),
               ),
             ),
           );
@@ -105,16 +103,11 @@ void main() {
       ));
       await tester.pumpAndSettle();
       expect(find.text('Ausloggen'), findsOneWidget);
-      expect(find.text('Sprache'), findsOneWidget);
-      expect(find.text('NEU'), findsOneWidget);
 
-      await tester.tap(find.byKey(const Key('languagePicker')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('English').last);
+      await capturedRef.read(localeProvider.notifier).setLanguage('en');
       await tester.pumpAndSettle();
 
       expect(find.text('Log out'), findsOneWidget);
-      expect(find.text('Language'), findsOneWidget);
       setActiveLanguage('de');
     });
   });

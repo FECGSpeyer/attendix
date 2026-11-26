@@ -7,7 +7,7 @@ import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../settings/presentation/pages/left_players_page.dart' show LeftPlayersPage, leftPlayersProvider;
+import '../../../settings/data/left_players_actions.dart' show leftPlayersProvider, reactivatePersonWithConfirmation;
 import '../../data/rd_manage_logic.dart' show RdManageEntry;
 import '../widgets/manage/rd_manage_entries.dart' show rdManageTitle;
 import '../widgets/manage/rd_manage_list.dart';
@@ -79,7 +79,7 @@ List<RdManageListItem> rdArchiveItems(BuildContext context, WidgetRef ref, List<
           key: ValueKey('rd-archive-restore-${p.id}'),
           icon: Icon(Icons.restore, color: context.rd.present),
           tooltip: l10n.redesignArchiveListRestore,
-          onPressed: () => LeftPlayersPage.reactivateWithConfirmation(context, ref, p),
+          onPressed: () => reactivatePersonWithConfirmation(context, ref, p),
         ),
         onTap: p.id == null
             ? null

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 
 import '../../../../core/services/plan_export_service.dart';
 import '../../../../data/models/attendance/attendance.dart' show AttendanceType;
@@ -9,12 +7,7 @@ import '../../../../core/utils/plan_utils.dart';
 import '../../../../data/models/plan/plan.dart';
 import '../widgets/plan_export_actions.dart';
 import '../widgets/plan_view_list.dart';
-import '../widgets/ion_items.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/adaptive_platform.dart' show useIosLook;
-import '../../../../shared/widgets/adaptive/app_toolbar.dart' show ToolbarButtonGroup;
-import '../../../../shared/widgets/dialogs/ion_modal.dart' show showIonModal;
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
 import '../../../../shared/widgets/common/escape_to_close.dart';
@@ -256,91 +249,7 @@ class _PlanViewerPageState extends ConsumerState<PlanViewerPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    if (context.rdSkin != null) return _buildBeta(context);
-    final date = _date;
-    return Scaffold(
-      appBar: AppBar(
-        // Ionic: modal with close button at the start.
-        // IOS_PAGES3: iOS → ion-buttons in a Liquid Glass capsule.
-        // 12 + 48 + 12: the capsule of one toolbar button; narrower, the
-        // button was cut off inside its capsule.
-        leadingWidth: useIosLook(context) ? 72 : null,
-        leading: ToolbarButtonGroup(children: [
-          IconButton(
-            tooltip: context.l10n.commonClose,
-            icon: Icon(AppIcons.close),
-            onPressed: () => Navigator.of(context).maybePop(),
-          ),
-        ]),
-        title: Text(date != null ? DateFormat(dateFmt()).format(date) : _title),
-        actions: [
-          ToolbarButtonGroup(children: [
-          if (_isLiveNow())
-            IconButton(
-              tooltip: _live ? context.l10n.planningFlutterLiveModeEnd : context.l10n.planningFlutterLiveMode,
-              // Ionic: radio / radio-outline, danger while live.
-              color: _live ? AppColors.danger : AppColors.primary,
-              icon: Icon(_live ? AppIcons.sensors : AppIcons.sensorsOutlined),
-              onPressed: () => setState(() => _live = !_live),
-            ),
-          if (widget.onEdit != null)
-            IconButton(
-              tooltip: context.l10n.attendanceEditRunSheet,
-              icon: Icon(AppIcons.editOutlined),
-              onPressed: () {
-                Navigator.of(context).pop();
-                widget.onEdit!(_index);
-              },
-            ),
-          IconButton(
-            tooltip: context.l10n.planningExport,
-            icon: Icon(AppIcons.iosShare),
-            onPressed: _export,
-          ),
-          ]),
-        ],
-      ),
-      body: ListView(
-        children: [
-          if (_labels.isNotEmpty)
-            PlanChips(
-              labels: _labels,
-              selected: _index,
-              todayIndex: _todayIndex,
-              onSelected: (i) => setState(() {
-                _index = i;
-                _live = _isLiveNow();
-              }),
-            ),
-          if (_plan.fields.isEmpty)
-            // Ionic: ion-card with "Kein Ablaufplan vorhanden".
-            Card(
-              margin: const EdgeInsets.all(16),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Text(context.l10n.planningNoPlanAvailable, textAlign: TextAlign.center),
-              ),
-            )
-          else
-            // Ionic: ion-list [inset] with header "Ablauf".
-            IonInsetList(
-              header: context.l10n.planningRunSheet,
-              children: [
-                PlanViewList(
-                  plan: _plan,
-                  date: date,
-                  liveMode: _live,
-                  fieldWarning: widget.fieldWarning,
-                  songAction: widget.songAction,
-                ),
-              ],
-            ),
-          const SizedBox(height: 16),
-        ],
-      ),
-    );
-  }
+  Widget build(BuildContext context) => _buildBeta(context);
 }
 
 /// Opens the plan viewer as full screen dialog.
@@ -365,10 +274,6 @@ Future<void> showPlanViewer(
           songAction: songAction,
         ),
       );
-  // ABL-15: classic = Ionic `modalController.create({ component:
-  // PlanViewerComponent })` – full screen on phones, centred card from
-  // 768px. The Beta keeps its full-screen page.
-  if (context.rdSkin == null) return showIonModal<void>(context, builder: page);
   return Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(
     fullscreenDialog: true,
     builder: page,

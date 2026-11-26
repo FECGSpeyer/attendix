@@ -163,8 +163,6 @@ void main() {
 
   group('Demo Guard - pages (Ionic people.demoUnavailable)', () {
     for (final path in [
-      'lib/features/people/presentation/pages/person_import_page.dart',
-      'lib/features/people/presentation/pages/bulk_edit_page.dart',
       'lib/features/songs/presentation/pages/song_import_page.dart',
     ]) {
       test('$path blocks the demo account', () {

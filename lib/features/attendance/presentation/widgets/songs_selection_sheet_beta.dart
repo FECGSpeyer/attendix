@@ -37,7 +37,6 @@ extension _RdSongsSelection on _SongsSelectionSheetState {
     _rdExpandedSongId = null;
     _useOtherConductor = c.other != null;
     _otherConductorName = c.other;
-    _otherConductorSaved = c.other != null;
     _otherConductorController.text = c.other ?? '';
     _selectedConductorId = c.other != null ? null : c.id;
   });

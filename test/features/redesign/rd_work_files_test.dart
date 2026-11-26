@@ -230,7 +230,7 @@ Widget _app(
   return ProviderScope(
     overrides: [
       initialRedesignSettingsProvider.overrideWithValue(
-        const RedesignSettings(enabled: true, world: RdFarbwelt.petrol),
+        const RedesignSettings(world: RdFarbwelt.petrol),
       ),
       effectiveRoleProvider.overrideWithValue(role),
       currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),

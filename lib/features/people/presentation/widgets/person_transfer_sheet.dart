@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
-import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/handover_request.dart';
 import '../../../../core/utils/error_message.dart';
@@ -17,46 +14,25 @@ import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/player_repository.dart' show HandoverResult;
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart' show showAppConfirm;
 import '../../../redesign/presentation/widgets/manage/rd_settings_sheets.dart' show showRdChoiceSheet;
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
-import 'ion/ion_widgets.dart';
 
-/// Ionic person.page transfer modal (sheet, breakpoint 0.5): "Kopieren von
-/// {name}" / "Übertragen von {name}" with "Ziel-Instanz" (instances of the
-/// organisation except the current one, first preselected) and
-/// "Ziel-Gruppe" (required). Returns true when the person was handed over.
+/// Opens the person transfer/copy sheet. Returns true when the person was handed over.
 Future<bool> showPersonTransferSheet(
   BuildContext context,
   Person person, {
   required bool copy,
 }) async {
-  if (RedesignRoutes.active) {
-    // REDESIGN: the same flow in a sheet of the new design.
-    final done = await showRdSheet<bool>(context, _PersonTransferSheet(person: person, copy: copy, beta: true));
-    return done ?? false;
-  }
-  // Ionic: [breakpoints]="[0, 0.5, 1]" [initialBreakpoint]="0.5".
-  final done = await showIonSheet<bool>(
-    context,
-    breakpoints: const [0, 0.5, 1],
-    initialBreakpoint: 0.5,
-    builder: (_, controller) => _PersonTransferSheet(person: person, copy: copy, scrollController: controller),
-  );
+  final done = await showRdSheet<bool>(context, _PersonTransferSheet(person: person, copy: copy));
   return done ?? false;
 }
 
 class _PersonTransferSheet extends ConsumerStatefulWidget {
-  const _PersonTransferSheet({required this.person, required this.copy, this.beta = false, this.scrollController});
-
-  /// Classic design: the controller of the breakpoint sheet.
-  final ScrollController? scrollController;
+  const _PersonTransferSheet({required this.person, required this.copy});
 
   final Person person;
   final bool copy;
-
-  /// Drawn in the new design (Beta).
-  final bool beta;
 
   @override
   ConsumerState<_PersonTransferSheet> createState() => _PersonTransferSheetState();
@@ -102,10 +78,7 @@ class _PersonTransferSheetState extends ConsumerState<_PersonTransferSheet> {
     final person = widget.person;
     final copy = widget.copy;
     final l10n = context.l10n;
-    // TENANT (Beta): the person belongs to the group the sheet was opened
-    // in; after a switch before "Übertragen" nothing is handed over.
-    if (widget.beta &&
-        (source.id != _sourceTenantId || (person.tenantId != null && person.tenantId != source.id))) {
+    if (source.id != _sourceTenantId || (person.tenantId != null && person.tenantId != source.id)) {
       ToastHelper.showError(context, l10n.rdPeopleGroupSwitched);
       return;
     }
@@ -142,33 +115,14 @@ class _PersonTransferSheetState extends ConsumerState<_PersonTransferSheet> {
           ? l10n.peopleFlutterHandoverRequestNoteStay(target.longName)
           : l10n.peopleFlutterHandoverRequestNoteMove(target.longName);
       final confirmText = request ? '$question\n\n$requestNote' : question;
-      final confirmed = widget.beta
-          ? await showAppConfirm(
-              context,
-              title: copy ? l10n.personCopyPerson : l10n.personTransferPerson,
-              message: confirmText,
-              confirmText: l10n.commonYes,
-            )
-          : await showAppDialog<bool>(
-        context: context,
-        builder: (ctx) => AppAlertDialog(
-          title: Text(copy ? l10n.personCopyPerson : l10n.personTransferPerson),
-          content: Text(confirmText),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx, false),
-              child: Text(l10n.commonCancel),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(ctx, true),
-              child: Text(l10n.commonYes),
-            ),
-          ],
-        ),
+      final confirmed = await showAppConfirm(
+        context,
+        title: copy ? l10n.personCopyPerson : l10n.personTransferPerson,
+        message: confirmText,
+        confirmText: l10n.commonYes,
       );
       if (confirmed != true || !mounted) return;
-      // TENANT (Beta): after a group change nothing is handed over.
-      if (widget.beta && ref.read(currentTenantIdProvider) != _sourceTenantId) {
+      if (ref.read(currentTenantIdProvider) != _sourceTenantId) {
         ToastHelper.showError(context, l10n.rdPeopleGroupSwitched);
         return;
       }
@@ -221,80 +175,7 @@ class _PersonTransferSheetState extends ConsumerState<_PersonTransferSheet> {
         if (mounted && _tenantId != null) _loadGroups(_tenantId!);
       });
     }
-    final name = '${widget.person.firstName} ${widget.person.lastName}';
-    if (widget.beta) return _buildBeta(context, tenants, name.trim());
-
-    // Ionic: ion-title + close ✕ in the end slot; PEO-22: `ion-content
-    // color="light"` with an inset list of two label-start selects
-    // (default alert interface) and the block button.
-    return IonSheetScaffold(
-      title: widget.copy ? l10n.personCopyFrom(name) : l10n.personTransferFrom(name),
-      showClose: true,
-      onClose: () => Navigator.pop(context, false),
-      backgroundColor: ionLightColor(context),
-      body: SingleChildScrollView(
-        controller: widget.scrollController,
-        padding: const EdgeInsets.only(bottom: AppDimensions.paddingL),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const SizedBox(height: AppDimensions.paddingM),
-            IonInsetList(
-              children: [
-                IonSelectRow<int>(
-                  lines: false,
-                  label: l10n.personTargetInstance,
-                  value: _tenantId,
-                  options: [
-                    for (final t in tenants)
-                      if (t.id != null)
-                        AppSelectOption<int>(value: t.id!, label: t.longName),
-                  ],
-                  onChanged: _busy
-                      ? null
-                      : (id) {
-                          if (id == _tenantId) return;
-                          setState(() => _tenantId = id);
-                          _loadGroups(id);
-                        },
-                ),
-                if (_tenantId != null && _groups.isNotEmpty)
-                  IonSelectRow<int>(
-                    lines: false,
-                    label: l10n.personTargetGroup,
-                    value: _groupId,
-                    options: [
-                      for (final g in _groups)
-                        if (g.id != null)
-                          AppSelectOption<int>(value: g.id!, label: g.name),
-                    ],
-                    onChanged: _busy ? null : (id) => setState(() => _groupId = id),
-                  ),
-              ],
-            ),
-            const SizedBox(height: AppDimensions.paddingL),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
-              child: FilledButton(
-                onPressed: _busy || _tenantId == null || _groupId == null
-                    ? null
-                    : () => _transfer(tenants),
-                child: IonButtonLabel(
-                    widget.copy ? l10n.peopleFlutterHandoverCopy : l10n.handoverTransfer),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  /// REDESIGN: "{Name} übertragen / kopieren" with "Zielgruppe" and the
-  /// group there ("Instrument", "Stimme" … by the kind of the target) as
-  /// choice rows, a note and the primary button.
-  Widget _buildBeta(BuildContext context, List<Tenant> tenants, String name) {
-    final l10n = context.l10n;
+    final name = '${widget.person.firstName} ${widget.person.lastName}'.trim();
     final target = tenants.where((t) => t.id == _tenantId).firstOrNull;
     final kind = target?.type ?? '';
     final group = _groups.where((g) => g.id == _groupId).firstOrNull;

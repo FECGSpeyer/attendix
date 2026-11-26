@@ -25,23 +25,13 @@ class RdTokens extends ThemeExtension<RdTokens> {
 }
 
 extension RdContext on BuildContext {
-  /// Palette of the new design. Outside the Beta theme (tests, old shell)
-  /// it falls back to Petrol in the current brightness.
+  /// Palette of the active Farbwelt (falls back to Petrol in tests without
+  /// [RdTokens]).
   RdPalette get rd {
     final theme = Theme.of(this);
     return theme.extension<RdTokens>()?.palette ??
         rdPalette(RdFarbwelt.petrol, theme.brightness);
   }
-}
-
-extension RdSkinContext on BuildContext {
-  /// Palette of the new design while the Beta theme is active, else null.
-  ///
-  /// The old (Ionic) building blocks draw themselves in the new design when
-  /// this is set ("Beta-Skin"), so every old page, sheet and dialog that is
-  /// reachable from the Beta looks like the new design. Without the Beta
-  /// they keep the Ionic look.
-  RdPalette? get rdSkin => Theme.of(this).extension<RdTokens>()?.palette;
 }
 
 /// Font family of serif titles (Konzertsaal). Georgia ships with iOS,
@@ -100,9 +90,7 @@ class RdType {
 /// keep their component styles and only take over the Farbwelt colours.
 ThemeData buildRdTheme(RdFarbwelt world, Brightness brightness) {
   final p = rdPalette(world, brightness);
-  // The Beta keeps the Material letter spacing and line heights it was
-  // designed with.
-  final base = AppTheme.forPlatform(p.brightness, AppTheme.lookPlatform, ionicText: false);
+  final base = AppTheme.forPlatform(p.brightness, AppTheme.lookPlatform);
   final scheme = base.colorScheme.copyWith(
     brightness: p.brightness,
     primary: p.primary,

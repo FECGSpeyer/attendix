@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'adaptive_platform.dart';
 import 'ion_button_label.dart';
 
 /// Ionic `fill` of an `ion-button`.
@@ -19,9 +18,7 @@ enum IonButtonFill {
 /// used to be written as `ElevatedButton`, `FilledButton`, `OutlinedButton`
 /// or `TextButton` with hand-set styles.
 ///
-/// The look comes from the app theme (iOS look: ionic-theme-ios27 pill
-/// button, md look: Ionic md button, uppercase label; Beta design: its own
-/// themed buttons), this widget only maps the Ionic attributes:
+/// The look comes from the app theme; this widget maps button variants:
 ///
 /// - [fill]: solid (default) / outline / clear,
 /// - [color]: Ionic `color="…"` (null = primary) with [foregroundColor] as
@@ -64,7 +61,6 @@ class IonButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ios = useIosLook(context);
     final solid = fill == IonButtonFill.solid;
     final fg = solid ? (foregroundColor ?? (color == null ? null : Colors.white)) : color;
     final theme = Theme.of(context);
@@ -78,12 +74,9 @@ class IonButton extends StatelessWidget {
         theme.textTheme.labelLarge ??
         const TextStyle();
 
-    // Only what differs from the themed default is set, so an [IonButton]
-    // without attributes is exactly the themed button.
     final style = ButtonStyle(
       backgroundColor: solid && color != null
           ? WidgetStateProperty.resolveWith(
-              // Ionic: a disabled button keeps its colour at opacity .5.
               (states) => states.contains(WidgetState.disabled)
                   ? color!.withValues(alpha: 0.5)
                   : color,
@@ -92,34 +85,20 @@ class IonButton extends StatelessWidget {
       foregroundColor: fg == null ? null : WidgetStatePropertyAll(fg),
       iconColor: fg == null ? null : WidgetStatePropertyAll(fg),
       side: fill == IonButtonFill.outline && color != null
-          ? WidgetStatePropertyAll(BorderSide(color: color!, width: ios ? 1 : 2))
+          ? WidgetStatePropertyAll(BorderSide(color: color!, width: 1.5))
           : null,
-      shape: round
-          ? const WidgetStatePropertyAll(StadiumBorder())
-          : small && ios
-              ? WidgetStatePropertyAll(
-                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-                )
-              : null,
+      shape: round ? const WidgetStatePropertyAll(StadiumBorder()) : null,
       padding: round
           ? const WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 26))
           : small
-              ? WidgetStatePropertyAll(
-                  EdgeInsets.symmetric(horizontal: ios ? 12.4 : 11.7, vertical: 4),
+              ? const WidgetStatePropertyAll(
+                  EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 )
               : null,
-      minimumSize: small
-          ? WidgetStatePropertyAll(Size(0, ios ? 29 : 27.3))
-          : null,
-      // The small label keeps the themed button font (family etc.) and
-      // only takes the Ionic small size: .8125rem.
+      minimumSize: small ? const WidgetStatePropertyAll(Size(0, 29)) : null,
       textStyle: small
           ? WidgetStatePropertyAll(
-              themedText.copyWith(
-                fontSize: ios ? 13.8125 : 13,
-                fontWeight: FontWeight.w500,
-                letterSpacing: ios ? themedText.letterSpacing : 0.78,
-              ),
+              themedText.copyWith(fontSize: 13.5, fontWeight: FontWeight.w500),
             )
           : null,
       tapTargetSize: small ? MaterialTapTargetSize.shrinkWrap : null,

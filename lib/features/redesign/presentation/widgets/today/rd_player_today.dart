@@ -11,8 +11,6 @@ import '../../../../../core/router/redesign_routes.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../core/utils/event_list_utils.dart';
 import '../../../../../l10n/l10n.dart';
-import '../../../../self_service/presentation/pages/signout_page.dart'
-    show signoutEventActions;
 import '../../../../self_service/presentation/widgets/self_service_event_actions.dart';
 import '../../../data/providers/rd_today_providers.dart'
     show rdDeadlineLabel, rdDeadlineUrgent, rdNotMemberInfo, rdOpenDeadline, rdSignoutDataProvider, rdStartOf, rdTodayFocus;

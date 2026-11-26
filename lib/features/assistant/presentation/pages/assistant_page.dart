@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/assistant_providers.dart';
 import '../../../../core/providers/locale_provider.dart';
-import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
@@ -241,34 +240,18 @@ class _ChatStyle {
   });
 
   factory _ChatStyle.of(BuildContext context) {
-    final rd = context.rdSkin;
-    if (rd != null) {
-      return _ChatStyle(
-        background: rd.bg,
-        surface: rd.surface,
-        accent: rd.primary,
-        onAccent: rd.onPrimary,
-        text: rd.text,
-        muted: rd.text2,
-        line: rd.line,
-        good: rd.present,
-        bad: rd.absent,
-        radius: rd.cardRadius,
-      );
-    }
-    final theme = Theme.of(context);
-    final cs = theme.colorScheme;
+    final rd = context.rd;
     return _ChatStyle(
-      background: theme.scaffoldBackgroundColor,
-      surface: cs.surfaceContainerHighest.withValues(alpha: 0.6),
-      accent: cs.primary,
-      onAccent: cs.onPrimary,
-      text: cs.onSurface,
-      muted: cs.onSurfaceVariant,
-      line: cs.outlineVariant,
-      good: Colors.green.shade600,
-      bad: cs.error,
-      radius: 16,
+      background: rd.bg,
+      surface: rd.surface,
+      accent: rd.primary,
+      onAccent: rd.onPrimary,
+      text: rd.text,
+      muted: rd.text2,
+      line: rd.line,
+      good: rd.present,
+      bad: rd.absent,
+      radius: rd.cardRadius,
     );
   }
 
@@ -416,7 +399,6 @@ class _ReplyView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
-    final redesign = ref.watch(redesignEnabledProvider);
     final text = TextStyle(color: style.text);
     final muted = TextStyle(color: style.muted, fontSize: 13);
     final title = TextStyle(color: style.text, fontWeight: FontWeight.w700, fontSize: 16);
@@ -549,7 +531,7 @@ class _ReplyView extends ConsumerWidget {
             if (r.personId != null && !r.isMe && seesOthers)
               link(
                 l10n.assistantRateOpenPerson,
-                redesign ? RedesignRoutes.person(r.personId!) : '/people/${r.personId}',
+                RedesignRoutes.person(r.personId!),
               ),
           ],
         );
@@ -643,7 +625,7 @@ class _ReplyView extends ConsumerWidget {
                   Flexible(child: Text(n.place!, style: muted)),
                 ],
               ),
-            if ((seesOthers || redesign) && n.tenantName == null)
+            if (n.tenantName == null)
               link(l10n.assistantEventOpenEvent, eventLocation(n.attendanceId)),
           ],
         );
@@ -682,7 +664,7 @@ class _ReplyView extends ConsumerWidget {
               s.lastSung == null ? l10n.assistantSongNever : l10n.assistantSongLastSung(_weekdayDate(s.lastSung!)),
               style: text,
             ),
-            link(l10n.assistantSongOpen, redesign ? RedesignRoutes.work(s.songId) : '/settings/songs/${s.songId}'),
+            link(l10n.assistantSongOpen, RedesignRoutes.work(s.songId)),
           ],
         );
 
@@ -979,7 +961,7 @@ class _ReplyView extends ConsumerWidget {
               style: FilledButton.styleFrom(backgroundColor: style.accent, foregroundColor: style.onAccent),
               onPressed:
                   () => context.push(
-                    redesign ? RedesignRoutes.personNew : '/people/new',
+                    RedesignRoutes.personNew,
                     extra: PersonCreatePrefill(
                       firstName: p.firstName,
                       lastName: p.lastName,

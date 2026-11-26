@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -17,8 +18,8 @@ import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/song_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
-import '../../../organisation/presentation/pages/org_settings_page.dart' show createGemeindeAppKey;
 import '../../../organisation/presentation/widgets/org_link_dialogs.dart';
+import '../../../planning/presentation/widgets/plan_field_dialogs.dart' show showPlanConfirm;
 import '../../data/rd_manage_logic.dart' show RdManageArea;
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/manage/rd_settings_sheets.dart';
@@ -326,4 +327,62 @@ class _RdOrgSettingsPageState extends ConsumerState<RdOrgSettingsPage> {
       ],
     );
   }
+}
+
+/// Ionic 4.17.10 `createGemeindeAppKey`: only the hash is stored, so the
+/// key is shown once. A new key cuts the old link.
+Future<void> createGemeindeAppKey(BuildContext context, WidgetRef ref, Organisation org) async {
+  final l10n = context.l10n;
+  final stillCurrent = bindCurrentTenant(context);
+  final notifier = ref.read(planSettingsNotifierProvider.notifier);
+  if (org.gemeindeAppKeyHash != null) {
+    final ok = await showPlanConfirm(
+      context,
+      title: l10n.orgGaRenewKey,
+      message: l10n.orgGaRenewMessage,
+      confirmText: l10n.orgGaRenewButton,
+      destructive: true,
+    );
+    if (!ok || !context.mounted) return;
+  }
+  if (!stillCurrent()) return;
+  final created = PlanBeamer.newGemeindeAppKey();
+  final saved = await notifier.updateOrgGemeindeApp({
+    'gemeinde_app_key_hash': created.hash,
+    'gemeinde_app_key_hint': created.hint,
+  });
+  if (!context.mounted) return;
+  if (!saved) {
+    ToastHelper.showError(context, l10n.svcSaveGemeindeAppFailed);
+    return;
+  }
+  await showAppDialog<void>(
+    context: context,
+    builder: (ctx) => AppAlertDialog(
+      title: Text(ctx.l10n.orgGaKeyHeader),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SelectableText(created.key, style: const TextStyle(fontFamily: 'monospace', fontWeight: FontWeight.w600)),
+          const SizedBox(height: 8),
+          Text(ctx.l10n.orgGaKeyMessage),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () async {
+            try {
+              await Clipboard.setData(ClipboardData(text: created.key));
+              if (ctx.mounted) ToastHelper.showSuccess(ctx, ctx.l10n.orgGaCopied);
+            } catch (_) {
+              // Clipboard not available (PWA without permission): key stays visible.
+            }
+          },
+          child: Text(ctx.l10n.orgGaCopy),
+        ),
+        FilledButton(onPressed: () => Navigator.pop(ctx), child: Text(ctx.l10n.commonClose)),
+      ],
+    ),
+  );
 }

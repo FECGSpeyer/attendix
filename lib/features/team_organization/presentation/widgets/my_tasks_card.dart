@@ -1,24 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:ionicons/ionicons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
-import '../../../planning/presentation/widgets/ion_items.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/team_org/team_org.dart';
-import '../../../dashboard/presentation/widgets/dashboard_card.dart';
 import '../../team_org_utils.dart';
 
-/// INTEGRATION: compact "Meine Aufgaben" card (Ionic `app-my-tasks`): the
-/// signed-in person's open tasks. Used as a dashboard card (leadership) and
-/// on "Meine Termine" (members). Renders nothing when the Teamorganisation is
-/// off or nothing is open.
+/// Compact "Meine Aufgaben" section: the signed-in person's open tasks.
+/// Used on Heute (leadership and members). Renders nothing when Teamorganisation
+/// is off or nothing is open.
 class MyTasksCard extends ConsumerStatefulWidget {
   const MyTasksCard({super.key, this.limit = 5});
 
@@ -32,8 +26,6 @@ class MyTasksCard extends ConsumerStatefulWidget {
 class _MyTasksCardState extends ConsumerState<MyTasksCard> {
   /// Tasks completed in this card (hidden optimistically).
   final Set<String> _done = {};
-
-  static const _strip = [Color(0xFF438E96), Color(0xFF2B6168)];
 
   Future<void> _complete(TeamTask task) async {
     final id = task.id;
@@ -70,57 +62,13 @@ class _MyTasksCardState extends ConsumerState<MyTasksCard> {
     final isLeader = ref.watch(isTeamLeaderProvider);
     final shown = open.take(widget.limit).toList();
 
-    if (ref.watch(redesignEnabledProvider)) {
-      return _buildBeta(
-        context,
-        shown: shown,
-        openCount: open.length,
-        subtitle: subtitle,
-        isLeader: isLeader,
-        today: today,
-      );
-    }
-
-    return DashboardCard(
-      icon: Ionicons.checkboxOutline,
-      title: l10n.tasksMyTasks,
+    return _buildBeta(
+      context,
+      shown: shown,
+      openCount: open.length,
       subtitle: subtitle,
-      strip: _strip,
-      child: Column(
-        children: [
-          for (final task in shown) ...[
-            // Ionic: ion-list lines="full"
-            if (task != shown.first) const Divider(height: 1),
-            ListTile(
-              contentPadding: const EdgeInsets.only(left: 4, right: 12),
-              leading: IconButton(
-                tooltip: l10n.tasksMarkDone,
-                icon: Icon(Ionicons.ellipseOutline, color: AppColors.mediumOf(context)),
-                onPressed: () => _complete(task),
-              ),
-              title: Text(task.title, style: const TextStyle(fontSize: 15)),
-              subtitle: Text(
-                _dueLabel(l10n, task, today),
-                style: TextStyle(color: isTaskOverdue(task, today) ? AppColors.danger : AppColors.mediumOf(context)),
-              ),
-              trailing:
-                  task.status == 'in_progress' ? IonBadge(label: l10n.tasksInProgress, color: AppColors.warning) : null,
-              onTap: task.id == null ? null : () => context.push('/settings/tasks/${task.id}'),
-            ),
-          ],
-          if (open.length > widget.limit || isLeader) ...[
-            const Divider(height: 1),
-            ListTile(
-              title: Text(
-                open.length > widget.limit ? l10n.tasksFlutterShowAllCount(open.length) : l10n.tasksFlutterAllTasks,
-                style: const TextStyle(color: AppColors.primary),
-              ),
-              trailing: const IonDetailIcon(),
-              onTap: () => context.push('/settings/team-organization?tab=tasks'),
-            ),
-          ],
-        ],
-      ),
+      isLeader: isLeader,
+      today: today,
     );
   }
 

@@ -18,7 +18,6 @@ void main() {
           const VersionHistorySheet(),
         );
 
-        // Should show CircularProgressIndicator while loading
         expect(find.byType(CircularProgressIndicator), findsOneWidget);
       });
 
@@ -27,11 +26,10 @@ void main() {
           const VersionHistorySheet(),
         );
 
-        expect(find.text('Was ist neu?'), findsOneWidget);
+        expect(find.text('Neu in dieser Version'), findsOneWidget);
       });
 
-      widgetTest('has no close button (Ionic toolbar shows only the title)',
-          (tester) async {
+      widgetTest('has no close button in header', (tester) async {
         await tester.pumpApp(
           const VersionHistorySheet(),
         );
@@ -39,16 +37,7 @@ void main() {
         expect(find.byIcon(Icons.close), findsNothing);
       });
 
-      widgetTest('has handle bar at top', (tester) async {
-        await tester.pumpApp(
-          const VersionHistorySheet(),
-        );
-
-        // The widget builds successfully with handle bar
-        expect(find.byType(DraggableScrollableSheet), findsOneWidget);
-      });
-
-      widgetTest('has no sparkle icon in header (Ionic parity)', (tester) async {
+      widgetTest('has no sparkle icon in header', (tester) async {
         await tester.pumpApp(
           const VersionHistorySheet(),
         );
@@ -57,7 +46,7 @@ void main() {
       });
     });
 
-    group('entries (Ionic shows the full text)', () {
+    group('entries (shows the full text)', () {
       widgetTest('changes wrap instead of being cut to one line',
           (tester) async {
         final first = (_userHistory().first
@@ -71,7 +60,7 @@ void main() {
       });
     });
 
-    group('user history (Ionic history continued)', () {
+    group('user history', () {
       widgetTest(
           'loads the user file; top entry is displayVersion, '
           'header without date', (tester) async {
@@ -84,27 +73,13 @@ void main() {
 
         final second = versions[1] as Map<String, dynamic>;
         await _openSheetAndWaitFor(
-            tester, find.text('Version ${AppConstants.displayVersion}'));
-        // no date in parentheses for the top entry (like Ionic) …
-        expect(find.text('Version ${AppConstants.displayVersion}'),
-            findsOneWidget);
-        // … the Ionic entries below keep "Version x (date)"
+            tester, find.text(AppConstants.displayVersion));
+        expect(find.text(AppConstants.displayVersion), findsOneWidget);
         expect(
-            find.text('Version ${second['version']} (${second['date']})'),
+            find.text('${second['version']} · ${second['date']}'),
             findsOneWidget);
         // the internal 0.x developer history is not shown
-        expect(find.text('Version ${AppConstants.appVersion}'), findsNothing);
-        expect(find.textContaining('Version 0.'), findsNothing);
-      });
-    });
-
-    group('DraggableScrollableSheet configuration', () {
-      widgetTest('is wrapped in DraggableScrollableSheet', (tester) async {
-        await tester.pumpApp(
-          const VersionHistorySheet(),
-        );
-
-        expect(find.byType(DraggableScrollableSheet), findsOneWidget);
+        expect(find.text(AppConstants.appVersion), findsNothing);
       });
     });
   });
@@ -120,7 +95,6 @@ List<dynamic> _userHistory() {
 /// Opens the sheet via [showVersionHistorySheet] and waits until the asset
 /// is loaded and [finder] shows up.
 Future<void> _openSheetAndWaitFor(WidgetTester tester, Finder finder) async {
-  // earlier tests leave a cached (never completed) load behind
   rootBundle.evict(versionHistoryUserAsset);
   tester.view.physicalSize = const Size(393, 852);
   tester.view.devicePixelRatio = 1;

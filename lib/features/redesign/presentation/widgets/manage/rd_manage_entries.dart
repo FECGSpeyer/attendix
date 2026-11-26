@@ -15,8 +15,7 @@ import '../../../../../core/router/redesign_routes.dart';
 import '../../../../../core/services/certificate_service.dart';
 import '../../../../../data/models/person/person.dart';
 import '../../../../../l10n/l10n.dart';
-import '../../../../history/presentation/pages/history_page.dart' show showHistoryModal;
-import '../../../../settings/presentation/pages/settings_page.dart'
+import '../../../../settings/data/account_provisioning_actions.dart'
     show createMissingAccounts, playersOfCurrentTenant;
 import '../../../../settings/presentation/widgets/calendar_subscription_dialog.dart';
 import '../../pages/rd_general_settings_page.dart' show showRdSharingSheet;
@@ -407,7 +406,7 @@ void rdOpenManageEntry(BuildContext context, WidgetRef ref, RdManageEntry entry,
     case RdManageEntry.approvals:
       push(RedesignRoutes.approvals);
     case RdManageEntry.workHistory:
-      showHistoryModal(context);
+      push(RedesignRoutes.workHistory);
     case RdManageEntry.workCategories:
       showSongCategoriesSheet(context);
     case RdManageEntry.fileStorage:

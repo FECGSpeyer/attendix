@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
-import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:intl/intl.dart';
 
@@ -10,24 +8,11 @@ import '../../../../l10n/l10n.dart';
 import '../../../planning/presentation/widgets/ion_items.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 
-/// Shows the Ionic "calculate shifts" modal (full height sheet, close button
-/// at the end, plain list "Berechnete Schichten").
+/// Shows the calculated shifts sheet.
 void showShiftPreviewSheet(BuildContext context, ShiftPlan plan, {ShiftInstance? startInstance}) {
-  if (context.rdSkin == null) {
-    // Ionic calculateModal: breakpoints [0, 1]
-    showIonSheet<void>(
-      context,
-      builder: (context, scrollController) => ShiftPreviewSheet(
-        plan: plan,
-        startInstance: startInstance,
-        scrollController: scrollController,
-      ),
-    );
-    return;
-  }
   showModalBottomSheet(
     context: context,
-    useRootNavigator: true, // IOS_SHELL2: above the tab bar
+    useRootNavigator: true,
     isScrollControlled: true,
     useSafeArea: true,
     builder: (context) => FractionallySizedBox(
@@ -126,24 +111,16 @@ class ShiftPreviewSheet extends StatelessWidget {
 
     return Column(
       children: [
-        // EIA-16: classic = the shared sheet toolbar (no title, close ✕ in
-        // the end slot) instead of an AppBar.
-        if (context.rdSkin == null)
-          const IonSheetHeader(title: '', end: [IonCloseButton()])
-        else
         AppBar(
           toolbarHeight: ionModalToolbarHeight(context),
           automaticallyImplyLeading: false,
           primary: false,
           actions: [
-            if (context.rdSkin == null)
-              const IonCloseButton()
-            else
-              IconButton(
-                icon: Icon(AppIcons.close),
-                tooltip: context.l10n.commonClose,
-                onPressed: () => Navigator.pop(context),
-              ),
+            IconButton(
+              icon: Icon(AppIcons.close),
+              tooltip: context.l10n.commonClose,
+              onPressed: () => Navigator.pop(context),
+            ),
           ],
         ),
         Expanded(

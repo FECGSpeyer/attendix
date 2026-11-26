@@ -172,7 +172,7 @@ class _TargetTenantAlertState extends State<_TargetTenantAlert> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final ios = useIosLook(context);
+    final ios = Theme.of(context).platform == TargetPlatform.iOS;
     return AppAlertDialog(
       title: Text(l10n.shiftsCopyToTenant),
       scrollable: true,

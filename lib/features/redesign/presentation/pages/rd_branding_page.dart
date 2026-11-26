@@ -15,10 +15,12 @@ import '../../../../data/models/organisation/organisation.dart';
 import '../../../../data/repositories/organisation_settings_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
-import '../../../settings/presentation/pages/branding_page.dart' show kMaxLogoBytes;
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/manage/rd_settings_sheets.dart';
 import '../widgets/rd_widgets.dart';
+
+/// Maximum logo file size in bytes (2 MB).
+const int kMaxLogoBytes = 2 * 1024 * 1024;
 
 /// REDESIGN: Verwaltung › Gruppe › Branding (canvas "Beta: Gruppe und
 /// Daten", board "G1 Branding"). Same data as the old page

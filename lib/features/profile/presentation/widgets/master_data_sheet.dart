@@ -8,7 +8,6 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../../core/providers/church_providers.dart';
 import '../../../../core/providers/profile_providers.dart';
-import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart';
 import '../../../redesign/presentation/widgets/members/rd_person_form.dart' show RdPersonAvatar;
@@ -17,63 +16,36 @@ import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/church/church.dart';
 import '../../../../data/repositories/profile_repository.dart';
-import '../../../../shared/widgets/display/avatar.dart';
 import '../../../../shared/widgets/sheets/image_viewer_sheet.dart';
-import '../../../auth/presentation/widgets/ion_form_list.dart';
 import 'church_picker.dart';
 import 'profile_helpers.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../auth/presentation/widgets/ion_form_list.dart' show showIonSelectOptions;
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
-import '../../../../shared/widgets/layout/ion_modal_handle.dart';
 
-/// Opens the "Meine Stammdaten" sheet (Ionic settings master data modal).
-///
-/// Ionic: `ion-modal [breakpoints]="[0, .9]"` – on iOS a sheet with the
-/// grabber drawn over the toolbar (IOS_FORMS1).
+/// Opens the "Meine Stammdaten" sheet.
 Future<void> showMasterDataSheet(BuildContext context) {
-  // REDESIGN (E2): Beta edit page as a high sheet that saves right away.
-  if (ProviderScope.containerOf(context, listen: false).read(redesignEnabledProvider)) {
-    return showModalBottomSheet(
-      context: context,
-      useRootNavigator: true,
-      isScrollControlled: true,
-      useSafeArea: true,
-      // Closing only via "Fertig"/back/barrier, so open changes get saved
-      // first (pulling down would pop past PopScope).
-      enableDrag: false,
-      backgroundColor: context.rd.bg,
-      // Only as high as the fields (few fields left a big empty sheet).
-      builder: (sheetContext) => ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(sheetContext).height * 0.95),
-        child: const MasterDataSheet(beta: true),
-      ),
-    );
-  }
-  final ios = useIosLook(context);
   return showModalBottomSheet(
     context: context,
-    useRootNavigator: true, // IOS_SHELL2: above the tab bar
+    useRootNavigator: true,
     isScrollControlled: true,
     useSafeArea: true,
-    showDragHandle: false,
-    backgroundColor: ios ? Theme.of(context).scaffoldBackgroundColor : null,
-    builder: (_) => FractionallySizedBox(
-      heightFactor: 0.9,
-      child: ios
-          ? const IonModalHandleOverlay(child: MasterDataSheet())
-          : const MasterDataSheet(),
+    // Closing only via "Fertig"/back/barrier, so open changes get saved
+    // first (pulling down would pop past PopScope).
+    enableDrag: false,
+    backgroundColor: context.rd.bg,
+    // Only as high as the fields (few fields left a big empty sheet).
+    builder: (sheetContext) => ConstrainedBox(
+      constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(sheetContext).height * 0.95),
+      child: const MasterDataSheet(),
     ),
   );
 }
 
 /// Edit own master data: Passbild, name, phone, birthday, extra fields.
 class MasterDataSheet extends ConsumerStatefulWidget {
-  const MasterDataSheet({super.key, this.beta = false});
-
-  /// Beta look: no "Speichern" button, every change is saved on its own
-  /// (text after a short pause, picks right away), "Fertig" closes.
-  final bool beta;
+  const MasterDataSheet({super.key});
 
   @override
   ConsumerState<MasterDataSheet> createState() => _MasterDataSheetState();
@@ -156,7 +128,7 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
         _birthday =
             '${picked.year.toString().padLeft(4, '0')}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}';
       });
-      if (widget.beta) _changed(now: true);
+      _changed(now: true);
     }
   }
 
@@ -443,91 +415,7 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
       _loadedProfile = profile;
     }
     _visibleFields = visibleFields;
-    if (widget.beta) return _buildBeta(context, profileAsync, profile, churches);
-    final inputStyle = ionItemInputStyle(context);
-
-    // Ionic master data modal: sheet (breakpoint .9) with a plain toolbar
-    // title "Meine Stammdaten" (no close button, swipe/backdrop closes) and
-    // an inset list on the light background; "Speichern" is the last item.
-    return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: ionModalToolbarHeight(context),
-        title: Text(context.l10n.settingsMyData),
-        automaticallyImplyLeading: false,
-      ),
-      body: !_initialized
-          ? (profileAsync.hasError
-              ? Center(child: Text(context.l10n.signoutFlutterError(friendlyErrorMessage(profileAsync.error))))
-              : profileAsync.hasValue && profile == null
-                  ? Center(child: Text(context.l10n.settingsFlutterNoProfile))
-                  : const Center(child: AppSpinner()))
-          : ListView(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              children: [
-                IonInsetGroup(
-                  children: [
-                    IonItem(
-                      label: context.l10n.settingsPassPhoto,
-                      onTap: _changeImg,
-                      detail: true,
-                      end: Avatar(
-                        imageUrl: hasCustomProfileImage(_img) ? _img : null,
-                        firstName: _firstName.text,
-                        lastName: _lastName.text,
-                        size: 40,
-                      ),
-                    ),
-                    _stackedInput(
-                      label: context.l10n.peopleFirstName,
-                      controller: _firstName,
-                      style: inputStyle,
-                      textCapitalization: TextCapitalization.words,
-                    ),
-                    _stackedInput(
-                      label: context.l10n.peopleLastName,
-                      controller: _lastName,
-                      style: inputStyle,
-                      textCapitalization: TextCapitalization.words,
-                    ),
-                    _stackedInput(
-                      label: context.l10n.settingsMobile,
-                      controller: _phone,
-                      style: inputStyle,
-                      keyboardType: TextInputType.phone,
-                    ),
-                    IonItem(
-                      label: context.l10n.peopleBirthday,
-                      end: IonDateButton(
-                        onTap: _pickBirthday,
-                        // Ionic ion-datetime-button: "16. Feb. 2002"
-                        text: (_birthday ?? '').isEmpty
-                            ? context.l10n.orgChoose
-                            : formatIonDateButton(_birthday),
-                      ),
-                    ),
-                  ],
-                ),
-                if (visibleFields.isNotEmpty) ...[
-                  IonListHeader(context.l10n.settingsExtraFields),
-                  IonInsetGroup(
-                    children: [
-                      for (final field in visibleFields)
-                        _buildExtraField(field, churches),
-                    ],
-                  ),
-                ],
-                const SizedBox(height: 8),
-                IonInsetGroup(
-                  children: [
-                    IonButtonItem(
-                      label: context.l10n.commonSave,
-                      onTap: _saving ? null : () => _save(visibleFields),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-    );
+    return _buildBeta(context, profileAsync, profile, churches);
   }
 
   /// REDESIGN (E2): "Meine Stammdaten" edit page – Passbild on top, fields
@@ -733,146 +621,6 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
           lines: field.type == 'textarea' ? 4 : 1,
         );
     }
-  }
-
-  Widget _buildExtraField(ProfileExtraField field, List<Church> churches) {
-    if (!field.editableByPlayers) {
-      // ion-label h3 name + p value
-      return IonItem(
-        title: Text(field.name, style: const TextStyle(fontSize: 14)),
-        subtitle: Text(extraFieldDisplayValue(field, _additional, churches)),
-      );
-    }
-
-    switch (field.type) {
-      case 'boolean':
-        return IonItem(
-          label: field.name,
-          end: IonSwitch(
-            value: _additional[field.id] == true,
-            onChanged: (v) => setState(() => _additional[field.id] = v),
-          ),
-        );
-      case 'select':
-        final current = _additional[field.id]?.toString();
-        final valid = field.options.contains(current);
-        return IonItem(
-          label: field.name,
-          onTap: () async {
-            final value = await showIonSelectOptions<String>(
-              context,
-              title: field.name,
-              options: [for (final o in field.options) (o, o)],
-              selected: valid ? current : null,
-            );
-            if (value != null && mounted) {
-              setState(() => _additional[field.id] = value);
-            }
-          },
-          end: IonSelectValue(
-            text: valid ? current! : context.l10n.settingsPleaseSelect,
-            placeholder: !valid,
-          ),
-        );
-      case 'bfecg_church':
-        return IonItem(
-          label: field.name,
-          end: TextButton(
-            onPressed: () => _selectChurch(field, churches),
-            child: IonButtonLabel(_churchLabel(field, churches)),
-          ),
-        );
-      default:
-        // Ionic `ion-input labelPlacement="stacked"`: the label is scaled
-        // to .75 of the item font (legacy `ion-label` keeps the full size).
-        return _stackedInput(
-          label: field.name,
-          controller: _controllerFor(field),
-          style: ionItemInputStyle(context),
-          keyboardType: field.type == 'number'
-              ? TextInputType.number
-              : TextInputType.text,
-          maxLines: field.type == 'textarea' ? 3 : 1,
-          textCapitalization: TextCapitalization.sentences,
-          iosLabelScale: 0.75,
-        );
-    }
-  }
-
-  /// `ion-item` with a stacked label above an `ion-input`.
-  ///
-  /// iOS (IOS_FORMS1): label row (17pt, 10pt from the top, 4pt gap) above a
-  /// 44pt input row – two ≈40pt rows like the Ionic iOS item
-  /// (`item-label-stacked`, min-height 68). Material keeps the floating
-  /// label decoration.
-  Widget _stackedInput({
-    required String label,
-    required TextEditingController controller,
-    required TextStyle style,
-    TextInputType? keyboardType,
-    TextCapitalization textCapitalization = TextCapitalization.none,
-    int maxLines = 1,
-    double iosLabelScale = 1,
-  }) {
-    if (!useIosLook(context)) {
-      return IonInputItem(
-        child: TextField(
-          controller: controller,
-          style: style,
-          keyboardType: keyboardType,
-          maxLines: maxLines,
-          textCapitalization: textCapitalization,
-          decoration: ionItemInputDecoration(context, label),
-        ),
-      );
-    }
-    final fontSize = ionItemFontSize(context);
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // ROLLEN-A-14: the label names the field for screen readers.
-          ExcludeSemantics(
-            child: Text(
-              label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontSize: fontSize * iosLabelScale,
-                height: 20.33 / 17,
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
-            ),
-          ),
-          const SizedBox(height: 4),
-          ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: 44),
-            child: Semantics(
-              label: label,
-              child: TextField(
-              controller: controller,
-              style: style.copyWith(height: 20.33 / 17),
-              keyboardType: keyboardType,
-              maxLines: maxLines,
-              textCapitalization: textCapitalization,
-              decoration: const InputDecoration(
-                isDense: true,
-                filled: false,
-                contentPadding: EdgeInsets.symmetric(vertical: 12),
-                border: InputBorder.none,
-                enabledBorder: InputBorder.none,
-                focusedBorder: InputBorder.none,
-                errorBorder: InputBorder.none,
-                focusedErrorBorder: InputBorder.none,
-                disabledBorder: InputBorder.none,
-              ),
-            ),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 
   String _churchLabel(ProfileExtraField field, List<Church> churches) {

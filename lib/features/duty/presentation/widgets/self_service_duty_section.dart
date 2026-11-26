@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
-import '../../../../shared/widgets/layout/ionic_ios.dart' show IonInsetList, IonItem;
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -14,7 +12,6 @@ import '../../../../data/repositories/duty_repository.dart' show DutyTermin;
 import '../pages/unavailability_page.dart';
 import 'duty_actions.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/ion_button.dart';
 import '../../../../shared/widgets/adaptive/ion_button_label.dart';
 import '../../../planning/presentation/widgets/rd_plan_widgets.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
@@ -198,15 +195,7 @@ class SelfServiceDutySection extends ConsumerWidget {
               ListTile(
                 title: Text(t.title),
                 subtitle: Text('${_dateShort(t)}${isUrgentDuty(t) ? ' · ${context.l10n.signoutUrgent}' : ''} · ${_dutyMeta(t)}'),
-                // Ionic `ion-button slot="end" size="small"` (solid
-                // primary); the Beta design keeps its tonal button.
-                trailing: context.rdSkin == null
-                    ? IonButton(
-                        label: context.l10n.commonApply,
-                        small: true,
-                        onPressed: () => takeDutyAction(context, ref, t.attendance.id!),
-                      )
-                    : FilledButton.tonal(
+                trailing: FilledButton.tonal(
                   onPressed: () => takeDutyAction(context, ref, t.attendance.id!),
                   child: IonButtonLabel(context.l10n.commonApply),
                 ),
@@ -317,73 +306,8 @@ String _dutyMeta(DutyTermin t) {
 }
 
 /// Sheet "Offene Dienste" with "Ich übernehme" and "Regelmäßig verhindert".
-Future<void> showOpenDutiesSheet(BuildContext context) {
-  if (context.rdSkin != null) return _rdOpenDutiesSheet(context);
-  // Ionic openDuties modal: [initialBreakpoint]="0.75"
-  // [breakpoints]="[0, 0.75, 1]", toolbar with ion-title and the end button
-  // "Schließen".
-  return showIonSheet<void>(
-    context,
-    breakpoints: const [0, 0.75, 1],
-    initialBreakpoint: 0.75,
-    builder: (ctx, scroll) => Consumer(
-        builder: (ctx, ref, _) {
-          final overview = ref.watch(myDutyOverviewProvider).valueOrNull;
-          final open = overview?.openDuties ?? const <DutyTermin>[];
-          return IonSheetScaffold(
-            title: context.l10n.signoutOpenDuties,
-            end: [
-              TextButton(onPressed: () => Navigator.of(ctx).pop(), child: IonButtonLabel(context.l10n.commonClose)),
-            ],
-            body: ListView(
-            controller: scroll,
-            padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(ctx).bottom),
-            // DAS-30: Ionic `ion-list [inset]` with an `ion-button slot="end"`
-            // per duty, then a second inset list with the detail row.
-            children: [
-              if (open.isEmpty)
-                Padding(
-                  padding: const EdgeInsets.all(AppDimensions.paddingM),
-                  child: Text(context.l10n.signoutAllDutiesFilled, textAlign: TextAlign.center),
-                )
-              else
-                IonInsetList(
-                  margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                  children: [
-                    for (final t in open)
-                      IonItem(
-                        title: Text(t.title),
-                        subtitle: Text('${_dateShort(t)} · ${_dutyMeta(t)}'),
-                        trailing: IonButton(
-                          label: context.l10n.signoutIllTakeIt,
-                          onPressed: () => takeDutyAction(ctx, ref, t.attendance.id!),
-                        ),
-                      ),
-                  ],
-                ),
-              if (overview?.person?.id != null)
-                IonInsetList(
-                  margin: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-                  children: [
-                    IonItem(
-                      leading: Icon(AppIcons.calendarClearOutline),
-                      title: Text(context.l10n.signoutRegularlyUnavailable),
-                      subtitle: Text(context.l10n.signoutRegularlyUnavailableHint),
-                      detail: true,
-                      onTap: () {
-                        Navigator.of(ctx).pop();
-                        openUnavailabilityPage(context, personId: overview!.person!.id!);
-                      },
-                    ),
-                  ],
-                ),
-            ],
-            ),
-          );
-        },
-    ),
-  );
-}
+Future<void> showOpenDutiesSheet(BuildContext context) =>
+    _rdOpenDutiesSheet(context);
 
 /// Scrolls the duty section [id] (`duty-mine`, `duty-requests`, `duty-open`)
 /// into view (Ionic `scrollToSection`). Returns false when the section is not

@@ -46,9 +46,9 @@ void main() {
   group('homeRouteFor', () {
     final meta = {'showDashboardTab_42': true};
 
-    test('admin/responsible with dashboard tab start on the dashboard', () {
-      expect(homeRouteFor(Role.admin, 42, meta), '/home-dashboard');
-      expect(homeRouteFor(Role.responsible, 42, meta), '/home-dashboard');
+    test('admin/responsible with dashboard tab start on Heute', () {
+      expect(homeRouteFor(Role.admin, 42, meta), '/heute');
+      expect(homeRouteFor(Role.responsible, 42, meta), '/heute');
     });
 
     test('setting is per tenant', () {

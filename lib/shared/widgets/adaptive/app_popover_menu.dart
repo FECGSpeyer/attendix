@@ -7,8 +7,6 @@ import 'package:attendix/core/theme/app_icons.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/redesign/rd_theme.dart';
 import '../../../l10n/l10n.dart';
-import '../layout/ionic_ios.dart' show IonIos, IonDetailChevron;
-import 'adaptive_platform.dart';
 
 /// iOS nested popovers (`side="start"`, iOS default `alignment="center"`)
 /// are centred on their trigger row and moved down by Ionic's
@@ -224,52 +222,33 @@ class AppPopoverSubItem {
 /// [itemsBuilder] (optional) rebuilds the entries while a nested popover
 /// changes state (e.g. the "Filter aktiv" subtitle). Returns the tapped
 /// entry's value, or null when dismissed.
-/// BETA_SELECT: the Ionic iOS glass popover only outside the Beta design;
-/// the Beta design gets its own menu card (see [_PopoverCard]) with the md
-/// placement below the trigger.
-bool _iosPopover(BuildContext context) =>
-    useIosLook(context) && context.rdSkin == null;
-
 Future<T?> showAppPopoverMenu<T>({
   required BuildContext context,
   required List<AppPopoverMenuItem<T>> items,
   List<AppPopoverMenuItem<T>> Function()? itemsBuilder,
-  // Ionic `popover.ios.css`: `--width: 200px` (md 250px).
   double iosWidth = 200,
-  // Item lines of the entries: false = `ion-list lines="none"`; true = the
-  // Ionic default of an `ion-list` / of bare `ion-item`s (an inset line
-  // below every entry that does not say `lines: false`).
   bool lines = false,
-  // iOS: the trigger is not an `ion-button` (e.g. an `ion-item`): the
-  // popover opens below the trigger, centred, with the arrow tip pointing
-  // at it (Ionic iOS default) instead of covering the trigger.
   bool iosArrow = false,
-  // Ionic `--max-height` (e.g. 70 % of the screen); the menu scrolls.
   double? maxHeight,
-  // md look: a page-set Ionic `--width` (default md 250px).
   double? mdWidth,
 }) {
   final navigator = Navigator.of(context, rootNavigator: true);
   final overlay = navigator.overlay!.context.findRenderObject()! as RenderBox;
   final anchor = _anchorOf(context, overlay);
-  final ios = _iosPopover(context);
 
   return navigator.push<T>(
     _PopoverRoute<T>(
-      ios: ios,
-      beta: context.rdSkin != null,
+      ios: false,
+      beta: true,
       lines: lines,
-      arrow: ios && iosArrow,
+      arrow: false,
       maxHeight: maxHeight,
       anchor: anchor,
-      // Opened from the keyboard (the focused trigger): the first entry
-      // gets the focus, like the former action sheet. A mouse/touch open
-      // keeps nothing highlighted; Tab still reaches the first entry.
       autofocusFirst: _openedByKeyboard(context),
       overlaySize: overlay.size,
       items: items,
       itemsBuilder: itemsBuilder,
-      width: ios ? iosWidth : (mdWidth ?? 250),
+      width: mdWidth ?? 250,
       barrierLabel: context.l10n.commonClose,
       capturedThemes: InheritedTheme.capture(
         from: context,
@@ -312,7 +291,7 @@ Future<void> showAppContentPopover({
 }) {
   return showAppPopover<void>(
     context: context,
-    width: _iosPopover(context) ? iosWidth : 250,
+    width: 250,
     builder: (_) => Padding(padding: const EdgeInsets.all(16), child: child),
   );
 }
@@ -326,23 +305,7 @@ Rect _anchorOf(BuildContext context, RenderBox overlay) {
   );
 }
 
-/// Ionic `ion-popover` with free content (a help text, a glossary card)
-/// instead of a menu – same surface, backdrop and animation as
-/// [showAppPopoverMenu]. There is no button: a tap outside closes it.
-///
-/// Placement follows Ionic:
-/// - anchored on [context]'s widget (the trigger button), or on [anchor]
-///   (global coordinates, e.g. the point of a tapped text link – Ionic
-///   `popoverController.create({event})`);
-/// - md: below the anchor, left edge at the anchor;
-/// - iOS: a button trigger ([anchor] null) is covered by the popover,
-///   right-aligned with it (ios27 "replace", like [showAppPopoverMenu]);
-///   any other anchor gets the popover below it, centred;
-/// - pushed back into the viewport, and above the anchor when there is no
-///   room below.
-///
-/// [width] is Ionic `--width` (default iOS 200 / md 250), [maxHeight] is
-/// Ionic `--max-height`.
+/// Popover with free content (a help text, a glossary card) instead of a menu.
 Future<T?> showAppPopover<T>({
   required BuildContext context,
   required WidgetBuilder builder,
@@ -352,19 +315,18 @@ Future<T?> showAppPopover<T>({
 }) {
   final navigator = Navigator.of(context, rootNavigator: true);
   final overlay = navigator.overlay!.context.findRenderObject()! as RenderBox;
-  final ios = _iosPopover(context);
   return navigator.push<T>(
     _ContentPopoverRoute<T>(
-      ios: ios,
-      beta: context.rdSkin != null,
+      ios: false,
+      beta: true,
       anchor: anchor == null
           ? _anchorOf(context, overlay)
           : Rect.fromPoints(
               overlay.globalToLocal(anchor.topLeft),
               overlay.globalToLocal(anchor.bottomRight),
             ),
-      coverAnchor: ios && anchor == null,
-      width: width ?? (ios ? 200 : 250),
+      coverAnchor: false,
+      width: width ?? 250,
       maxHeight: maxHeight,
       builder: builder,
       barrierLabel: context.l10n.commonClose,
@@ -568,40 +530,6 @@ class _AnchoredPopoverState extends State<_AnchoredPopover> {
 
   @override
   Widget build(BuildContext context) {
-    final card = !widget.arrow
-        ? widget.child
-        : LayoutBuilder(
-            builder: (context, constraints) {
-              // The card is centred on the anchor and pushed back into the
-              // viewport ([_AnchoredPopoverLayout]); the arrow stays on the
-              // anchor's centre (Ionic does not move it), but on the
-              // straight part of the card's edge.
-              final viewport = MediaQuery.sizeOf(context).width;
-              final w = constraints.maxWidth;
-              const m = _AnchoredPopoverLayout._margin;
-              final left = (widget.anchor.center.dx - w / 2)
-                  .clamp(m, math.max(m, viewport - w - m))
-                  .toDouble();
-              const aw = _IosPopoverArrow.width;
-              const r = 34.0;
-              final arrowLeft = (widget.anchor.center.dx - left - aw / 2)
-                  .clamp(math.min(r, (w - aw) / 2),
-                      math.max((w - aw) / 2, w - aw - r))
-                  .toDouble();
-              return Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  widget.child,
-                  Positioned(
-                    left: arrowLeft,
-                    top: _above ? null : -kIosPopoverArrowGap,
-                    bottom: _above ? -kIosPopoverArrowGap : null,
-                    child: _IosPopoverArrow(down: _above),
-                  ),
-                ],
-              );
-            },
-          );
     return CustomSingleChildLayout(
       delegate: _AnchoredPopoverLayout(
         ios: widget.ios,
@@ -611,7 +539,7 @@ class _AnchoredPopoverState extends State<_AnchoredPopover> {
         maxHeight: widget.maxHeight,
         topPadding: widget.topPadding,
         bottomPadding: widget.bottomPadding,
-        gap: widget.arrow ? kIosPopoverArrowGap : 0,
+        gap: 0,
         placement: _placement,
         onPlaced: _onPlaced,
       ),
@@ -619,96 +547,15 @@ class _AnchoredPopoverState extends State<_AnchoredPopover> {
         opacity: widget.animation,
         child: ScaleTransition(
           scale: Tween<double>(
-            begin: widget.ios ? 0.85 : 0.8,
+            begin: 0.8,
             end: 1,
           ).animate(widget.animation),
           alignment: Alignment(widget.originX, _above ? 1 : -1),
-          child: card,
+          child: widget.child,
         ),
       ),
     );
   }
-}
-
-/// Distance between an iOS popover with an arrow and its trigger: Ionic
-/// puts the content at `trigger.bottom + arrowHeight - 1` (ios27 arrow:
-/// 34 × 14).
-const double kIosPopoverArrowGap = 13;
-
-/// ionic-theme-ios27 `ion-popover::part(arrow)`: a 34 × 14 glass tip with a
-/// rounded point and concave shoulders that joins the popover's edge
-/// (`clip-path: path('M 0 14 L 0 13 C 3 13 4.5 12 6.5 10 L 14.5 1.5 C 16
-/// -0.5 18 -0.5 19.5 1.5 L 27.5 10 C 29.5 12 31 13 34 13 L 34 14 Z')`).
-/// [down]: the popover sits above its trigger, the tip points down.
-class _IosPopoverArrow extends StatelessWidget {
-  const _IosPopoverArrow({required this.down});
-
-  static const double width = 34;
-  static const double height = 14;
-
-  final bool down;
-
-  @override
-  Widget build(BuildContext context) {
-    final b = Theme.of(context).brightness;
-    // The colour of [IosGlassSurface.popover] (PERF_GLASS: frosted, opaque).
-    final glass = IosGlass.background(b, b == Brightness.dark ? 0.08 : 0.42);
-    final fill = IosGlass.liveBlur(context)
-        ? glass
-        : IosGlass.frosted(
-            glass,
-            page: IosGlass.pageColor(context),
-            backdropBrightness: b == Brightness.dark ? 0.9 : 1.35,
-          );
-    return IgnorePointer(
-      child: RotatedBox(
-        quarterTurns: down ? 2 : 0,
-        child: CustomPaint(
-          size: const Size(width, height),
-          painter: _IosPopoverArrowPainter(
-            fill: fill,
-            border: IosGlass.overlayBorder(b),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _IosPopoverArrowPainter extends CustomPainter {
-  const _IosPopoverArrowPainter({required this.fill, required this.border});
-
-  final Color fill;
-  final Color border;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    Path outline() => Path()
-      ..moveTo(0, 13)
-      ..cubicTo(3, 13, 4.5, 12, 6.5, 10)
-      ..lineTo(14.5, 1.5)
-      ..cubicTo(16, -0.5, 18, -0.5, 19.5, 1.5)
-      ..lineTo(27.5, 10)
-      ..cubicTo(29.5, 12, 31, 13, 34, 13);
-    // The base overlaps the card's 0.5pt border so tip and card read as
-    // one surface.
-    final shape = outline()
-      ..lineTo(34, 14)
-      ..lineTo(0, 14)
-      ..close();
-    canvas.drawPath(shape, Paint()..color = fill);
-    canvas.drawPath(
-      outline(),
-      Paint()
-        ..color = border
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 0.5,
-    );
-  }
-
-  @override
-  bool shouldRepaint(_IosPopoverArrowPainter old) =>
-      old.fill != fill || old.border != border;
 }
 
 /// Places a popover card at its anchor (see [showAppPopover]) and keeps it
@@ -826,21 +673,18 @@ class AppPopoverText {
   const AppPopoverText._();
 
   static TextStyle heading(BuildContext context) => TextStyle(
-        fontSize: _iosPopover(context) ? 17 : 16,
+        fontSize: 16,
         color: Theme.of(context).colorScheme.onSurface,
       );
 
   static TextStyle paragraph(BuildContext context) {
-    final ios = _iosPopover(context);
     final brightness = Theme.of(context).brightness;
     return TextStyle(
-      fontSize: ios ? IonIos.pFontSize : 14,
-      height: ios ? null : 20 / 14,
-      color: ios
-          ? IonIos.labelP(brightness)
-          : (brightness == Brightness.dark
-              ? const Color(0xFF999999)
-              : const Color(0xFF666666)),
+      fontSize: 14,
+      height: 20 / 14,
+      color: brightness == Brightness.dark
+          ? const Color(0xFF999999)
+          : const Color(0xFF666666),
     );
   }
 }
@@ -887,12 +731,8 @@ class _PopoverRoute<T> extends PopupRoute<T> {
   @override
   final String barrierLabel;
 
-  /// AUDIT_R4: Ionic md dims the page behind a popover
-  /// (`--backdrop-opacity: var(--ion-backdrop-opacity, .32)`); the ios27
-  /// theme sets `--backdrop-opacity: 0`.
   @override
-  Color? get barrierColor =>
-      ios || beta ? Colors.transparent : Colors.black.withValues(alpha: 0.32);
+  Color? get barrierColor => Colors.transparent;
 
   @override
   bool get barrierDismissible => true;
@@ -1305,7 +1145,7 @@ class _PopoverCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget list = SingleChildScrollView(
-      padding: EdgeInsets.symmetric(vertical: ios ? 6 : 8),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1319,75 +1159,15 @@ class _PopoverCard extends StatelessWidget {
         child: list,
       );
     }
-    if (ios && opaque) {
-      // PARITY_R8: same shape (radius 34), border and shadow as the glass
-      // popover, filled with the item background (white / dark card) and
-      // without backdrop blur, so the labels stay crisp.
-      final brightness = Theme.of(context).brightness;
-      const radius = BorderRadius.all(Radius.circular(34));
-      return CustomPaint(
-        painter: const IosOuterShadowPainter(
-          borderRadius: radius,
-          shadows: [
-            BoxShadow(
-              color: Color(0x1F000000),
-              blurRadius: 16,
-              offset: Offset(0, 4),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: radius,
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color:
-                  brightness == Brightness.dark
-                      ? const Color(0xFF1C1C1D)
-                      : Colors.white,
-              borderRadius: radius,
-              border: Border.all(
-                color: IosGlass.overlayBorder(brightness),
-                width: 0.5,
-              ),
-            ),
-            child: Material(type: MaterialType.transparency, child: list),
-          ),
-        ),
-      );
-    }
-    if (ios) {
-      // IOS27_SWEEP: ionic-theme-ios27 popover – radius 34, rgba(glass,
-      // .42) over blur(12px) brightness(1.35).
-      return IosGlassSurface.popover(
-        brightness: Theme.of(context).brightness,
-        // ios27 popovers don't dim the page ([barrierColor])
-        scrim: Colors.transparent,
-        child: Material(type: MaterialType.transparency, child: list),
-      );
-    }
-    // BETA_SELECT: the Beta menu card (as its row menus and selects).
-    final rd = context.rdSkin;
-    if (rd != null) {
-      return Material(
-        color: rd.surface,
-        surfaceTintColor: Colors.transparent,
-        elevation: 8,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: rd.line),
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: list,
-      );
-    }
-    // Ionic md popover: --background (item colour), radius 4, md shadow
-    // (elevation ≈8).
-    final theme = Theme.of(context);
+    final rd = context.rd;
     return Material(
-      color: theme.colorScheme.surface,
+      color: rd.surface,
       surfaceTintColor: Colors.transparent,
       elevation: 8,
-      borderRadius: BorderRadius.circular(4),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: rd.line),
+      ),
       clipBehavior: Clip.antiAlias,
       child: list,
     );
@@ -1494,101 +1274,67 @@ class _PopoverRow extends StatelessWidget {
         ),
       );
     } else if (icon != null) {
-      // iOS: Ionic item `::slotted(ion-icon)` 1.6em of 17pt = 27.2pt.
-      leading = Icon(icon, size: ios ? 27.2 : 24, color: iconColor);
+      leading = Icon(icon, size: 24, color: iconColor);
     }
 
     final row = InkWell(
-      // No ripple on iOS, grey press highlight; nothing highlighted
-      // initially (no initial value). Focusable for the keyboard (Tab /
-      // arrow keys, Enter / Space); the focus highlight only shows in
-      // keyboard mode, a mouse click or tap doesn't take the focus.
-      splashFactory: ios ? NoSplash.splashFactory : null,
-      highlightColor: ios ? IosGlass.itemActivated(theme.brightness) : null,
       focusNode: focusNode,
       autofocus: autofocus,
       onTap: onTap,
       child: ConstrainedBox(
-        constraints: BoxConstraints(minHeight: ios ? 44 : 48),
-        // iOS (Ionic item in a 200pt popover): padding-start 16, icon
-        // margin-end 16, label margin 10/8/10/0, detail chevron margin-start
-        // 8 / end -6, inner-padding-end 16 – long labels wrap to two lines
-        // (60pt rows) like "Status-|Filter".
+        constraints: const BoxConstraints(minHeight: 48),
         child: Padding(
-          padding:
-              ios
-                  ? EdgeInsets.only(left: 16, right: chevron ? 10 : 16)
-                  : const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           child: Row(
             children: [
               if (leading != null) ...[
                 leading,
-                SizedBox(width: ios ? 16 : (checked != null ? 16 : 32)),
+                SizedBox(width: checked != null ? 16 : 32),
               ],
               Expanded(
-                child: Padding(
-                  padding:
-                      ios
-                          ? const EdgeInsets.fromLTRB(0, 10, 8, 10)
-                          : EdgeInsets.zero,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // IOS27_SWEEP: ion-item 1rem = 17pt on the iPhone
-                      _PopoverLabel(
-                        ios: ios,
-                        label: label,
-                        note: note,
-                        style: TextStyle(
-                          fontSize: ios ? 17 : 16,
-                          // iOS: CSS `line-height: normal` (≈1.2) – 60pt two-line rows.
-                          height: ios ? 1.2 : null,
-                          color: fg,
-                        ),
-                      ),
-                      if (subtitle != null)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 2),
-                          child: Text(
-                            subtitle!,
-                            style: TextStyle(
-                              fontSize: ios ? IonIos.pFontSize : 14,
-                              color:
-                                  ios
-                                      ? IonIos.labelP(theme.brightness)
-                                      : (theme.brightness == Brightness.dark
-                                          ? const Color(0xFF999999)
-                                          : const Color(0xFF666666)),
-                            ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _PopoverLabel(
+                      ios: false,
+                      label: label,
+                      note: note,
+                      style: TextStyle(fontSize: 16, color: fg),
+                    ),
+                    if (subtitle != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2),
+                        child: Text(
+                          subtitle!,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: theme.brightness == Brightness.dark
+                                ? const Color(0xFF999999)
+                                : const Color(0xFF666666),
                           ),
                         ),
-                    ],
-                  ),
+                      ),
+                  ],
                 ),
               ),
-              // `ion-icon slot="end" name="checkmark" color="primary"`.
               if (selected)
                 Padding(
-                  padding: EdgeInsets.only(left: ios ? 2 : 16),
+                  padding: const EdgeInsets.only(left: 16),
                   child: Icon(
                     AppIcons.check,
-                    size: ios ? 27.2 : 24,
+                    size: 24,
                     color: AppColors.primary,
                   ),
                 ),
               if (end != null) end!,
               if (chevron) ...[
-                SizedBox(width: ios ? 8 : 6),
-                if (ios)
-                  const IonDetailChevron()
-                else
-                  Icon(
-                    AppIcons.chevronRight,
-                    size: 20,
-                    // Ionic md detail icon: text colour at .25.
-                    color: onSurface.withValues(alpha: 0.25),
-                  ),
+                const SizedBox(width: 6),
+                Icon(
+                  AppIcons.chevronRight,
+                  size: 20,
+                  color: onSurface.withValues(alpha: 0.25),
+                ),
               ],
             ],
           ),
@@ -1597,23 +1343,16 @@ class _PopoverRow extends StatelessWidget {
     );
     if (!line) return row;
     return _PopoverLine(
-      ios: ios,
-      // The Ionic default line is the inner border: it starts at the label
-      // (after the start icon and its margin) and runs to the edge.
+      ios: false,
       inset: 16 +
           (leading == null
               ? 0
-              : (checked != null ? 24 : (ios ? 27.2 : 24)) +
-                  (ios ? 16 : (checked != null ? 16 : 32))),
+              : 24 + (checked != null ? 16 : 32)),
       child: row,
     );
   }
 }
 
-/// Label of a popover row with the optional grey [note] behind it. iOS
-/// (200pt popover): a single word wider than the row (e.g.
-/// "Werkkategorien" next to an icon) is set slightly smaller instead of
-/// being broken inside the word – CSS never breaks inside a word either.
 class _PopoverLabel extends StatelessWidget {
   const _PopoverLabel({
     required this.ios,
@@ -1630,55 +1369,23 @@ class _PopoverLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final brightness = Theme.of(context).brightness;
-    Widget text(TextStyle style) => Text.rich(
-          TextSpan(
-            text: label,
-            children: [
-              // `ion-note` inside the label: step-350 at the label's size
-              // (iOS) / step-600 14px (md).
-              if (note != null)
-                TextSpan(
-                  text: ' $note',
-                  style: TextStyle(
-                    fontSize: ios ? null : 14,
-                    color: ios
-                        ? IonIos.labelP(brightness)
-                        : (brightness == Brightness.dark
-                            ? const Color(0xFF999999)
-                            : const Color(0xFF666666)),
-                  ),
-                ),
-            ],
-          ),
-          style: style,
-        );
-    if (!ios) return text(style);
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final max = constraints.maxWidth;
-        if (!max.isFinite || max <= 0) return text(style);
-        final scaler = MediaQuery.textScalerOf(context);
-        final base = DefaultTextStyle.of(context).style.merge(style);
-        var widest = 0.0;
-        for (final word in label.split(RegExp(r'[\s\-/]+'))) {
-          if (word.length < 8) continue;
-          final painter = TextPainter(
-            text: TextSpan(text: word, style: base),
-            textDirection: TextDirection.ltr,
-            textScaler: scaler,
-            maxLines: 1,
-          )..layout();
-          widest = math.max(widest, painter.width);
-          painter.dispose();
-        }
-        if (widest <= max) return text(style);
-        final size = style.fontSize ?? 17;
-        return text(
-          style.copyWith(
-            fontSize: math.max(size * 0.8, size * max / widest - 0.1),
-          ),
-        );
-      },
+    return Text.rich(
+      TextSpan(
+        text: label,
+        children: [
+          if (note != null)
+            TextSpan(
+              text: ' $note',
+              style: TextStyle(
+                fontSize: 14,
+                color: brightness == Brightness.dark
+                    ? const Color(0xFF999999)
+                    : const Color(0xFF666666),
+              ),
+            ),
+        ],
+      ),
+      style: style,
     );
   }
 }

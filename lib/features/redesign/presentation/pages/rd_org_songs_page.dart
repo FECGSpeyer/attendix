@@ -8,7 +8,7 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/song_copy.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../organisation/presentation/pages/org_songs_page.dart';
+import '../../../organisation/presentation/org_songs_logic.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/manage/rd_settings_sheets.dart';
 import '../widgets/rd_widgets.dart';

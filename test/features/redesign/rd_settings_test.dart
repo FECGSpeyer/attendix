@@ -1,6 +1,5 @@
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/redesign_providers.dart';
-import 'package:attendix/core/router/redesign_routes.dart';
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/features/redesign/data/providers/rd_today_providers.dart';
 import 'package:attendix/features/redesign/presentation/widgets/today/rd_today_common.dart';
@@ -10,18 +9,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
-/// REDESIGN: Beta switch and Darstellung are stored on the device only;
-/// helpers of "Heute".
+/// Darstellung settings stored on device and helpers of "Heute".
 void main() {
-  tearDown(() => RedesignRoutes.active = false);
-
   group('RedesignSettings', () {
-    test('defaults: old design, Petrol, automatic', () async {
+    test('defaults: Petrol, automatic', () async {
       SharedPreferences.setMockInitialValues({});
       final s = await loadInitialRedesignSettings();
       expect(s, const RedesignSettings());
-      expect(s.enabled, isFalse);
       expect(s.world, RdFarbwelt.petrol);
       expect(s.themeMode, ThemeMode.system);
     });
@@ -38,37 +32,27 @@ void main() {
       addTearDown(container.dispose);
       final notifier = container.read(redesignSettingsProvider.notifier);
 
-      await notifier.setEnabled(true);
       await notifier.setWorld(RdFarbwelt.nachtblau);
       await notifier.setMode(RdBrightnessMode.dark);
-
-      expect(RedesignRoutes.active, isTrue);
-      expect(container.read(redesignEnabledProvider), isTrue);
 
       final restored = await loadInitialRedesignSettings();
       expect(
         restored,
         const RedesignSettings(
-          enabled: true,
           world: RdFarbwelt.nachtblau,
           mode: RdBrightnessMode.dark,
         ),
       );
-
-      await notifier.setEnabled(false);
-      expect(RedesignRoutes.active, isFalse);
-      expect((await loadInitialRedesignSettings()).enabled, isFalse);
     });
 
-    test('the start value comes from main() and sets the router flag', () {
+    test('the start value comes from main()', () {
       final container = ProviderContainer(overrides: [
         initialRedesignSettingsProvider.overrideWithValue(
-          const RedesignSettings(enabled: true, world: RdFarbwelt.klar),
+          const RedesignSettings(world: RdFarbwelt.klar),
         ),
       ]);
       addTearDown(container.dispose);
       expect(container.read(redesignSettingsProvider).world, RdFarbwelt.klar);
-      expect(RedesignRoutes.active, isTrue);
     });
 
     test('unknown stored values fall back to the defaults', () async {

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'redesign/rd_theme.dart' show RdSkinContext;
-
 /// App color palette
 class AppColors {
   AppColors._();
@@ -96,13 +94,12 @@ class AppColors {
   static const Color iosNoteLight = Color(0xFF737373);
   static const Color iosNoteDark = Color(0xFF8C8C8C);
   static const Color iosMediumDark = Color(0xFF989AA2);
-  // IOS27_SWEEP: Ionic 9 light `--ion-color-medium` (#636469).
+  // Medium grey in light mode (#636469).
   static const Color iosMediumLight = Color(0xFF636469);
-  // IOS27_SWEEP: ionic-theme-ios27 `ion-list.ios { --ion-border-color:
-  // var(--ion-color-step-100, …, #e8e8e8) }` – item lines in lists.
+  // Subtle list divider lines.
   static const Color iosListLineLight = Color(0xFFE8E8E8);
   static const Color iosListLineDark = Color(0xFF1A1A1A);
-  // IOS27_SWEEP: Ionic 9 `ion-label p` (`--ion-color-step-400`).
+  // Secondary paragraph text colours.
   static const Color iosLabelPLight = Color(0xFF999999);
   static const Color iosLabelPDark = Color(0xFF666666);
   // ion-button[disabled] in the iOS 26 theme: step-200 grey, white label.
@@ -146,13 +143,8 @@ class AppColors {
     return color;
   }
 
-  /// Ionic `--ion-color-medium` for grey text and icons: #636469 in light
-  /// and #989AA2 in dark mode, like Ionic 9. The Beta design keeps
-  /// [medium] (#92949C) in both.
-  static Color mediumOf(BuildContext context) {
-    if (context.rdSkin != null) return medium;
-    return Theme.of(context).brightness == Brightness.dark ? mediumOnDark : iosMediumLight;
-  }
+  /// Grey text and icons color in the active palette.
+  static Color mediumOf(BuildContext context) => medium;
 
   /// [forBrightness] with the brightness of [context]'s theme.
   static Color adaptive(BuildContext context, Color color) =>

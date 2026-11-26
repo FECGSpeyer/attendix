@@ -87,11 +87,6 @@ void main() {
       expect(type, contains('SwipeActions.delete('));
       expect(type, isNot(contains('AppIcons.close, size: 20')));
 
-      final templates = _read('lib/features/organisation/presentation/pages/org_planning_templates_page.dart');
-      expect(templates, contains('Slidable('));
-      expect(templates, contains('_renameTemplate'));
-      expect(templates, isNot(contains('AppIcons.moreHoriz')));
-
       for (final path in [
         'lib/features/settings/presentation/widgets/type_reminders_editor.dart',
         'lib/features/settings/presentation/widgets/registration_fields_editor.dart',
@@ -100,11 +95,10 @@ void main() {
       }
     });
 
-    test('person history delete uses the Ionic alert and toast texts', () {
-      final src = _read('lib/features/people/presentation/widgets/person_detail/historie_accordion.dart');
-      expect(src, contains('l10n.personRemoveEntry')); // 'Eintrag unwiderruflich entfernen?'
-      expect(src, contains('l10n.personEntryRemoved')); // 'Eintrag wurde erfolgreich entfernt.'
-      expect(src, contains('l10n.personNoteChanged')); // 'Notiz geändert'
+    test('person history delete uses the alert and toast texts', () {
+      final src = _read('lib/features/redesign/presentation/pages/rd_person_history_page.dart');
+      expect(src, contains('l10n.personRemoveEntry'));
+      expect(src, contains('l10n.personEntryRemoved'));
     });
   });
 }

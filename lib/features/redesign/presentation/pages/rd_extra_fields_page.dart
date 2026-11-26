@@ -11,7 +11,7 @@ import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/extra_fields_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/app_action_sheet.dart';
-import '../../../settings/presentation/pages/extra_fields_page.dart'
+import '../../../settings/data/extra_fields_helpers.dart'
     show ExtraFieldTarget, ProviderRead, extraFieldChurchIds, extraFieldSummaryLines, saveExtraFieldDefinitions, showExtraFieldSheet;
 import '../../data/rd_manage_logic.dart' show RdManageEntry;
 import '../widgets/manage/rd_manage_entries.dart' show rdManageTitle;

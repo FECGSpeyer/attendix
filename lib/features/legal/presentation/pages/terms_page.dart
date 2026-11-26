@@ -14,10 +14,10 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/repositories/account_repository.dart';
 import '../../../public_links/presentation/pages/open_file_page.dart';
 import '../widgets/legal_content_view.dart';
+import '../../../settings/presentation/widgets/settings_list.dart';
 import '../../../../l10n/l10n.dart';
 import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
 import '../../../../shared/widgets/adaptive/adaptive.dart';
-import '../../../settings/presentation/widgets/settings_list.dart';
 
 /// One-time consent gate (`/terms`): the user must accept the terms and
 /// privacy policy before using the app.
@@ -145,7 +145,7 @@ class _TermsPageState extends ConsumerState<TermsPage> {
     return Scaffold(
       // IOS_R6: Ionic `ion-content fullscreen` under the
       // `ion-header translucent` (no large title: always blurred)
-      extendBodyBehindAppBar: ionIsIos(context),
+      extendBodyBehindAppBar: Theme.of(context).platform == TargetPlatform.iOS,
       appBar: IonTranslucentAppBar(child: AppBar(
         title: Text(context.l10n.termsTitle),
         automaticallyImplyLeading: false,

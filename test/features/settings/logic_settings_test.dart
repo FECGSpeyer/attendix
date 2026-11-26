@@ -7,7 +7,7 @@ import 'package:attendix/data/models/plan/plan.dart';
 import 'package:attendix/data/models/tenant/tenant.dart';
 import 'package:attendix/data/repositories/attendance_type_repository.dart';
 import 'package:attendix/features/settings/presentation/pages/attendance_type_edit_page.dart';
-import 'package:attendix/features/settings/presentation/pages/general_settings_page.dart';
+import 'package:attendix/features/settings/data/general_settings_helpers.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../factories/test_factories.dart';
@@ -94,10 +94,13 @@ void main() {
       final src = File(
         'lib/features/settings/presentation/pages/attendance_type_edit_page.dart',
       ).readAsStringSync();
+      final beta = File(
+        'lib/features/settings/presentation/pages/attendance_type_edit_page_beta.dart',
+      ).readAsStringSync();
       expect(src, isNot(contains("_relevantGroups.isNotEmpty ? _relevantGroups : null")));
       expect(src, contains("'relevant_groups': _relevantGroups,"));
       // save must check the update result (Ionic shows updateFailed)
-      expect(src, contains('if (updated == null)'));
+      expect(beta, contains('if (updated == null)'));
     });
   });
 

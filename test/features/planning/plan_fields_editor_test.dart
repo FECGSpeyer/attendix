@@ -1,51 +1,51 @@
+import 'package:attendix/core/theme/redesign/rd_palette.dart';
+import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/core/utils/plan_utils.dart';
 import 'package:attendix/data/models/plan/plan.dart';
 import 'package:attendix/features/planning/presentation/widgets/plan_fields_editor.dart';
+import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-/// UX parity with the Ionic plan editor: inline minutes input per row,
-/// swipe options (Einrücken + delete), "Themen aufnehmen" on the agenda marker.
+/// Plan fields editor: duration editing in the row sheet, reorder handles,
+/// "Themen aufnehmen" on the agenda marker, and Beamer rows.
 void main() {
-  Future<List<PlanField>?> pump(
+  Widget wrap(Widget child) => MaterialApp(
+        theme: buildRdTheme(RdFarbwelt.petrol, Brightness.light),
+        locale: const Locale('de'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Scaffold(body: SingleChildScrollView(child: child)),
+      );
+
+  Future<List<PlanField>? Function()> pump(
     WidgetTester tester,
     List<PlanField> fields, {
     VoidCallback? onAddTopics,
+    BeamerFile? Function(PlanField)? fileOf,
   }) async {
     List<PlanField>? emitted;
-    await tester.pumpWidget(MaterialApp(
-      home: Scaffold(
-        body: SingleChildScrollView(
-          child: PlanFieldsEditor(
-            fields: fields,
-            startTime: '18:00',
-            onChanged: (f) => emitted = f,
-            onAddTopics: onAddTopics,
-          ),
-        ),
+    await tester.pumpWidget(wrap(
+      PlanFieldsEditor(
+        fields: fields,
+        startTime: '18:00',
+        onChanged: (f) => emitted = f,
+        onAddTopics: onAddTopics,
+        beamerFileOf: fileOf,
       ),
     ));
-    return emitted;
+    return () => emitted;
   }
 
-  testWidgets('plain fields have an inline minutes input that emits changes', (tester) async {
-    List<PlanField>? emitted;
-    await tester.pumpWidget(MaterialApp(
-      home: Scaffold(
-        body: SingleChildScrollView(
-          child: PlanFieldsEditor(
-            fields: const [PlanField(id: 'a', name: 'Einsingen', time: '10')],
-            startTime: '18:00',
-            onChanged: (f) => emitted = f,
-          ),
-        ),
-      ),
-    ));
+  testWidgets('plain fields edit minutes via row sheet and emit changes', (tester) async {
+    final emitted = await pump(tester, const [PlanField(id: 'a', name: 'Einsingen', time: '10')]);
 
-    expect(find.widgetWithText(TextField, '10'), findsOneWidget);
-    await tester.enterText(find.byType(TextField), '25');
-    expect(emitted?.single.time, '25');
+    await tester.tap(find.text('Einsingen'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byKey(const Key('rd-plan-field-minutes')), '25');
+    await tester.tap(find.byKey(const Key('rd-sheet-close')));
+    await tester.pumpAndSettle();
+    expect(emitted()?.single.time, '25');
   });
 
   testWidgets('note fields have no minutes input', (tester) async {
@@ -54,12 +54,12 @@ void main() {
     expect(find.text('Bitte pünktlich'), findsOneWidget);
   });
 
-  testWidgets('rows are slidable (Ionic ion-item-sliding)', (tester) async {
+  testWidgets('rows have drag handles for reordering', (tester) async {
     await pump(tester, const [
       PlanField(id: 'a', name: 'A', time: '10'),
       PlanField(id: 'b', name: 'B', time: '5'),
     ]);
-    expect(find.byType(Slidable), findsNWidgets(2));
+    expect(find.byIcon(Icons.drag_indicator), findsNWidgets(2));
   });
 
   testWidgets('agenda marker offers "Themen aufnehmen" when allowed', (tester) async {
@@ -70,38 +70,20 @@ void main() {
       onAddTopics: () => tapped = true,
     );
     await tester.tap(find.text('Themen aufnehmen'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Themen aufnehmen').last);
+    await tester.pumpAndSettle();
     expect(tapped, isTrue);
   });
 
-  group('Beamer rows (Ionic 4.17.10/4.17.11)', () {
-    Future<List<PlanField>? Function()> pumpBeamer(
-      WidgetTester tester,
-      List<PlanField> fields, {
-      BeamerFile? Function(PlanField)? fileOf,
-    }) async {
-      List<PlanField>? emitted;
-      await tester.pumpWidget(MaterialApp(
-        home: Scaffold(
-          body: SingleChildScrollView(
-            child: PlanFieldsEditor(
-              fields: fields,
-              startTime: '18:00',
-              onChanged: (f) => emitted = f,
-              beamerFileOf: fileOf,
-            ),
-          ),
-        ),
-      ));
-      return () => emitted;
-    }
-
+  group('Beamer rows', () {
     testWidgets('no status line when the Beamer feature is off', (tester) async {
-      await pumpBeamer(tester, const [PlanField(id: 'a', name: 'Gemeindelied', time: '5')]);
+      await pump(tester, const [PlanField(id: 'a', name: 'Gemeindelied', time: '5')]);
       expect(find.text('Beamer-Datei fehlt'), findsNothing);
     });
 
-    testWidgets('status line shows the file or "Beamer-Datei fehlt"', (tester) async {
-      await pumpBeamer(
+    testWidgets('status line shows "Beamer-Datei fehlt" only when missing', (tester) async {
+      await pump(
         tester,
         const [
           PlanField(id: 'a', name: 'Gemeindelied', time: '5'),
@@ -111,12 +93,10 @@ void main() {
         fileOf: (f) => f.songId == 7 ? const BeamerFile(name: 'werk.sng', path: 'p') : null,
       );
       expect(find.text('Beamer-Datei fehlt'), findsOneWidget);
-      expect(find.text('werk.sng'), findsOneWidget);
-      expect(find.byKey(const ValueKey('beamer-status-c')), findsNothing);
     });
 
-    testWidgets('edit dialog switches "Beamer-Datei nötig" off by hand', (tester) async {
-      final emitted = await pumpBeamer(
+    testWidgets('edit sheet switches "Beamer-Datei nötig" off by hand', (tester) async {
+      final emitted = await pump(
         tester,
         const [PlanField(id: 'a', name: 'Gemeindelied', time: '5')],
         fileOf: (_) => null,
@@ -124,20 +104,17 @@ void main() {
       await tester.tap(find.text('Gemeindelied'));
       await tester.pumpAndSettle();
       expect(find.text('Beamer-Datei nötig'), findsOneWidget);
-      expect(find.text('Automatisch an: Titel enthält „Lied“'), findsOneWidget);
-      expect(find.text('Noch keine Datei verknüpft'), findsOneWidget);
 
-      await tester.tap(find.byKey(const ValueKey('plan-field-beamer-toggle')));
+      await tester.ensureVisible(find.byKey(const Key('rd-plan-field-beamer')));
+      await tester.tap(find.byKey(const Key('rd-plan-field-beamer')));
       await tester.pumpAndSettle();
-      expect(find.text('Noch keine Datei verknüpft'), findsNothing);
-
-      await tester.tap(find.byKey(const ValueKey('plan-field-edit-save')));
+      await tester.tap(find.byKey(const Key('rd-sheet-close')));
       await tester.pumpAndSettle();
       expect(emitted()?.single.needsBeamer, isFalse);
     });
 
-    testWidgets('edit dialog has no Beamer section when the feature is off', (tester) async {
-      await pumpBeamer(tester, const [PlanField(id: 'a', name: 'Gemeindelied', time: '5', needsBeamer: true)]);
+    testWidgets('edit sheet has no Beamer section when the feature is off', (tester) async {
+      await pump(tester, const [PlanField(id: 'a', name: 'Gemeindelied', time: '5', needsBeamer: true)]);
       await tester.tap(find.text('Gemeindelied'));
       await tester.pumpAndSettle();
       expect(find.text('Beamer-Datei nötig'), findsNothing);
