@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.157.2",
+      "date": "26.11.2026",
+      "changes": [
+        "🐛 Termine wieder als Telegram-Karte über das Terminmenü teilen."
+      ]
+    },
+    {
       "version": "0.157.1",
       "date": "26.11.2026",
       "changes": [
