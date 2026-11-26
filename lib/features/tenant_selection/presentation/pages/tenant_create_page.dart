@@ -24,6 +24,7 @@ import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
 import '../../../instruments/data/catalog_import.dart';
 import '../../../instruments/data/catalog_selection.dart';
+import '../../../instruments/data/instrument_presets.dart';
 import '../../../instruments/presentation/widgets/instrument_catalog_sheet.dart';
 
 /// Create a new group/tenant ("Neue Gruppe").
@@ -97,6 +98,8 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
   String _selectedType = 'general';
   bool _isLoading = false;
   bool _creationComplete = false;
+  bool _isChoosingCatalog = false;
+  String? _catalogPresetId;
   List<CatalogGroupDraft> _catalogSelection = const [];
 
   @override
@@ -141,6 +144,16 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
     final p = context.rd;
     final l10n = context.l10n;
     final texts = TenantTypeTexts.of(_selectedType, l10n);
+    final language = Localizations.localeOf(context).languageCode;
+    final presets = instrumentPresets.where(
+      (preset) => preset.tenantType == _selectedType,
+    );
+    final selectedPreset =
+        presets.where((preset) => preset.id == _catalogPresetId).firstOrNull;
+    final selectionCount =
+        _catalogSelection.isEmpty
+            ? l10n.catalogSetupNone
+            : l10n.catalogSetupCount(_catalogSelection.length);
     final textStyle = TextStyle(fontSize: 17, color: p.text);
     Widget hint(String text) => Padding(
       padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
@@ -180,7 +193,7 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
                 saving: _isLoading,
                 onCancel: !_isLoading ? _close : null,
                 onSubmit:
-                    _isLoading || _creationComplete
+                    _isLoading || _creationComplete || _isChoosingCatalog
                         ? null
                         : () =>
                             _isComplete
@@ -210,11 +223,12 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
                                     : TenantTypeTexts.of(type, l10n).label,
                             selected: _selectedType == type,
                             onTap:
-                                _isLoading
+                                _isLoading || _isChoosingCatalog
                                     ? null
                                     : () => setState(() {
                                       if (_selectedType != type) {
                                         _catalogSelection = const [];
+                                        _catalogPresetId = null;
                                       }
                                       _selectedType = type;
                                     }),
@@ -222,6 +236,54 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
                       ],
                     ),
                     hint(texts.help),
+                    if (_selectedType != 'general') ...[
+                      const SizedBox(height: 20),
+                      RdGroupLabel(l10n.catalogSetupTitle),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          for (final preset in presets)
+                            RdChoiceChip(
+                              key: Key('rd-tenant-preset-${preset.id}'),
+                              label: preset.label(language),
+                              selected: _catalogPresetId == preset.id,
+                              onTap:
+                                  _isLoading || _isChoosingCatalog
+                                      ? null
+                                      : () => _choosePreset(preset),
+                            ),
+                          RdChoiceChip(
+                            key: const Key('rd-tenant-preset-later'),
+                            label: l10n.catalogSetupLater,
+                            selected:
+                                _catalogPresetId == null &&
+                                _catalogSelection.isEmpty,
+                            onTap:
+                                _isLoading || _isChoosingCatalog
+                                    ? null
+                                    : () => _choosePreset(null),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      RdGroupedList(
+                        children: [
+                          RdListRow(
+                            key: const Key('rd-tenant-catalog'),
+                            title: l10n.catalogSetupChoose,
+                            subtitle:
+                                selectedPreset == null
+                                    ? selectionCount
+                                    : '${selectedPreset.label(language)} · $selectionCount',
+                            onTap:
+                                _isLoading || _isChoosingCatalog
+                                    ? null
+                                    : _chooseCatalog,
+                          ),
+                        ],
+                      ),
+                    ],
                     const SizedBox(height: 20),
                     RdGroupedList(
                       children: [
@@ -256,25 +318,6 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
                       ],
                     ),
                     hint(l10n.redesignTenantsNewMainHint(_selectedType)),
-                    if (_selectedType != 'general') ...[
-                      const SizedBox(height: 20),
-                      RdGroupLabel(l10n.catalogSetupTitle),
-                      RdGroupedList(
-                        children: [
-                          RdListRow(
-                            key: const Key('rd-tenant-catalog'),
-                            title: l10n.catalogSetupChoose,
-                            subtitle:
-                                _catalogSelection.isEmpty
-                                    ? l10n.catalogSetupNone
-                                    : l10n.catalogSetupCount(
-                                      _catalogSelection.length,
-                                    ),
-                            onTap: _isLoading ? null : _chooseCatalog,
-                          ),
-                        ],
-                      ),
-                    ],
                   ],
                 ),
               ),
@@ -286,22 +329,104 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
   }
 
   Future<void> _chooseCatalog() async {
+    if (_isLoading || _isChoosingCatalog) return;
     final type = _selectedType;
     final accountId = ref.read(currentAuthUserIdProvider);
     final tenantId = ref.read(currentTenantIdProvider);
-    final selection = await showInstrumentCatalogSheet(
-      context,
-      tenantType: type,
-      initialSelection: _catalogSelection,
-    );
-    if (!mounted ||
-        selection == null ||
-        _selectedType != type ||
-        ref.read(currentAuthUserIdProvider) != accountId ||
-        ref.read(currentTenantIdProvider) != tenantId) {
+    setState(() => _isChoosingCatalog = true);
+    try {
+      final selection = await showInstrumentCatalogSheet(
+        context,
+        tenantType: type,
+        initialSelection: _catalogSelection,
+        initialPresetId: _catalogPresetId,
+        purpose: CatalogPickerPurpose.setup,
+      );
+      if (!mounted ||
+          selection == null ||
+          _selectedType != type ||
+          ref.read(currentAuthUserIdProvider) != accountId ||
+          ref.read(currentTenantIdProvider) != tenantId) {
+        return;
+      }
+      setState(() {
+        _catalogSelection = selection.drafts;
+        _catalogPresetId = selection.presetId;
+      });
+    } finally {
+      if (mounted) setState(() => _isChoosingCatalog = false);
+    }
+  }
+
+  Future<void> _choosePreset(CatalogPreset? preset) async {
+    if (_isLoading || _isChoosingCatalog || _creationComplete) return;
+    if (preset?.id == _catalogPresetId &&
+        (preset != null || _catalogSelection.isEmpty)) {
       return;
     }
-    setState(() => _catalogSelection = selection);
+    final type = _selectedType;
+    if (preset != null && preset.tenantType != type) return;
+    final accountId = ref.read(currentAuthUserIdProvider);
+    final tenantId = ref.read(currentTenantIdProvider);
+    final language = Localizations.localeOf(context).languageCode;
+    final l10n = context.l10n;
+    bool isCurrent() =>
+        mounted &&
+        _selectedType == type &&
+        ref.read(currentAuthUserIdProvider) == accountId &&
+        ref.read(currentTenantIdProvider) == tenantId;
+    setState(() => _isChoosingCatalog = true);
+    try {
+      if (preset == null) {
+        if (_catalogSelection.isNotEmpty) {
+          final discard = await showAppDialog<bool>(
+            context: context,
+            builder:
+                (dialogContext) => AppAlertDialog(
+                  title: Text(l10n.catalogSetupSkipTitle),
+                  content: Text(l10n.catalogSetupSkipMessage),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(dialogContext).pop(false),
+                      child: Text(l10n.commonCancel),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.of(dialogContext).pop(true),
+                      child: Text(l10n.catalogSetupDiscard),
+                    ),
+                  ],
+                ),
+          );
+          if (!isCurrent() || discard != true) return;
+        }
+        setState(() {
+          _catalogSelection = const [];
+          _catalogPresetId = null;
+        });
+        return;
+      }
+      var change = CatalogPresetChange.replace;
+      if (_catalogSelection.isNotEmpty) {
+        final decision = await showCatalogPresetChangeDialog(context);
+        if (!isCurrent() || decision == null) return;
+        change = decision;
+      }
+      final additions = [
+        for (final entry in preset.entries.where(
+          (entry) => entry.selectedByDefault,
+        ))
+          draftFromPresetEntry(entry, languageCode: language),
+      ];
+      setState(() {
+        _catalogSelection =
+            change == CatalogPresetChange.merge
+                ? mergeCatalogDrafts(_catalogSelection, additions)
+                : additions;
+        _catalogPresetId = preset.id;
+      });
+    } finally {
+      if (mounted) setState(() => _isChoosingCatalog = false);
+    }
   }
 
   Future<void> _createTenant() async {

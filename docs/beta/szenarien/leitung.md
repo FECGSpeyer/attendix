@@ -596,9 +596,10 @@ Alles unter „Ich“ › „Verwaltung“. Die Suche oben findet jede Einstellu
      wähle eine Vorlage oder ergänze über „Eigenes Instrument“ einen eigenen
      Namen. Im Chor heißt dieser Eintrag „Eigene Stimme“. Allgemeine Gruppen
      behalten die direkte Namenseingabe.
-  2. Prüfe „Ausgewählt“. Über „Eigenen Namen verwenden“ kannst du zusätzliche
-     Stimmen benennen. Tippe auf „Übernehmen“; vorhandene Einträge werden
-     nicht nochmals angelegt.
+  2. Prüfe „Ausgewählt“. Bei einem vorhandenen Eintrag kannst du über
+     „Weitere Stimme anlegen“ einen zusätzlichen Namen vergeben. Die Aktion
+     zum Hinzufügen zeigt die Anzahl der ausgewählten Instrumente oder Stimmen;
+     vorhandene Einträge werden nicht nochmals angelegt.
   3. Tippe auf ein Instrument, um Name, Register, Stimmung, Notenschlüssel und
      „Synonyme“ zu ändern.
   4. ••• › „Reihenfolge ändern“ sortiert die Liste.
@@ -609,6 +610,8 @@ Alles unter „Ich“ › „Verwaltung“. Die Suche oben findet jede Einstellu
   Die Vorlagen umfassen Sinfonieorchester, Streichorchester, Blasorchester,
   Volksinstrumentenorchester (unter anderem Domra, Balalaika, Bajan,
   Akkordeon und Mandoline) sowie gemischten Chor. Alle Auswahlen sind anpassbar.
+  Ein Vorlagenwechsel bietet Ergänzen oder Ersetzen an. „Ohne Vorlage“ entfernt
+  nur die Vorlagenzuordnung und behält deine Auswahl.
   Die Sammlung lässt sich offline durchsuchen; die Übernahme braucht eine
   Verbindung. Bei einem Fehler prüfe die Liste und wiederhole die Auswahl.
 
