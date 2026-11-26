@@ -20,7 +20,7 @@ Das Skript erledigt nach dem Clone automatisch:
 2. Ermittelt `--build-name` (`AppConstants.displayVersion`, z. B. `5.0.0`) und `--build-number` (`pubspec`-Build + 100) über `scripts/store_build.sh --print` und gleicht sie mit `CI_BUILD_NUMBER` ab.
 3. Erzeugt `.env.app` ausschließlich aus freigegebenen Client-Variablen (sicher gequotet für `flutter_dotenv`, niemals Service-Role-Keys).
 4. Dekodiert optional `GOOGLE_SERVICE_INFO_PLIST_B64` nach `ios/Runner/GoogleService-Info.plist` (ohne Quarantine-xattrs, geprüft per `plutil -lint` — wird sowohl vom iOS- als auch vom macOS-Build eingebunden).
-5. Installiert bei Bedarf CocoaPods, führt `flutter precache`, `flutter pub get`, `flutter build <ios|macos> --release --config-only` und (falls nötig) `pod install` aus.
+5. Deaktiviert in Xcode Cloud Flutters automatische Swift-Package-Manager-Migration (`--no-enable-swift-package-manager`, da das Repo auf CocoaPods/`Podfile.lock` basiert), installiert bei Bedarf CocoaPods und führt `flutter precache`, `flutter pub get`, `flutter build <ios|macos> --release --config-only` sowie (falls nötig) `pod install` aus.
 6. Aktiviert bei **macOS** in Xcode Cloud (`CI_XCODE_CLOUD=TRUE`) `macos/Runner/AppStore.entitlements` (Sandbox, Schlüsselbund-Gruppe und Push-Entitlement), ohne lokale ad-hoc-Builds zu beeinflussen.
 
 ## Einmalige Einrichtung in Xcode / App Store Connect

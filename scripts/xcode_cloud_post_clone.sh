@@ -181,6 +181,14 @@ log "Flutter binary: $(command -v flutter)"
 flutter --version
 flutter config --no-analytics >/dev/null 2>&1 || true
 
+# The repo uses CocoaPods (Podfile.lock) without a committed swiftpm/Package.resolved.
+# Xcode Cloud disables automatic SPM resolution during ci_post_clone, so disable
+# Flutter's on-the-fly SPM auto-migration inside Xcode Cloud.
+if [[ "${CI_XCODE_CLOUD:-}" == "TRUE" || "${DISABLE_FLUTTER_SPM:-0}" == "1" ]]; then
+  log "Disabling Flutter Swift Package Manager auto-migration (using CocoaPods)..."
+  flutter config --no-enable-swift-package-manager >/dev/null
+fi
+
 # 6. Ensure CocoaPods is available before `flutter build --config-only` runs.
 if ! command -v pod >/dev/null 2>&1; then
   log "Installing CocoaPods via Homebrew..."
