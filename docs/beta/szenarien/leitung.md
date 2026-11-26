@@ -17,7 +17,7 @@ Leitung nicht.
 | Bereich | Szenarien |
 |---------|-----------|
 | [Heute](#heute) | L-01 bis L-03 |
-| [Termine](#termine) | L-04 bis L-13 |
+| [Termine](#termine) | L-04 bis L-13, L-65 |
 | [Mitglieder](#mitglieder) | L-14 bis L-28 |
 | [Werke](#werke) | L-29 bis L-39 |
 | [Mitteilungen](#mitteilungen) | L-40 bis L-42 |
@@ -191,6 +191,20 @@ die Leitung kann.
 - **Ergebnis:** Ein Plan für einen Anlass, der nicht in der Terminliste steht.
 
 ---
+
+### L-65 Einen Termin als Telegram-Karte teilen
+
+- **Ich möchte** einen Termin in einer Telegram-Gruppe teilen, damit die
+  Mitglieder direkt dort zu- und absagen können.
+- **Wo:** „Termine“ → Termin öffnen → Drei-Punkte-Menü.
+- **So geht's:**
+  1. Wähle „Als Telegram-Karte senden“.
+  2. Lies den Hinweis und wähle „Telegram öffnen“. Mit „Abbrechen“ verlässt
+     du den Dialog, ohne Telegram zu öffnen.
+  3. Wähle in Telegram die gewünschte Gruppe. Dort postet @attendix_bot
+     eine gemeinsame Karte zu diesem Termin.
+- **Ergebnis:** Mitglieder mit verknüpftem Telegram können auf der Karte
+  antworten. Es werden keine persönlichen Nachrichten an alle verschickt.
 
 ## Mitglieder
 
