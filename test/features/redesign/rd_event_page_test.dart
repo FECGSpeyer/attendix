@@ -656,16 +656,43 @@ void main() {
     expect(find.text('0 von 1 da'), findsOneWidget);
   });
 
-  testWidgets('excused rows are settled: no status buttons, all behind more', (tester) async {
+  testWidgets('excused and announced-late rows are settled: no status buttons, row tap opens sheet', (tester) async {
     _size(tester, const Size(393, 852));
     final h = _Harness();
     await tester.pumpWidget(h.app(tab: RdEventTab.record));
     await _settle(tester);
 
+    final sophie = find.byKey(const ValueKey('rd-record-1'));
+    expect(find.descendant(of: sophie, matching: find.bySemanticsLabel('Anwesend')), findsNothing);
+    expect(find.descendant(of: sophie, matching: find.bySemanticsLabel('Verspätet')), findsNothing);
+    expect(find.descendant(of: sophie, matching: find.bySemanticsLabel('Abwesend')), findsNothing);
+    expect(find.descendant(of: sophie, matching: find.byIcon(Icons.more_time_rounded)), findsOneWidget);
+    expect(find.descendant(of: sophie, matching: find.byIcon(Icons.more_horiz)), findsOneWidget);
+    expect(tester.getSemantics(sophie).hint, 'Weitere Status und Notiz für Sophie Lang');
+
     final max = find.byKey(const ValueKey('rd-record-3'));
     expect(find.descendant(of: max, matching: find.bySemanticsLabel('Anwesend')), findsNothing);
     expect(find.descendant(of: max, matching: find.bySemanticsLabel('Abwesend')), findsNothing);
-    expect(find.descendant(of: max, matching: find.bySemanticsLabel('Weitere Status und Notiz für Max Huber')), findsOneWidget);
+    expect(find.descendant(of: max, matching: find.byIcon(Icons.more_horiz)), findsOneWidget);
+    expect(tester.getSemantics(max).hint, 'Weitere Status und Notiz für Max Huber');
+
+    // Announced-late keeps full name contrast, excused is muted.
+    final sophieName = tester.widget<Text>(find.descendant(of: sophie, matching: find.text('Sophie Lang')));
+    final maxName = tester.widget<Text>(find.descendant(of: max, matching: find.text('Max Huber')));
+    expect(sophieName.style?.color, isNot(maxName.style?.color));
+
+    // Tapping a settled row opens the status sheet directly.
+    await tester.tap(find.descendant(of: sophie, matching: find.text('Sophie Lang')));
+    await _settle(tester);
+    expect(find.text('Fertig'), findsOneWidget);
+    Navigator.of(tester.element(find.text('Fertig'))).pop();
+    await _settle(tester);
+
+    await tester.ensureVisible(max);
+    await _settle(tester);
+    await tester.tap(find.descendant(of: max, matching: find.text('Max Huber')));
+    await _settle(tester);
+    expect(find.text('Fertig'), findsOneWidget);
   });
 
   testWidgets('Helfer only see their own group, without notes', (tester) async {

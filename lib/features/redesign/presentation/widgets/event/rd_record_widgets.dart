@@ -130,8 +130,10 @@ class _FilterChip extends StatelessWidget {
 /// One person of the recording list: name, note, three status buttons
 /// (only the ones the Termin type allows) and "more".
 ///
-/// Excused persons are settled: nothing is left to do, so the row is
-/// muted and shows no status buttons; every status sits behind "more".
+/// Excused and announced-late ("Kommt später") persons are settled: nothing is
+/// left to do in the usual case, so the row shows no status buttons and
+/// tapping the row or "more" opens the status sheet. Excused names are muted
+/// (not coming); announced-late names keep normal contrast (still coming).
 class RdRecordRow extends StatelessWidget {
   const RdRecordRow({
     super.key,
@@ -164,7 +166,8 @@ class RdRecordRow extends StatelessWidget {
       _ => null,
     };
     final look = rdStatusLook(p, status);
-    final settled = status == AttendanceStatus.excused;
+    final excused = status == AttendanceStatus.excused;
+    final settled = excused || status == AttendanceStatus.lateExcused;
     final info = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -172,7 +175,7 @@ class RdRecordRow extends StatelessWidget {
           member.name,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: settled ? p.text2 : p.text),
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: excused ? p.text2 : p.text),
         ),
         if (badge != null)
           Row(
@@ -201,6 +204,11 @@ class RdRecordRow extends StatelessWidget {
           ),
       ],
     );
+    final moreIcon = SizedBox(
+      width: 30,
+      height: 44,
+      child: Icon(Icons.more_horiz, color: p.text2),
+    );
     final buttons = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -210,28 +218,27 @@ class RdRecordRow extends StatelessWidget {
               _StatusButton(status: s, active: status == s, onTap: () => onTap(s)),
               const SizedBox(width: 6),
             ],
-        Semantics(
-          button: true,
-          label: l10n.redesignEventMoreStatus(member.name),
-          excludeSemantics: true,
-          child: InkResponse(
-            onTap: onMore,
-            radius: 22,
-            child: SizedBox(
-              width: 30,
-              height: 44,
-              child: Icon(Icons.more_horiz, color: p.text2),
+        if (settled)
+          ExcludeSemantics(child: moreIcon)
+        else
+          Semantics(
+            button: true,
+            label: l10n.redesignEventMoreStatus(member.name),
+            excludeSemantics: true,
+            child: InkResponse(
+              onTap: onMore,
+              radius: 22,
+              child: moreIcon,
             ),
           ),
-        ),
       ],
     );
-    return Padding(
+    final content = Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: LayoutBuilder(
         builder: (context, constraints) {
           // Narrow phones: the buttons go below the name.
-          if (constraints.maxWidth < 300) {
+          if (!settled && constraints.maxWidth < 300) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -251,6 +258,14 @@ class RdRecordRow extends StatelessWidget {
         },
       ),
     );
+    if (settled) {
+      return Semantics(
+        button: true,
+        hint: l10n.redesignEventMoreStatus(member.name),
+        child: InkWell(onTap: onMore, child: content),
+      );
+    }
+    return content;
   }
 }
 

@@ -62,8 +62,14 @@ void main() {
         );
         expect(tester.getRect(shortDate).left, tester.getRect(longDate).left);
         expect(
-          tester.getRect(shortTitle).top - tester.getRect(shortDate).top,
-          tester.getRect(longTitle).top - tester.getRect(longDate).top,
+          tester.getRect(shortDate).center.dy,
+          closeTo(tester.getRect(shortCard).center.dy, 0.5),
+          reason: 'The date box is vertically centered in the Termin card.',
+        );
+        expect(
+          tester.getRect(longDate).center.dy,
+          closeTo(tester.getRect(longCard).center.dy, 0.5),
+          reason: 'The date box stays vertically centered when the title wraps.',
         );
         expect(
           tester.getRect(pill).right,

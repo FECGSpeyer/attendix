@@ -180,24 +180,47 @@ class RdEventDateBox extends StatelessWidget {
     final fg = highlight ? p.softText : p.text;
     return Container(
       width: 52,
-      padding: const EdgeInsets.symmetric(vertical: 6),
+      constraints: const BoxConstraints(minHeight: 54),
+      alignment: Alignment.center,
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 7),
       decoration: BoxDecoration(
         color: highlight ? p.soft : p.track,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            top,
-            maxLines: 1,
-            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: highlight ? fg : p.text2),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              top,
+              maxLines: 1,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 11,
+                height: 1.15,
+                letterSpacing: 0.3,
+                fontWeight: FontWeight.w700,
+                color: highlight ? fg : p.text2,
+              ),
+            ),
           ),
+          const SizedBox(height: 2),
           FittedBox(
             fit: BoxFit.scaleDown,
             child: Text(
               bottom,
-              style: TextStyle(fontSize: days > 1 ? 16 : 20, fontWeight: FontWeight.w700, color: fg),
+              maxLines: 1,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: days > 1 ? 15 : 20,
+                height: 1.1,
+                fontWeight: FontWeight.w700,
+                fontFeatures: const [FontFeature.tabularFigures()],
+                color: fg,
+              ),
             ),
           ),
         ],

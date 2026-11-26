@@ -694,7 +694,7 @@ class _LeaderEventCard extends StatelessWidget {
       onTap: onTap,
       border: selected ? Border.all(color: p.primary, width: 2) : null,
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           RdEventDateBox(date: attendance.date, durationDays: days, highlight: today),
           const SizedBox(width: 14),
