@@ -58,6 +58,10 @@ import '../../../redesign/presentation/widgets/event/rd_plan_take_over.dart';
 import '../../../redesign/presentation/widgets/today/rd_today_common.dart' show RdInfoCard;
 
 part 'planning_page_beta.dart';
+part 'planning_page_beta_timeline.dart';
+part 'planning_page_beta_actions.dart';
+part 'planning_page_beta_quick_add.dart';
+part 'planning_page_beta_widgets.dart';
 
 /// Provider for songs list (for adding to plan)
 final planSongsProvider = FutureProvider<List<Song>>((ref) async {
