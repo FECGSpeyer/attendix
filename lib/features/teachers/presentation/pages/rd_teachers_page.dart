@@ -8,11 +8,11 @@ import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/repositories/teacher_repository.dart';
 import '../../../../l10n/l10n.dart';
-import '../../data/rd_manage_logic.dart' show RdManageEntry;
-import '../widgets/manage/rd_manage_entries.dart' show rdManageTitle;
-import '../widgets/manage/rd_manage_list.dart';
-import '../widgets/manage/rd_teacher_create_sheet.dart';
-import 'rd_general_settings_page.dart' show RdTenantSettings, RdTenantSettingsBlock;
+import '../../../settings/data/rd_manage_logic.dart' show RdManageEntry;
+import '../../../settings/presentation/widgets/manage/rd_manage_entries.dart' show rdManageTitle;
+import '../../../settings/presentation/widgets/manage/rd_manage_list.dart';
+import '../widgets/rd_teacher_create_sheet.dart';
+import '../../../settings/presentation/pages/rd_general_settings_page.dart' show RdTenantSettings, RdTenantSettingsBlock;
 
 /// REDESIGN: Verwaltung › Lehrer in the template "Verwaltungsliste"
 /// (replaces `/settings/teachers` while the Beta is on). Name, instruments

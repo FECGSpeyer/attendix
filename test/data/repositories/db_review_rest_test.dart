@@ -55,7 +55,7 @@ void main() {
 
   group('M3 critical rules have no enabled switch (Ionic / edge function)', () {
     test('rule editor always saves enabled rules, no switch', () {
-      final page = read('lib/features/redesign/presentation/pages/rd_critical_rule_page.dart');
+      final page = read('lib/features/settings/presentation/pages/rd_critical_rule_page.dart');
       expect(page, isNot(contains('SwitchListTile')));
       expect(page, contains('enabled: true'));
     });

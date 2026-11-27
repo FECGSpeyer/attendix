@@ -20,7 +20,7 @@ import '../../../../data/models/role_permission/tenant_role_permission.dart';
 import '../../../../data/repositories/role_permission_repository.dart';
 import '../../../../data/repositories/user_registration_repository.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../settings/data/account_provisioning_actions.dart' show playersOfCurrentTenant;
+import '../../data/account_provisioning_actions.dart' show playersOfCurrentTenant;
 import '../../data/rd_manage_logic.dart' show RdManageEntry, rdManageVisible;
 import '../../../../core/redesign/rd_roles_logic.dart';
 import 'rd_general_settings_page.dart' show RdTenantSettings, RdTenantSettingsBlock;

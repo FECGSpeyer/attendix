@@ -31,7 +31,7 @@ import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/router/route_access.dart' show canOpenSongsTab;
 import '../../../../core/providers/debug_providers.dart' show effectiveRoleProvider;
 import '../../../../core/theme/redesign/rd_theme.dart';
-import '../../../redesign/presentation/widgets/manage/rd_settings_sheets.dart';
+import '../widgets/manage/rd_settings_sheets.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../../../today/presentation/widgets/rd_today_common.dart' show RdInfoCard;
 

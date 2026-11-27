@@ -13,8 +13,8 @@ void main() {
   });
 
   test('teachers: only admins open the edit page, add sheet without main group', () {
-    final listSrc = read('lib/features/redesign/presentation/pages/rd_teachers_page.dart');
-    final sheetSrc = read('lib/features/redesign/presentation/widgets/manage/rd_teacher_create_sheet.dart');
+    final listSrc = read('lib/features/teachers/presentation/pages/rd_teachers_page.dart');
+    final sheetSrc = read('lib/features/teachers/presentation/widgets/rd_teacher_create_sheet.dart');
     expect(listSrc, contains('onTap: isAdmin'));
     expect(sheetSrc, contains('.where((g) => g.maingroup != true'));
   });

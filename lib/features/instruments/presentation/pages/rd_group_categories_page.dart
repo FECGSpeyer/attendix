@@ -11,8 +11,8 @@ import '../../../../data/models/instrument/instrument.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../core/redesign/rd_words.dart';
-import '../widgets/manage/rd_manage_list.dart';
-import '../widgets/manage/rd_settings_sheets.dart';
+import '../../../settings/presentation/widgets/manage/rd_manage_list.dart';
+import '../../../settings/presentation/widgets/manage/rd_settings_sheets.dart';
 
 /// REDESIGN: Gruppen › Kategorien in the template "Verwaltungsliste" (like
 /// Werk-Kategorien). Replaces the old categories sheet while the Beta is on:

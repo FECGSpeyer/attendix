@@ -31,7 +31,7 @@ import '../../data/rd_create_logic.dart';
 import '../../../../core/redesign/rd_type_flags.dart';
 import '../../../../shared/widgets/adaptive/app_dialog.dart';
 import '../widgets/event/rd_create_sheets.dart';
-import '../../../redesign/presentation/widgets/manage/rd_manage_entries.dart' show rdManageAccessProvider;
+import '../../../settings/presentation/widgets/manage/rd_manage_entries.dart' show rdManageAccessProvider;
 import '../widgets/event/rd_form_widgets.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../../../today/presentation/widgets/rd_today_common.dart' show RdInfoCard;

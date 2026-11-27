@@ -22,7 +22,7 @@ import '../../../attendance/data/providers/rd_events_providers.dart' show rdAtte
 import '../../data/providers/rd_today_providers.dart';
 import '../../../attendance/data/rd_event_details_logic.dart';
 import '../../../attendance/data/rd_event_phase.dart' show rdEventSpan;
-import '../../../redesign/presentation/widgets/manage/rd_manage_list.dart' show rdLoadedValue;
+import '../../../settings/presentation/widgets/manage/rd_manage_list.dart' show rdLoadedValue;
 import '../../../../shared/widgets/redesign/rd_desktop.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import 'rd_player_today.dart';

@@ -8,7 +8,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/app_dialog.dart';
 import '../../../attendance/presentation/widgets/event/rd_form_widgets.dart'
     show RdFieldRow, RdFormBody, rdInputDecoration;
-import '../../../redesign/presentation/widgets/manage/rd_settings_sheets.dart'
+import '../../../settings/presentation/widgets/manage/rd_settings_sheets.dart'
     show RdSheetHead, showRdSettingsSheet, showRdTextSheet;
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../../data/catalog_selection.dart';

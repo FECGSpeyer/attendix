@@ -106,7 +106,7 @@ void main() {
   });
 
   test('general settings writes no withExcuses / critical_rules enabled (D6)', () {
-    final src = read('lib/features/redesign/presentation/pages/rd_general_settings_page.dart');
+    final src = read('lib/features/settings/presentation/pages/rd_general_settings_page.dart');
     expect(src, isNot(contains("'withExcuses'")));
     final repo = read('lib/data/repositories/tenant_settings_repository.dart');
     expect(repo, isNot(contains("'withExcuses'")));

@@ -43,9 +43,9 @@ import '../widgets/members/rd_members_filter_sheet.dart';
 import '../../../../shared/widgets/redesign/rd_split_view.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../../../today/presentation/widgets/rd_today_common.dart' show RdInfoCard;
-import '../../../redesign/presentation/widgets/manage/rd_manage_entries.dart'
+import '../../../settings/presentation/widgets/manage/rd_manage_entries.dart'
     show rdManageIcon, rdManageRecentProvider, rdManageTitle, rdMissingAccountsProvider, rdOpenManageEntry;
-import '../../../redesign/data/rd_manage_logic.dart' show RdManageEntry;
+import '../../../settings/data/rd_manage_logic.dart' show RdManageEntry;
 import '../../../settings/data/account_provisioning_actions.dart' show createMissingAccounts;
 import '../../../../core/utils/helper_member.dart';
 

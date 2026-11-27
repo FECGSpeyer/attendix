@@ -17,7 +17,7 @@ import 'package:attendix/features/attendance/data/providers/rd_events_providers.
 import 'package:attendix/features/today/data/providers/rd_today_providers.dart';
 import 'package:attendix/features/attendance/presentation/pages/rd_event_page.dart';
 import 'package:attendix/features/attendance/presentation/pages/rd_events_page.dart';
-import 'package:attendix/features/redesign/presentation/pages/rd_manage_page.dart';
+import 'package:attendix/features/settings/presentation/pages/rd_manage_page.dart';
 import 'package:attendix/features/profile/presentation/pages/rd_me_page.dart';
 import 'package:attendix/features/people/presentation/pages/rd_members_page.dart';
 import 'package:attendix/features/today/presentation/pages/rd_today_page.dart';

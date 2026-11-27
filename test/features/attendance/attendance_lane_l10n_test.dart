@@ -43,7 +43,7 @@ void main() {
       'lib/features/attendance/presentation/pages/rd_event_page.dart',
       'lib/features/songs/presentation/pages/rd_work_history_page.dart',
       'lib/features/statistics/presentation/pages/rd_stats_page.dart',
-      'lib/features/redesign/presentation/pages/rd_export_page.dart',
+      'lib/features/export/presentation/pages/rd_export_page.dart',
     ];
     final literal = RegExp(r"(Text|tooltip:|title:|label:|showSuccess\(context,|showError\(context,|showWarning\(context,)\s*\(?'[^']*[äöüÄÖÜß][^']*'");
     for (final path in files) {

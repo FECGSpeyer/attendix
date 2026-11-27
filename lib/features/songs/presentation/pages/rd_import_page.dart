@@ -25,7 +25,7 @@ import '../../data/import/rd_import_logic.dart';
 import '../../data/rd_collections_logic.dart';
 import '../../../../core/redesign/rd_words.dart';
 import '../widgets/import/rd_import_widgets.dart';
-import '../../../redesign/presentation/widgets/manage/rd_settings_sheets.dart' show showRdTextSheet;
+import '../../../settings/presentation/widgets/manage/rd_settings_sheets.dart' show showRdTextSheet;
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../widgets/works/rd_collections_ui.dart';
 import '../../../today/presentation/widgets/rd_today_common.dart' show RdInfoCard;

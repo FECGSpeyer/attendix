@@ -15,9 +15,9 @@ import '../../../../../core/router/redesign_routes.dart';
 import '../../../../../core/services/certificate_service.dart';
 import '../../../../../data/models/person/person.dart';
 import '../../../../../l10n/l10n.dart';
-import '../../../../settings/data/account_provisioning_actions.dart'
+import '../../../data/account_provisioning_actions.dart'
     show createMissingAccounts, playersOfCurrentTenant;
-import '../../../../settings/presentation/widgets/calendar_subscription_dialog.dart';
+import '../calendar_subscription_dialog.dart';
 import '../../pages/rd_general_settings_page.dart' show showRdSharingSheet;
 import '../../../../../shared/widgets/redesign/rd_split_view.dart' show rdManageSplitOpen;
 import 'rd_data_sheets.dart';

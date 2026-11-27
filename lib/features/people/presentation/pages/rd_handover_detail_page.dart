@@ -8,7 +8,7 @@ import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../settings/data/handover_logic.dart';
 import '../../../today/presentation/widgets/rd_today_common.dart' show RdInfoCard;
-import '../../../redesign/presentation/widgets/manage/rd_settings_sheets.dart';
+import '../../../settings/presentation/widgets/manage/rd_settings_sheets.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import 'rd_handover_page.dart' show RdStepButton;
 

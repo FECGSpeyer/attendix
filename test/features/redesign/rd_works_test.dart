@@ -26,7 +26,7 @@ import 'package:attendix/features/songs/data/providers/rd_shared_library.dart';
 import 'package:attendix/core/redesign/rd_dates.dart';
 import 'package:attendix/core/redesign/rd_words.dart';
 import 'package:attendix/features/songs/data/rd_works_logic.dart';
-import 'package:attendix/features/redesign/presentation/pages/rd_folder_page.dart';
+import 'package:attendix/features/settings/presentation/pages/rd_folder_page.dart';
 import 'package:attendix/features/songs/presentation/pages/rd_work_page.dart';
 import 'package:attendix/features/songs/presentation/pages/rd_works_page.dart';
 import 'package:attendix/shared/widgets/redesign/rd_overview.dart';

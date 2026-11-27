@@ -7,7 +7,7 @@ import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../data/models/instrument/instrument.dart';
 import '../../../../../data/models/person/person.dart';
 import '../../../../../l10n/l10n.dart';
-import '../../../../settings/presentation/widgets/vorkurs_certificates.dart';
+import '../vorkurs_certificates.dart';
 import '../../../../../core/redesign/rd_words.dart';
 import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 import 'rd_settings_sheets.dart';

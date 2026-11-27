@@ -16,7 +16,7 @@ import '../../../../../l10n/l10n.dart';
 import '../../../person_write.dart' show personProblemSolvedColumns, personProblemSolvedEntry;
 import '../../../data/providers/rd_critical_providers.dart';
 import '../../../data/rd_critical_logic.dart';
-import '../../../../redesign/presentation/widgets/manage/rd_settings_sheets.dart' show RdListNote;
+import '../../../../settings/presentation/widgets/manage/rd_settings_sheets.dart' show RdListNote;
 import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 
 /// REDESIGN: "Gespräch eintragen" for a Problemfall, right where the

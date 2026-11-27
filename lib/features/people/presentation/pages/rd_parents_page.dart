@@ -18,13 +18,13 @@ import '../../../../data/repositories/user_registration_repository.dart' show Ac
 import '../../../../data/repositories/viewer_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
-import '../../../redesign/data/rd_manage_logic.dart' show RdManageEntry;
-import '../../../redesign/presentation/widgets/manage/rd_manage_entries.dart' show rdManageTitle;
-import '../../../redesign/presentation/widgets/manage/rd_manage_list.dart';
+import '../../../settings/data/rd_manage_logic.dart' show RdManageEntry;
+import '../../../settings/presentation/widgets/manage/rd_manage_entries.dart' show rdManageTitle;
+import '../../../settings/presentation/widgets/manage/rd_manage_list.dart';
 import '../widgets/members/rd_invite_sheet.dart' show showRdInviteSheet;
 import '../../../../shared/widgets/redesign/rd_widgets.dart' show RdPrimaryButton, rdBack;
 import '../../../today/presentation/widgets/rd_today_common.dart' show RdInfoCard;
-import '../../../redesign/presentation/pages/rd_general_settings_page.dart' show RdTenantSettings, RdTenantSettingsBlock;
+import '../../../settings/presentation/pages/rd_general_settings_page.dart' show RdTenantSettings, RdTenantSettingsBlock;
 
 /// REDESIGN: Verwaltung › Eltern in the template "Verwaltungsliste"
 /// (replaces the old parents sheet while the Beta is on; leads only). Name

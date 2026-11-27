@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../../core/providers/teacher_providers.dart';
-import '../../../../../core/services/tracking/tracking_event.dart';
-import '../../../../../core/services/tracking/tracking_service.dart';
-import '../../../../../core/theme/redesign/rd_theme.dart';
-import '../../../../../core/utils/toast_helper.dart';
-import '../../../../../data/models/instrument/instrument.dart';
-import '../../../../../data/repositories/teacher_repository.dart';
-import '../../../../../l10n/l10n.dart';
-import '../../../../teachers/data/teacher_helpers.dart' show isTeacherFormValid, loadTeacherGroups;
-import '../../../../../core/redesign/rd_words.dart';
-import '../../../../attendance/presentation/widgets/event/rd_form_widgets.dart' show rdInputDecoration;
-import '../../../../../shared/widgets/redesign/rd_widgets.dart';
-import 'rd_settings_sheets.dart';
+import '../../../../core/providers/teacher_providers.dart';
+import '../../../../core/services/tracking/tracking_event.dart';
+import '../../../../core/services/tracking/tracking_service.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../core/utils/toast_helper.dart';
+import '../../../../data/models/instrument/instrument.dart';
+import '../../../../data/repositories/teacher_repository.dart';
+import '../../../../l10n/l10n.dart';
+import '../../data/teacher_helpers.dart' show isTeacherFormValid, loadTeacherGroups;
+import '../../../../core/redesign/rd_words.dart';
+import '../../../attendance/presentation/widgets/event/rd_form_widgets.dart' show rdInputDecoration;
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
+import '../../../settings/presentation/widgets/manage/rd_settings_sheets.dart';
 
 /// REDESIGN: "Neuer Lehrer" – the one create step of the Beta (Verwaltung ›
 /// Lehrer and the teacher picker of "Person bearbeiten"). One sheet with

@@ -8,9 +8,9 @@ import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../settings/data/left_players_actions.dart' show leftPlayersProvider, reactivatePersonWithConfirmation;
-import '../../../redesign/data/rd_manage_logic.dart' show RdManageEntry;
-import '../../../redesign/presentation/widgets/manage/rd_manage_entries.dart' show rdManageTitle;
-import '../../../redesign/presentation/widgets/manage/rd_manage_list.dart';
+import '../../../settings/data/rd_manage_logic.dart' show RdManageEntry;
+import '../../../settings/presentation/widgets/manage/rd_manage_entries.dart' show rdManageTitle;
+import '../../../settings/presentation/widgets/manage/rd_manage_list.dart';
 
 /// REDESIGN: Verwaltung › Archiv in the template "Verwaltungsliste"
 /// (replaces the old archive sheet while the Beta is on; leads only). The

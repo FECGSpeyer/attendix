@@ -13,7 +13,7 @@ import '../../../../l10n/l10n.dart';
 import '../../data/providers/rd_critical_providers.dart';
 import '../../data/rd_critical_logic.dart';
 import '../../data/rd_members_logic.dart' show rdCriticalMembers;
-import '../../../redesign/presentation/widgets/manage/rd_manage_list.dart';
+import '../../../settings/presentation/widgets/manage/rd_manage_list.dart';
 import '../widgets/members/rd_critical_talk.dart';
 import '../../../../shared/widgets/redesign/rd_split_view.dart' show RdSplitView, rdUseSplit;
 import '../../../../shared/widgets/redesign/rd_widgets.dart' show RdGroupedList, RdListRow, RdRowIcon, rdBack;

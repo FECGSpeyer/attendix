@@ -6,9 +6,9 @@ import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../redesign/data/rd_manage_logic.dart' show RdManageEntry;
-import '../../../redesign/presentation/widgets/manage/rd_manage_entries.dart' show rdManageTitle;
-import '../../../redesign/presentation/widgets/manage/rd_manage_list.dart';
+import '../../../settings/data/rd_manage_logic.dart' show RdManageEntry;
+import '../../../settings/presentation/widgets/manage/rd_manage_entries.dart' show rdManageTitle;
+import '../../../settings/presentation/widgets/manage/rd_manage_list.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart' show rdBack;
 
 /// REDESIGN: Verwaltung › Freigaben in the template "Verwaltungsliste"

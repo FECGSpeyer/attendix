@@ -26,7 +26,7 @@ import '../church_picker_sheet.dart';
 import '../pause_person_sheet.dart' show buildPauseHistoryText;
 import '../../../../settings/data/left_players_actions.dart' show leftPlayersProvider;
 import '../../../../../core/redesign/rd_words.dart';
-import '../../../../redesign/presentation/widgets/manage/rd_settings_sheets.dart' show showRdChoiceSheet, showRdTextSheet;
+import '../../../../settings/presentation/widgets/manage/rd_settings_sheets.dart' show showRdChoiceSheet, showRdTextSheet;
 
 /// Runs [change] for every person and counts successes and failures, so
 /// one failing row does not stop the rest.

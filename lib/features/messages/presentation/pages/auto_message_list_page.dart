@@ -9,7 +9,7 @@ import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/auto_message/auto_message.dart';
-import '../../../redesign/presentation/widgets/manage/rd_manage_list.dart';
+import '../../../settings/presentation/widgets/manage/rd_manage_list.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../auto_message_texts.dart';

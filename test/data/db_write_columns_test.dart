@@ -158,7 +158,7 @@ void main() {
   group('tenants', () {
     test('general settings writes showMembersList (camelCase)', () {
       final src = _read(
-          'lib/features/redesign/presentation/pages/rd_general_settings_page.dart');
+          'lib/features/settings/presentation/pages/rd_general_settings_page.dart');
       expect(src, isNot(contains("'show_members_list'")));
       expect(src, contains("'showMembersList': v"));
     });

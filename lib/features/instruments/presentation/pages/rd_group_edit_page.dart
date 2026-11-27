@@ -16,9 +16,9 @@ import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/repositories/group_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/app_action_sheet.dart';
-import '../../../instruments/data/group_options.dart'
+import '../../data/group_options.dart'
     show groupClefLabel, groupClefOptions, groupTuningOptions;
-import '../../../instruments/presentation/widgets/instrument_categories_sheet.dart';
+import '../widgets/instrument_categories_sheet.dart';
 import '../../../../core/redesign/rd_words.dart';
 import '../../../attendance/presentation/widgets/event/rd_form_widgets.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';

@@ -9,10 +9,10 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
-import '../../../redesign/data/rd_manage_logic.dart' show RdManageEntry;
-import '../../../redesign/presentation/widgets/manage/rd_manage_entries.dart' show rdManageTitle;
-import '../../../redesign/presentation/widgets/manage/rd_manage_list.dart';
-import '../../../redesign/presentation/widgets/manage/rd_settings_sheets.dart';
+import '../../../settings/data/rd_manage_logic.dart' show RdManageEntry;
+import '../../../settings/presentation/widgets/manage/rd_manage_entries.dart' show rdManageTitle;
+import '../../../settings/presentation/widgets/manage/rd_manage_list.dart';
+import '../../../settings/presentation/widgets/manage/rd_settings_sheets.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart' show rdBack;
 
 /// REDESIGN: Verwaltung › Werk-Kategorien in the template "Verwaltungsliste"

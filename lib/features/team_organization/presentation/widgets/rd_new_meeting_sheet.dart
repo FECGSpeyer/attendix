@@ -16,7 +16,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../core/redesign/rd_words.dart';
 import '../../../attendance/presentation/widgets/event/rd_form_widgets.dart' show rdInputDecoration;
-import '../../../redesign/presentation/widgets/manage/rd_settings_sheets.dart';
+import '../../../settings/presentation/widgets/manage/rd_settings_sheets.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../../../settings/presentation/pages/attendance_type_edit_page.dart' show buildNewAttendanceType;
 import '../../team_org_utils.dart';

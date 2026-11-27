@@ -8,7 +8,7 @@ import '../../../../core/router/redesign_routes.dart';
 import '../../../../data/models/message/message.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../attendance/presentation/widgets/event/rd_event_head.dart' show rdEventMeta;
-import '../../../redesign/presentation/widgets/manage/rd_manage_list.dart';
+import '../../../settings/presentation/widgets/manage/rd_manage_list.dart';
 
 /// REDESIGN: Verwaltung › Mitteilungen in the template "Verwaltungsliste"
 /// (replaces `/settings/messages` while the Beta is on; canvas K1). The

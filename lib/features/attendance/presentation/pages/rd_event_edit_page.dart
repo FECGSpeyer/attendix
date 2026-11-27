@@ -40,7 +40,7 @@ import '../../../../core/redesign/rd_type_flags.dart';
 import '../../../../shared/widgets/adaptive/app_dialog.dart';
 import '../widgets/event/rd_create_sheets.dart' show showRdTypePicker;
 import '../widgets/event/rd_event_now.dart' show rdPlanMovedWithStart;
-import '../../../redesign/presentation/widgets/manage/rd_manage_entries.dart' show rdManageAccessProvider;
+import '../../../settings/presentation/widgets/manage/rd_manage_entries.dart' show rdManageAccessProvider;
 import '../widgets/event/rd_form_widgets.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../../../today/presentation/widgets/rd_today_common.dart';

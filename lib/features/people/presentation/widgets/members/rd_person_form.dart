@@ -28,7 +28,7 @@ import '../../../person_extra_fields.dart'
 import '../../../person_write.dart' show personUtcMidnightIso;
 import '../church_picker_sheet.dart';
 import '../../../../../core/redesign/rd_words.dart';
-import '../../../../redesign/presentation/widgets/manage/rd_teacher_create_sheet.dart' show showRdAddTeacherSheet;
+import '../../../../teachers/presentation/widgets/rd_teacher_create_sheet.dart' show showRdAddTeacherSheet;
 import '../../../../attendance/presentation/widgets/event/rd_form_widgets.dart';
 import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 

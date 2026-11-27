@@ -22,7 +22,7 @@ import '../../../today/data/providers/rd_today_providers.dart' show rdEventInfo;
 import '../../data/rd_stats_logic.dart';
 import '../../../../core/redesign/rd_words.dart';
 import '../../../people/presentation/pages/rd_members_page.dart' show rdPercentColor;
-import '../../../redesign/presentation/widgets/manage/rd_settings_sheets.dart' show RdListNote;
+import '../../../settings/presentation/widgets/manage/rd_settings_sheets.dart' show RdListNote;
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
 
 // REDESIGN: building blocks of the Auswertung (canvas "Auswertung neu

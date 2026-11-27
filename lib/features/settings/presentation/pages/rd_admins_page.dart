@@ -10,7 +10,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/repositories/admin_repository.dart' show TenantAdmin;
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/app_action_sheet.dart';
-import '../../../settings/presentation/widgets/settings_admins_sheet.dart'
+import '../widgets/settings_admins_sheet.dart'
     show removeAdminWithConfirmation, showAddAdminDialog;
 import '../../data/rd_manage_logic.dart' show RdManageEntry;
 import '../widgets/manage/rd_manage_entries.dart' show rdManageTitle;

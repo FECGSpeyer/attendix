@@ -13,7 +13,7 @@ import '../../../../data/models/duty/person_unavailability.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart' show showAppConfirm, showAppDatePicker;
 import '../../../attendance/presentation/widgets/event/rd_form_widgets.dart';
-import '../../../redesign/presentation/widgets/manage/rd_settings_sheets.dart';
+import '../../../settings/presentation/widgets/manage/rd_settings_sheets.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../../../today/presentation/widgets/rd_today_common.dart' show RdInfoCard;
 

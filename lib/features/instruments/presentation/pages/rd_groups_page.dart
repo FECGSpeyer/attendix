@@ -15,16 +15,16 @@ import '../../../../core/utils/instrument_sort.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../instruments/data/catalog_import.dart';
-import '../../../instruments/data/catalog_selection.dart';
-import '../../../instruments/data/group_options.dart' show groupClefLabel;
-import '../../../instruments/presentation/widgets/instrument_catalog_sheet.dart';
-import '../../../instruments/presentation/widgets/instrument_categories_sheet.dart';
-import '../../data/rd_manage_logic.dart' show RdManageEntry;
+import '../../data/catalog_import.dart';
+import '../../data/catalog_selection.dart';
+import '../../data/group_options.dart' show groupClefLabel;
+import '../widgets/instrument_catalog_sheet.dart';
+import '../widgets/instrument_categories_sheet.dart';
+import '../../../settings/data/rd_manage_logic.dart' show RdManageEntry;
 import '../../../../core/redesign/rd_words.dart';
-import '../widgets/manage/rd_manage_entries.dart' show rdManageTitle;
-import '../widgets/manage/rd_manage_list.dart';
-import '../widgets/manage/rd_settings_sheets.dart' show showRdTextSheet;
+import '../../../settings/presentation/widgets/manage/rd_manage_entries.dart' show rdManageTitle;
+import '../../../settings/presentation/widgets/manage/rd_manage_list.dart';
+import '../../../settings/presentation/widgets/manage/rd_settings_sheets.dart' show showRdTextSheet;
 
 /// REDESIGN: Verwaltung › Gruppen in the template "Verwaltungsliste"
 /// (replaces `/settings/instruments` while the Beta is on). The groups by

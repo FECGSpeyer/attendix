@@ -10,7 +10,7 @@ import '../../../../core/utils/song_copy.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../organisation/presentation/org_songs_logic.dart';
 import '../../../today/presentation/widgets/rd_today_common.dart' show RdInfoCard;
-import '../../../redesign/presentation/widgets/manage/rd_settings_sheets.dart';
+import '../../../settings/presentation/widgets/manage/rd_settings_sheets.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
 
 /// REDESIGN: Werke der Organisation (canvas "Beta: Gruppe und Daten", board

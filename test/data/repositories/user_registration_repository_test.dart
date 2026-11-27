@@ -80,7 +80,7 @@ void main() {
       'lib/features/songs/presentation/pages/rd_import_page.dart',
       'lib/features/profile/presentation/pages/rd_me_page.dart',
       'lib/features/people/presentation/pages/rd_person_edit_page.dart',
-      'lib/features/redesign/presentation/pages/rd_admins_page.dart',
+      'lib/features/settings/presentation/pages/rd_admins_page.dart',
       'lib/features/people/presentation/pages/rd_parents_page.dart',
     ]) {
       test(path, () {

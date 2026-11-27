@@ -12,8 +12,8 @@ import '../../../../data/models/song/song.dart';
 import '../../../../l10n/l10n.dart';
 import '../../data/providers/rd_shared_library.dart';
 import '../../data/rd_collections_logic.dart';
-import '../../../redesign/presentation/widgets/manage/rd_manage_list.dart';
-import '../../../redesign/presentation/widgets/manage/rd_settings_sheets.dart' show showRdTextSheet;
+import '../../../settings/presentation/widgets/manage/rd_manage_list.dart';
+import '../../../settings/presentation/widgets/manage/rd_settings_sheets.dart' show showRdTextSheet;
 import '../widgets/works/rd_collections_ui.dart';
 
 /// REDESIGN: Werke › "Sammlungen verwalten" in the template

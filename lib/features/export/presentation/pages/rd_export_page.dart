@@ -8,10 +8,10 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../export/export_fields.dart';
-import '../../../export/presentation/export_logic.dart';
+import '../../export_fields.dart';
+import '../export_logic.dart';
 import '../../../../core/redesign/rd_words.dart';
-import '../widgets/manage/rd_settings_sheets.dart';
+import '../../../settings/presentation/widgets/manage/rd_settings_sheets.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../../../people/presentation/pages/rd_handover_page.dart' show RdStepButton;
 

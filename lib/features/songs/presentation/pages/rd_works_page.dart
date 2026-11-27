@@ -37,7 +37,7 @@ import '../widgets/works/rd_collections_ui.dart';
 import '../widgets/works/rd_current_works.dart';
 import '../widgets/works/rd_works_filter_sheet.dart';
 import '../../../../shared/widgets/redesign/rd_actions.dart' show rdShareLink;
-import '../../../redesign/presentation/pages/rd_general_settings_page.dart' show rdEnableWorksSharing;
+import '../../../settings/presentation/pages/rd_general_settings_page.dart' show rdEnableWorksSharing;
 
 /// Search text of the Werke list, shared by every copy of the list (the
 /// split view builds a new one when the first Werk opens).

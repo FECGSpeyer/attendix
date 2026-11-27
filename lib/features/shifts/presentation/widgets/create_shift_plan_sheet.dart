@@ -7,7 +7,7 @@ import '../../../../core/utils/error_message.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/shift/shift_plan.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../redesign/presentation/widgets/manage/rd_settings_sheets.dart';
+import '../../../settings/presentation/widgets/manage/rd_settings_sheets.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
 
 /// Opens the "Neuer Schichtplan" sheet, creates the plan, and navigates to its

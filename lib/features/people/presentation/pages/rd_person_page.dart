@@ -33,7 +33,7 @@ import '../../../settings/data/left_players_actions.dart' show leftPlayersProvid
 import '../../data/rd_members_logic.dart';
 import '../widgets/members/rd_critical_talk.dart' show RdCriticalTalkCard, rdCanRecordTalk;
 import '../widgets/members/rd_pause_sheets.dart' show showRdArchiveSheet;
-import '../../../redesign/presentation/widgets/manage/rd_settings_sheets.dart' show RdListNote;
+import '../../../settings/presentation/widgets/manage/rd_settings_sheets.dart' show RdListNote;
 import '../../../attendance/presentation/widgets/event/rd_record_widgets.dart' show rdStatusLook;
 import '../../../../shared/widgets/redesign/rd_split_view.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';

@@ -20,7 +20,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../core/services/native/native_file_service.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../planning/presentation/widgets/rd_plan_widgets.dart';
-import '../../../redesign/presentation/widgets/manage/rd_manage_list.dart';
+import '../../../settings/presentation/widgets/manage/rd_manage_list.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
 
 /// Short date "Mo, 03.11.2026" (Ionic dayjs `dd, ${dateFmt()}`).

@@ -18,7 +18,7 @@ import '../widgets/layout/root_back_button_scope.dart';
 import '../widgets/layout/route_leave_guard.dart';
 import '../../features/songs/data/import/rd_import_controller.dart';
 import '../../features/songs/presentation/widgets/import/rd_import_widgets.dart' show rdImportTimeLeftText;
-import '../../features/redesign/presentation/widgets/manage/rd_manage_entries.dart';
+import '../../features/settings/presentation/widgets/manage/rd_manage_entries.dart';
 import '../widgets/redesign/rd_desktop.dart';
 import '../widgets/redesign/rd_logo.dart';
 import 'rd_destinations.dart';

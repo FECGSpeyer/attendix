@@ -15,7 +15,7 @@ import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/player_repository.dart' show HandoverResult;
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart' show showAppConfirm;
-import '../../../redesign/presentation/widgets/manage/rd_settings_sheets.dart' show showRdChoiceSheet;
+import '../../../settings/presentation/widgets/manage/rd_settings_sheets.dart' show showRdChoiceSheet;
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
 
 /// Opens the person transfer/copy sheet. Returns true when the person was handed over.
