@@ -11,6 +11,7 @@ import '../../core/utils/duty_utils.dart';
 import 'base_repository.dart';
 import '../../l10n/l10n.dart';
 import '../../core/utils/status_utils.dart';
+import '../models/plan/plan.dart' show isPlanPublished;
 
 part 'cross_tenant_person_attendance.dart';
 part 'sign_in_out_repository_queries.dart';

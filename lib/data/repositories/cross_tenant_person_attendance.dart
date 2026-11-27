@@ -178,7 +178,7 @@ class CrossTenantPersonAttendance {
 
   /// Check if plan is available for viewing
   bool get hasPlan {
-    if (!sharePlan || plan == null) return false;
+    if (!sharePlan || plan == null || !isPlanPublished(plan)) return false;
     final fields = plan?['fields'] as List?;
     return fields != null && fields.isNotEmpty;
   }

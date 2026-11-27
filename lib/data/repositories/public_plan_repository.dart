@@ -39,7 +39,7 @@ class PublicPlanRepository extends BaseRepository {
 
   /// Public columns of `shared_plans` (everything except `edit_key`).
   static const String _sharedPlanColumns =
-      'id, plan_title, date, time, end_time, fields, branding_id, creator_user_id, created_at, org_id';
+      'id, plan_title, date, time, end_time, fields, branding_id, creator_user_id, created_at, org_id, unpublished';
 
   /// Columns that must never reach a public viewer (realtime payloads included).
   static const Set<String> _secretColumns = {'share_key', 'share_edit_key', 'edit_key'};

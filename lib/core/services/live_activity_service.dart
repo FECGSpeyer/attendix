@@ -497,6 +497,8 @@ class LiveActivityService {
       final type = types[att.typeId];
       final typeName = type?.name ?? '';
       for (var index = 0; index < plans.length; index++) {
+        // Unpublished (Gemeinde App): no Live Activity until it is published.
+        if (!isPlanPublished(plans[index])) continue;
         // Ionic 4.17.22: the activity has the colour of the Termin type.
         final state = withLiveColor(
           liveStateAt(liveSchedule(att, index, timezone, plans), now),
@@ -546,7 +548,7 @@ class LiveActivityService {
       final plan = att.plan;
       if (id == null) continue;
       attendanceIds.add(id);
-      if (plan == null) continue;
+      if (plan == null || !isPlanPublished(plan)) continue;
       if (result.any((c) => c.attendanceId == id && c.planKey == 'main')) continue;
       final state = withLiveColor(
         liveStateAt(liveSchedule(att, 0, timezone, [plan]), now),
@@ -565,7 +567,7 @@ class LiveActivityService {
     for (final sp in org.sharedPlans) {
       final date = sp.date ?? '';
       final time = sp.time ?? '';
-      if (date.isEmpty || time.isEmpty || sp.fields.isEmpty) continue;
+      if (date.isEmpty || time.isEmpty || sp.fields.isEmpty || !isPlanPublished(sp)) continue;
       final state = liveStateAt(
         buildSchedule(date: date, planTime: time, fields: sp.fields, timezone: timezone),
         now,

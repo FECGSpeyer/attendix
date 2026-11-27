@@ -12,6 +12,7 @@ import '../../../../core/services/plan_export_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/plan_utils.dart';
 import '../../../../data/repositories/public_plan_repository.dart';
+import '../../../../data/models/plan/plan.dart' show isPlanPublished;
 import '../../../planning/presentation/widgets/plan_export_actions.dart';
 import '../../../planning/presentation/widgets/plan_field_dialogs.dart';
 import '../../../planning/presentation/widgets/plan_view_list.dart';
@@ -106,8 +107,8 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
     _unsubscribe();
     final result = await _repo.getPublicOrgPlans(_orgId!);
     final entries = [
-      ...result.attendances.where((a) => a.plan != null).map(OrgPlanEntry.attendance),
-      ...result.adHoc.map(OrgPlanEntry.adHoc),
+      ...result.attendances.where((a) => a.plan != null && isPlanPublished(a.plan)).map(OrgPlanEntry.attendance),
+      ...result.adHoc.where(isPlanPublished).map(OrgPlanEntry.adHoc),
     ];
     final split = splitOrgPlanEntries(entries);
     if (!mounted) return;
@@ -133,12 +134,18 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
       final result = await _repo.getPublicOrgPlans(orgId);
       if (!mounted) return;
       final fresh = <String, OrgPlanEntry>{
-        for (final a in result.attendances.where((a) => a.plan != null))
+        for (final a in result.attendances.where((a) => a.plan != null && isPlanPublished(a.plan)))
           OrgPlanEntry.attendance(a).key: OrgPlanEntry.attendance(a),
-        for (final p in result.adHoc) OrgPlanEntry.adHoc(p).key: OrgPlanEntry.adHoc(p),
+        for (final p in result.adHoc.where(isPlanPublished)) OrgPlanEntry.adHoc(p).key: OrgPlanEntry.adHoc(p),
+      };
+      // Plans unpublished in the Gemeinde App meanwhile leave the list.
+      final hidden = <String>{
+        for (final a in result.attendances.where((a) => a.plan != null && !isPlanPublished(a.plan)))
+          OrgPlanEntry.attendance(a).key,
+        for (final p in result.adHoc.where((p) => !isPlanPublished(p))) OrgPlanEntry.adHoc(p).key,
       };
       setState(() {
-        _upcoming = mergeOrgPlanUpdates(_upcoming, fresh);
+        _upcoming = mergeOrgPlanUpdates(_upcoming, fresh).where((e) => !hidden.contains(e.key)).toList();
       });
     } catch (_) {
       // Network hiccup: keep showing the last state, retry on the next tick.

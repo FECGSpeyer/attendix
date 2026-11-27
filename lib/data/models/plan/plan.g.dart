@@ -115,6 +115,7 @@ _$PlanImpl _$$PlanImplFromJson(Map<String, dynamic> json) => _$PlanImpl(
   id: json['id'] as String?,
   label: json['label'] as String?,
   day: const PlanIntConverter().fromJson(json['day']),
+  unpublished: json['unpublished'] as bool?,
 );
 
 Map<String, dynamic> _$$PlanImplToJson(_$PlanImpl instance) =>
@@ -129,6 +130,7 @@ Map<String, dynamic> _$$PlanImplToJson(_$PlanImpl instance) =>
       if (instance.label case final value?) 'label': value,
       if (const PlanIntConverter().toJson(instance.day) case final value?)
         'day': value,
+      if (instance.unpublished case final value?) 'unpublished': value,
     };
 
 _$PlanBlockTemplateImpl _$$PlanBlockTemplateImplFromJson(
@@ -168,6 +170,7 @@ _$SharedPlanImpl _$$SharedPlanImplFromJson(Map<String, dynamic> json) =>
       creatorUserId: json['creator_user_id'] as String?,
       createdAt: json['created_at'] as String?,
       orgId: const PlanIntConverter().fromJson(json['org_id']),
+      unpublished: json['unpublished'] as bool?,
     );
 
 Map<String, dynamic> _$$SharedPlanImplToJson(_$SharedPlanImpl instance) =>
@@ -184,6 +187,7 @@ Map<String, dynamic> _$$SharedPlanImplToJson(_$SharedPlanImpl instance) =>
       if (instance.createdAt case final value?) 'created_at': value,
       if (const PlanIntConverter().toJson(instance.orgId) case final value?)
         'org_id': value,
+      if (instance.unpublished case final value?) 'unpublished': value,
     };
 
 _$PlanAttendanceImpl _$$PlanAttendanceImplFromJson(Map<String, dynamic> json) =>

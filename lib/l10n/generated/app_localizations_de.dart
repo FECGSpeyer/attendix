@@ -10098,7 +10098,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get planningFlutterTelegramPdf2x => 'Per Telegram senden (PDF 2x A5)';
 
   @override
+  String get planningFlutterUnpublishedHint =>
+      'Noch nicht veröffentlicht. Nur hier im Editor sichtbar, bis der Plan in der Gemeinde App veröffentlicht wird.';
+
+  @override
   String get planningFlutterUnshareAction => 'Freigabe aufheben';
+
+  @override
+  String get planningFlutterUpdatedElsewhere =>
+      'Der Plan wurde gerade an anderer Stelle geändert und ist aktualisiert.';
 
   @override
   String get planningGroupName => 'Gruppenname';

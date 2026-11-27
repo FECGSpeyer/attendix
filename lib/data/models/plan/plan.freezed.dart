@@ -1062,6 +1062,10 @@ mixin _$Plan {
   @PlanIntConverter()
   int? get day => throw _privateConstructorUsedError;
 
+  /// "Unveröffentlicht" (set in the Gemeinde App): only shown in the
+  /// editor, see [isPlanPublished]. Kept on save so it survives edits here.
+  bool? get unpublished => throw _privateConstructorUsedError;
+
   /// Serializes this Plan to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
@@ -1084,6 +1088,7 @@ abstract class $PlanCopyWith<$Res> {
     String? id,
     String? label,
     @PlanIntConverter() int? day,
+    bool? unpublished,
   });
 }
 
@@ -1109,6 +1114,7 @@ class _$PlanCopyWithImpl<$Res, $Val extends Plan>
     Object? id = freezed,
     Object? label = freezed,
     Object? day = freezed,
+    Object? unpublished = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -1147,6 +1153,11 @@ class _$PlanCopyWithImpl<$Res, $Val extends Plan>
                     ? _value.day
                     : day // ignore: cast_nullable_to_non_nullable
                         as int?,
+            unpublished:
+                freezed == unpublished
+                    ? _value.unpublished
+                    : unpublished // ignore: cast_nullable_to_non_nullable
+                        as bool?,
           )
           as $Val,
     );
@@ -1169,6 +1180,7 @@ abstract class _$$PlanImplCopyWith<$Res> implements $PlanCopyWith<$Res> {
     String? id,
     String? label,
     @PlanIntConverter() int? day,
+    bool? unpublished,
   });
 }
 
@@ -1191,6 +1203,7 @@ class __$$PlanImplCopyWithImpl<$Res>
     Object? id = freezed,
     Object? label = freezed,
     Object? day = freezed,
+    Object? unpublished = freezed,
   }) {
     return _then(
       _$PlanImpl(
@@ -1229,6 +1242,11 @@ class __$$PlanImplCopyWithImpl<$Res>
                 ? _value.day
                 : day // ignore: cast_nullable_to_non_nullable
                     as int?,
+        unpublished:
+            freezed == unpublished
+                ? _value.unpublished
+                : unpublished // ignore: cast_nullable_to_non_nullable
+                    as bool?,
       ),
     );
   }
@@ -1246,6 +1264,7 @@ class _$PlanImpl implements _Plan {
     this.id,
     this.label,
     @PlanIntConverter() this.day,
+    this.unpublished,
   }) : _fields = fields;
 
   factory _$PlanImpl.fromJson(Map<String, dynamic> json) =>
@@ -1284,9 +1303,14 @@ class _$PlanImpl implements _Plan {
   @PlanIntConverter()
   final int? day;
 
+  /// "Unveröffentlicht" (set in the Gemeinde App): only shown in the
+  /// editor, see [isPlanPublished]. Kept on save so it survives edits here.
+  @override
+  final bool? unpublished;
+
   @override
   String toString() {
-    return 'Plan(time: $time, end: $end, fields: $fields, title: $title, id: $id, label: $label, day: $day)';
+    return 'Plan(time: $time, end: $end, fields: $fields, title: $title, id: $id, label: $label, day: $day, unpublished: $unpublished)';
   }
 
   @override
@@ -1300,7 +1324,9 @@ class _$PlanImpl implements _Plan {
             (identical(other.title, title) || other.title == title) &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.label, label) || other.label == label) &&
-            (identical(other.day, day) || other.day == day));
+            (identical(other.day, day) || other.day == day) &&
+            (identical(other.unpublished, unpublished) ||
+                other.unpublished == unpublished));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1314,6 +1340,7 @@ class _$PlanImpl implements _Plan {
     id,
     label,
     day,
+    unpublished,
   );
 
   /// Create a copy of Plan
@@ -1339,6 +1366,7 @@ abstract class _Plan implements Plan {
     final String? id,
     final String? label,
     @PlanIntConverter() final int? day,
+    final bool? unpublished,
   }) = _$PlanImpl;
 
   factory _Plan.fromJson(Map<String, dynamic> json) = _$PlanImpl.fromJson;
@@ -1366,6 +1394,11 @@ abstract class _Plan implements Plan {
   @override
   @PlanIntConverter()
   int? get day;
+
+  /// "Unveröffentlicht" (set in the Gemeinde App): only shown in the
+  /// editor, see [isPlanPublished]. Kept on save so it survives edits here.
+  @override
+  bool? get unpublished;
 
   /// Create a copy of Plan
   /// with the given fields replaced by the non-null parameter values.
@@ -1609,6 +1642,9 @@ mixin _$SharedPlan {
   @PlanIntConverter()
   int? get orgId => throw _privateConstructorUsedError;
 
+  /// "Unveröffentlicht" (set in the Gemeinde App), see [isPlanPublished].
+  bool? get unpublished => throw _privateConstructorUsedError;
+
   /// Serializes this SharedPlan to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
@@ -1638,6 +1674,7 @@ abstract class $SharedPlanCopyWith<$Res> {
     @JsonKey(name: 'creator_user_id') String? creatorUserId,
     @JsonKey(name: 'created_at') String? createdAt,
     @JsonKey(name: 'org_id') @PlanIntConverter() int? orgId,
+    bool? unpublished,
   });
 }
 
@@ -1667,6 +1704,7 @@ class _$SharedPlanCopyWithImpl<$Res, $Val extends SharedPlan>
     Object? creatorUserId = freezed,
     Object? createdAt = freezed,
     Object? orgId = freezed,
+    Object? unpublished = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -1725,6 +1763,11 @@ class _$SharedPlanCopyWithImpl<$Res, $Val extends SharedPlan>
                     ? _value.orgId
                     : orgId // ignore: cast_nullable_to_non_nullable
                         as int?,
+            unpublished:
+                freezed == unpublished
+                    ? _value.unpublished
+                    : unpublished // ignore: cast_nullable_to_non_nullable
+                        as bool?,
           )
           as $Val,
     );
@@ -1752,6 +1795,7 @@ abstract class _$$SharedPlanImplCopyWith<$Res>
     @JsonKey(name: 'creator_user_id') String? creatorUserId,
     @JsonKey(name: 'created_at') String? createdAt,
     @JsonKey(name: 'org_id') @PlanIntConverter() int? orgId,
+    bool? unpublished,
   });
 }
 
@@ -1780,6 +1824,7 @@ class __$$SharedPlanImplCopyWithImpl<$Res>
     Object? creatorUserId = freezed,
     Object? createdAt = freezed,
     Object? orgId = freezed,
+    Object? unpublished = freezed,
   }) {
     return _then(
       _$SharedPlanImpl(
@@ -1838,6 +1883,11 @@ class __$$SharedPlanImplCopyWithImpl<$Res>
                 ? _value.orgId
                 : orgId // ignore: cast_nullable_to_non_nullable
                     as int?,
+        unpublished:
+            freezed == unpublished
+                ? _value.unpublished
+                : unpublished // ignore: cast_nullable_to_non_nullable
+                    as bool?,
       ),
     );
   }
@@ -1859,6 +1909,7 @@ class _$SharedPlanImpl implements _SharedPlan {
     @JsonKey(name: 'creator_user_id') this.creatorUserId,
     @JsonKey(name: 'created_at') this.createdAt,
     @JsonKey(name: 'org_id') @PlanIntConverter() this.orgId,
+    this.unpublished,
   }) : _fields = fields;
 
   factory _$SharedPlanImpl.fromJson(Map<String, dynamic> json) =>
@@ -1902,9 +1953,13 @@ class _$SharedPlanImpl implements _SharedPlan {
   @PlanIntConverter()
   final int? orgId;
 
+  /// "Unveröffentlicht" (set in the Gemeinde App), see [isPlanPublished].
+  @override
+  final bool? unpublished;
+
   @override
   String toString() {
-    return 'SharedPlan(id: $id, editKey: $editKey, planTitle: $planTitle, date: $date, time: $time, endTime: $endTime, fields: $fields, brandingId: $brandingId, creatorUserId: $creatorUserId, createdAt: $createdAt, orgId: $orgId)';
+    return 'SharedPlan(id: $id, editKey: $editKey, planTitle: $planTitle, date: $date, time: $time, endTime: $endTime, fields: $fields, brandingId: $brandingId, creatorUserId: $creatorUserId, createdAt: $createdAt, orgId: $orgId, unpublished: $unpublished)';
   }
 
   @override
@@ -1926,7 +1981,9 @@ class _$SharedPlanImpl implements _SharedPlan {
                 other.creatorUserId == creatorUserId) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
-            (identical(other.orgId, orgId) || other.orgId == orgId));
+            (identical(other.orgId, orgId) || other.orgId == orgId) &&
+            (identical(other.unpublished, unpublished) ||
+                other.unpublished == unpublished));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1944,6 +2001,7 @@ class _$SharedPlanImpl implements _SharedPlan {
     creatorUserId,
     createdAt,
     orgId,
+    unpublished,
   );
 
   /// Create a copy of SharedPlan
@@ -1973,6 +2031,7 @@ abstract class _SharedPlan implements SharedPlan {
     @JsonKey(name: 'creator_user_id') final String? creatorUserId,
     @JsonKey(name: 'created_at') final String? createdAt,
     @JsonKey(name: 'org_id') @PlanIntConverter() final int? orgId,
+    final bool? unpublished,
   }) = _$SharedPlanImpl;
 
   factory _SharedPlan.fromJson(Map<String, dynamic> json) =
@@ -2008,6 +2067,10 @@ abstract class _SharedPlan implements SharedPlan {
   @JsonKey(name: 'org_id')
   @PlanIntConverter()
   int? get orgId;
+
+  /// "Unveröffentlicht" (set in the Gemeinde App), see [isPlanPublished].
+  @override
+  bool? get unpublished;
 
   /// Create a copy of SharedPlan
   /// with the given fields replaced by the non-null parameter values.

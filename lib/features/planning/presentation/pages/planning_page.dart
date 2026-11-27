@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show RealtimeChannel;
 
 import '../../../../core/providers/attendance_detail_providers.dart';
 import '../../../../core/providers/attendance_type_providers.dart' show attendanceTypesProvider;
@@ -46,6 +47,7 @@ import '../../../../data/repositories/plan_repository.dart';
 import '../../../../core/services/offline_queue_service.dart' show rootScaffoldMessengerKey;
 import '../../../../core/config/supabase_config.dart' show currentAuthUserIdProvider;
 import '../../../../core/services/planning_draft_store.dart';
+import '../../../../core/services/error_reporter.dart';
 import '../../../../core/services/register_plan_service.dart';
 import '../../data/planning_write_sync.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
@@ -126,6 +128,12 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   bool _sharePlan = false;
   bool _isOrgPlan = false;
   bool _loaded = false;
+
+  /// ORG plans: changes made elsewhere (Gemeinde App, other device) reach
+  /// the open editor live (see [_watchOrgPlan]).
+  RealtimeChannel? _planChannel;
+  int? _planChannelAttId;
+  PlanRepository? _planChannelRepo;
 
   /// [_init] has chosen the start Termin (or found none). Until then the
   /// page shows its loading state instead of the editor, since edits made
@@ -278,6 +286,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     } else {
       unawaited(_serialised(attId, () async => _invalidateCaches()));
     }
+    _unwatchOrgPlan();
     _titleController.dispose();
     super.dispose();
   }

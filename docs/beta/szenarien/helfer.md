@@ -197,6 +197,11 @@ sieht.
   Über „Hinzufügen“ › „Programmpunkt“ fügst du mehrere Punkte nacheinander
   hinzu: Das Blatt bleibt offen, bis du auf „Fertig“ tippst. „Programmblock“
   legt im selben Blatt einen Block an, in den die nächsten Punkte kommen.
+  Ein Organisationsplan kann auch in der Gemeinde App bearbeitet werden.
+  Ändert ihn dort jemand, während du ihn offen hast, lädt er sich neu und du
+  siehst „Der Plan wurde gerade an anderer Stelle geändert und ist
+  aktualisiert.“ Ist er dort noch nicht veröffentlicht, steht das oben im
+  Editor; Mitglieder sehen ihn dann noch nicht.
 
 ### H-13 Die Anwesenheit eines Termins als Excel speichern
 
