@@ -123,15 +123,6 @@ class IonContentTopInset extends StatelessWidget {
       SizedBox(height: MediaQuery.paddingOf(context).top);
 }
 
-/// [IonContentTopInset] as the first sliver of a [CustomScrollView].
-class SliverIonContentTopInset extends StatelessWidget {
-  const SliverIonContentTopInset({super.key});
-
-  @override
-  Widget build(BuildContext context) =>
-      const SliverToBoxAdapter(child: IonContentTopInset());
-}
-
 /// Adaptive pull-to-refresh positioned below an extended translucent toolbar.
 class IonRefresher extends StatelessWidget {
   const IonRefresher({super.key, required this.onRefresh, required this.child});

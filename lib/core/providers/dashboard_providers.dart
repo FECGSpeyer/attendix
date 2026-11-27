@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../data/models/dashboard/dashboard_event.dart';
 import '../../data/models/dashboard/dashboard_models.dart';
 import '../../data/models/person/person.dart';
 import '../../data/repositories/administration_repository.dart';
@@ -14,12 +13,10 @@ import '../utils/dashboard_logic.dart';
 import '../utils/dashboard_utils.dart';
 
 export '../utils/dashboard_logic.dart';
-import 'attendance_type_providers.dart';
 import 'church_providers.dart';
 import 'debug_providers.dart';
 import 'team_org_providers.dart';
 import 'tenant_providers.dart';
-import '../utils/helper_member.dart';
 
 // =============================================================================
 // Super-Developer
@@ -215,15 +212,6 @@ final showDashboardTabProvider = Provider<bool>((ref) {
   return ref.watch(dashboardSettingsNotifierProvider).showTab;
 });
 
-/// Visible cards in configured order (Ionic `visibleCards`).
-final visibleDashboardCardsProvider = Provider<List<DashboardCardConfig>>((ref) {
-  final cards = ref.watch(dashboardSettingsNotifierProvider).cards;
-  final teamOrg = ref.watch(dashboardTeamOrgEnabledProvider);
-  return configurableDashboardCards(cards, teamOrgEnabled: teamOrg)
-      .where((c) => c.visible)
-      .toList();
-});
-
 // =============================================================================
 // Card data
 // =============================================================================
@@ -239,72 +227,6 @@ final dashboardBirthdaysProvider = FutureProvider<List<BirthdayEntry>>((ref) asy
   final persons = await ref.watch(dashboardPersonsProvider.future);
   return DashboardUtils.birthdays(persons);
 });
-
-final dashboardMemberChangesProvider = FutureProvider<List<MemberChange>>((ref) async {
-  final persons = await ref.watch(dashboardPersonsProvider.future);
-  return DashboardUtils.memberChanges(persons);
-});
-
-final dashboardCriticalPersonsProvider = FutureProvider<List<Person>>((ref) async {
-  final persons = await ref.watch(dashboardPersonsProvider.future);
-  // Aushilfen ("dabei bis") are never a Problemfall.
-  return persons.where((p) => p.isCritical && !isHelperMember(p)).toList();
-});
-
-final dashboardAbsencesProvider = FutureProvider<List<AbsenceEntry>>((ref) async {
-  final repo = ref.watch(dashboardRepositoryWithTenantProvider);
-  if (!repo.hasTenantId) return [];
-  final persons = await ref.watch(dashboardPersonsProvider.future);
-  final absences = await repo.getAbsences();
-  return DashboardUtils.absences(absences, persons);
-});
-
-final dashboardNextEventProvider = FutureProvider<NextEventSummary>((ref) async {
-  final repo = ref.watch(dashboardRepositoryWithTenantProvider);
-  if (!repo.hasTenantId) return const NextEventSummary();
-  final tenant = ref.watch(currentTenantProvider);
-  final results = await Future.wait([
-    repo.getEventsAroundToday(seasonStart: tenant?.seasonStart),
-    repo.getShiftExcusedAsPresent(),
-  ]);
-  return computeNextEventSummary(
-    results[0] as List<DashboardEvent>,
-    shiftExcusedAsPresent: results[1] as bool,
-  );
-});
-
-/// Ionic `getCurrentSongs` + CurrentSongsCard: one entry per planned song.
-final dashboardCurrentSongsProvider = FutureProvider<List<DashboardSongEntry>>((ref) async {
-  final repo = ref.watch(dashboardRepositoryWithTenantProvider);
-  if (!repo.hasTenantId) return [];
-  final rows = await repo.getCurrentSongHistory();
-  final types = await ref.watch(attendanceTypesProvider.future);
-  return buildCurrentSongEntries(
-    rows,
-    typeName: (typeId) {
-      final t = types.where((t) => t.id == typeId).firstOrNull;
-      return t == null || t.hideName ? null : t.name;
-    },
-  );
-});
-
-final dashboardCurrentPlanProvider = FutureProvider<CurrentPlanData?>((ref) async {
-  final repo = ref.watch(dashboardRepositoryWithTenantProvider);
-  if (!repo.hasTenantId) return null;
-  final role = ref.watch(effectiveRoleProvider);
-  final events = await repo.getUpcomingEventsIncludingRunning();
-  return selectCurrentPlan(events, isAdmin: role.isAdmin || role.isResponsible);
-});
-
-/// Reload all cards (pull-to-refresh, Ionic `refreshAllCards`).
-void refreshDashboardCards(WidgetRef ref) {
-  ref.invalidate(dashboardPersonsProvider);
-  ref.invalidate(dashboardAbsencesProvider);
-  ref.invalidate(dashboardNextEventProvider);
-  ref.invalidate(dashboardCurrentSongsProvider);
-  ref.invalidate(dashboardCurrentPlanProvider);
-  ref.invalidate(myTasksProvider);
-}
 
 // =============================================================================
 // Super-developer: usage dashboard & administration

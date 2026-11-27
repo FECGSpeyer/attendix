@@ -176,8 +176,6 @@ void main() {
       'currentTenantUserProvider': 'lib/core/providers/tenant_providers.dart',
       'userOrganisationsProvider':
           'lib/core/providers/organisation_providers.dart',
-      'crossTenantAttendancesProvider':
-          'lib/core/providers/cross_tenant_providers.dart',
       'allPersonAttendancesAcrossTenantsProvider':
           'lib/core/providers/self_service_providers.dart',
       'ownProfileProvider': 'lib/core/providers/profile_providers.dart',

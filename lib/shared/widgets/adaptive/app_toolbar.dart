@@ -3,10 +3,8 @@ import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../core/theme/redesign/rd_theme.dart';
 import '../../../l10n/l10n.dart';
-import '../layout/side_nav/side_nav_layout.dart';
 
-/// Groups header actions in an [AppBar] and hides entries marked with
-/// [HiddenWithSidePanel] while the side panel is active.
+/// Groups header actions in an [AppBar].
 class ToolbarButtonGroup extends StatelessWidget {
   const ToolbarButtonGroup({super.key, required this.children});
 
@@ -14,9 +12,6 @@ class ToolbarButtonGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final children = SideNavScope.isActive(context)
-        ? this.children.where((c) => c is! HiddenWithSidePanel).toList()
-        : this.children;
     if (children.isEmpty) return const SizedBox.shrink();
     return Row(mainAxisSize: MainAxisSize.min, children: children);
   }

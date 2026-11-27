@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:attendix/core/theme/app_icons.dart';
 
-import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/redesign/rd_theme.dart';
 import '../../../data/models/church/church.dart';
 import '../../../features/planning/presentation/widgets/rd_plan_widgets.dart';
@@ -86,84 +84,7 @@ Future<void> showChurchOverviewSheet(
   );
 }
 
-/// Content of the church overview sheet.
-class ChurchOverviewView extends StatelessWidget {
-  const ChurchOverviewView({
-    super.key,
-    required this.data,
-    required this.subtitle,
-    this.scrollController,
-    this.showTitle = true,
-  });
-
-  final ChurchOverviewData data;
-  final String subtitle;
-  final ScrollController? scrollController;
-
-  /// false when the sheet toolbar already shows the title.
-  final bool showTitle;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final l10n = context.l10n;
-    Widget header(String text) => Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
-          child: Text(text, style: theme.textTheme.titleSmall?.copyWith(color: AppColors.mediumOf(context))),
-        );
-    Widget badge(int value, {Color color = AppColors.primary}) => Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-          decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(12)),
-          child: Text('$value',
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
-        );
-
-    return ListView(
-      controller: scrollController,
-      padding: const EdgeInsets.only(bottom: 24),
-      children: [
-        if (showTitle)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(l10n.churchOverviewTitle, style: theme.textTheme.titleLarge),
-          ),
-        header(l10n.churchOverviewTotal),
-        ListTile(
-          leading: Icon(AppIcons.peopleOutline),
-          title: Text(subtitle),
-          trailing: badge(data.total),
-        ),
-        ListTile(
-          leading: Icon(AppIcons.businessOutlined),
-          title: Text(l10n.churchOverviewChurches),
-          trailing: badge(data.churchCounts.length),
-        ),
-        if (data.churchCounts.isNotEmpty) ...[
-          header(l10n.churchOverviewChurches),
-          for (final c in data.churchCounts)
-            ListTile(title: Text(c.name), trailing: badge(c.count)),
-        ],
-        if (data.withoutChurch > 0) ...[
-          header(l10n.churchOverviewUnassigned),
-          ListTile(
-            title: Text(l10n.churchOverviewNoChurch),
-            trailing: badge(data.withoutChurch, color: AppColors.mediumOf(context)),
-          ),
-        ],
-        if (data.total == 0)
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Center(
-              child: Text(l10n.churchOverviewNoPeople,
-                  style: TextStyle(color: AppColors.mediumOf(context))),
-            ),
-          ),
-      ],
-    );
-  }
-}
-
-/// Beta (redesign) content of the church overview sheet: the total on top,
+/// Content of the church overview sheet: the total on top,
 /// then one row per Gemeinde with its count.
 class RdChurchOverviewView extends StatelessWidget {
   const RdChurchOverviewView({super.key, required this.data, required this.subtitle});
