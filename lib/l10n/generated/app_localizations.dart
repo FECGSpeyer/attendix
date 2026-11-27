@@ -18751,6 +18751,12 @@ abstract class AppLocalizations {
   /// **'Aushilfe bis {date}'**
   String rdHelperUntil(Object date);
 
+  /// rdOrg.adHocShort
+  ///
+  /// In de, this message translates to:
+  /// **'Ohne Termin'**
+  String get rdOrgAdHocShort;
+
   /// rdOrg.archiveNote
   ///
   /// In de, this message translates to:

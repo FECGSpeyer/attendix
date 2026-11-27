@@ -14446,6 +14446,10 @@
       "date": {}
     }
   },
+  "rdOrgAdHocShort": "Ohne Termin",
+  "@rdOrgAdHocShort": {
+    "description": "rdOrg.adHocShort"
+  },
   "rdOrgArchiveNote": "Die Personen werden hier archiviert. Wer ein Konto hat, bekommt eine Nachricht.",
   "@rdOrgArchiveNote": {
     "description": "rdOrg.archiveNote"

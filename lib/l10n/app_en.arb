@@ -3102,6 +3102,7 @@
   "rdHelperSwitchHint": "Only joins for a while, e.g. for one concert",
   "rdHelperTitle": "Helper",
   "rdHelperUntil": "Helper until {date}",
+  "rdOrgAdHocShort": "Without event",
   "rdOrgArchiveNote": "The people are archived here. People with an account get a message.",
   "rdOrgBack": "Organisation",
   "rdOrgBackSelection": "Selection",

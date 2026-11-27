@@ -342,6 +342,7 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
                       counts: a.id == null ? null : counts[a.id],
                       own: a.id == null ? null : own[a.id],
                       past: isPast,
+                      orgName: org?.name,
                       selected: a.id != null && RdSplitScope.of(context)?.selectedId == a.id,
                       onTap: a.id != null && canOpen
                           ? () => RdSplitScope.open(context, RedesignRoutes.event(a.id!))
@@ -722,6 +723,7 @@ class _LeaderEventCard extends StatelessWidget {
     required this.past,
     required this.onTap,
     this.own,
+    this.orgName,
     this.selected = false,
   });
 
@@ -732,6 +734,7 @@ class _LeaderEventCard extends StatelessWidget {
   /// The Helfer's own answer for this Termin (chip opens the answer sheet).
   final CrossTenantPersonAttendance? own;
   final bool past;
+  final String? orgName;
   final VoidCallback? onTap;
 
   /// Open on the right of the split view.
@@ -793,7 +796,14 @@ class _LeaderEventCard extends StatelessWidget {
                     crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
                       if (meta.isNotEmpty) Text(meta, style: RdType.meta(p, size: 13)),
-                      if (attendance.isOrgPlan) RdOrgPill(l10n.rdOrgBadge, compact: true),
+                      if (attendance.isOrgPlan)
+                        ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 160),
+                          child: RdOrgPill(
+                            orgName != null && orgName!.isNotEmpty ? orgName! : l10n.rdOrgBadge,
+                            compact: true,
+                          ),
+                        ),
                     ],
                   ),
                 ],

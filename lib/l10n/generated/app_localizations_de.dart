@@ -11757,6 +11757,9 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get rdOrgAdHocShort => 'Ohne Termin';
+
+  @override
   String get rdOrgArchiveNote =>
       'Die Personen werden hier archiviert. Wer ein Konto hat, bekommt eine Nachricht.';
 

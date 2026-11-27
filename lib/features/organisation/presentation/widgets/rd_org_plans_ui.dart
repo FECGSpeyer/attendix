@@ -168,6 +168,19 @@ class RdTodayOrgPlansCard extends ConsumerWidget {
   }
 }
 
+/// Compact neutral origin tag used inside an ORG container (Heute ORG card or
+/// Termine › Org-Pläne), where the organisation itself is already named above.
+Widget? _orgOriginPill(BuildContext context, OrgPlanEntry entry) {
+  final l10n = context.l10n;
+  if (entry.isAdHoc) {
+    return RdPill(l10n.rdOrgAdHocShort, icon: Icons.edit_note);
+  }
+  if (entry.tenantLabel.isNotEmpty) {
+    return RdPill(entry.tenantLabel, icon: Icons.groups_outlined);
+  }
+  return null;
+}
+
 class _TodayOrgPlanTile extends StatelessWidget {
   const _TodayOrgPlanTile({required this.item, required this.orgName});
 
@@ -179,11 +192,7 @@ class _TodayOrgPlanTile extends StatelessWidget {
     final p = context.rd;
     final l10n = context.l10n;
     final entry = item.entry;
-    final badge = entry.isAdHoc
-        ? l10n.rdOrgBadgeAdHoc
-        : entry.tenantLabel.isNotEmpty
-            ? l10n.rdOrgBadgeGroup(entry.tenantLabel)
-            : l10n.rdOrgBadge;
+    final origin = _orgOriginPill(context, entry);
     final meta = [
       if (item.timeRange.isNotEmpty) item.timeRange,
       if (item.currentItem != null) item.currentItem!,
@@ -212,21 +221,19 @@ class _TodayOrgPlanTile extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: p.text),
                   ),
-                  const SizedBox(height: 5),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 4,
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      RdOrgPill(
-                        badge,
-                        compact: true,
-                        icon: entry.isAdHoc ? Icons.edit_note : Icons.hub_outlined,
-                      ),
-                      if (meta.isNotEmpty)
-                        Text(meta, style: RdType.meta(p, size: 13)),
-                    ],
-                  ),
+                  if (origin != null || meta.isNotEmpty) ...[
+                    const SizedBox(height: 5),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 4,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        if (origin != null) origin,
+                        if (meta.isNotEmpty)
+                          Text(meta, style: RdType.meta(p, size: 13)),
+                      ],
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -367,15 +374,10 @@ class _OrgPlanListCard extends StatelessWidget {
     final timeRange = startMin != null && entry.plan.fields.isNotEmpty
         ? '${PlanUtils.formatMinutes(startMin)}–${PlanUtils.formatMinutes(startMin + PlanUtils.totalMinutes(entry.plan.fields))}'
         : entry.plan.time;
-    final badge = entry.isAdHoc
-        ? l10n.rdOrgBadgeAdHoc
-        : entry.tenantLabel.isNotEmpty
-            ? l10n.rdOrgBadgeGroup(entry.tenantLabel)
-            : l10n.rdOrgBadge;
+    final origin = _orgOriginPill(context, entry);
     final meta = [
       if (timeRange.isNotEmpty) timeRange,
       if (entry.fieldCount > 0) orgPlanPoints(entry.fieldCount),
-      if (entry.isAdHoc) l10n.rdOrgPlanAdHocMeta,
     ].join(' · ');
 
     return RdCard(
@@ -413,12 +415,10 @@ class _OrgPlanListCard extends StatelessWidget {
                   entry.title,
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: p.text),
                 ),
-                const SizedBox(height: 5),
-                RdOrgPill(
-                  badge,
-                  compact: true,
-                  icon: entry.isAdHoc ? Icons.edit_note : Icons.hub_outlined,
-                ),
+                if (origin != null) ...[
+                  const SizedBox(height: 5),
+                  origin,
+                ],
                 if (meta.isNotEmpty) ...[
                   const SizedBox(height: 4),
                   Text(meta, style: RdType.meta(p, size: 13)),

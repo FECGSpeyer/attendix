@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/dashboard_providers.dart';
+import '../../../../core/providers/organisation_providers.dart' show currentOrganisationProvider;
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/role_permission_providers.dart';
@@ -221,6 +222,9 @@ class _NextEventCard extends ConsumerWidget {
     final hasTime = (attendance.startTime ?? type?.startTime)?.isNotEmpty ?? false;
     final countdown = rdCountdown(l10n, info.start, hasTime: hasTime);
     final meta = [info.timeRange, info.place].where((s) => s.isNotEmpty).join(' · ');
+    final orgName = attendance.isOrgPlan
+        ? ref.watch(currentOrganisationProvider).valueOrNull?.name
+        : null;
 
     return RdCard(
       child: Column(
@@ -235,7 +239,13 @@ class _NextEventCard extends ConsumerWidget {
                 ),
               ),
               if (attendance.isOrgPlan) ...[
-                RdOrgPill(l10n.rdOrgBadge, compact: true),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 150),
+                  child: RdOrgPill(
+                    orgName != null && orgName.isNotEmpty ? orgName : l10n.rdOrgBadge,
+                    compact: true,
+                  ),
+                ),
                 if (countdown != null) const SizedBox(width: 6),
               ],
               if (countdown != null) RdPill(countdown, tone: RdTone.primary),

@@ -177,7 +177,7 @@ void main() {
       expect(find.byKey(const Key('rd-today-org-plans-card')), findsOneWidget);
       expect(find.text('Wortunterhaltung'), findsOneWidget);
       expect(find.text('FECG Speyer'), findsOneWidget);
-      expect(find.text('ORG-Plan'), findsOneWidget);
+      expect(find.text('Ohne Termin'), findsOneWidget);
     });
 
     testWidgets('renders nothing without an organisation', (tester) async {
@@ -243,7 +243,7 @@ void main() {
 
       // Own ORG Termin shows the ORG pill in Kommend.
       expect(find.text('Konzert'), findsOneWidget);
-      expect(find.text('ORG'), findsOneWidget);
+      expect(find.text('FECG Speyer'), findsOneWidget);
       // 3rd segment "Org-Pläne" is visible.
       expect(find.text('Org-Pläne'), findsOneWidget);
 
@@ -251,7 +251,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Wortunterhaltung'), findsOneWidget);
-      expect(find.text('ORG-Plan'), findsOneWidget);
+      expect(find.text('Ohne Termin'), findsOneWidget);
     });
   });
 
