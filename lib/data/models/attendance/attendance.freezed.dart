@@ -74,7 +74,10 @@ mixin _$Attendance {
   Map<String, dynamic>? get players => throw _privateConstructorUsedError;
   @JsonKey(name: 'share_plan')
   @_FlexibleBoolConverter()
-  bool get sharePlan => throw _privateConstructorUsedError; // ATTENDANCE_SIGNOUT: place, files folder, description & attachment
+  bool get sharePlan => throw _privateConstructorUsedError;
+  @JsonKey(name: 'is_org_plan')
+  @_FlexibleBoolConverter()
+  bool get isOrgPlan => throw _privateConstructorUsedError; // ATTENDANCE_SIGNOUT: place, files folder, description & attachment
   @_FlexibleStringConverter()
   String? get place => throw _privateConstructorUsedError;
   @JsonKey(name: 'files_folder')
@@ -146,6 +149,7 @@ abstract class $AttendanceCopyWith<$Res> {
     @_FlexibleIntListConverter() List<int>? conductors,
     Map<String, dynamic>? players,
     @JsonKey(name: 'share_plan') @_FlexibleBoolConverter() bool sharePlan,
+    @JsonKey(name: 'is_org_plan') @_FlexibleBoolConverter() bool isOrgPlan,
     @_FlexibleStringConverter() String? place,
     @JsonKey(name: 'files_folder')
     @_FlexibleStringConverter()
@@ -205,6 +209,7 @@ class _$AttendanceCopyWithImpl<$Res, $Val extends Attendance>
     Object? conductors = freezed,
     Object? players = freezed,
     Object? sharePlan = null,
+    Object? isOrgPlan = null,
     Object? place = freezed,
     Object? filesFolder = freezed,
     Object? description = freezed,
@@ -347,6 +352,11 @@ class _$AttendanceCopyWithImpl<$Res, $Val extends Attendance>
                     ? _value.sharePlan
                     : sharePlan // ignore: cast_nullable_to_non_nullable
                         as bool,
+            isOrgPlan:
+                null == isOrgPlan
+                    ? _value.isOrgPlan
+                    : isOrgPlan // ignore: cast_nullable_to_non_nullable
+                        as bool,
             place:
                 freezed == place
                     ? _value.place
@@ -436,6 +446,7 @@ abstract class _$$AttendanceImplCopyWith<$Res>
     @_FlexibleIntListConverter() List<int>? conductors,
     Map<String, dynamic>? players,
     @JsonKey(name: 'share_plan') @_FlexibleBoolConverter() bool sharePlan,
+    @JsonKey(name: 'is_org_plan') @_FlexibleBoolConverter() bool isOrgPlan,
     @_FlexibleStringConverter() String? place,
     @JsonKey(name: 'files_folder')
     @_FlexibleStringConverter()
@@ -494,6 +505,7 @@ class __$$AttendanceImplCopyWithImpl<$Res>
     Object? conductors = freezed,
     Object? players = freezed,
     Object? sharePlan = null,
+    Object? isOrgPlan = null,
     Object? place = freezed,
     Object? filesFolder = freezed,
     Object? description = freezed,
@@ -636,6 +648,11 @@ class __$$AttendanceImplCopyWithImpl<$Res>
                 ? _value.sharePlan
                 : sharePlan // ignore: cast_nullable_to_non_nullable
                     as bool,
+        isOrgPlan:
+            null == isOrgPlan
+                ? _value.isOrgPlan
+                : isOrgPlan // ignore: cast_nullable_to_non_nullable
+                    as bool,
         place:
             freezed == place
                 ? _value.place
@@ -720,6 +737,9 @@ class _$AttendanceImpl implements _Attendance {
     @JsonKey(name: 'share_plan')
     @_FlexibleBoolConverter()
     this.sharePlan = false,
+    @JsonKey(name: 'is_org_plan')
+    @_FlexibleBoolConverter()
+    this.isOrgPlan = false,
     @_FlexibleStringConverter() this.place,
     @JsonKey(name: 'files_folder') @_FlexibleStringConverter() this.filesFolder,
     @_FlexibleStringConverter() this.description,
@@ -899,6 +919,10 @@ class _$AttendanceImpl implements _Attendance {
   @JsonKey(name: 'share_plan')
   @_FlexibleBoolConverter()
   final bool sharePlan;
+  @override
+  @JsonKey(name: 'is_org_plan')
+  @_FlexibleBoolConverter()
+  final bool isOrgPlan;
   // ATTENDANCE_SIGNOUT: place, files folder, description & attachment
   @override
   @_FlexibleStringConverter()
@@ -938,7 +962,7 @@ class _$AttendanceImpl implements _Attendance {
 
   @override
   String toString() {
-    return 'Attendance(id: $id, tenantId: $tenantId, createdAt: $createdAt, createdBy: $createdBy, date: $date, type: $type, typeId: $typeId, saveInHistory: $saveInHistory, percentage: $percentage, excused: $excused, typeInfo: $typeInfo, notes: $notes, img: $img, plan: $plan, lateExcused: $lateExcused, songs: $songs, criticalPlayers: $criticalPlayers, playerNotes: $playerNotes, startTime: $startTime, endTime: $endTime, deadline: $deadline, durationDays: $durationDays, checklist: $checklist, conductors: $conductors, players: $players, sharePlan: $sharePlan, place: $place, filesFolder: $filesFolder, description: $description, attachmentUrl: $attachmentUrl, attachmentName: $attachmentName, dutyRequired: $dutyRequired, archived: $archived, archivedAt: $archivedAt, archivedBy: $archivedBy)';
+    return 'Attendance(id: $id, tenantId: $tenantId, createdAt: $createdAt, createdBy: $createdBy, date: $date, type: $type, typeId: $typeId, saveInHistory: $saveInHistory, percentage: $percentage, excused: $excused, typeInfo: $typeInfo, notes: $notes, img: $img, plan: $plan, lateExcused: $lateExcused, songs: $songs, criticalPlayers: $criticalPlayers, playerNotes: $playerNotes, startTime: $startTime, endTime: $endTime, deadline: $deadline, durationDays: $durationDays, checklist: $checklist, conductors: $conductors, players: $players, sharePlan: $sharePlan, isOrgPlan: $isOrgPlan, place: $place, filesFolder: $filesFolder, description: $description, attachmentUrl: $attachmentUrl, attachmentName: $attachmentName, dutyRequired: $dutyRequired, archived: $archived, archivedAt: $archivedAt, archivedBy: $archivedBy)';
   }
 
   @override
@@ -997,6 +1021,8 @@ class _$AttendanceImpl implements _Attendance {
             const DeepCollectionEquality().equals(other._players, _players) &&
             (identical(other.sharePlan, sharePlan) ||
                 other.sharePlan == sharePlan) &&
+            (identical(other.isOrgPlan, isOrgPlan) ||
+                other.isOrgPlan == isOrgPlan) &&
             (identical(other.place, place) || other.place == place) &&
             (identical(other.filesFolder, filesFolder) ||
                 other.filesFolder == filesFolder) &&
@@ -1046,6 +1072,7 @@ class _$AttendanceImpl implements _Attendance {
     const DeepCollectionEquality().hash(_conductors),
     const DeepCollectionEquality().hash(_players),
     sharePlan,
+    isOrgPlan,
     place,
     filesFolder,
     description,
@@ -1109,6 +1136,7 @@ abstract class _Attendance implements Attendance {
     @_FlexibleIntListConverter() final List<int>? conductors,
     final Map<String, dynamic>? players,
     @JsonKey(name: 'share_plan') @_FlexibleBoolConverter() final bool sharePlan,
+    @JsonKey(name: 'is_org_plan') @_FlexibleBoolConverter() final bool isOrgPlan,
     @_FlexibleStringConverter() final String? place,
     @JsonKey(name: 'files_folder')
     @_FlexibleStringConverter()
@@ -1213,7 +1241,11 @@ abstract class _Attendance implements Attendance {
   @override
   @JsonKey(name: 'share_plan')
   @_FlexibleBoolConverter()
-  bool get sharePlan; // ATTENDANCE_SIGNOUT: place, files folder, description & attachment
+  bool get sharePlan;
+  @override
+  @JsonKey(name: 'is_org_plan')
+  @_FlexibleBoolConverter()
+  bool get isOrgPlan; // ATTENDANCE_SIGNOUT: place, files folder, description & attachment
   @override
   @_FlexibleStringConverter()
   String? get place;

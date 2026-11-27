@@ -275,6 +275,58 @@ String rdInitialsOf(String name) {
   return (parts.first[0] + parts[1][0]).toUpperCase();
 }
 
+/// Consistent visual marker for everything belonging to or shared with the
+/// organisation (ORG-Pläne, cross-group Termine, shared libraries, shared
+/// person fields). Uses soft primary fill with a crisp border and hub icon so
+/// it stands apart from normal status/type pills across all Farbwelten.
+class RdOrgPill extends StatelessWidget {
+  const RdOrgPill(
+    this.label, {
+    super.key,
+    this.compact = false,
+    this.icon = Icons.hub_outlined,
+  });
+
+  final String label;
+  final bool compact;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: compact ? 7 : 10,
+        vertical: compact ? 2 : 4,
+      ),
+      decoration: BoxDecoration(
+        color: p.soft,
+        borderRadius: BorderRadius.circular(compact ? 7 : 999),
+        border: Border.all(color: p.primary.withValues(alpha: 0.35)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: compact ? 12 : 14, color: p.softText),
+          const SizedBox(width: 4),
+          Flexible(
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: compact ? 11 : 12,
+                fontWeight: FontWeight.w700,
+                color: p.softText,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 /// Small "Stimmführung" tag next to a name (Mitglieder, Meine Stimme).
 class RdLeaderTag extends StatelessWidget {
   const RdLeaderTag({super.key});

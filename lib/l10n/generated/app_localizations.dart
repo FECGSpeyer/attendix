@@ -18769,11 +18769,35 @@ abstract class AppLocalizations {
   /// **'Auswahl'**
   String get rdOrgBackSelection;
 
+  /// rdOrg.badge
+  ///
+  /// In de, this message translates to:
+  /// **'ORG'**
+  String get rdOrgBadge;
+
+  /// rdOrg.badgeAdHoc
+  ///
+  /// In de, this message translates to:
+  /// **'ORG-Plan'**
+  String get rdOrgBadgeAdHoc;
+
+  /// rdOrg.badgeGroup
+  ///
+  /// In de, this message translates to:
+  /// **'ORG · {group}'**
+  String rdOrgBadgeGroup(Object group);
+
   /// rdOrg.create
   ///
   /// In de, this message translates to:
   /// **'Organisation erstellen oder verknüpfen'**
   String get rdOrgCreate;
+
+  /// rdOrg.eventsTabOrgPlans
+  ///
+  /// In de, this message translates to:
+  /// **'Org-Pläne'**
+  String get rdOrgEventsTabOrgPlans;
 
   /// rdOrg.fieldDelete
   ///
@@ -18798,6 +18822,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Neues Feld'**
   String get rdOrgFieldNew;
+
+  /// rdOrg.fieldSharedHint
+  ///
+  /// In de, this message translates to:
+  /// **'Gilt gruppenübergreifend in deiner Organisation'**
+  String get rdOrgFieldSharedHint;
 
   /// rdOrg.fieldTypeFixed
   ///
@@ -18865,6 +18895,18 @@ abstract class AppLocalizations {
   /// **'Noch nicht verbunden'**
   String get rdOrgGaNoKey;
 
+  /// rdOrg.groupsManageOrg
+  ///
+  /// In de, this message translates to:
+  /// **'Organisation verwalten'**
+  String get rdOrgGroupsManageOrg;
+
+  /// rdOrg.groupsOtherSection
+  ///
+  /// In de, this message translates to:
+  /// **'Weitere Gruppen'**
+  String get rdOrgGroupsOtherSection;
+
   /// rdOrg.handover
   ///
   /// In de, this message translates to:
@@ -18894,6 +18936,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Hier: {group}'**
   String rdOrgHere(Object group);
+
+  /// rdOrg.inOrgSubtitle
+  ///
+  /// In de, this message translates to:
+  /// **'in {org}'**
+  String rdOrgInOrgSubtitle(Object org);
 
   /// rdOrg.keepMove
   ///
@@ -18942,6 +18990,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Dieselbe Person in mehreren Gruppen'**
   String get rdOrgLinkPersonsHint;
+
+  /// rdOrg.liveActivityOrgPlans
+  ///
+  /// In de, this message translates to:
+  /// **'ORG-Pläne anderer Gruppen'**
+  String get rdOrgLiveActivityOrgPlans;
+
+  /// rdOrg.liveActivityOrgPlansHint
+  ///
+  /// In de, this message translates to:
+  /// **'Zeigt laufende ORG-Pläne anderer Gruppen deiner Organisation auf diesem Gerät.'**
+  String get rdOrgLiveActivityOrgPlansHint;
 
   /// rdOrg.mainGroup
   ///
@@ -19002,6 +19062,30 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Gemeinsame eigene Felder'**
   String get rdOrgPersonFields;
+
+  /// rdOrg.planAdHocMeta
+  ///
+  /// In de, this message translates to:
+  /// **'ORG-Plan ohne Termin'**
+  String get rdOrgPlanAdHocMeta;
+
+  /// rdOrg.planBackClose
+  ///
+  /// In de, this message translates to:
+  /// **'Schließen'**
+  String get rdOrgPlanBackClose;
+
+  /// rdOrg.planBackOrgPlans
+  ///
+  /// In de, this message translates to:
+  /// **'Org-Pläne'**
+  String get rdOrgPlanBackOrgPlans;
+
+  /// rdOrg.planSwitchGroup
+  ///
+  /// In de, this message translates to:
+  /// **'In „{group}“ öffnen'**
+  String rdOrgPlanSwitchGroup(Object group);
 
   /// rdOrg.request
   ///
@@ -19069,6 +19153,24 @@ abstract class AppLocalizations {
   /// **'Diese Gruppe'**
   String get rdOrgThisGroup;
 
+  /// rdOrg.todayAllPlans
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Org-Pläne'**
+  String get rdOrgTodayAllPlans;
+
+  /// rdOrg.todayEyebrow
+  ///
+  /// In de, this message translates to:
+  /// **'Heute in der Organisation'**
+  String get rdOrgTodayEyebrow;
+
+  /// rdOrg.todayLiveEyebrow
+  ///
+  /// In de, this message translates to:
+  /// **'Läuft gerade · ORG-Plan'**
+  String get rdOrgTodayLiveEyebrow;
+
   /// rdOrg.transfer
   ///
   /// In de, this message translates to:
@@ -19098,6 +19200,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Nur Admins und Verantwortliche einer Gruppe mit Organisation können Werke organisationsweit suchen.'**
   String get rdOrgWorksNoPermission;
+
+  /// rdOrg.worksSearchInOrg
+  ///
+  /// In de, this message translates to:
+  /// **'In {org} suchen'**
+  String rdOrgWorksSearchInOrg(Object org);
+
+  /// rdOrg.worksSearchInOrgHint
+  ///
+  /// In de, this message translates to:
+  /// **'Kein Treffer in dieser Gruppe. Du kannst direkt in den anderen Gruppen deiner Organisation suchen.'**
+  String get rdOrgWorksSearchInOrgHint;
 
   /// rdPeople.archiveTitle
   ///

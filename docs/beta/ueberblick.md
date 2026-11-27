@@ -36,11 +36,12 @@ Suche der Verwaltung findet auch diese Einträge und sagt, wo sie sind:
 
 | Eintrag | Wo er jetzt ist |
 |---------|-----------------|
-| Freigaben, Mehrere auswählen | im Reiter „Mitglieder“ |
-| Gespielte Werke, Werk-Kategorien, Dateiablage, Werke öffentlich teilen | im Reiter „Werke“ unter ••• |
+| Freigaben, Mehrere auswählen, Personen übergeben | im Reiter „Mitglieder“ |
+| Gespielte Werke, Werk-Kategorien, Dateiablage, Werke öffentlich teilen, Werke der Organisation | im Reiter „Werke“ unter ••• |
 | Ablaufpläne | im Termin unter „Programm“ |
+| Org-Pläne | im Reiter „Termine“ unter „Org-Pläne“, am Tag auf „Heute“ und in der Seitenleiste |
 | Export, Urkunden | in der Auswertung |
-| Branding, Planvorlagen & Felder, Org-Pläne | in „Organisation“ |
+| Branding, Planvorlagen & Felder | in „Organisation“ |
 | Admins, Eltern, Beobachter | in „Rollen und Rechte“ |
 | Kalender abonnieren, Team | unter „Ich“ |
 

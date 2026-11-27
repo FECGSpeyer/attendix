@@ -171,6 +171,7 @@ class Attendance with _$Attendance {
     @_FlexibleIntListConverter() List<int>? conductors,
     Map<String, dynamic>? players,
     @JsonKey(name: 'share_plan') @_FlexibleBoolConverter() @Default(false) bool sharePlan,
+    @JsonKey(name: 'is_org_plan') @_FlexibleBoolConverter() @Default(false) bool isOrgPlan,
     // ATTENDANCE_SIGNOUT: place, files folder, description & attachment
     @_FlexibleStringConverter() String? place,
     @JsonKey(name: 'files_folder') @_FlexibleStringConverter() String? filesFolder,

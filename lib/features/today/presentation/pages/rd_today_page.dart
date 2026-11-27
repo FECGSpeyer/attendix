@@ -6,6 +6,7 @@ import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/dashboard_providers.dart';
 import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/message_providers.dart';
+import '../../../../core/providers/plan_providers.dart' show orgPlansProvider;
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/self_service_providers.dart';
@@ -50,6 +51,7 @@ class RdTodayPage extends ConsumerWidget {
       ref.invalidate(pendingPlayersProvider);
       ref.invalidate(criticalPlayersProvider);
       ref.invalidate(dashboardPersonsProvider);
+      ref.invalidate(orgPlansProvider);
     }
     if (role.isParent) {
       ref.invalidate(childrenAttendancesProvider);

@@ -58,7 +58,26 @@
       "fieldDelete": "Feld löschen",
       "fieldDeleteHint": "Die Werte bei allen Personen der Organisation werden mit gelöscht.",
       "fieldTypeFixed": "Der Typ lässt sich nach dem Anlegen nicht mehr ändern.",
-      "fieldsSaving": "Änderung wird gespeichert …"
+      "fieldsSaving": "Änderung wird gespeichert …",
+      "badge": "ORG",
+      "badgeGroup": "ORG · {group}",
+      "badgeAdHoc": "ORG-Plan",
+      "planBackClose": "Schließen",
+      "planBackOrgPlans": "Org-Pläne",
+      "planAdHocMeta": "ORG-Plan ohne Termin",
+      "planSwitchGroup": "In „{group}“ öffnen",
+      "liveActivityOrgPlans": "ORG-Pläne anderer Gruppen",
+      "liveActivityOrgPlansHint": "Zeigt laufende ORG-Pläne anderer Gruppen deiner Organisation auf diesem Gerät.",
+      "todayLiveEyebrow": "Läuft gerade · ORG-Plan",
+      "todayEyebrow": "Heute in der Organisation",
+      "todayAllPlans": "Alle Org-Pläne",
+      "eventsTabOrgPlans": "Org-Pläne",
+      "worksSearchInOrg": "In {org} suchen",
+      "worksSearchInOrgHint": "Kein Treffer in dieser Gruppe. Du kannst direkt in den anderen Gruppen deiner Organisation suchen.",
+      "fieldSharedHint": "Gilt gruppenübergreifend in deiner Organisation",
+      "groupsOtherSection": "Weitere Gruppen",
+      "groupsManageOrg": "Organisation verwalten",
+      "inOrgSubtitle": "in {org}"
     }
   },
   "en": {
@@ -120,7 +139,26 @@
       "fieldDelete": "Delete field",
       "fieldDeleteHint": "The values of all persons of the organisation are deleted too.",
       "fieldTypeFixed": "The type cannot be changed after the field was created.",
-      "fieldsSaving": "Saving change …"
+      "fieldsSaving": "Saving change …",
+      "badge": "ORG",
+      "badgeGroup": "ORG · {group}",
+      "badgeAdHoc": "ORG plan",
+      "planBackClose": "Close",
+      "planBackOrgPlans": "Org plans",
+      "planAdHocMeta": "ORG plan without event",
+      "planSwitchGroup": "Open in “{group}”",
+      "liveActivityOrgPlans": "ORG plans of other groups",
+      "liveActivityOrgPlansHint": "Shows running ORG plans of other groups in your organisation on this device.",
+      "todayLiveEyebrow": "Live now · ORG plan",
+      "todayEyebrow": "Today in the organisation",
+      "todayAllPlans": "All org plans",
+      "eventsTabOrgPlans": "Org plans",
+      "worksSearchInOrg": "Search in {org}",
+      "worksSearchInOrgHint": "No match in this group. You can search across the other groups of your organisation.",
+      "fieldSharedHint": "Shared across all groups in your organisation",
+      "groupsOtherSection": "Other groups",
+      "groupsManageOrg": "Manage organisation",
+      "inOrgSubtitle": "in {org}"
     }
   }
 }

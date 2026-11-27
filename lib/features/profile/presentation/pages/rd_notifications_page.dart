@@ -7,7 +7,9 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/enums.dart';
+import '../../../../core/providers/live_activity_providers.dart';
 import '../../../../core/providers/notification_settings_providers.dart';
+import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/providers/push_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
@@ -226,6 +228,9 @@ class _RdNotificationsPageState extends ConsumerState<RdNotificationsPage> with 
     final tenants = ref.watch(userTenantsProvider).valueOrNull ?? const <Tenant>[];
     final hasDutyTypes = ref.watch(tenantHasDutyTypesProvider).valueOrNull ?? false;
     final liveActivity = ref.read(liveActivityServiceProvider).hasNativePlugin;
+    final hasOrg = ref.watch(currentOrganisationProvider).valueOrNull != null ||
+        (ref.watch(userOrganisationsProvider).valueOrNull?.isNotEmpty ?? false);
+    final liveActivityOrgPlans = ref.watch(liveActivityOrgPlansEnabledProvider);
     final connected = config.isConnected;
     // Sign-in/out, registrations and problem cases only reach admins and
     // responsible persons (edge functions: role 1 or 5) – of any group.
@@ -322,6 +327,14 @@ class _RdNotificationsPageState extends ConsumerState<RdNotificationsPage> with 
                     ? l10n.notifLiveActivityHelperIos
                     : l10n.notifLiveActivityHelper,
               ),
+              if (config.liveActivity != false && isLead && hasOrg)
+                RdSwitchRow(
+                  key: const Key('rd-notif-live-activity-org'),
+                  title: l10n.rdOrgLiveActivityOrgPlans,
+                  subtitle: l10n.rdOrgLiveActivityOrgPlansHint,
+                  value: liveActivityOrgPlans,
+                  onChanged: (v) => ref.read(liveActivityOrgPlansEnabledProvider.notifier).setEnabled(v),
+                ),
             ],
           ),
         ],

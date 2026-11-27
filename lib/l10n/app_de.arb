@@ -14458,9 +14458,28 @@
   "@rdOrgBackSelection": {
     "description": "rdOrg.backSelection"
   },
+  "rdOrgBadge": "ORG",
+  "@rdOrgBadge": {
+    "description": "rdOrg.badge"
+  },
+  "rdOrgBadgeAdHoc": "ORG-Plan",
+  "@rdOrgBadgeAdHoc": {
+    "description": "rdOrg.badgeAdHoc"
+  },
+  "rdOrgBadgeGroup": "ORG · {group}",
+  "@rdOrgBadgeGroup": {
+    "description": "rdOrg.badgeGroup",
+    "placeholders": {
+      "group": {}
+    }
+  },
   "rdOrgCreate": "Organisation erstellen oder verknüpfen",
   "@rdOrgCreate": {
     "description": "rdOrg.create"
+  },
+  "rdOrgEventsTabOrgPlans": "Org-Pläne",
+  "@rdOrgEventsTabOrgPlans": {
+    "description": "rdOrg.eventsTabOrgPlans"
   },
   "rdOrgFieldDelete": "Feld löschen",
   "@rdOrgFieldDelete": {
@@ -14477,6 +14496,10 @@
   "rdOrgFieldNew": "Neues Feld",
   "@rdOrgFieldNew": {
     "description": "rdOrg.fieldNew"
+  },
+  "rdOrgFieldSharedHint": "Gilt gruppenübergreifend in deiner Organisation",
+  "@rdOrgFieldSharedHint": {
+    "description": "rdOrg.fieldSharedHint"
   },
   "rdOrgFieldTypeFixed": "Der Typ lässt sich nach dem Anlegen nicht mehr ändern.",
   "@rdOrgFieldTypeFixed": {
@@ -14534,6 +14557,14 @@
   "@rdOrgGaNoKey": {
     "description": "rdOrg.gaNoKey"
   },
+  "rdOrgGroupsManageOrg": "Organisation verwalten",
+  "@rdOrgGroupsManageOrg": {
+    "description": "rdOrg.groupsManageOrg"
+  },
+  "rdOrgGroupsOtherSection": "Weitere Gruppen",
+  "@rdOrgGroupsOtherSection": {
+    "description": "rdOrg.groupsOtherSection"
+  },
   "rdOrgHandover": "Personen übergeben",
   "@rdOrgHandover": {
     "description": "rdOrg.handover"
@@ -14560,6 +14591,13 @@
     "description": "rdOrg.here",
     "placeholders": {
       "group": {}
+    }
+  },
+  "rdOrgInOrgSubtitle": "in {org}",
+  "@rdOrgInOrgSubtitle": {
+    "description": "rdOrg.inOrgSubtitle",
+    "placeholders": {
+      "org": {}
     }
   },
   "rdOrgKeepMove": "Wechseln ganz",
@@ -14593,6 +14631,14 @@
   "rdOrgLinkPersonsHint": "Dieselbe Person in mehreren Gruppen",
   "@rdOrgLinkPersonsHint": {
     "description": "rdOrg.linkPersonsHint"
+  },
+  "rdOrgLiveActivityOrgPlans": "ORG-Pläne anderer Gruppen",
+  "@rdOrgLiveActivityOrgPlans": {
+    "description": "rdOrg.liveActivityOrgPlans"
+  },
+  "rdOrgLiveActivityOrgPlansHint": "Zeigt laufende ORG-Pläne anderer Gruppen deiner Organisation auf diesem Gerät.",
+  "@rdOrgLiveActivityOrgPlansHint": {
+    "description": "rdOrg.liveActivityOrgPlansHint"
   },
   "rdOrgMainGroup": "Hauptgruppe einbeziehen",
   "@rdOrgMainGroup": {
@@ -14639,6 +14685,25 @@
   "rdOrgPersonFields": "Gemeinsame eigene Felder",
   "@rdOrgPersonFields": {
     "description": "rdOrg.personFields"
+  },
+  "rdOrgPlanAdHocMeta": "ORG-Plan ohne Termin",
+  "@rdOrgPlanAdHocMeta": {
+    "description": "rdOrg.planAdHocMeta"
+  },
+  "rdOrgPlanBackClose": "Schließen",
+  "@rdOrgPlanBackClose": {
+    "description": "rdOrg.planBackClose"
+  },
+  "rdOrgPlanBackOrgPlans": "Org-Pläne",
+  "@rdOrgPlanBackOrgPlans": {
+    "description": "rdOrg.planBackOrgPlans"
+  },
+  "rdOrgPlanSwitchGroup": "In „{group}“ öffnen",
+  "@rdOrgPlanSwitchGroup": {
+    "description": "rdOrg.planSwitchGroup",
+    "placeholders": {
+      "group": {}
+    }
   },
   "rdOrgRequest": "Anfragen ({count})",
   "@rdOrgRequest": {
@@ -14697,6 +14762,18 @@
   "@rdOrgThisGroup": {
     "description": "rdOrg.thisGroup"
   },
+  "rdOrgTodayAllPlans": "Alle Org-Pläne",
+  "@rdOrgTodayAllPlans": {
+    "description": "rdOrg.todayAllPlans"
+  },
+  "rdOrgTodayEyebrow": "Heute in der Organisation",
+  "@rdOrgTodayEyebrow": {
+    "description": "rdOrg.todayEyebrow"
+  },
+  "rdOrgTodayLiveEyebrow": "Läuft gerade · ORG-Plan",
+  "@rdOrgTodayLiveEyebrow": {
+    "description": "rdOrg.todayLiveEyebrow"
+  },
   "rdOrgTransfer": "Übergeben ({count})",
   "@rdOrgTransfer": {
     "description": "rdOrg.transfer",
@@ -14719,6 +14796,17 @@
   "rdOrgWorksNoPermission": "Nur Admins und Verantwortliche einer Gruppe mit Organisation können Werke organisationsweit suchen.",
   "@rdOrgWorksNoPermission": {
     "description": "rdOrg.worksNoPermission"
+  },
+  "rdOrgWorksSearchInOrg": "In {org} suchen",
+  "@rdOrgWorksSearchInOrg": {
+    "description": "rdOrg.worksSearchInOrg",
+    "placeholders": {
+      "org": {}
+    }
+  },
+  "rdOrgWorksSearchInOrgHint": "Kein Treffer in dieser Gruppe. Du kannst direkt in den anderen Gruppen deiner Organisation suchen.",
+  "@rdOrgWorksSearchInOrgHint": {
+    "description": "rdOrg.worksSearchInOrgHint"
   },
   "rdPeopleArchiveTitle": "{name} archivieren",
   "@rdPeopleArchiveTitle": {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/providers/organisation_providers.dart';
 import '../../core/providers/tenant_providers.dart';
 import '../../core/router/redesign_routes.dart';
 import '../../core/theme/redesign/rd_theme.dart';
@@ -15,7 +16,7 @@ import 'rd_shell.dart';
 
 /// Entries of the desktop sidebar beside the tabs: the most used pages of
 /// the Verwaltung for leads, Team and Hilfe from "Ich".
-enum RdSideExtra { stats, messages, manage, team, help }
+enum RdSideExtra { stats, messages, orgPlans, manage, team, help }
 
 const _helpRoute = '/settings/help';
 /// Team pages: the team organisation and its tasks, topics and protocols.
@@ -29,12 +30,16 @@ const _teamRoots = [
 /// Pages opened from Mitteilungen (a sent Mitteilung, automatic ones).
 const _messageRoots = ['/messages', '/settings/auto-messages'];
 
+/// Pages opened from Org-Pläne in the sidebar.
+const _orgPlansRoots = ['/settings/org-plans', '/org-plans-tab'];
+
 /// The extra entry [location] belongs to, null when a tab is selected.
 /// [manage]/[team]: whether the sidebar shows those entries.
 RdSideExtra? rdSideExtraFor(String location, {required bool manage, required bool team}) {
   bool under(String root) => location == root || location.startsWith('$root/');
   if (team && _teamRoots.any(under)) return RdSideExtra.team;
   if (manage && _messageRoots.any(under)) return RdSideExtra.messages;
+  if (manage && _orgPlansRoots.any(under)) return RdSideExtra.orgPlans;
   if (manage && rdIsManageLocation(location)) {
     if (under(RedesignRoutes.stats)) return RdSideExtra.stats;
     if (under(RedesignRoutes.messages) || under(RedesignRoutes.compose)) {
@@ -74,6 +79,7 @@ class RdSidebar extends ConsumerWidget {
     final access = ref.watch(rdManageAccessProvider);
     // "Verwaltung" for Dirigent and Verantwortliche (`rdShowsManage`).
     final showManage = rdShowsManage(access);
+    final showOrgPlans = showManage && ref.watch(currentOrganisationProvider).valueOrNull != null;
     final showTeam = access.showTeam;
     final location = rdShownLocation(context);
     final extra = rdSideExtraFor(location, manage: showManage, team: showTeam);
@@ -137,6 +143,14 @@ class RdSidebar extends ConsumerWidget {
                       l10n.settingsAnnouncements,
                       RedesignRoutes.messages,
                     ),
+                    if (showOrgPlans)
+                      item(
+                        RdSideExtra.orgPlans,
+                        Icons.hub_outlined,
+                        Icons.hub,
+                        l10n.rdOrgEventsTabOrgPlans,
+                        '/settings/org-plans',
+                      ),
                     item(
                       RdSideExtra.manage,
                       Icons.settings_outlined,
@@ -176,8 +190,12 @@ class _GroupCard extends ConsumerWidget {
     final p = context.rd;
     final l10n = context.l10n;
     final tenant = ref.watch(currentTenantProvider);
+    final org = ref.watch(currentOrganisationProvider).valueOrNull;
     final name = tenant?.longName.isNotEmpty == true ? tenant!.longName : (tenant?.shortName ?? '');
     final count = ref.watch(userTenantsProvider).valueOrNull?.length ?? 0;
+    final sub = org != null && org.name.isNotEmpty
+        ? l10n.rdOrgInOrgSubtitle(org.name)
+        : (count > 1 ? l10n.rdSidebarGroupsCount(count) : '');
 
     return Semantics(
       button: true,
@@ -212,9 +230,14 @@ class _GroupCard extends ConsumerWidget {
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(fontSize: 15, height: 1.2, fontWeight: FontWeight.w700, color: p.text),
                       ),
-                      if (count > 1) ...[
+                      if (sub.isNotEmpty) ...[
                         const SizedBox(height: 2),
-                        Text(l10n.rdSidebarGroupsCount(count), style: TextStyle(fontSize: 12.5, color: p.text2)),
+                        Text(
+                          sub,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(fontSize: 12.5, color: p.text2),
+                        ),
                       ],
                     ],
                   ),

@@ -22,6 +22,7 @@ import '../../../attendance/data/providers/rd_events_providers.dart' show rdAtte
 import '../../data/providers/rd_today_providers.dart';
 import '../../../attendance/data/rd_event_details_logic.dart';
 import '../../../attendance/data/rd_event_phase.dart' show rdEventSpan;
+import '../../../organisation/presentation/widgets/rd_org_plans_ui.dart' show RdTodayOrgPlansCard;
 import '../../../settings/presentation/widgets/manage/rd_manage_list.dart' show rdLoadedValue;
 import '../../../../shared/widgets/redesign/rd_desktop.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
@@ -115,6 +116,7 @@ class RdLeaderToday extends ConsumerWidget {
         )
       else
         _NextEventCard(attendance: next, canOpen: role.canAddAttendance, canRemind: isLead, own: ownNext),
+      if (isLead) const RdTodayOrgPlansCard(),
     ];
     final own = <Widget>[
       if (role.canSeeSelfServiceTab) ...[
@@ -232,6 +234,10 @@ class _NextEventCard extends ConsumerWidget {
                   '${info.start == null ? '' : rdRelativeDay(l10n, info.start!)}',
                 ),
               ),
+              if (attendance.isOrgPlan) ...[
+                RdOrgPill(l10n.rdOrgBadge, compact: true),
+                if (countdown != null) const SizedBox(width: 6),
+              ],
               if (countdown != null) RdPill(countdown, tone: RdTone.primary),
             ],
           ),

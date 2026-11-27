@@ -6,16 +6,21 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/models/plan/plan.dart';
+import '../../data/models/tenant/tenant.dart';
 import '../../data/repositories/org_plan_repository.dart';
 import '../../features/planning/presentation/pages/plan_viewer_page.dart';
+import '../../l10n/l10n.dart';
 import '../config/supabase_config.dart';
 import '../constants/enums.dart';
 import '../providers/attendance_type_providers.dart';
 import '../providers/live_activity_providers.dart';
 import '../providers/organisation_providers.dart';
 import '../providers/plan_providers.dart';
+import '../providers/self_service_providers.dart';
 import '../providers/tenant_providers.dart';
+import '../providers/user_preferences_provider.dart';
 import '../router/app_router.dart';
+import '../router/redesign_routes.dart';
 import '../utils/live_plan.dart';
 import '../utils/plan_utils.dart';
 import 'error_reporter.dart';
@@ -93,6 +98,7 @@ class LiveActivityService {
   bool _supported = false;
   bool _started = false;
   bool _enabled = true;
+  bool _orgPlansEnabled = true;
   bool _syncing = false;
   int? _loadedTenantId;
   Timer? _timer;
@@ -101,6 +107,11 @@ class LiveActivityService {
 
   /// Last state pushed per plan, to skip no-op updates.
   final Map<String, String> _lastKeys = {};
+
+  /// Activities started or updated by this service for the current tenant/org,
+  /// so a deleted, archived, or un-planned Termin is ended on the next sync
+  /// instead of remaining as a ghost activity.
+  final Set<String> _ownedKeys = {};
 
   /// SOL_FIX15: account the tokens were registered for, and the tokens this
   /// device saved for it (removed again on logout).
@@ -140,6 +151,7 @@ class LiveActivityService {
   /// Live Activities are allowed on this device (iOS 16.2+, user setting).
   bool get isSupported => _supported;
   bool get isEnabled => _enabled;
+  bool get isOrgPlansEnabled => _orgPlansEnabled;
   bool get isLoopRunning => _timer != null;
 
   /// Once at app start: receives native events and a deep link that launched the app.
@@ -175,6 +187,7 @@ class LiveActivityService {
     }
     if (!hasTenantUser || tenantId == _loadedTenantId) return;
     _loadedTenantId = tenantId;
+    _ownedKeys.clear();
     await init();
   }
 
@@ -224,6 +237,7 @@ class LiveActivityService {
     _lifecycle?.dispose();
     _lifecycle = null;
     _lastKeys.clear();
+    _ownedKeys.clear();
     _pendingUri = null;
     final sessionUserId = _sessionUserId;
     final savedTokens = {..._savedTokens};
@@ -233,6 +247,7 @@ class LiveActivityService {
     _loadedTenantId = null;
     _started = false;
     _enabled = true;
+    _orgPlansEnabled = true;
     // SOL_FIX18: the iOS side uploads activity tokens on its own (straight
     // to the live-activity-token Edge Function, not via Dart). Close that
     // too and wait for its running uploads – before the rows are deleted.
@@ -322,7 +337,12 @@ class LiveActivityService {
     if (_isStale(generation)) return;
     final enabled = await _loadEnabled();
     if (_isStale(generation)) return;
-    if (epoch == _enableEpoch) _enabled = enabled;
+    final orgPlansEnabled = await _loadOrgPlansEnabled();
+    if (_isStale(generation)) return;
+    if (epoch == _enableEpoch) {
+      _enabled = enabled;
+      _orgPlansEnabled = orgPlansEnabled;
+    }
     if (!_started) {
       _started = true;
       _registrationOpen = true;
@@ -352,6 +372,14 @@ class LiveActivityService {
     }
   }
 
+  Future<bool> _loadOrgPlansEnabled() async {
+    try {
+      return await _host.loadOrgPlansEnabled();
+    } catch (_) {
+      return true;
+    }
+  }
+
   /// Called from the notification settings toggle.
   Future<void> setEnabled(bool enabled) async {
     _enabled = enabled;
@@ -362,12 +390,22 @@ class LiveActivityService {
     if (!_supported) return;
     if (!enabled) {
       _lastKeys.clear();
+      _ownedKeys.clear();
       try {
         await _channel.invokeMethod<void>('endAll');
       } catch (_) {}
     } else {
       await sync();
     }
+  }
+
+  /// Called from the notification settings sub-toggle "ORG-Pläne anderer Gruppen".
+  Future<void> setOrgPlansEnabled(bool enabled) async {
+    _orgPlansEnabled = enabled;
+    _enableEpoch++;
+    _syncing = false;
+    if (!_supported || !_enabled) return;
+    await sync();
   }
 
   /// Syncs now and every [syncInterval]; completes after the first sync.
@@ -422,7 +460,10 @@ class LiveActivityService {
         final k = c.key;
         final stateKey = liveStateKey(c.state);
         final isRunning = activities.any((a) => a.key == k);
-        if (isRunning && _lastKeys[k] == stateKey) continue;
+        if (isRunning && _lastKeys[k] == stateKey) {
+          _ownedKeys.add(k);
+          continue;
+        }
         // Ionic: iOS gets iosLiveState, Android the raw state.
         final shown = (_isAndroid ? c.state : iosLiveState(c.state)).toMap();
         // SOL_FIX16: re-checked before every native change.
@@ -434,6 +475,7 @@ class LiveActivityService {
               'planKey': c.planKey,
               'state': shown,
             });
+            _ownedKeys.remove(k);
           }
         } else if (isRunning) {
           await _channel.invokeMethod<void>('update', {
@@ -441,6 +483,7 @@ class LiveActivityService {
             'planKey': c.planKey,
             'state': shown,
           });
+          _ownedKeys.add(k);
         } else {
           // SOL_FIX17: never start an activity while disabled.
           if (!_enabled) continue;
@@ -450,14 +493,26 @@ class LiveActivityService {
             'title': c.title,
             'state': shown,
           });
+          _ownedKeys.add(k);
         }
         _lastKeys[k] = stateKey;
       }
-      // Plans that are over or no longer visible to this user. Activities of the
-      // user's other tenants are left alone (the server keeps those up to date).
+      // End plans that are over, deleted, archived, un-planned, or no longer
+      // visible to this user. Valid activities of the user's other tenants are
+      // left alone (the server keeps those up to date).
       for (final a in activities) {
-        if (!wanted.contains(a.key) &&
-            (attendanceIds == null || attendanceIds.contains(a.attendanceId))) {
+        if (wanted.contains(a.key)) continue;
+        final isDisabledAdHocOrg =
+            !_orgPlansEnabled && a.attendanceId == 0 && a.planKey.startsWith('org-');
+        var shouldEnd = attendanceIds == null ||
+            attendanceIds.contains(a.attendanceId) ||
+            _ownedKeys.contains(a.key) ||
+            isDisabledAdHocOrg;
+        if (!shouldEnd) {
+          shouldEnd = !await _host.isActivityStillValid(a);
+          if (stale()) return;
+        }
+        if (shouldEnd) {
           if (stale()) return;
           await _channel.invokeMethod<void>('end', {
             'attendanceId': a.attendanceId,
@@ -465,6 +520,7 @@ class LiveActivityService {
             'immediate': true,
           });
           _lastKeys.remove(a.key);
+          _ownedKeys.remove(a.key);
         }
       }
     } catch (e) {
@@ -486,13 +542,20 @@ class LiveActivityService {
     final to = DateTime(today.year, today.month, today.day + 1, 23, 59, 59, 999);
     final attendances = await _host.loadAttendances(from, to);
     final types = await _host.termTypes();
+    final attendanceIds = attendances.map((a) => a.id).whereType<int>().toSet();
+    Set<int>? playerVisibleIds;
+    if (!role.canSeeAttendanceTab && !role.isViewer && attendanceIds.isNotEmpty) {
+      playerVisibleIds = await _host.loadVisiblePlayerAttendanceIds(attendanceIds.toList());
+    }
 
     final result = <LivePlanCandidate>[];
     for (final att in attendances) {
       final id = att.id;
       if (id == null) continue;
-      // Beobachter never see the plan; others only when it is shared.
+      // Beobachter never see the plan; others only when it is shared and
+      // visible in their own Termine list (and not signed out).
       if (role.isViewer || (!isLeader && !att.sharePlan)) continue;
+      if (playerVisibleIds != null && !playerVisibleIds.contains(id)) continue;
       final plans = PlanUtils.allPlans(att);
       final type = types[att.typeId];
       final typeName = type?.name ?? '';
@@ -513,8 +576,9 @@ class LiveActivityService {
         ));
       }
     }
-    final attendanceIds = attendances.map((a) => a.id).whereType<int>().toSet();
-    if (isLeader) await _addOrgPlans(result, attendanceIds, timezone, now);
+    if (isLeader && _orgPlansEnabled) {
+      await _addOrgPlans(result, attendanceIds, timezone, now);
+    }
     return (candidates: result, attendanceIds: attendanceIds);
   }
 
@@ -555,10 +619,13 @@ class LiveActivityService {
         entry.typeColor,
       );
       if (state == null) continue;
+      final baseTitle = liveTitle(att, entry.typeName, 0, [plan]);
+      final group = entry.tenantName.trim();
+      final orgTag = group.isNotEmpty ? 'ORG · $group' : 'ORG';
       result.add(LivePlanCandidate(
         attendanceId: id,
         planKey: 'main',
-        title: liveTitle(att, entry.typeName, 0, [plan]),
+        title: '$baseTitle · $orgTag',
         state: state,
       ));
     }
@@ -573,11 +640,14 @@ class LiveActivityService {
         now,
       );
       if (state == null) continue;
-      final title = sp.planTitle?.trim() ?? '';
+      final rawTitle = sp.planTitle?.trim() ?? '';
+      final title = rawTitle.isEmpty
+          ? 'ORG-Plan'
+          : (rawTitle.toUpperCase().contains('ORG') ? rawTitle : '$rawTitle · ORG');
       result.add(LivePlanCandidate(
         attendanceId: 0,
         planKey: 'org-${sp.id}',
-        title: title.isNotEmpty ? title : 'ORG-Plan',
+        title: title,
         state: state,
       ));
     }
@@ -703,7 +773,7 @@ class LiveActivityService {
       if (orgPlanId != null) {
         await _host.openSharedOrgPlan(orgPlanId);
       } else {
-        await _host.openPlan(attendanceId);
+        await _host.openPlan(attendanceId, planKey: planKey);
       }
     } catch (e) {
       _log('openFromUrl', e);

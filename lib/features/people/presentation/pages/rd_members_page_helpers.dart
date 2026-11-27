@@ -75,7 +75,8 @@ extension _RdMembersPageHelpers on _RdMembersPageState {
   /// "•••" of the leads: the Verwaltung entries that act on the members.
   Future<void> _more() async {
     final l10n = context.l10n;
-    final entry = await showAppActionSheet<RdManageEntry>(
+    final hasOrgOthers = ref.read(linkedTenantsProvider).valueOrNull?.isNotEmpty ?? false;
+    final entry = await showAppActionSheet<Object>(
       context,
       actions: [
         for (final e in const [
@@ -86,17 +87,29 @@ extension _RdMembersPageHelpers on _RdMembersPageState {
           RdManageEntry.archive,
           RdManageEntry.export,
         ])
-          AppActionSheetAction(value: e, icon: rdManageIcon(e), label: rdManageTitle(l10n, e, kind: ref.read(rdGroupKindProvider))),
+          AppActionSheetAction<Object>(
+            value: e,
+            icon: rdManageIcon(e),
+            label: rdManageTitle(l10n, e, kind: ref.read(rdGroupKindProvider)),
+          ),
+        if (hasOrgOthers)
+          AppActionSheetAction<Object>(
+            value: 'handover',
+            icon: Icons.swap_horiz,
+            label: l10n.rdOrgHandover,
+          ),
       ],
     );
     if (entry == null || !mounted) return;
-    if (entry == RdManageEntry.bulkMembers) {
+    if (entry == 'handover') {
+      await context.push('/settings/handover');
+    } else if (entry == RdManageEntry.bulkMembers) {
       _setSelecting(true);
     } else if (entry == RdManageEntry.archive) {
       // Stays in this tab ("‹ Mitglieder"), not in Ich › Verwaltung.
-      ref.read(rdManageRecentProvider.notifier).push(entry);
+      ref.read(rdManageRecentProvider.notifier).push(entry as RdManageEntry);
       await context.push(RedesignRoutes.membersArchive);
-    } else {
+    } else if (entry is RdManageEntry) {
       rdOpenManageEntry(context, ref, entry);
     }
   }

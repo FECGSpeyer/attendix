@@ -19,8 +19,12 @@ class FakeHost implements LiveActivityHost {
   @override
   int? tenantId = 7;
   bool enabled = true;
+  bool orgPlansEnabled = true;
+  Set<int>? visiblePlayerAttendanceIds;
+  bool Function(LiveActivityTarget target)? activityStillValid;
   final saved = <Map<String, Object?>>[];
   final opened = <int>[];
+  final openedPlanKeys = <String>[];
 
   @override
   String get timezone => 'Europe/Berlin';
@@ -49,12 +53,23 @@ class FakeHost implements LiveActivityHost {
   }
 
   @override
+  Future<bool> loadOrgPlansEnabled() async => orgPlansEnabled;
+
+  @override
   Future<List<PlanAttendance>> loadAttendances(DateTime from, DateTime to) async {
     final gate = attendancesGate;
     attendancesGate = null;
     if (gate != null) await gate.future;
     return attendances;
   }
+
+  @override
+  Future<Set<int>?> loadVisiblePlayerAttendanceIds(List<int> attendanceIds) async =>
+      visiblePlayerAttendanceIds;
+
+  @override
+  Future<bool> isActivityStillValid(LiveActivityTarget target) async =>
+      activityStillValid?.call(target) ?? true;
   @override
   Future<Map<String, LiveTermType>> termTypes() async => {
         't1': (name: 'Probe', color: typeColor),
@@ -99,7 +114,10 @@ class FakeHost implements LiveActivityHost {
   }
 
   @override
-  Future<void> openPlan(int attendanceId) async => opened.add(attendanceId);
+  Future<void> openPlan(int attendanceId, {String planKey = ''}) async {
+    opened.add(attendanceId);
+    openedPlanKeys.add(planKey);
+  }
 }
 
 void main() {
@@ -353,7 +371,7 @@ void main() {
       PlanField(id: 'a', name: 'Einsingen', time: '15'),
       PlanField(id: 'b', name: 'Auftritt', time: '45'),
     ];
-    OrgLiveAttendance orgAttendance(int id, {String? color}) => (
+    OrgLiveAttendance orgAttendance(int id, {String? color, String tenantName = ''}) => (
           attendance: PlanAttendance(
             id: id,
             date: '2026-10-21T10:00:00+00:00',
@@ -361,6 +379,7 @@ void main() {
           ),
           typeName: 'Konzert',
           typeColor: color,
+          tenantName: tenantName,
         );
     SharedPlan sharedPlan({String id = 'sp1', String? title = ' Chortag ', String? time = '19:00'}) =>
         SharedPlan(id: id, editKey: 'k', planTitle: title, date: '2026-10-21', time: time, fields: fields);
@@ -368,7 +387,7 @@ void main() {
     test('admins get org Termine and ad-hoc ORG plans (attendance 0, plan "org-<id>")', () async {
       final host = FakeHost(attendances: [attendance()])
         ..orgPlans = (
-          attendances: [orgAttendance(11), orgAttendance(55, color: 'mint')],
+          attendances: [orgAttendance(11), orgAttendance(55, color: 'mint', tenantName: 'JC')],
           sharedPlans: [
             sharedPlan(),
             sharedPlan(id: 'sp2', title: null),
@@ -378,9 +397,9 @@ void main() {
       final r = await service(host).runningPlans();
       // 11 is already a plan of this tenant: not added twice.
       expect(r.candidates.map((c) => c.key), ['11:main', '55:main', '0:org-sp1', '0:org-sp2']);
-      expect(r.candidates[1].title, 'Konzert');
+      expect(r.candidates[1].title, 'Konzert · ORG · JC');
       expect(r.candidates[1].state.color, '#36c2c4');
-      expect(r.candidates[2].title, 'Chortag');
+      expect(r.candidates[2].title, 'Chortag · ORG');
       expect(r.candidates[2].state.color, isNull); // ad-hoc plans stay teal
       expect(r.candidates[3].title, 'ORG-Plan');
       expect(r.attendanceIds, containsAll([11, 55, 0]));
@@ -388,6 +407,68 @@ void main() {
       final range = host.orgRanges.single;
       expect(range[0], DateTime(2026, 10, 20));
       expect(range[1], DateTime(2026, 10, 22, 23, 59, 59, 999));
+    });
+
+    test('disabling ORG-Plan Live Activities skips org plans and ends running ad-hoc ORG plans', () async {
+      running = [
+        {'id': 'org1', 'attendanceId': 0, 'planKey': 'org-sp1'},
+      ];
+      final host = FakeHost(attendances: [attendance()])
+        ..orgPlansEnabled = false
+        ..orgPlans = (
+          attendances: [orgAttendance(55, tenantName: 'JC')],
+          sharedPlans: [sharedPlan()],
+        );
+      final s = service(host);
+      await s.init();
+      s.stopLoop();
+      expect(host.orgRanges, isEmpty);
+      final ends = calls.where((c) => c.method == 'end').toList();
+      expect(ends.single.arguments, {'attendanceId': 0, 'planKey': 'org-sp1', 'immediate': true});
+      final starts = calls.where((c) => c.method == 'start').toList();
+      expect(starts.map((c) => (c.arguments as Map)['attendanceId']), [11]);
+    });
+
+    test('deleted or un-planned Termin started by this service is ended on next sync', () async {
+      final host = FakeHost(attendances: [attendance()]);
+      final s = service(host);
+      await s.init();
+      s.stopLoop();
+      expect(methods(), contains('start'));
+
+      // Termin is now deleted / plan removed, so loadAttendances returns [].
+      running = [
+        {'id': 'x', 'attendanceId': 11, 'planKey': 'main'},
+      ];
+      host.attendances = const [];
+      calls.clear();
+      await s.sync();
+      final ends = calls.where((c) => c.method == 'end').toList();
+      expect(ends.single.arguments, {'attendanceId': 11, 'planKey': 'main', 'immediate': true});
+    });
+
+    test('stale server-pushed activity is ended when isActivityStillValid returns false', () async {
+      running = [
+        {'id': 'ghost', 'attendanceId': 777, 'planKey': 'main'},
+        {'id': 'valid', 'attendanceId': 888, 'planKey': 'main'},
+      ];
+      final host = FakeHost(attendances: const [])
+        ..activityStillValid = (t) => t.attendanceId == 888;
+      final s = service(host);
+      await s.init();
+      s.stopLoop();
+      final ends = calls.where((c) => c.method == 'end').toList();
+      expect(ends.length, 1);
+      expect(ends.single.arguments, {'attendanceId': 777, 'planKey': 'main', 'immediate': true});
+    });
+
+    test('players only get Live Activities for visible non-signed-out attendances', () async {
+      final host = FakeHost(
+        attendances: [attendance(id: 11), attendance(id: 12)],
+        role: Role.player,
+      )..visiblePlayerAttendanceIds = {12};
+      final r = await service(host).runningPlans();
+      expect(r.candidates.map((c) => c.attendanceId), [12]);
     });
 
     test('players never load ORG plans', () async {

@@ -610,7 +610,10 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
     }
     final thumb = tester.widget<AnimatedPositioned>(
-      find.descendant(of: find.byType(RdSegmented<bool>), matching: find.byType(AnimatedPositioned)),
+      find.descendant(
+        of: find.byType(RdSegmented<RdEventsSegment>),
+        matching: find.byType(AnimatedPositioned),
+      ),
     );
     expect(thumb.left, greaterThan(0));
     await gesture.up();

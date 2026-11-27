@@ -118,6 +118,8 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
           ),
         if (canManage)
           AppActionSheetAction(value: 'categories', icon: Icons.sell_outlined, label: l10n.rdWmManageCategories),
+        if (isAdmin && (ref.read(linkedTenantsProvider).valueOrNull?.isNotEmpty ?? false))
+          AppActionSheetAction(value: 'org_songs', icon: Icons.hub_outlined, label: l10n.rdOrgWorks),
         // From the old Verwaltung (canvas "Werke-Tab: •••"): Werkhistorie
         // for leads and helpers, the Dateiablage for everyone with access.
         if (isAdmin || role.isHelperRole)
@@ -140,6 +142,8 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
         await context.push(RedesignRoutes.collections);
       case 'categories':
         await showSongCategoriesSheet(context);
+      case 'org_songs':
+        await context.push('/settings/org-settings/songs?from=werke');
       case 'history':
         await context.push(RedesignRoutes.workHistory);
       case 'files':
@@ -269,6 +273,8 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
     // and "+" and the manage entries need a lead role there.
     final shared = ref.watch(rdSharedLibrarySourceProvider) != null;
     final sharedName = ref.watch(rdSharedLibraryNameProvider);
+    final org = isAdmin ? ref.watch(currentOrganisationProvider).valueOrNull : null;
+    final hasOrgOthers = org != null && (ref.watch(linkedTenantsProvider).valueOrNull?.isNotEmpty ?? false);
     final canManage = isAdmin && ref.watch(rdLibraryEditableProvider);
     final async = ref.watch(songsListDataProvider(null));
     // Which library the group uses could not be read: what loaded may be
@@ -446,14 +452,28 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
           Padding(
             key: const Key('rd-works-shared-note'),
             padding: const EdgeInsets.fromLTRB(4, 0, 4, 16),
-            child: Text(
-              [
-                sharedName.valueOrNull == null ? l10n.rdWmSharedFromOther : l10n.rdWmSharedFrom(sharedName.valueOrNull!),
-                // The second sentence once the roles in that group are known.
-                if (isAdmin && ref.watch(userTenantsProvider).hasValue)
-                  canManage ? l10n.rdWmSharedEditable : l10n.rdWmSharedLocked,
-              ].join(' '),
-              style: RdType.meta(p, size: 13),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                RdOrgPill(
+                  sharedName.valueOrNull == null
+                      ? l10n.rdOrgBadge
+                      : l10n.rdOrgBadgeGroup(sharedName.valueOrNull!),
+                  compact: true,
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  [
+                    sharedName.valueOrNull == null
+                        ? l10n.rdWmSharedFromOther
+                        : l10n.rdWmSharedFrom(sharedName.valueOrNull!),
+                    // The second sentence once the roles in that group are known.
+                    if (isAdmin && ref.watch(userTenantsProvider).hasValue)
+                      canManage ? l10n.rdWmSharedEditable : l10n.rdWmSharedLocked,
+                  ].join(' '),
+                  style: RdType.meta(p, size: 13),
+                ),
+              ],
             ),
           ),
         if (current.isNotEmpty) ...[
@@ -558,7 +578,11 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
                     ? l10n.redesignWorksEmpty
                     : listData.songs.isEmpty && !searching
                     ? l10n.collectionsEmptyIn(rdCollectionName(l10n, visibleCollections, chosenCollection))
-                    : (!searching && filterCount > 0 ? l10n.rdTextWorksNoFilterMatch : l10n.redesignWorksNoMatch),
+                    : (!searching && filterCount > 0
+                        ? l10n.rdTextWorksNoFilterMatch
+                        : (searching && filterCount == 0 && hasOrgOthers
+                            ? l10n.rdOrgWorksSearchInOrgHint
+                            : l10n.redesignWorksNoMatch)),
             action:
                 filterCount > 0
                     ? RdOutlineButton(
@@ -568,6 +592,15 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
                         if (chosenCategory != null) filterNotifier.setCategory(null);
                         ref.read(rdWorksOnlyProvider.notifier).state = const {};
                       },
+                    )
+                    : (searching && hasOrgOthers)
+                    ? RdOutlineButton(
+                      key: const Key('rd-works-search-in-org'),
+                      icon: Icons.hub_outlined,
+                      label: l10n.rdOrgWorksSearchInOrg(org.name),
+                      onPressed: () => context.push(
+                        '/settings/org-settings/songs?from=werke&q=${Uri.encodeQueryComponent(_query.trim())}',
+                      ),
                     )
                     : null,
           )

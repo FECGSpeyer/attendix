@@ -51,6 +51,10 @@ _$AttendanceImpl _$$AttendanceImplFromJson(
       json['share_plan'] == null
           ? false
           : const _FlexibleBoolConverter().fromJson(json['share_plan']),
+  isOrgPlan:
+      json['is_org_plan'] == null
+          ? false
+          : const _FlexibleBoolConverter().fromJson(json['is_org_plan']),
   place: const _FlexibleStringConverter().fromJson(json['place']),
   filesFolder: const _FlexibleStringConverter().fromJson(json['files_folder']),
   description: const _FlexibleStringConverter().fromJson(json['description']),
@@ -103,6 +107,7 @@ Map<String, dynamic> _$$AttendanceImplToJson(
   'conductors': const _FlexibleIntListConverter().toJson(instance.conductors),
   'players': instance.players,
   'share_plan': const _FlexibleBoolConverter().toJson(instance.sharePlan),
+  'is_org_plan': const _FlexibleBoolConverter().toJson(instance.isOrgPlan),
   'place': const _FlexibleStringConverter().toJson(instance.place),
   'files_folder': const _FlexibleStringConverter().toJson(instance.filesFolder),
   'description': const _FlexibleStringConverter().toJson(instance.description),

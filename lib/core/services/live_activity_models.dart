@@ -47,7 +47,17 @@ abstract class LiveActivityHost {
   String get apiKey;
 
   Future<bool> loadEnabled();
+
+  /// Whether ORG-Pläne of other groups / ad-hoc ORG-Pläne should be shown as
+  /// Live Activities on this device (default true).
+  Future<bool> loadOrgPlansEnabled();
+
   Future<List<PlanAttendance>> loadAttendances(DateTime from, DateTime to);
+
+  /// For non-leader players: subset of [attendanceIds] that the player sees in
+  /// their Termine list and did not sign out from. Returns null when no player
+  /// filter applies (leaders, viewers, or unsupported contexts).
+  Future<Set<int>?> loadVisiblePlayerAttendanceIds(List<int> attendanceIds);
 
   /// Name and colour of the tenant's Termin types by id.
   Future<Map<String, LiveTermType>> termTypes();
@@ -56,6 +66,12 @@ abstract class LiveActivityHost {
   /// [[from], [to]] (Ionic 4.17.8 `addOrgPlans`); null without an
   /// organisation.
   Future<LiveOrgPlans?> loadOrgPlans(DateTime from, DateTime to);
+
+  /// Checks whether a running native activity not covered by the current
+  /// tenant's loaded candidates is still valid (e.g. an active plan in another
+  /// tenant of the user) or should be ended as a stale/deleted ghost activity.
+  Future<bool> isActivityStillValid(LiveActivityTarget target);
+
   Future<void> saveToken({
     required String userId,
     required String kind,
@@ -69,7 +85,7 @@ abstract class LiveActivityHost {
   Future<void> removeTokens({required String userId, required List<String> tokens});
 
   /// Opens the plan viewer of a Termin in live mode.
-  Future<void> openPlan(int attendanceId);
+  Future<void> openPlan(int attendanceId, {String planKey = ''});
 
   /// Opens an ad-hoc ORG plan (`shared_plans.id`) in the plan viewer in
   /// live mode, like on the ORG-Pläne page.

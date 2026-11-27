@@ -10,11 +10,12 @@ final orgPlanRepositoryProvider = Provider<OrgPlanRepository>((ref) {
 });
 
 /// An org plan Termin with the name and colour of its Termin type
-/// (`attType:type_id(name, color)`), for the Live Activity.
+/// (`attType:type_id(name, color)`) and owning group name, for the Live Activity.
 typedef OrgLiveAttendance = ({
   PlanAttendance attendance,
   String typeName,
   String? typeColor,
+  String tenantName,
 });
 
 /// Organisation-level planning (ORG_PLANS package).
@@ -80,9 +81,9 @@ class OrgPlanRepository extends BaseRepository {
     }
   }
 
-  /// LIVE_ACTIVITY (Ionic 4.17.8 `addOrgPlans`): org plan Termine of the
-  /// organisation's instances dated within [[from], [to]], with the name and
-  /// colour of their Termin type.
+  /// LIVE_ACTIVITY (Ionic 4.17.8 `addOrgPlans`): non-archived org plan Termine
+  /// of the organisation's instances dated within [[from], [to]], with the name
+  /// and colour of their Termin type and the owning group's display name.
   Future<List<OrgLiveAttendance>> getOrgLiveAttendancesBetween(
     int orgId,
     DateTime from,
@@ -91,19 +92,32 @@ class OrgPlanRepository extends BaseRepository {
     try {
       final links = await supabase
           .from('tenant_group_tenants')
-          .select('tenant_id')
+          .select('tenant_id, tenant:tenant_id(shortName, longName)')
           .eq('tenant_group', orgId);
-      final tenantIds = (links as List)
-          .map((l) => (l as Map)['tenant_id'])
-          .whereType<int>()
-          .toList();
+      final names = <int, String>{};
+      for (final raw in links as List) {
+        final row = raw as Map;
+        final id = row['tenant_id'];
+        if (id is int) {
+          final tenant = row['tenant'];
+          if (tenant is Map) {
+            final shortName = (tenant['shortName'] as String? ?? '').trim();
+            final longName = (tenant['longName'] as String? ?? '').trim();
+            names[id] = shortName.isNotEmpty ? shortName : longName;
+          } else {
+            names[id] = '';
+          }
+        }
+      }
+      final tenantIds = names.keys.toList();
       if (tenantIds.isEmpty) return [];
 
       final response = await supabase
           .from('attendance')
-          .select('id, date, plan, typeInfo, attType:type_id(name, color)')
+          .select('id, tenantId, date, plan, typeInfo, attType:type_id(name, color)')
           .inFilter('tenantId', tenantIds)
           .eq('is_org_plan', true)
+          .not('archived', 'is', true)
           .gte('date', from.toUtc().toIso8601String())
           .lte('date', to.toUtc().toIso8601String())
           .not('plan', 'is', null);
@@ -111,10 +125,12 @@ class OrgPlanRepository extends BaseRepository {
       return (response as List).map((e) {
         final row = e as Map<String, dynamic>;
         final type = row['attType'];
+        final att = PlanAttendance.fromJson(row);
         return (
-          attendance: PlanAttendance.fromJson(row),
+          attendance: att,
           typeName: type is Map ? (type['name'] as String? ?? '') : '',
           typeColor: type is Map ? type['color'] as String? : null,
+          tenantName: names[att.tenantId] ?? '',
         );
       }).toList();
     } catch (e, stack) {

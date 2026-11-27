@@ -32,10 +32,34 @@ class RiverpodLiveActivityHost implements LiveActivityHost {
   }
 
   @override
+  Future<bool> loadOrgPlansEnabled() => loadLiveActivityOrgPlansEnabled();
+
+  @override
   Future<List<PlanAttendance>> loadAttendances(DateTime from, DateTime to) async {
     final repo = _ref.read(liveActivityRepositoryWithTenantProvider);
     if (!repo.hasTenantId) return [];
     return repo.getPlanAttendancesBetween(from, to);
+  }
+
+  @override
+  Future<Set<int>?> loadVisiblePlayerAttendanceIds(List<int> attendanceIds) async {
+    if (role.canSeeAttendanceTab) return null;
+    final repo = _ref.read(liveActivityRepositoryWithTenantProvider);
+    if (!repo.hasTenantId || attendanceIds.isEmpty) return const {};
+    try {
+      final player = await _ref.read(currentSelfServicePlayerProvider.future);
+      final playerId = player?.id;
+      if (playerId == null) return const {};
+      final showAll = _ref.read(currentTenantProvider)?.showAllAttendances ?? false;
+      return await repo.getPlayerVisibleAttendanceIds(
+        playerId,
+        attendanceIds,
+        showAllAttendances: showAll,
+      );
+    } catch (_) {
+      // On transient errors keep existing behaviour instead of flapping.
+      return null;
+    }
   }
 
   @override
@@ -97,37 +121,69 @@ class RiverpodLiveActivityHost implements LiveActivityHost {
   }
 
   @override
-  Future<void> openPlan(int attendanceId) async {
-    final repo = _ref.read(planRepositoryWithTenantProvider);
-    if (!repo.hasTenantId) return;
-    var attendance = await repo.getPlanAttendanceById(attendanceId);
-    // Ionic getAttendanceById has no tenant filter: a Live Activity of an
-    // ORG-Plan of another choir / a Termin of another instance opens too.
-    if (attendance == null) {
-      // Own instances with the own role there; linked instances of the
-      // organisation without a role (archived Termine stay hidden there).
+  Future<bool> isActivityStillValid(LiveActivityTarget target) async {
+    final planRepo = _ref.read(planRepositoryWithTenantProvider);
+    final orgPlanRepo = _ref.read(orgPlanRepositoryProvider);
+    final now = DateTime.now().millisecondsSinceEpoch;
+    final tz = timezone.isNotEmpty ? timezone : 'Europe/Berlin';
+    try {
+      // Ad-hoc ORG plan (`attendanceId == 0`, `planKey == 'org-<id>'`).
+      if (target.attendanceId == 0 && target.planKey.startsWith('org-')) {
+        if (!await loadOrgPlansEnabled()) return false;
+        final id = target.planKey.substring(4);
+        if (id.isEmpty) return false;
+        final orgIds = await _userOrgIds();
+        for (final orgId in orgIds) {
+          final sp = await orgPlanRepo.getAdHocOrgPlan(orgId, id);
+          if (sp == null) continue;
+          if (!isPlanPublished(sp)) return false;
+          final date = sp.date ?? '';
+          final time = sp.time ?? '';
+          if (date.isEmpty || time.isEmpty || sp.fields.isEmpty) return false;
+          final state = liveStateAt(
+            buildSchedule(date: date, planTime: time, fields: sp.fields, timezone: tz),
+            now,
+          );
+          return state != null && state.phase != 'ended';
+        }
+        return false;
+      }
+
+      if (target.attendanceId <= 0) return false;
+      if (!planRepo.hasTenantId) return false;
+      final orgPlansEnabled = await loadOrgPlansEnabled();
+      final ownTenants = await _ref.read(userTenantsProvider.future);
+      final linkedTenants = orgPlansEnabled && (role.isAdmin || role.isResponsible)
+          ? await _ref.read(linkedTenantsProvider.future)
+          : const <Tenant>[];
       final tenantRoles = <int, Role?>{
-        for (final t in await _ref.read(linkedTenantsProvider.future))
+        for (final t in linkedTenants)
           if (t.id != null) t.id!: null,
-        for (final t in await _ref.read(userTenantsProvider.future))
+        for (final t in ownTenants)
           if (t.id != null) t.id!: t.role == null ? null : Role.fromValue(t.role!),
       };
-      attendance = await repo.getPlanAttendanceByIdInTenants(attendanceId, tenantRoles);
+      final att = await planRepo.getPlanAttendanceById(target.attendanceId, includeArchived: false) ??
+          await planRepo.getPlanAttendanceByIdInTenants(target.attendanceId, tenantRoles);
+      if (att == null) return false;
+      // If it belongs to a linked org tenant (not own tenant) and ORG plans are
+      // disabled or is_org_plan was turned off, end it.
+      final isOwnTenant = ownTenants.any((t) => t.id == att.tenantId);
+      if (!isOwnTenant && (!orgPlansEnabled || !att.isOrgPlan)) return false;
+      final plans = PlanUtils.allPlans(att);
+      for (var i = 0; i < plans.length; i++) {
+        if (livePlanKey(plans[i]) != target.planKey) continue;
+        if (!isPlanPublished(plans[i])) return false;
+        final state = liveStateAt(liveSchedule(att, i, tz, plans), now);
+        return state != null && state.phase != 'ended';
+      }
+      return false;
+    } catch (_) {
+      // Transient network error: leave valid activities alone until next sync.
+      return true;
     }
-    if (attendance?.plan == null) return;
-    final context = _ref.read(routerProvider).routerDelegate.navigatorKey.currentContext;
-    if (context == null || !context.mounted) return;
-    await showPlanViewer(context, attendance: attendance!, defaultLive: true);
   }
 
-  @override
-  Future<void> openSharedOrgPlan(String id) async {
-    // Ionic reads shared_plans by id only (RLS: leader of an instance of the
-    // org). The server sends the activity to admins/responsibles of every
-    // instance of the org, so the currently selected instance may belong to
-    // another (or no) organisation: try the current organisation first, then
-    // every organisation of the user's admin/responsible instances
-    // (userOrganisationsProvider). Each read stays scoped by org_id.
+  Future<Set<int>> _userOrgIds() async {
     final orgIds = <int>{};
     try {
       final current = (await _ref.read(currentOrganisationProvider.future))?.id;
@@ -138,22 +194,146 @@ class RiverpodLiveActivityHost implements LiveActivityHost {
         if (org.id != null) orgIds.add(org.id!);
       }
     } catch (_) {}
+    return orgIds;
+  }
+
+  @override
+  Future<void> openPlan(int attendanceId, {String planKey = ''}) async {
+    final repo = _ref.read(planRepositoryWithTenantProvider);
+    if (!repo.hasTenantId) return;
+    final currentId = tenantId;
+    var attendance = await repo.getPlanAttendanceById(attendanceId);
+    List<Tenant> ownTenants = const [];
+    List<Tenant> linkedTenants = const [];
+    // Ionic getAttendanceById has no tenant filter: a Live Activity of an
+    // ORG-Plan of another choir / a Termin of another instance opens too.
+    if (attendance == null) {
+      ownTenants = await _ref.read(userTenantsProvider.future).catchError((_) => const <Tenant>[]);
+      linkedTenants = await _ref.read(linkedTenantsProvider.future).catchError((_) => const <Tenant>[]);
+      // Own instances with the own role there; linked instances of the
+      // organisation without a role (archived Termine stay hidden there).
+      final tenantRoles = <int, Role?>{
+        for (final t in linkedTenants)
+          if (t.id != null) t.id!: null,
+        for (final t in ownTenants)
+          if (t.id != null) t.id!: t.role == null ? null : Role.fromValue(t.role!),
+      };
+      attendance = await repo.getPlanAttendanceByIdInTenants(attendanceId, tenantRoles);
+    }
+    if (attendance?.plan == null) return;
+    final context = _ref.read(routerProvider).routerDelegate.navigatorKey.currentContext;
+    if (context == null || !context.mounted) return;
+    final l10n = context.l10n;
+
+    final att = attendance!;
+    final isOtherTenant = att.tenantId != null && att.tenantId != currentId;
+    String? originBadge;
+    String? originHint;
+    ({String label, VoidCallback onTap})? openInGroupAction;
+
+    if (isOtherTenant) {
+      final ownMatch = ownTenants.where((t) => t.id == att.tenantId).firstOrNull;
+      final linkedMatch = linkedTenants.where((t) => t.id == att.tenantId).firstOrNull;
+      final match = ownMatch ?? linkedMatch;
+      final groupName = (match?.longName.isNotEmpty == true ? match!.longName : match?.shortName) ?? '';
+      if (att.isOrgPlan) {
+        originBadge = groupName.isNotEmpty ? l10n.rdOrgBadgeGroup(groupName) : l10n.rdOrgBadge;
+      } else if (groupName.isNotEmpty) {
+        originBadge = groupName;
+      }
+      if (ownMatch != null && ownMatch.id != null) {
+        final target = ownMatch;
+        final targetRole = target.role == null ? Role.none : Role.fromValue(target.role!);
+        final labelName = target.shortName.isNotEmpty ? target.shortName : target.longName;
+        openInGroupAction = (
+          label: l10n.rdOrgPlanSwitchGroup(labelName),
+          onTap: () => _switchToTenantEvent(context, target, attendanceId, targetRole),
+        );
+      }
+    } else if (att.isOrgPlan) {
+      originBadge = l10n.rdOrgBadge;
+      final orgName = _ref.read(currentOrganisationProvider).valueOrNull?.name;
+      if (orgName != null && orgName.isNotEmpty) originHint = orgName;
+    }
+
+    await showPlanViewer(
+      context,
+      attendance: att,
+      defaultLive: true,
+      initialPlanKey: planKey.isEmpty ? null : planKey,
+      backLabel: l10n.rdOrgPlanBackClose,
+      originBadge: originBadge,
+      originHint: originHint,
+      openInGroupAction: openInGroupAction,
+    );
+  }
+
+  Future<void> _switchToTenantEvent(
+    BuildContext context,
+    Tenant target,
+    int attendanceId,
+    Role targetRole,
+  ) async {
+    final container = ProviderScope.containerOf(context, listen: false);
+    final router = _ref.read(routerProvider);
+    Navigator.of(context, rootNavigator: true).maybePop();
+    try {
+      await container.read(currentTenantProvider.notifier).setTenantLocal(target);
+      await container.read(currentTenantUserProvider.future);
+      container.read(userPreferencesNotifierProvider.notifier).updateCurrentTenantId(target.id!);
+      if (targetRole.canAddAttendance) {
+        router.go(RedesignRoutes.event(attendanceId));
+      } else {
+        router.go(RedesignRoutes.events);
+      }
+    } catch (_) {}
+  }
+
+  @override
+  Future<void> openSharedOrgPlan(String id) async {
+    // Ionic reads shared_plans by id only (RLS: leader of an instance of the
+    // org). The server sends the activity to admins/responsibles of every
+    // instance of the org, so the currently selected instance may belong to
+    // another (or no) organisation: try the current organisation first, then
+    // every organisation of the user's admin/responsible instances
+    // (userOrganisationsProvider). Each read stays scoped by org_id.
+    final orgNames = <int, String>{};
+    try {
+      final current = await _ref.read(currentOrganisationProvider.future);
+      if (current?.id != null) orgNames[current!.id!] = current.name;
+    } catch (_) {}
+    try {
+      for (final org in await _ref.read(userOrganisationsProvider.future)) {
+        if (org.id != null) orgNames[org.id!] = org.name;
+      }
+    } catch (_) {}
     final repo = _ref.read(orgPlanRepositoryProvider);
     SharedPlan? sp;
-    for (final orgId in orgIds) {
-      sp = await repo.getAdHocOrgPlan(orgId, id);
-      if (sp != null) break;
+    String? orgName;
+    for (final entry in orgNames.entries) {
+      sp = await repo.getAdHocOrgPlan(entry.key, id);
+      if (sp != null) {
+        orgName = entry.value;
+        break;
+      }
     }
     if (sp == null || sp.fields.isEmpty) return;
     final entry = OrgPlanEntry.adHoc(sp);
     final context = _ref.read(routerProvider).routerDelegate.navigatorKey.currentContext;
     if (context == null || !context.mounted) return;
+    final l10n = context.l10n;
     await showPlanViewer(
       context,
       attendance: PlanAttendance(id: null, date: entry.date),
       plan: entry.plan,
       title: entry.title,
       defaultLive: true,
+      backLabel: l10n.rdOrgPlanBackClose,
+      originBadge: l10n.rdOrgBadgeAdHoc,
+      originHint: [
+        l10n.rdOrgPlanAdHocMeta,
+        if (orgName != null && orgName.isNotEmpty) orgName,
+      ].join(' · '),
     );
   }
 }

@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/debug_providers.dart';
+import '../../../../core/providers/organisation_providers.dart';
+import '../../../../core/providers/plan_providers.dart' show orgPlansProvider;
 import '../../../../core/providers/player_absence_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/role_permission_providers.dart';
@@ -36,25 +38,51 @@ import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../../../today/presentation/widgets/rd_today_common.dart';
 import '../../../../core/redesign/rd_dates.dart';
 import '../../data/rd_event_phase.dart' show rdEffectiveDurationDays;
+import '../../../organisation/presentation/widgets/rd_org_plans_ui.dart';
 import '../../../today/presentation/widgets/rd_duty_section.dart';
 
+/// Segments of the leader "Termine" tab; [orgPlans] is shown only when the
+/// group belongs to an organisation.
+enum RdEventsSegment { upcoming, past, orgPlans }
+
 /// REDESIGN: tab "Termine" (canvas D2 for Dirigent/Helfer/Beobachter, S2
-/// for Spieler). Kommend / Vergangen, filters, and for Spieler the answer
-/// right in the list. Eltern (old `/parents`) see their children's Termine
-/// in the same cards and answer per child.
+/// for Spieler). Kommend / Vergangen (plus Org-Pläne for org leads), filters,
+/// and for Spieler the answer right in the list. Eltern (old `/parents`) see
+/// their children's Termine in the same cards and answer per child.
 class RdEventsPage extends ConsumerStatefulWidget {
-  const RdEventsPage({super.key});
+  const RdEventsPage({super.key, this.initialSegment});
+
+  final RdEventsSegment? initialSegment;
 
   @override
   ConsumerState<RdEventsPage> createState() => _RdEventsPageState();
 }
 
 class _RdEventsPageState extends ConsumerState<RdEventsPage> {
-  bool _past = false;
+  late RdEventsSegment _segment = widget.initialSegment ?? RdEventsSegment.upcoming;
+  String? _lastRouteTab;
   String? _type;
   bool _searching = false;
   String _query = '';
   bool _onlyOpen = false;
+
+  bool get _past => _segment == RdEventsSegment.past;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final tab = GoRouter.maybeOf(context)
+        ?.routerDelegate
+        .currentConfiguration
+        .uri
+        .queryParameters['tab'];
+    if (tab != _lastRouteTab) {
+      _lastRouteTab = tab;
+      if (tab == 'org') {
+        _segment = RdEventsSegment.orgPlans;
+      }
+    }
+  }
 
   /// Thumb of Kommend / Vergangen while swiping the list.
   /// Notifier so only the segmented control rebuilds while swiping, not
@@ -107,6 +135,7 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
           await ref.read(childrenAttendancesProvider.future).catchError((_) => const <ChildPersonAttendance>[]);
         } else if (leader) {
           ref.read(attendanceRefetchCounter.notifier).state++;
+          if (_segment == RdEventsSegment.orgPlans) ref.invalidate(orgPlansProvider);
           if (ownInLeaderList) ref.invalidate(signoutDataProvider);
         } else {
           ref.invalidate(signoutDataProvider);
@@ -199,9 +228,24 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
 
   Widget _leaderBody(BuildContext context) {
     final l10n = context.l10n;
+    final role = ref.watch(effectiveRoleProvider);
+    final isOrgLead = role.isAdmin || role.isResponsible;
+    final org = isOrgLead ? ref.watch(currentOrganisationProvider).valueOrNull : null;
+    final showOrgSegment = org != null;
+    final segments = [
+      RdEventsSegment.upcoming,
+      RdEventsSegment.past,
+      if (showOrgSegment) RdEventsSegment.orgPlans,
+    ];
+    final active = !showOrgSegment && _segment == RdEventsSegment.orgPlans
+        ? RdEventsSegment.upcoming
+        : _segment;
+    final isPast = active == RdEventsSegment.past;
+    final isOrgTab = active == RdEventsSegment.orgPlans;
+
     final async = ref.watch(realtimeAttendanceListProvider);
     final all = async.valueOrNull;
-    if (all == null) {
+    if (all == null && !isOrgTab) {
       return async.hasError
           ? RdInfoCard(
               text: l10n.redesignTodayLoadFailed,
@@ -219,89 +263,119 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
     final allTypes = ref.watch(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[];
     final types = allTypes.where((t) => t.visible).toList();
     final typeById = {for (final t in allTypes) t.id: t};
-    final past = rdPast(all, types: allTypes);
+    final past = all == null ? const <Attendance>[] : rdPast(all, types: allTypes);
     final average = rdAveragePercentage(past);
-    final source = _past ? past : rdUpcoming(all, types: allTypes);
+    final source = all == null
+        ? const <Attendance>[]
+        : (isPast ? past : rdUpcoming(all, types: allTypes));
     final list = source.where((a) {
       if (_type != null && a.typeId != _type) return false;
       final info = rdEventInfo(a, typeById[a.typeId]);
       return _matches(info.title, a.place);
     }).toList();
-    final sections = rdGroupEvents(list, (a) => a.date, past: _past);
-    final counts = _past ? const <int, RdStatusCounts>{} : (ref.watch(rdUpcomingCountsProvider).valueOrNull ?? const {});
-    final role = ref.watch(effectiveRoleProvider);
+    final sections = rdGroupEvents(list, (a) => a.date, past: isPast);
+    final counts = isPast || isOrgTab
+        ? const <int, RdStatusCounts>{}
+        : (ref.watch(rdUpcomingCountsProvider).valueOrNull ?? const {});
     final canOpen = role.canAddAttendance;
-    final own = role.canSeeSelfServiceTab && !_past ? _ownByAttendance() : const <int, CrossTenantPersonAttendance>{};
+    final own = role.canSeeSelfServiceTab && !isPast && !isOrgTab
+        ? _ownByAttendance()
+        : const <int, CrossTenantPersonAttendance>{};
+
+    final pastLabel = showOrgSegment || average == null
+        ? l10n.redesignEventsPast
+        : l10n.redesignEventsPastAverage(average.round());
+
+    final Widget content = isOrgTab
+        ? RdOrgPlansSegmentBody(
+            query: _query,
+            sectionHeaderBuilder: (section) => _SectionLabel(section: section, past: false),
+          )
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (types.length > 1) ...[
+                const SizedBox(height: 12),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      RdChoiceChip(
+                        label: l10n.redesignCommonAll,
+                        selected: _type == null,
+                        onTap: () => setState(() => _type = null),
+                      ),
+                      for (final t in types) ...[
+                        const SizedBox(width: 8),
+                        RdChoiceChip(
+                          label: t.name,
+                          selected: _type == t.id,
+                          onTap: () => setState(() => _type = _type == t.id ? null : t.id),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ],
+              const SizedBox(height: 8),
+              if (sections.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: RdInfoCard(
+                    text: (all ?? const []).isEmpty
+                        ? l10n.redesignEventsEmpty
+                        : _query.isNotEmpty || _type != null
+                            ? l10n.redesignEventsNoMatch
+                            : (isPast ? l10n.redesignEventsNoPast : l10n.redesignTodayNoUpcoming),
+                    // The one "+" of the page creates the first Termin.
+                    icon: Icons.event_available_outlined,
+                  ),
+                ),
+              for (final section in sections) ...[
+                _SectionLabel(section: section, past: isPast),
+                for (final a in section.items)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: _LeaderEventCard(
+                      attendance: a,
+                      type: typeById[a.typeId],
+                      counts: a.id == null ? null : counts[a.id],
+                      own: a.id == null ? null : own[a.id],
+                      past: isPast,
+                      selected: a.id != null && RdSplitScope.of(context)?.selectedId == a.id,
+                      onTap: a.id != null && canOpen
+                          ? () => RdSplitScope.open(context, RedesignRoutes.event(a.id!))
+                          : null,
+                    ),
+                  ),
+              ],
+            ],
+          );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _segments(
-          context,
-          pastLabel: average == null
-              ? l10n.redesignEventsPast
-              : l10n.redesignEventsPastAverage(average.round()),
+        ValueListenableBuilder<double?>(
+          valueListenable: _swipePos,
+          builder: (context, pos, _) => RdSegmented<RdEventsSegment>(
+            values: segments,
+            selected: active,
+            position: pos,
+            labelOf: (s) => switch (s) {
+              RdEventsSegment.upcoming => l10n.redesignEventsUpcoming,
+              RdEventsSegment.past => pastLabel,
+              RdEventsSegment.orgPlans => l10n.rdOrgEventsTabOrgPlans,
+            },
+            onChanged: _setSegment,
+          ),
         ),
-        _swipe(Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            if (types.length > 1) ...[
-              const SizedBox(height: 12),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    RdChoiceChip(
-                      label: l10n.redesignCommonAll,
-                      selected: _type == null,
-                      onTap: () => setState(() => _type = null),
-                    ),
-                    for (final t in types) ...[
-                      const SizedBox(width: 8),
-                      RdChoiceChip(
-                        label: t.name,
-                        selected: _type == t.id,
-                        onTap: () => setState(() => _type = _type == t.id ? null : t.id),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-            ],
-            const SizedBox(height: 8),
-            if (sections.isEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 12),
-                child: RdInfoCard(
-                  text: all.isEmpty
-                      ? l10n.redesignEventsEmpty
-                      : _query.isNotEmpty || _type != null
-                          ? l10n.redesignEventsNoMatch
-                          : (_past ? l10n.redesignEventsNoPast : l10n.redesignTodayNoUpcoming),
-                  // The one "+" of the page creates the first Termin.
-                  icon: Icons.event_available_outlined,
-                ),
-              ),
-            for (final section in sections) ...[
-              _SectionLabel(section: section, past: _past),
-              for (final a in section.items)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: _LeaderEventCard(
-                    attendance: a,
-                    type: typeById[a.typeId],
-                    counts: a.id == null ? null : counts[a.id],
-                    own: a.id == null ? null : own[a.id],
-                    past: _past,
-                    selected: a.id != null && RdSplitScope.of(context)?.selectedId == a.id,
-                    onTap: a.id != null && canOpen
-                        ? () => RdSplitScope.open(context, RedesignRoutes.event(a.id!))
-                        : null,
-                  ),
-                ),
-            ],
-          ],
-        )),
+        RdSwipeSwitch<RdEventsSegment>(
+          values: segments,
+          selected: active,
+          onChanged: _setSegment,
+          onDrag: (pos) => _swipePos.value = pos,
+          child: content,
+        ),
       ],
     );
   }
@@ -319,10 +393,12 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
     };
   }
 
-  void _setPast(bool past) => setState(() {
-        _past = past;
+  void _setSegment(RdEventsSegment segment) => setState(() {
+        _segment = segment;
         _onlyOpen = false;
       });
+
+  void _setPast(bool past) => _setSegment(past ? RdEventsSegment.past : RdEventsSegment.upcoming);
 
   Widget _segments(BuildContext context, {required String pastLabel}) {
     final l10n = context.l10n;
@@ -709,9 +785,17 @@ class _LeaderEventCard extends StatelessWidget {
                     ],
                   ],
                 ),
-                if (meta.isNotEmpty) ...[
-                  const SizedBox(height: 2),
-                  Text(meta, style: RdType.meta(p, size: 13)),
+                if (meta.isNotEmpty || attendance.isOrgPlan) ...[
+                  const SizedBox(height: 3),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 4,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      if (meta.isNotEmpty) Text(meta, style: RdType.meta(p, size: 13)),
+                      if (attendance.isOrgPlan) RdOrgPill(l10n.rdOrgBadge, compact: true),
+                    ],
+                  ),
                 ],
                 if (!past && c != null && c.total > 0) ...[
                   const SizedBox(height: 8),

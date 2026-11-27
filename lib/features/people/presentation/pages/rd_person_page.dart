@@ -334,6 +334,10 @@ class _LeftDetails extends ConsumerWidget {
     final group = person.groupName ?? (person.instrument == null ? null : groups[person.instrument]);
     // Zusatzfelder with the organisation's values (shown once loaded).
     final additional = ref.watch(_leftFieldValuesProvider(person)).valueOrNull ?? const <String, dynamic>{};
+    final orgFieldIds = {
+      for (final f in ref.watch(personExtraFieldsProvider).valueOrNull ?? const [])
+        if (f.isOrganisationField) f.id,
+    };
     final pausedUntil = DateTime.tryParse(person.pausedUntil ?? '');
     // Internal note: only Admins and Verantwortliche (like _InfoList).
     final notes = role.isAdmin || role.isResponsible ? text(person.notes) : null;
@@ -358,7 +362,15 @@ class _LeftDetails extends ConsumerWidget {
       for (final f in ref.watch(personListExtraFieldsProvider))
         if (additional[f.id] != null)
           if (formatExtraFieldValue(additional, f, churchNames: churchNames).trim() case final v when v.isNotEmpty)
-            info(f.name, v),
+            orgFieldIds.contains(f.id)
+                ? RdListRow(
+                    title: f.name,
+                    subtitle: l10n.rdOrgFieldSharedHint,
+                    leading: RdOrgPill(l10n.rdOrgBadge, compact: true),
+                    value: v,
+                    showChevron: false,
+                  )
+                : info(f.name, v),
       if (notes != null) block(l10n.redesignPersonNotes, notes),
     ];
     if (rows.isEmpty) return const SizedBox.shrink();

@@ -11644,7 +11644,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdOrgBackSelection => 'Selection';
 
   @override
+  String get rdOrgBadge => 'ORG';
+
+  @override
+  String get rdOrgBadgeAdHoc => 'ORG plan';
+
+  @override
+  String rdOrgBadgeGroup(Object group) {
+    return 'ORG · $group';
+  }
+
+  @override
   String get rdOrgCreate => 'Create or link organisation';
+
+  @override
+  String get rdOrgEventsTabOrgPlans => 'Org plans';
 
   @override
   String get rdOrgFieldDelete => 'Delete field';
@@ -11658,6 +11672,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rdOrgFieldNew => 'New field';
+
+  @override
+  String get rdOrgFieldSharedHint =>
+      'Shared across all groups in your organisation';
 
   @override
   String get rdOrgFieldTypeFixed =>
@@ -11702,6 +11720,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdOrgGaNoKey => 'Not connected yet';
 
   @override
+  String get rdOrgGroupsManageOrg => 'Manage organisation';
+
+  @override
+  String get rdOrgGroupsOtherSection => 'Other groups';
+
+  @override
   String get rdOrgHandover => 'Hand over people';
 
   @override
@@ -11719,6 +11743,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String rdOrgHere(Object group) {
     return 'Here: $group';
+  }
+
+  @override
+  String rdOrgInOrgSubtitle(Object org) {
+    return 'in $org';
   }
 
   @override
@@ -11746,6 +11775,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rdOrgLinkPersonsHint => 'The same person in several groups';
+
+  @override
+  String get rdOrgLiveActivityOrgPlans => 'ORG plans of other groups';
+
+  @override
+  String get rdOrgLiveActivityOrgPlansHint =>
+      'Shows running ORG plans of other groups in your organisation on this device.';
 
   @override
   String get rdOrgMainGroup => 'Include main group';
@@ -11782,6 +11818,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rdOrgPersonFields => 'Shared custom fields';
+
+  @override
+  String get rdOrgPlanAdHocMeta => 'ORG plan without event';
+
+  @override
+  String get rdOrgPlanBackClose => 'Close';
+
+  @override
+  String get rdOrgPlanBackOrgPlans => 'Org plans';
+
+  @override
+  String rdOrgPlanSwitchGroup(Object group) {
+    return 'Open in “$group”';
+  }
 
   @override
   String rdOrgRequest(Object count) {
@@ -11831,6 +11881,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdOrgThisGroup => 'This group';
 
   @override
+  String get rdOrgTodayAllPlans => 'All org plans';
+
+  @override
+  String get rdOrgTodayEyebrow => 'Today in the organisation';
+
+  @override
+  String get rdOrgTodayLiveEyebrow => 'Live now · ORG plan';
+
+  @override
   String rdOrgTransfer(Object count) {
     return 'Hand over ($count)';
   }
@@ -11847,6 +11906,15 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get rdOrgWorksNoPermission =>
       'Only admins and leads of a group in an organisation can search works across the organisation.';
+
+  @override
+  String rdOrgWorksSearchInOrg(Object org) {
+    return 'Search in $org';
+  }
+
+  @override
+  String get rdOrgWorksSearchInOrgHint =>
+      'No match in this group. You can search across the other groups of your organisation.';
 
   @override
   String rdPeopleArchiveTitle(Object name) {

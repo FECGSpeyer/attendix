@@ -26,13 +26,24 @@ void main() {
       expect(repo, contains('extends BaseRepository with TenantAwareRepository'));
     });
 
-    test('attendance queries filter by tenantId', () {
+    test('attendance queries filter by tenantId and exclude archived', () {
       final q = queries(repo, 'attendance').toList();
       expect(q, isNotEmpty);
       for (final query in q) {
         expect(query, contains(".eq('tenantId', currentTenantId)"), reason: query);
+        expect(query, contains(".not('archived', 'is', true)"), reason: query);
         expect(query, contains(".not('plan', 'is', null)"));
       }
+      final orgRepo = readDartLibrary('lib/data/repositories/org_plan_repository.dart');
+      final orgLive = orgRepo.substring(orgRepo.indexOf('Future<List<OrgLiveAttendance>> getOrgLiveAttendancesBetween('));
+      expect(orgLive.substring(0, orgLive.indexOf('\n  }\n')), contains(".not('archived', 'is', true)"));
+    });
+
+    test('player attendance visibility query is scoped by person_id and currentTenantId', () {
+      final q = queries(repo, 'person_attendances').single;
+      expect(q, contains(".eq('person_id', personId)"));
+      expect(q, contains(".eq('attendance.tenantId', currentTenantId)"));
+      expect(q, contains(".inFilter('attendance_id', attendanceIds)"));
     });
 
     test('notifications are read by the user id only', () {
@@ -48,7 +59,7 @@ void main() {
     });
 
     test('every method uses handleError', () {
-      expect('handleError('.allMatches(repo).length, 4);
+      expect('handleError('.allMatches(repo).length, 5);
     });
 
     test('logout deletes only this device\'s tokens of the user (SOL_FIX15)', () {

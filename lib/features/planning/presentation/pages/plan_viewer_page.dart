@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/services/plan_export_service.dart';
+import '../../../../core/utils/live_plan.dart' show livePlanKey;
 import '../../../../data/models/attendance/attendance.dart' show AttendanceType;
 import '../../../../core/utils/plan_utils.dart';
 import '../../../../data/models/plan/plan.dart';
@@ -21,6 +22,11 @@ class PlanViewerPage extends ConsumerStatefulWidget {
     this.plan,
     this.title,
     this.defaultLive = false,
+    this.initialPlanKey,
+    this.backLabel,
+    this.originBadge,
+    this.originHint,
+    this.openInGroupAction,
     this.onEdit,
     this.fieldWarning,
     this.songAction,
@@ -33,6 +39,21 @@ class PlanViewerPage extends ConsumerStatefulWidget {
   final Plan? plan;
   final String? title;
   final bool defaultLive;
+
+  /// Optional plan key (e.g. from a Live Activity deep link) to open directly.
+  final String? initialPlanKey;
+
+  /// Custom back link label (defaults to "Termin").
+  final String? backLabel;
+
+  /// Prominent ORG / group origin badge shown above the metadata (e.g. "ORG · Jugendchor").
+  final String? originBadge;
+
+  /// Optional secondary origin note (e.g. "ORG-Plan ohne Termin · FECG Speyer").
+  final String? originHint;
+
+  /// Optional action to switch to the owning group (for cross-tenant Live Activities).
+  final ({String label, VoidCallback onTap})? openInGroupAction;
 
   /// Shows an edit button; called with the index of the shown plan.
   final void Function(int planIndex)? onEdit;
@@ -60,7 +81,11 @@ class _PlanViewerPageState extends ConsumerState<PlanViewerPage> {
     if (widget.plan == null && all.length > 1) {
       _plans = all;
       _labels = [for (var i = 0; i < all.length; i++) PlanUtils.planLabel(att, i, all)];
-      _index = PlanUtils.todayPlanIndex(att);
+      final requestedKey = widget.initialPlanKey;
+      final matched = requestedKey == null
+          ? -1
+          : all.indexWhere((p) => livePlanKey(p) == requestedKey);
+      _index = matched >= 0 ? matched : PlanUtils.todayPlanIndex(att);
       final d = PlanUtils.planDate(att, _index, all);
       final now = DateTime.now();
       _todayIndex = d != null && d.year == now.year && d.month == now.month && d.day == now.day ? _index : -1;
@@ -174,7 +199,10 @@ class _PlanViewerPageState extends ConsumerState<PlanViewerPage> {
         Row(
           children: [
             Expanded(
-              child: RdBackLink(label: l10n.redesignPlanBack, onTap: () => Navigator.of(context).maybePop()),
+              child: RdBackLink(
+                label: widget.backLabel ?? l10n.redesignPlanBack,
+                onTap: () => Navigator.of(context).maybePop(),
+              ),
             ),
             if (widget.onEdit != null) ...[
               RdCircleButton(
@@ -199,10 +227,32 @@ class _PlanViewerPageState extends ConsumerState<PlanViewerPage> {
           ],
         ),
         const SizedBox(height: 4),
+        if (widget.originBadge != null && widget.originBadge!.isNotEmpty) ...[
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: RdOrgPill(widget.originBadge!, key: const Key('rd-plan-view-origin')),
+          ),
+          const SizedBox(height: 8),
+        ],
         Semantics(header: true, child: Text(_title, style: RdType.title(p))),
         if (meta.isNotEmpty) ...[
           const SizedBox(height: 4),
           Text(meta, style: RdType.meta(p, size: 15)),
+        ],
+        if (widget.originHint != null && widget.originHint!.isNotEmpty) ...[
+          const SizedBox(height: 2),
+          Text(widget.originHint!, style: RdType.meta(p, size: 13)),
+        ],
+        if (widget.openInGroupAction != null) ...[
+          const SizedBox(height: 10),
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: RdTextLink(
+              key: const Key('rd-plan-view-switch-group'),
+              label: widget.openInGroupAction!.label,
+              onTap: widget.openInGroupAction!.onTap,
+            ),
+          ),
         ],
         if (_labels.isNotEmpty) ...[
           const SizedBox(height: 16),
@@ -259,6 +309,11 @@ Future<void> showPlanViewer(
   Plan? plan,
   String? title,
   bool defaultLive = false,
+  String? initialPlanKey,
+  String? backLabel,
+  String? originBadge,
+  String? originHint,
+  ({String label, VoidCallback onTap})? openInGroupAction,
   void Function(int planIndex)? onEdit,
   String? Function(PlanField field)? fieldWarning,
   VoidCallback? Function(PlanField field)? songAction,
@@ -269,6 +324,11 @@ Future<void> showPlanViewer(
           plan: plan,
           title: title,
           defaultLive: defaultLive,
+          initialPlanKey: initialPlanKey,
+          backLabel: backLabel,
+          originBadge: originBadge,
+          originHint: originHint,
+          openInGroupAction: openInGroupAction,
           onEdit: onEdit,
           fieldWarning: fieldWarning,
           songAction: songAction,

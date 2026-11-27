@@ -23,7 +23,7 @@ Leitung nicht.
 | [Mitteilungen](#mitteilungen) | L-40 bis L-42 |
 | [Auswertung](#auswertung) | L-43 bis L-45 |
 | [Gruppe einrichten](#gruppe-einrichten) | L-46 bis L-58 |
-| [Organisation](#organisation) | L-59 bis L-60 |
+| [Organisation](#organisation) | L-59 bis L-60, L-66 bis L-67 |
 | [Team](#team) | L-61 bis L-63 |
 | [Dienste](#dienste) | L-64 |
 
@@ -775,7 +775,7 @@ Felder sind Sache der Administratoren: siehe [A-04 bis A-07](admin.md).
 
 ### L-59 Personen an eine andere Gruppe übergeben
 
-- **Wo:** Verwaltung › „Organisation“ › „Personen übergeben“
+- **Wo:** Reiter „Mitglieder“ › ••• › „Personen übergeben“ (oder Verwaltung › „Organisation“ › „Personen übergeben“)
 - **Schritte:**
   1. Wähle die „Ziel-Gruppe“.
   2. Entscheide bei „Was passiert hier mit den Personen?“: „Bleiben auch hier“
@@ -797,6 +797,32 @@ Felder sind Sache der Administratoren: siehe [A-04 bis A-07](admin.md).
   1. Lade ein Logo hoch (höchstens 2 MB) und trag einen „Branding-Text“ ein.
 - **Ergebnis:** Logo und Text stehen dezent auf exportierten Plänen und
   Listen, für alle Gruppen der Organisation.
+
+### L-66 Org-Pläne im Alltag mitverfolgen
+
+- **Wo:** Reiter „Termine“ › „Org-Pläne“, am Tag des Plans auf „Heute“ oder am
+  Computer in der Seitenleiste unter „Org-Pläne“
+- **Voraussetzung:** Die Gruppe gehört zu einer Organisation.
+- **Schritte:**
+  1. Öffne unter „Termine“ das Segment „Org-Pläne“ oder tippe auf „Heute“ auf
+     die hervorgehobene Karte der Organisation.
+  2. Jeder Eintrag ist klar mit „ORG“ bzw. „ORG-Plan“ gekennzeichnet; eigene
+     Termine mit aktivem Organisationsplan tragen ebenfalls ein „ORG“-Zeichen.
+  3. Tippe auf einen Plan, um ihn im Live-Modus anzusehen. Oben steht immer, aus
+     welcher Gruppe oder ob er als „ORG-Plan ohne Termin“ stammt.
+- **Ergebnis:** Org-Pläne sind ohne Umweg über die Verwaltung nutzbar und lassen
+  sich nie mit normalen Terminen der eigenen Gruppe verwechseln.
+
+### L-67 Live Activities für Org-Pläne anderer Gruppen steuern
+
+- **Wo:** Ich › „Benachrichtigungen“ › „Laufender Ablaufplan“ › „ORG-Pläne anderer Gruppen“
+- **Voraussetzung:** App aus dem App Store / Play Store und Leitungsrolle in
+  einer Gruppe mit Organisation.
+- **Schritte:**
+  1. Schalte „ORG-Pläne anderer Gruppen“ ein oder aus.
+- **Ergebnis:** Ausgeschaltet zeigt dieses Gerät nur noch Live Activities der
+  eigenen Gruppe; eingeschaltet erscheinen auch laufende Org-Pläne anderer
+  Gruppen mit klarer „ORG“-Kennzeichnung.
 
 ---
 

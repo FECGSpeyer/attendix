@@ -69,7 +69,7 @@ Die Seite listet die Rollen. Jede Zeile öffnet die Seite der Rolle:
 | Eintrag | Wofür | Erscheint | Szenario |
 |---------|-------|-----------|----------|
 | „Name und Kürzel“ | Wie die Gruppe heißt, Kürzel für Dateinamen | immer | L-57 |
-| „Organisation“ | Gruppenübergreifend: Personen, Branding, Vorlagen, Org-Pläne | immer | L-59, L-60, A-04 bis A-09 |
+| „Organisation“ | Gruppenübergreifend: Personen, Branding, Vorlagen, Org-Pläne | immer | L-59, L-60, L-66, L-67, A-04 bis A-09 |
 | „Werke öffentlich teilen“ | Werkliste per Link, ohne Anmeldung | nur in allgemeinen Gruppen hier, sonst im Reiter „Werke“ | L-37 |
 
 ### Noch nicht genutzt
@@ -96,7 +96,7 @@ findet sie und nennt den Ort.
 | „Urkunden“ | in der „Auswertung“, nur in Vorkurs-Gruppen | |
 | „Branding“ | in „Organisation“ | L-60 |
 | „Planvorlagen & Felder“ | in „Organisation“ | |
-| „Org-Pläne“ | in „Organisation“ | |
+| „Org-Pläne“ | Reiter „Termine“ › „Org-Pläne“, auf „Heute“ und in „Organisation“ | L-66 |
 | „Admins“, „Eltern“, „Beobachter“ | in „Rollen und Rechte“ | A-01, L-54, L-55 |
 | „Kalender abonnieren“ | unter „Ich“ | M-28 |
 | „Team“ | unter „Ich“, wenn die Teamorganisation an ist | L-61 bis L-63 |
@@ -167,7 +167,7 @@ Bestehende Termine behalten sie, und „Wiederherstellen“ holt sie zurück.
 | Mitteilung schreiben | L-40 |
 | Noten hochladen | L-30, L-34 |
 | Noten öffnen | M-17, M-20, M-21 |
-| Organisation | L-59, L-60, A-04 bis A-09 |
+| Organisation | L-59, L-60, L-66, L-67, A-04 bis A-09 |
 | Passwort | M-33, N-03 |
 | Pausieren | M-13, L-23 |
 | Problemfälle | L-27, L-49 |

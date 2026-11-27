@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/enums.dart';
+import '../../../core/providers/debug_providers.dart';
+import '../../../core/providers/organisation_providers.dart';
 import '../../../core/providers/tenant_providers.dart';
 import '../../../core/providers/user_preferences_provider.dart';
 import '../../../core/router/redesign_routes.dart';
@@ -159,6 +161,17 @@ class _RdGroupSwitchSheetState extends ConsumerState<_RdGroupSwitchSheet> {
     if (rootContext.mounted) showRdJoinSheet(rootContext);
   }
 
+  /// "Organisation verwalten" directly from the group switcher (leads only).
+  Future<void> _openOrganisation() async {
+    final navigator = Navigator.of(context);
+    final sheet = ModalRoute.of(context);
+    final router = GoRouter.of(context);
+    final guards = ref.read(routeLeaveGuardRegistryProvider);
+    if (guards.hasGuards && !await guards.canLeave()) return;
+    if (sheet != null && sheet.isCurrent) navigator.pop();
+    router.push('/settings/org-settings');
+  }
+
   /// "Neue Gruppe gründen": like "Gruppen verwalten", a page with unsaved
   /// input or a running save is asked first.
   Future<void> _create() async {
@@ -177,6 +190,36 @@ class _RdGroupSwitchSheetState extends ConsumerState<_RdGroupSwitchSheet> {
     final l10n = context.l10n;
     final tenants = ref.watch(userTenantsProvider);
     final current = ref.watch(currentTenantProvider);
+    final org = ref.watch(currentOrganisationProvider).valueOrNull;
+    final linkedIds = {
+      if (current?.id != null) current!.id!,
+      for (final t in ref.watch(linkedTenantsProvider).valueOrNull ?? const <Tenant>[])
+        if (t.id != null) t.id!,
+    };
+    final role = ref.watch(effectiveRoleProvider);
+    final isOrgLead = role.isAdmin || role.isResponsible;
+
+    Widget tenantRow(Tenant t) => RdListRow(
+          leading: RdInitials(
+            rdInitialsOf(t.shortName.isNotEmpty ? t.shortName : t.longName),
+            size: 40,
+            square: true,
+          ),
+          title: t.longName.isNotEmpty ? t.longName : t.shortName,
+          subtitle: profileRoleName(Role.fromValue(t.role ?? 99)),
+          selected: t.id == current?.id,
+          showChevron: false,
+          trailing: _switchingTo == t.id
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : t.id == current?.id
+              ? Icon(Icons.check_circle, color: p.primary)
+              : null,
+          onTap: _switchingTo == null ? () => _switch(t) : null,
+        );
 
     return PopScope(
       canPop: _switchingTo == null,
@@ -223,34 +266,37 @@ class _RdGroupSwitchSheetState extends ConsumerState<_RdGroupSwitchSheet> {
                               padding: const EdgeInsets.all(16),
                               child: Text(l10n.redesignGroupsLoadFailed, style: RdType.meta(p)),
                             ),
-                        data:
-                            (list) => RdGroupedList(
-                              children: [
-                                for (final t in list)
-                                  RdListRow(
-                                    leading: RdInitials(
-                                      rdInitialsOf(t.shortName.isNotEmpty ? t.shortName : t.longName),
-                                      size: 40,
-                                      square: true,
+                        data: (list) {
+                          if (org == null) {
+                            return RdGroupedList(children: [for (final t in list) tenantRow(t)]);
+                          }
+                          final inOrg = [for (final t in list) if (t.id != null && linkedIds.contains(t.id)) t];
+                          final outside = [for (final t in list) if (t.id == null || !linkedIds.contains(t.id)) t];
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Row(
+                                children: [
+                                  RdOrgPill(org.name, compact: true),
+                                  const Spacer(),
+                                  if (isOrgLead)
+                                    RdTextLink(
+                                      key: const Key('rd-group-switch-org'),
+                                      label: l10n.rdOrgGroupsManageOrg,
+                                      onTap: _switchingTo == null ? _openOrganisation : () {},
                                     ),
-                                    title: t.longName.isNotEmpty ? t.longName : t.shortName,
-                                    subtitle: profileRoleName(Role.fromValue(t.role ?? 99)),
-                                    selected: t.id == current?.id,
-                                    showChevron: false,
-                                    trailing:
-                                        _switchingTo == t.id
-                                            ? const SizedBox(
-                                              width: 20,
-                                              height: 20,
-                                              child: CircularProgressIndicator(strokeWidth: 2),
-                                            )
-                                            : t.id == current?.id
-                                            ? Icon(Icons.check_circle, color: p.primary)
-                                            : null,
-                                    onTap: _switchingTo == null ? () => _switch(t) : null,
-                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              RdGroupedList(children: [for (final t in inOrg) tenantRow(t)]),
+                              if (outside.isNotEmpty) ...[
+                                const SizedBox(height: 14),
+                                RdGroupLabel(l10n.rdOrgGroupsOtherSection),
+                                RdGroupedList(children: [for (final t in outside) tenantRow(t)]),
                               ],
-                            ),
+                            ],
+                          );
+                        },
                       ),
                       const SizedBox(height: 12),
                       // REDESIGN (E1): join and found right here, not only via the

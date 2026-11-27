@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/constants/enums.dart';
 import '../models/plan/plan.dart';
 import 'base_repository.dart';
 
@@ -26,13 +27,14 @@ class LiveActivityRepository extends BaseRepository with TenantAwareRepository {
   LiveActivityRepository(super.ref);
 
   /// Termine of the current tenant with a plan whose date lies in
-  /// [[from], [to]] (Ionic `runningPlans` query).
+  /// [[from], [to]] (Ionic `runningPlans` query), excluding archived Termine.
   Future<List<PlanAttendance>> getPlanAttendancesBetween(DateTime from, DateTime to) async {
     try {
       final response = await supabase
           .from('attendance')
           .select(liveActivityAttendanceColumns)
           .eq('tenantId', currentTenantId)
+          .not('archived', 'is', true)
           .gte('date', from.toUtc().toIso8601String())
           .lte('date', to.toUtc().toIso8601String())
           .not('plan', 'is', null);
@@ -42,6 +44,52 @@ class LiveActivityRepository extends BaseRepository with TenantAwareRepository {
           .toList();
     } catch (e, stack) {
       handleError(e, stack, 'getPlanAttendancesBetween');
+      rethrow;
+    }
+  }
+
+  /// Attendance IDs from [attendanceIds] (already scoped to [currentTenantId])
+  /// that a player may receive Live Activities for: when [showAllAttendances]
+  /// is false, only Termine with an own `person_attendances` row; in both cases
+  /// Termine where the player signed out (excused/absent) are excluded.
+  Future<Set<int>> getPlayerVisibleAttendanceIds(
+    int personId,
+    List<int> attendanceIds, {
+    required bool showAllAttendances,
+  }) async {
+    if (attendanceIds.isEmpty) return const {};
+    try {
+      // SEC: attendanceIds belong to currentTenantId; additionally scoped to
+      // person_id and inner-joined attendance.tenantId = currentTenantId.
+      final response = await supabase
+          .from('person_attendances')
+          .select('attendance_id, status, attendance:attendance_id!inner(tenantId)')
+          .eq('person_id', personId)
+          .eq('attendance.tenantId', currentTenantId)
+          .inFilter('attendance_id', attendanceIds);
+
+      final own = <int>{};
+      final signedOut = <int>{};
+      for (final raw in response as List) {
+        final row = raw as Map<String, dynamic>;
+        final attId = (row['attendance_id'] as num?)?.toInt();
+        if (attId == null) continue;
+        own.add(attId);
+        final statusVal = (row['status'] as num?)?.toInt();
+        final status = statusVal == null ? AttendanceStatus.neutral : AttendanceStatus.fromValue(statusVal);
+        if (status == AttendanceStatus.excused || status == AttendanceStatus.absent) {
+          signedOut.add(attId);
+        }
+      }
+      if (showAllAttendances) {
+        return {
+          for (final id in attendanceIds)
+            if (!signedOut.contains(id)) id,
+        };
+      }
+      return own.difference(signedOut);
+    } catch (e, stack) {
+      handleError(e, stack, 'getPlayerVisibleAttendanceIds');
       rethrow;
     }
   }

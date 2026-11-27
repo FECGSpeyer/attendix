@@ -10,6 +10,7 @@ import '../../../../../core/providers/church_providers.dart';
 import '../../../../../core/providers/debug_providers.dart' show effectiveRoleProvider;
 import '../../../../../core/providers/group_providers.dart';
 import '../../../../../core/providers/parent_providers.dart';
+import '../../../../../core/providers/profile_providers.dart' show personExtraFieldsProvider;
 import '../../../../../core/providers/shift_providers.dart';
 import '../../../../../core/providers/teacher_providers.dart';
 import '../../../../../core/providers/tenant_providers.dart';
@@ -538,6 +539,10 @@ class _RdPersonMoreFieldsState extends ConsumerState<RdPersonMoreFields> {
     ];
 
     final extraFields = personExtraFields(ref, tenant);
+    final orgFieldIds = {
+      for (final f in ref.watch(personExtraFieldsProvider).valueOrNull ?? const [])
+        if (f.isOrganisationField) f.id,
+    };
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -582,21 +587,59 @@ class _RdPersonMoreFieldsState extends ConsumerState<RdPersonMoreFields> {
         if (extraFields.isNotEmpty) ...[
           const SizedBox(height: 20),
           RdGroupLabel(l10n.peopleExtraFields),
-          RdGroupedList(children: [for (final f in extraFields) _extraRow(f)]),
+          RdGroupedList(children: [
+            for (final f in extraFields) _extraRow(f, isOrgField: orgFieldIds.contains(f.id)),
+          ]),
         ],
       ],
     );
   }
 
-  Widget _extraRow(ExtraField field) {
+  Widget _extraRow(ExtraField field, {bool isOrgField = false}) {
     final l10n = context.l10n;
     final value = widget.additionalValues[field.id];
+    final orgHint = isOrgField ? l10n.rdOrgFieldSharedHint : null;
+    Widget wrapOrgField(Widget child) {
+      if (!isOrgField) return child;
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          child,
+          Padding(
+            padding: const EdgeInsets.fromLTRB(14, 0, 14, 10),
+            child: Row(
+              children: [
+                RdOrgPill(l10n.rdOrgBadge, compact: true),
+                const SizedBox(width: 8),
+                Expanded(child: Text(l10n.rdOrgFieldSharedHint, style: RdType.meta(context.rd, size: 12))),
+              ],
+            ),
+          ),
+        ],
+      );
+    }
+
     switch (field.type) {
       case 'boolean':
-        return _switchRow(field.name, value == true, (v) => widget.onExtra(field.id, v));
+        return isOrgField
+            ? RdListRow(
+                title: field.name,
+                subtitle: orgHint,
+                leading: RdOrgPill(l10n.rdOrgBadge, compact: true),
+                showChevron: false,
+                trailing: Switch.adaptive(
+                  value: value == true,
+                  activeTrackColor: context.rd.primary,
+                  onChanged: (v) => widget.onExtra(field.id, v),
+                ),
+                onTap: () => widget.onExtra(field.id, value != true),
+              )
+            : _switchRow(field.name, value == true, (v) => widget.onExtra(field.id, v));
       case 'date':
         return RdListRow(
           title: field.name,
+          subtitle: orgHint,
+          leading: isOrgField ? RdOrgPill(l10n.rdOrgBadge, compact: true) : null,
           value: _date(value?.toString()),
           onTap: () async {
             final picked = await showAppDatePicker(
@@ -612,6 +655,8 @@ class _RdPersonMoreFieldsState extends ConsumerState<RdPersonMoreFields> {
         final options = field.options ?? const <String>[];
         return RdListRow(
           title: field.name,
+          subtitle: orgHint,
+          leading: isOrgField ? RdOrgPill(l10n.rdOrgBadge, compact: true) : null,
           value: value?.toString().isNotEmpty == true ? value.toString() : l10n.redesignPersonFormNotSet,
           onTap: options.isEmpty
               ? null
@@ -624,6 +669,8 @@ class _RdPersonMoreFieldsState extends ConsumerState<RdPersonMoreFields> {
         final churches = ref.watch(churchesProvider).valueOrNull ?? const [];
         return RdListRow(
           title: field.name,
+          subtitle: orgHint,
+          leading: isOrgField ? RdOrgPill(l10n.rdOrgBadge, compact: true) : null,
           value: churchLabel(value, churches),
           onTap: () async {
             final selected = await showChurchPickerSheet(
@@ -636,7 +683,7 @@ class _RdPersonMoreFieldsState extends ConsumerState<RdPersonMoreFields> {
           },
         );
       case 'number':
-        return RdFieldRow(
+        return wrapOrgField(RdFieldRow(
           label: field.name,
           child: TextField(
             key: Key('rd-person-extra-${field.id}'),
@@ -646,10 +693,10 @@ class _RdPersonMoreFieldsState extends ConsumerState<RdPersonMoreFields> {
             decoration: rdInputDecoration(context.rd, ''),
             onChanged: (v) => widget.onExtra(field.id, parseExtraFieldNumber(v), typing: true),
           ),
-        );
+        ));
       case 'text':
       case 'textarea':
-        return RdFieldRow(
+        return wrapOrgField(RdFieldRow(
           label: field.name,
           child: TextField(
             key: Key('rd-person-extra-${field.id}'),
@@ -661,7 +708,7 @@ class _RdPersonMoreFieldsState extends ConsumerState<RdPersonMoreFields> {
             decoration: rdInputDecoration(context.rd, ''),
             onChanged: (v) => widget.onExtra(field.id, v, typing: true),
           ),
-        );
+        ));
       default:
         return const SizedBox.shrink();
     }

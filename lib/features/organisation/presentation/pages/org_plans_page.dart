@@ -37,18 +37,39 @@ String orgPlanDate(String date) {
 
 String orgPlanPoints(int count) => l10nWithoutContext.plansPoints(count);
 
-/// Opens an org plan entry in the plan viewer (live by default on its day).
-Future<void> openOrgPlanEntry(BuildContext context, OrgPlanEntry entry) {
+/// Opens an org plan entry in the plan viewer (live by default on its day),
+/// always displaying its ORG / group origin and matching back link label.
+Future<void> openOrgPlanEntry(
+  BuildContext context,
+  OrgPlanEntry entry, {
+  String? backLabel,
+  String? orgName,
+}) {
+  final l10n = context.l10n;
   final d = entry.dateTime;
   final now = DateTime.now();
   final isToday = d != null && d.year == now.year && d.month == now.month && d.day == now.day;
   final att = entry.attendance ?? PlanAttendance(id: null, date: entry.date);
+  final badge = entry.isAdHoc
+      ? l10n.rdOrgBadgeAdHoc
+      : entry.tenantLabel.isNotEmpty
+          ? l10n.rdOrgBadgeGroup(entry.tenantLabel)
+          : l10n.rdOrgBadge;
+  final hint = entry.isAdHoc
+      ? [
+          l10n.rdOrgPlanAdHocMeta,
+          if (orgName != null && orgName.isNotEmpty) orgName,
+        ].join(' · ')
+      : (orgName != null && orgName.isNotEmpty ? orgName : null);
   return showPlanViewer(
     context,
     attendance: att,
     plan: entry.plan,
     title: entry.title,
     defaultLive: isToday,
+    backLabel: backLabel ?? l10n.rdOrgPlanBackOrgPlans,
+    originBadge: badge,
+    originHint: hint,
   );
 }
 
