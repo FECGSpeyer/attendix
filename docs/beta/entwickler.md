@@ -46,20 +46,24 @@ Rollen. Beim Speichern gilt: Was die App speichert (z. B. über
 lib/
 ├── core/
 │   ├── providers/redesign_providers.dart   # Farbwelt, Hell/Dunkel, App-Icon
+│   ├── redesign/                           # rd_words.dart, rd_dates.dart, rd_roles_logic.dart, …
 │   ├── router/redesign_routes.dart         # Routen und Rollenprüfung
 │   └── theme/redesign/                     # rd_palette.dart, rd_theme.dart
-├── features/redesign/
-│   ├── data/                               # rd_*_logic.dart, rd_words.dart, …
-│   │   └── providers/                      # Bereichs-Provider
+├── shared/
+│   ├── shell/                              # Rahmen, Reiter, Seitenleiste (RdShell)
+│   └── widgets/redesign/                   # rd_widgets.dart, primitives/, Split-View, Übersicht
+├── features/<domäne>/                      # Feature-First: today/, attendance/, people/, songs/,
+│   ├── data/                               # rd_*_logic.dart & Bereichs-Provider (data/providers/)
 │   └── presentation/
-│       ├── shell/                          # Rahmen, Reiter, Seitenleiste
 │       ├── pages/                          # eine Datei je Seite: rd_*_page.dart
-│       └── widgets/                        # rd_widgets.dart und Bausteine je Bereich
+│       └── widgets/                        # Bereichs-Widgets
 └── l10n/fragments/                         # Texte, eine Datei je Bereich
 ```
 
-Seiten im Ordner `features/redesign/` tragen weiterhin die Vorsilbe `rd_`
-(Dateien) und `Rd` (Klassen).
+Seiten und Bausteine des aktuellen Designs tragen weiterhin die Vorsilbe `rd_`
+(Dateien) und `Rd` (Klassen), liegen aber direkt in ihrer jeweiligen Fachdomäne
+(z. B. `features/today/`, `features/attendance/`, `features/people/`,
+`features/songs/`, `features/settings/`, `features/profile/`, `features/statistics/`).
 
 ## Routen und Weiterleitungen
 
@@ -82,7 +86,7 @@ Seiten im Ordner `features/redesign/` tragen weiterhin die Vorsilbe `rd_`
 
 ## Rahmen, Reiter und Breiten
 
-`lib/features/redesign/presentation/shell/`
+`lib/shared/shell/`
 
 - `rdDestinationsFor(role, …)` in `rd_destinations.dart` ist die eine Stelle,
   die festlegt, welche Reiter eine Rolle sieht. Die Tabelle dazu steht unter
@@ -121,7 +125,7 @@ Rechte kommen aus den vorhandenen Abfragen in
 Dazu kommen die Schalter der Gruppe aus
 `lib/core/providers/role_permission_providers.dart` (zum Beispiel, ob Helfer
 Termine anlegen dürfen). Welche Einträge die Verwaltung zeigt, entscheidet
-`rdManageVisible()` in `data/rd_manage_logic.dart`.
+`rdManageVisible()` in `lib/features/settings/data/rd_manage_logic.dart`.
 
 Die Rechte in der App sind Komfort. Die Datenbank setzt sie mit ihren eigenen
 Regeln durch, und jede Abfrage filtert nach `tenantId` (siehe `CLAUDE.md`).
@@ -133,13 +137,13 @@ Regeln durch, und jede Abfrage filtert nach `tenantId` (siehe `CLAUDE.md`).
   Dunkel. Farben werden nie fest in eine Seite geschrieben.
 - **Schrift:** `RdType` hat die Textstufen (`largeTitle`, `title`,
   `cardTitle`, `section`, `body`, `meta`, `eyebrow`).
-- **Widgets:** `presentation/widgets/rd_widgets.dart` enthält die Bausteine,
+- **Widgets:** `lib/shared/widgets/redesign/rd_widgets.dart` (mit `primitives/`) enthält die Bausteine,
   aus denen jede Seite besteht: `RdPage`, `RdCard`, `RdGroupedList`,
   `RdListRow`, `RdSwitchRow`, `RdGroupLabel`, `RdSectionHeader`,
   `RdPrimaryButton`, `RdOutlineButton`, `RdPill`, `RdSegmented`,
   `RdChoiceChip`, `RdChipScroller`, `RdBackLink`, `RdHintBox` und weitere.
 - **Seitenvorlagen:** Listen der Verwaltung nutzen
-  `widgets/manage/rd_manage_list.dart` (Rücklink zur Verwaltung, großer Titel,
+  `lib/features/settings/presentation/widgets/manage/rd_manage_list.dart` (Rücklink zur Verwaltung, großer Titel,
   ein Satz Erklärung, gruppierte Liste, Plus, •••). Die Vorlage zeigt nur. Laden,
   Speichern und Rechte bleiben bei der Seite.
 - **Theme & Tokens:** `context.rd` liefert die `RdPalette`, `buildRdTheme(...)`
@@ -180,10 +184,11 @@ Leitlinien für neue Seiten:
 ## Logik und Daten
 
 - Was sich ohne Oberfläche entscheiden lässt, liegt als reine Funktion in
-  `features/redesign/data/rd_*_logic.dart` (zum Beispiel
-  `rd_manage_logic.dart`, `rd_event_logic.dart`, `rd_critical_logic.dart`).
-  Diese Dateien haben keine Widgets und lassen sich direkt testen.
-- Provider nur für die Beta liegen in `features/redesign/data/providers/`. Sie
+  `features/<domäne>/data/rd_*_logic.dart` (zum Beispiel
+  `settings/data/rd_manage_logic.dart`, `attendance/data/rd_event_logic.dart`,
+  `people/data/rd_critical_logic.dart`) bzw. bereichsübergreifend in
+  `lib/core/redesign/`. Diese Dateien haben keine Widgets und lassen sich direkt testen.
+- Bereichs-Provider liegen in `features/<domäne>/data/providers/`. Sie
   bauen auf den Repositories mit Tenant auf
   (`…RepositoryWithTenantProvider`), nicht auf eigenen Abfragen.
 - `rd_event_phase.dart` bestimmt die Phase eines Termins (davor, am Tag,

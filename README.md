@@ -86,9 +86,22 @@ Die Projektordner `windows/` und `linux/` existieren (`flutter build windows` bz
 ## Entwicklung
 
 ```bash
-dart analyze lib/     # Code analysieren
-flutter test          # Tests
+# Code analysieren (wie in CI)
+dart analyze lib/ test/ tool/ scripts/ integration_test/ patrol_test/ test_driver/ --fatal-infos --fatal-warnings
+
+# Tests ausführen
+flutter test
 ```
+
+### Projektstruktur
+
+- `lib/core/` – Konfiguration, Provider, Router, Services, Theme & gemeinsame Redesign-Helfer (`core/redesign/`)
+- `lib/data/` – Freezed-Models und Mandanten-Repositories (`data/repositories/`)
+- `lib/features/` – Feature-First-Domänen (`today`, `attendance`, `people`, `songs`, `settings`, `planning`, `team_organization`, `assistant`, `profile`, `statistics`, …)
+- `lib/shared/` – App-Shell (`shared/shell/`) und Design-System-Bausteine (`shared/widgets/redesign/`, `shared/widgets/adaptive/`)
+- `test/`, `integration_test/`, `patrol_test/` – Unit-, Widget-, Security- und E2E-Tests
+- `supabase/`, `functions/`, `deploy/` – Edge Functions, SQL, Cloudflare Function und VPS-Setup
+- `tool/`, `scripts/` – Entwickler-, Release- und Store-/Xcode-Cloud-Skripte
 
 Weitere Hinweise für Entwickler stehen in [CLAUDE.md](CLAUDE.md).
 

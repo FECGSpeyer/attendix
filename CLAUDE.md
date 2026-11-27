@@ -13,11 +13,20 @@
 
 ```
 lib/
-├── core/           # Shared: providers, router, theme, utils
+├── core/           # Shared: config, constants, providers, redesign, router, services, theme, utils
 ├── data/           # Models (Freezed) + Repositories (Supabase)
-├── features/       # Feature-Module: presentation/pages/
-└── shared/         # Wiederverwendbare Widgets
+├── features/       # Feature-First-Module (today, attendance, people, songs, settings, planning, …)
+│   └── <feature>/  #   data/ (Logik & Provider) + presentation/ (pages/, widgets/)
+├── l10n/           # Übersetzungen (fragments/ + generated/)
+└── shared/         # App-Shell (shell/) + wiederverwendbare Widgets (widgets/redesign/, widgets/adaptive/, …)
 ```
+
+Top-Level-Ordner außerhalb von `lib/`:
+- `test/`, `integration_test/`, `patrol_test/` – Unit-, Widget-, Security- und E2E-Tests (`test/helpers/source_reader.dart` folgt `part`-Dateien automatisch)
+- `supabase/`, `functions/`, `deploy/` – Edge Functions, SQL-Migrationen, Cloudflare Pages Function & VPS-Deployment
+- `tool/` – Entwickler- & CI-Werkzeuge (i18n, Help-Build, Service-Worker, Release-Versionierung, App-Text-Check)
+- `scripts/` – Build- & Store-Skripte (inkl. Xcode Cloud `scripts/xcode_cloud_post_clone.sh`)
+- `docs/` – Handbuch (`docs/beta/`), Betriebsdoku und historisches Archiv (`docs/archive/`)
 
 ## Kritische Regeln
 
@@ -77,8 +86,8 @@ Native APIs (Haptics etc.) immer in try-catch wrappen.
 # Freezed/JSON generieren
 dart run build_runner build --delete-conflicting-outputs
 
-# Code analysieren
-dart analyze lib/
+# Code analysieren (wie in CI: 0 Errors, 0 Warnings, 0 Infos)
+dart analyze lib/ test/ tool/ scripts/ integration_test/ patrol_test/ test_driver/ --fatal-infos --fatal-warnings
 
 # Tests ausführen
 flutter test
