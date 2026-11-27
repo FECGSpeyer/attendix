@@ -16,14 +16,14 @@ import '../../../data/models/person/person.dart';
 import '../../../data/models/song/song.dart';
 import '../../../l10n/l10n.dart';
 import '../../../features/songs/presentation/utils/song_utils.dart';
-import '../../../features/redesign/data/providers/rd_members_providers.dart';
+import '../../../features/people/data/providers/rd_members_providers.dart';
 import '../../../features/redesign/data/rd_collections_logic.dart';
-import '../../../features/redesign/data/rd_members_logic.dart' show RdMembersFilter;
+import '../../../features/people/data/rd_members_logic.dart' show RdMembersFilter;
 import '../../../core/redesign/rd_overview_logic.dart';
 import '../../../features/redesign/data/rd_works_logic.dart';
 import '../../../features/redesign/presentation/pages/rd_folder_page.dart' show rdEventLabel;
 import 'rd_widgets.dart';
-import '../../../features/redesign/presentation/widgets/today/rd_today_common.dart' show RdInfoCard;
+import '../../../features/today/presentation/widgets/rd_today_common.dart' show RdInfoCard;
 import '../../../features/redesign/presentation/widgets/works/rd_collections_ui.dart';
 import '../../../features/redesign/presentation/widgets/works/rd_current_works.dart' show rdOpenCurrentWork;
 

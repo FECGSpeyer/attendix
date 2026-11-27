@@ -41,9 +41,9 @@ import '../../../planning/presentation/widgets/rd_plan_widgets.dart';
 import '../../../redesign/data/rd_manage_logic.dart' show RdManageEntry;
 import '../../../../core/redesign/rd_words.dart';
 import '../../../redesign/presentation/widgets/manage/rd_manage_entries.dart' show rdManageTitle;
-import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart' show RdValueBox;
+import '../../../attendance/presentation/widgets/event/rd_form_widgets.dart' show RdValueBox;
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
-import '../../../redesign/presentation/widgets/today/rd_today_common.dart' show RdInfoCard;
+import '../../../today/presentation/widgets/rd_today_common.dart' show RdInfoCard;
 
 part 'attendance_type_edit_page_beta.dart';
 part 'attendance_type_edit_plan_checklist.dart';

@@ -11,8 +11,8 @@ import '../../../../data/models/tenant/tenant.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/app_action_sheet.dart';
 import '../../../profile/presentation/widgets/profile_helpers.dart' show profileRoleName;
-import '../widgets/today/rd_today_common.dart' show RdInfoCard;
-import '../widgets/join/rd_join_sheet.dart';
+import '../../../today/presentation/widgets/rd_today_common.dart' show RdInfoCard;
+import '../../../today/presentation/widgets/join/rd_join_sheet.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
 
 /// REDESIGN (Ich und Einstieg, E1): the group list on /tenants in the new

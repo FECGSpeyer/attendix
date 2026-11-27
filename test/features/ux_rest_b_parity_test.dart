@@ -2,7 +2,7 @@ import 'package:attendix/core/theme/app_icons.dart';
 
 import 'package:attendix/core/providers/profile_providers.dart';
 import 'package:attendix/data/repositories/profile_repository.dart';
-import 'package:attendix/features/members/data/providers/members_providers.dart';
+import 'package:attendix/features/people/data/providers/members_providers.dart';
 import 'package:attendix/shared/widgets/common/swipe_actions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -96,7 +96,7 @@ void main() {
     });
 
     test('person history delete uses the alert and toast texts', () {
-      final src = _read('lib/features/redesign/presentation/pages/rd_person_history_page.dart');
+      final src = _read('lib/features/people/presentation/pages/rd_person_history_page.dart');
       expect(src, contains('l10n.personRemoveEntry'));
       expect(src, contains('l10n.personEntryRemoved'));
     });

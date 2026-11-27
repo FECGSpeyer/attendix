@@ -7,9 +7,9 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/auto_message/auto_message.dart';
 import '../../../../data/repositories/base_repository.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart';
+import '../../../attendance/presentation/widgets/event/rd_form_widgets.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
-import '../../../redesign/presentation/widgets/today/rd_today_common.dart';
+import '../../../today/presentation/widgets/rd_today_common.dart';
 import '../auto_message_texts.dart';
 
 /// Opens the answer dialog for a Termin message. Returns the new state

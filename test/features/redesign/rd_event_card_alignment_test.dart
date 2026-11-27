@@ -1,6 +1,6 @@
-import 'package:attendix/features/redesign/data/providers/rd_today_providers.dart';
+import 'package:attendix/features/today/data/providers/rd_today_providers.dart';
 import 'package:attendix/shared/widgets/redesign/rd_widgets.dart';
-import 'package:attendix/features/redesign/presentation/widgets/today/rd_today_common.dart';
+import 'package:attendix/features/today/presentation/widgets/rd_today_common.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/date_symbol_data_local.dart';

@@ -98,7 +98,7 @@ void main() {
       final expectations = {
         'lib/core/router/app_router.dart': ['TrackingEvent.login'],
         'lib/core/providers/signout_providers.dart': ['TrackingEvent.attendanceCheckIn', 'TrackingEvent.attendanceCheckOut'],
-        'lib/features/redesign/presentation/widgets/today/rd_parent_today.dart': ['TrackingEvent.parentSignIn', 'TrackingEvent.parentSignOut'],
+        'lib/features/today/presentation/widgets/rd_parent_today.dart': ['TrackingEvent.parentSignIn', 'TrackingEvent.parentSignOut'],
         'lib/features/songs/presentation/pages/song_detail_page.dart': ['TrackingEvent.songShared'],
         'lib/features/export/presentation/export_logic.dart': ['TrackingEvent.reportExported'],
         'lib/core/providers/player_providers.dart': ['TrackingEvent.playerAdded', 'TrackingEvent.playerUpdated', 'TrackingEvent.playerRemoved'],

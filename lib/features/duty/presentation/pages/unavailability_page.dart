@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../redesign/presentation/pages/rd_unavailability_page.dart' show RdUnavailabilityPage;
+import 'rd_unavailability_page.dart' show RdUnavailabilityPage;
 
 /// Opens "Nicht verfügbar" for a person ([RdUnavailabilityPage]).
 Future<void> openUnavailabilityPage(

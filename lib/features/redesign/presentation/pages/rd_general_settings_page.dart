@@ -24,14 +24,14 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../settings/data/general_settings_helpers.dart'
     show holidayRegions, initialRegistrationFields, normalizeReasons, normalizeShowAllInfoText;
 import '../../../../core/redesign/rd_words.dart';
-import '../widgets/today/rd_today_common.dart' show RdInfoCard;
+import '../../../today/presentation/widgets/rd_today_common.dart' show RdInfoCard;
 import '../widgets/manage/rd_manage_list.dart' show rdLoadedValue;
 import '../widgets/manage/rd_settings_sheets.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../../../../shared/widgets/redesign/rd_split_view.dart' show RdManageBackLink;
 import 'rd_critical_rule_page.dart';
-import '../../data/providers/rd_critical_providers.dart';
-import '../../data/rd_critical_logic.dart';
+import '../../../people/data/providers/rd_critical_providers.dart';
+import '../../../people/data/rd_critical_logic.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/person/person.dart';
 

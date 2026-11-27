@@ -1,6 +1,6 @@
 import '../../data/models/person/person.dart';
 import '../../data/models/song/song.dart';
-import '../../features/redesign/data/rd_members_logic.dart' show rdDaysToBirthday;
+import '../../features/people/data/rd_members_logic.dart' show rdDaysToBirthday;
 import '../utils/helper_member.dart';
 
 /// REDESIGN: pure logic of the overview shown in the empty detail column of

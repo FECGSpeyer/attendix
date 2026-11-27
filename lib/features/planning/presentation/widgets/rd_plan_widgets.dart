@@ -5,7 +5,7 @@ import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/plan_beamer.dart';
 import '../../../../core/utils/plan_utils.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart' show RdFieldRow, rdInputDecoration;
+import '../../../attendance/presentation/widgets/event/rd_form_widgets.dart' show RdFieldRow, rdInputDecoration;
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../redesign/data/rd_collections_logic.dart';

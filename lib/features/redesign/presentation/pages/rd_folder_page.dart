@@ -21,7 +21,7 @@ import '../../../songs/presentation/utils/song_utils.dart';
 import '../../data/rd_collections_logic.dart';
 import '../../data/rd_works_logic.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
-import '../widgets/today/rd_today_common.dart' show RdInfoCard;
+import '../../../today/presentation/widgets/rd_today_common.dart' show RdInfoCard;
 import '../widgets/work/rd_work_file_actions.dart' show rdOpenWorkFile;
 import '../widgets/works/rd_collections_ui.dart';
 

@@ -14,7 +14,7 @@ import '../../../../data/models/plan/plan.dart';
 import '../../../../data/repositories/org_plan_repository.dart' show orgPlanRepositoryProvider;
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
-import '../widgets/event/rd_form_widgets.dart';
+import '../../../attendance/presentation/widgets/event/rd_form_widgets.dart';
 import '../widgets/manage/rd_manage_list.dart';
 import '../widgets/manage/rd_settings_sheets.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';

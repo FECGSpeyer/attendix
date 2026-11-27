@@ -1,8 +1,8 @@
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/data/models/attendance/attendance.dart';
-import 'package:attendix/features/redesign/data/providers/rd_events_providers.dart';
-import 'package:attendix/features/redesign/data/providers/rd_today_providers.dart';
-import 'package:attendix/features/redesign/data/rd_members_logic.dart';
+import 'package:attendix/features/attendance/data/providers/rd_events_providers.dart';
+import 'package:attendix/features/today/data/providers/rd_today_providers.dart';
+import 'package:attendix/features/people/data/rd_members_logic.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../factories/test_factories.dart';

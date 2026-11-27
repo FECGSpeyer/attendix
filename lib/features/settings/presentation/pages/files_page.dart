@@ -33,7 +33,7 @@ import '../../../../core/providers/debug_providers.dart' show effectiveRoleProvi
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../redesign/presentation/widgets/manage/rd_settings_sheets.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
-import '../../../redesign/presentation/widgets/today/rd_today_common.dart' show RdInfoCard;
+import '../../../today/presentation/widgets/rd_today_common.dart' show RdInfoCard;
 
 part 'files_page_beta.dart';
 part 'files_page_actions.dart';

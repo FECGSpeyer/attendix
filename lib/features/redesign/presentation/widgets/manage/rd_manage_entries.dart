@@ -22,7 +22,7 @@ import '../../pages/rd_general_settings_page.dart' show showRdSharingSheet;
 import '../../../../../shared/widgets/redesign/rd_split_view.dart' show rdManageSplitOpen;
 import 'rd_data_sheets.dart';
 import '../../../../songs/presentation/widgets/song_categories_sheet.dart';
-import '../../../data/providers/rd_members_providers.dart' show rdMembersSelectingProvider;
+import '../../../../people/data/providers/rd_members_providers.dart' show rdMembersSelectingProvider;
 import '../../../data/rd_manage_logic.dart';
 
 /// REDESIGN: titles, icons and actions of the Verwaltung entries. Every entry

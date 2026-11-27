@@ -11,7 +11,7 @@ import '../../../../../data/repositories/teacher_repository.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../teachers/data/teacher_helpers.dart' show isTeacherFormValid, loadTeacherGroups;
 import '../../../../../core/redesign/rd_words.dart';
-import '../event/rd_form_widgets.dart' show rdInputDecoration;
+import '../../../../attendance/presentation/widgets/event/rd_form_widgets.dart' show rdInputDecoration;
 import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 import 'rd_settings_sheets.dart';
 

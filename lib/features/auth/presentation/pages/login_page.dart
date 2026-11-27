@@ -29,7 +29,7 @@ import '../../../../shared/widgets/display/attendix_logo.dart';
 import '../../../../shared/widgets/redesign/rd_account_switch.dart' show RdSavedAccountsOnLogin;
 import '../../../../shared/widgets/redesign/rd_logo.dart' show rdLogoColors;
 import '../../../../core/theme/redesign/rd_theme.dart';
-import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart';
+import '../../../attendance/presentation/widgets/event/rd_form_widgets.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../widgets/reset_password_dialog.dart';
 

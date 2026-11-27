@@ -324,7 +324,7 @@ void main() {
     });
 
     test('parents/viewers page uses the shared invite flow', () {
-      final src = _read('lib/features/redesign/presentation/pages/rd_parents_page.dart');
+      final src = _read('lib/features/people/presentation/pages/rd_parents_page.dart');
       expect(src, contains('.invite('));
       expect(src, isNot(contains('.createViewer(')));
       expect(src, isNot(contains('.createParent(')));

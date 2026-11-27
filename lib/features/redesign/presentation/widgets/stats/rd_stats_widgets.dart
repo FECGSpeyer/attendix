@@ -18,10 +18,10 @@ import '../../../../../l10n/l10n.dart';
 import '../../../../../shared/widgets/adaptive/adaptive.dart'
     show AppActionSheetAction, showAppActionSheet, showAppDatePicker;
 import '../../../data/providers/rd_stats_providers.dart';
-import '../../../data/providers/rd_today_providers.dart' show rdEventInfo;
+import '../../../../today/data/providers/rd_today_providers.dart' show rdEventInfo;
 import '../../../data/rd_stats_logic.dart';
 import '../../../../../core/redesign/rd_words.dart';
-import '../../pages/rd_members_page.dart' show rdPercentColor;
+import '../../../../people/presentation/pages/rd_members_page.dart' show rdPercentColor;
 import '../manage/rd_settings_sheets.dart' show RdListNote;
 import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 

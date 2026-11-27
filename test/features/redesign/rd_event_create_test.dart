@@ -22,8 +22,8 @@ import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/data/models/attendance/attendance.dart';
 import 'package:attendix/data/models/team_org/team_org.dart';
 import 'package:attendix/data/repositories/profile_repository.dart';
-import 'package:attendix/features/redesign/data/rd_create_logic.dart';
-import 'package:attendix/features/redesign/presentation/pages/rd_event_create_page.dart';
+import 'package:attendix/features/attendance/data/rd_create_logic.dart';
+import 'package:attendix/features/attendance/presentation/pages/rd_event_create_page.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:attendix/shared/widgets/layout/route_leave_guard.dart';
 import 'package:flutter/material.dart';
@@ -200,7 +200,7 @@ void main() {
     );
     // The page moves the end only this way.
     final page =
-        readDartLibrary('lib/features/redesign/presentation/pages/rd_event_create_page.dart');
+        readDartLibrary('lib/features/attendance/presentation/pages/rd_event_create_page.dart');
     expect(page, contains('rdMovedSeriesEnd(_date, day, _until)'));
     expect(page, isNot(contains('.difference(_date)')));
   });
@@ -652,7 +652,7 @@ void main() {
 
   group('source', () {
     final page =
-        readDartLibrary('lib/features/redesign/presentation/pages/rd_event_create_page.dart');
+        readDartLibrary('lib/features/attendance/presentation/pages/rd_event_create_page.dart');
     final writes =
         readDartLibrary('lib/features/attendance/presentation/attendance_create_writes.dart');
     final router = readDartLibrary('lib/core/router/app_router.dart');

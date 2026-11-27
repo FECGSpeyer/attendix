@@ -11,7 +11,7 @@ void main() {
 
   setUpAll(() {
     source = File(
-      'lib/features/voice_leader/data/providers/voice_leader_providers.dart',
+      'lib/features/people/data/providers/voice_leader_providers.dart',
     ).readAsStringSync();
   });
 

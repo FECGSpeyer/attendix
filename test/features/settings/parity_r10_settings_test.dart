@@ -2,7 +2,7 @@
 import 'package:attendix/data/models/person/person.dart';
 import 'package:attendix/features/settings/data/general_settings_helpers.dart';
 import 'package:attendix/features/settings/data/link_persons_logic.dart';
-import 'package:attendix/features/voice_leader/data/providers/voice_leader_providers.dart';
+import 'package:attendix/features/people/data/providers/voice_leader_providers.dart';
 import 'package:flutter_test/flutter_test.dart';
 import '../../helpers/source_reader.dart';
 

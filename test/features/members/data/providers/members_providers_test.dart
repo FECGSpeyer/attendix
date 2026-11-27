@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:attendix/data/models/instrument/instrument.dart';
-import 'package:attendix/features/members/data/providers/members_providers.dart';
+import 'package:attendix/features/people/data/providers/members_providers.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../../../factories/test_factories.dart';
@@ -8,7 +8,7 @@ import '../../../../factories/test_factories.dart';
 void main() {
   test('members_providers uses repositories, not supabaseClientProvider', () {
     final source = File(
-      'lib/features/members/data/providers/members_providers.dart',
+      'lib/features/people/data/providers/members_providers.dart',
     ).readAsStringSync();
 
     expect(source, isNot(contains('supabaseClientProvider')),

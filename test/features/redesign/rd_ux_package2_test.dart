@@ -1,11 +1,11 @@
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/data/models/attendance/attendance.dart';
-import 'package:attendix/features/parents/data/providers/parents_providers.dart';
-import 'package:attendix/features/redesign/data/providers/rd_today_providers.dart';
-import 'package:attendix/features/redesign/presentation/widgets/join/rd_join_sheet.dart';
-import 'package:attendix/features/redesign/presentation/widgets/members/rd_invite_sheet.dart';
-import 'package:attendix/features/redesign/presentation/widgets/today/rd_parent_today.dart';
-import 'package:attendix/features/redesign/presentation/widgets/today/rd_remind_open_sheet.dart';
+import 'package:attendix/features/people/data/providers/parents_providers.dart';
+import 'package:attendix/features/today/data/providers/rd_today_providers.dart';
+import 'package:attendix/features/today/presentation/widgets/join/rd_join_sheet.dart';
+import 'package:attendix/features/people/presentation/widgets/members/rd_invite_sheet.dart';
+import 'package:attendix/features/today/presentation/widgets/rd_parent_today.dart';
+import 'package:attendix/features/today/presentation/widgets/rd_remind_open_sheet.dart';
 import 'package:attendix/l10n/generated/app_localizations_de.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/date_symbol_data_local.dart';

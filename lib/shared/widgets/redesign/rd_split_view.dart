@@ -5,7 +5,7 @@ import '../../../core/router/redesign_routes.dart';
 import '../../../core/theme/redesign/rd_theme.dart';
 import 'rd_desktop.dart' show rdSidebarBreakpoint;
 import 'rd_widgets.dart' show RdBackLink, RdPage, rdIsPushed;
-import '../../../features/redesign/presentation/widgets/today/rd_today_common.dart' show RdInfoCard;
+import '../../../features/today/presentation/widgets/rd_today_common.dart' show RdInfoCard;
 
 /// REDESIGN: list and detail side by side on wide screens (canvas
 /// "Desktop", "DesktopMitglieder"): Termine and Mitglieder keep their list

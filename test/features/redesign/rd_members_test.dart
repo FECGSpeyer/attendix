@@ -15,14 +15,14 @@ import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/data/models/instrument/instrument.dart';
 import 'package:attendix/data/models/person/person.dart';
-import 'package:attendix/features/redesign/data/providers/rd_members_providers.dart';
+import 'package:attendix/features/people/data/providers/rd_members_providers.dart';
 import 'package:attendix/data/models/player_absence/player_absence.dart';
 import 'package:attendix/core/providers/person_detail_providers.dart'
     show personProvider, personAttendanceStatsProvider, personHistoryProvider;
-import 'package:attendix/features/redesign/data/rd_members_list_filter.dart';
-import 'package:attendix/features/redesign/data/rd_members_logic.dart';
-import 'package:attendix/features/redesign/presentation/pages/rd_members_page.dart';
-import 'package:attendix/features/redesign/presentation/pages/rd_person_page.dart';
+import 'package:attendix/features/people/data/rd_members_list_filter.dart';
+import 'package:attendix/features/people/data/rd_members_logic.dart';
+import 'package:attendix/features/people/presentation/pages/rd_members_page.dart';
+import 'package:attendix/features/people/presentation/pages/rd_person_page.dart';
 import 'package:attendix/shared/widgets/redesign/rd_split_view.dart';
 import 'package:attendix/shared/widgets/redesign/rd_widgets.dart';
 import 'package:attendix/l10n/l10n.dart';
@@ -891,8 +891,8 @@ void main() {
   });
 
   group('security (source)', () {
-    final members = readDartLibrary('lib/features/redesign/presentation/pages/rd_members_page.dart');
-    final person = readDartLibrary('lib/features/redesign/presentation/pages/rd_person_page.dart');
+    final members = readDartLibrary('lib/features/people/presentation/pages/rd_members_page.dart');
+    final person = readDartLibrary('lib/features/people/presentation/pages/rd_person_page.dart');
 
     test('no direct Supabase access in the new pages', () {
       for (final src in [members, person]) {

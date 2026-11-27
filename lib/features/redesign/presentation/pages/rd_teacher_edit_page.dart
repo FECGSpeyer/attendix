@@ -14,9 +14,9 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/repositories/teacher_repository.dart';
 import '../../../../l10n/l10n.dart';
-import '../widgets/event/rd_form_widgets.dart';
+import '../../../attendance/presentation/widgets/event/rd_form_widgets.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
-import '../widgets/today/rd_today_common.dart' show RdInfoCard;
+import '../../../today/presentation/widgets/rd_today_common.dart' show RdInfoCard;
 
 /// REDESIGN: "Lehrer bearbeiten" (template of "Gruppe bearbeiten"): the
 /// fields of the old teacher page (Name, Instrumente, Privatlehrer, Kontakt,

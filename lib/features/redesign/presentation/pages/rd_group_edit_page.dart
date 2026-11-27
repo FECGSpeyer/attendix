@@ -20,9 +20,9 @@ import '../../../instruments/data/group_options.dart'
     show groupClefLabel, groupClefOptions, groupTuningOptions;
 import '../../../instruments/presentation/widgets/instrument_categories_sheet.dart';
 import '../../../../core/redesign/rd_words.dart';
-import '../widgets/event/rd_form_widgets.dart';
+import '../../../attendance/presentation/widgets/event/rd_form_widgets.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
-import '../widgets/today/rd_today_common.dart' show RdInfoCard;
+import '../../../today/presentation/widgets/rd_today_common.dart' show RdInfoCard;
 
 /// Persons that are or were in a group (archived ones count, pending
 /// registrations not), like the delete check of the old group page.

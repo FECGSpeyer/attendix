@@ -1,8 +1,8 @@
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/redesign_providers.dart';
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
-import 'package:attendix/features/redesign/data/providers/rd_today_providers.dart';
-import 'package:attendix/features/redesign/presentation/widgets/today/rd_today_common.dart';
+import 'package:attendix/features/today/data/providers/rd_today_providers.dart';
+import 'package:attendix/features/today/presentation/widgets/rd_today_common.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

@@ -12,7 +12,7 @@ import '../../../../data/repositories/cross_tenant_person_repository.dart';
 import '../../../../core/utils/date_helper.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../redesign/presentation/widgets/members/rd_pause_sheets.dart';
+import 'members/rd_pause_sheets.dart';
 
 final _fmt = DateFormat('dd.MM.yyyy');
 

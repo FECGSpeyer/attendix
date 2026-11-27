@@ -9,11 +9,11 @@ import 'package:attendix/core/providers/tenant_providers.dart';
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/data/models/attendance/attendance.dart';
-import 'package:attendix/features/redesign/data/providers/rd_today_providers.dart';
-import 'package:attendix/features/redesign/presentation/pages/rd_own_event_page.dart';
-import 'package:attendix/features/redesign/presentation/widgets/event/rd_absence_sheet.dart';
-import 'package:attendix/features/redesign/presentation/widgets/event/rd_signout_sheet.dart';
-import 'package:attendix/features/redesign/presentation/widgets/today/rd_duty_section.dart';
+import 'package:attendix/features/today/data/providers/rd_today_providers.dart';
+import 'package:attendix/features/attendance/presentation/pages/rd_own_event_page.dart';
+import 'package:attendix/features/attendance/presentation/widgets/event/rd_absence_sheet.dart';
+import 'package:attendix/features/attendance/presentation/widgets/event/rd_signout_sheet.dart';
+import 'package:attendix/features/today/presentation/widgets/rd_duty_section.dart';
 import 'package:attendix/features/self_service/presentation/widgets/self_service_event_actions.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
@@ -264,9 +264,9 @@ void main() {
 
     test('Heute, Termine and the leader Heute show the duty section', () {
       for (final path in [
-        'lib/features/redesign/presentation/pages/rd_events_page.dart',
-        'lib/features/redesign/presentation/widgets/today/rd_player_today.dart',
-        'lib/features/redesign/presentation/widgets/today/rd_leader_today.dart',
+        'lib/features/attendance/presentation/pages/rd_events_page.dart',
+        'lib/features/today/presentation/widgets/rd_player_today.dart',
+        'lib/features/today/presentation/widgets/rd_leader_today.dart',
       ]) {
         expect(File(path).readAsStringSync(), contains('RdDutySection()'), reason: path);
       }
@@ -274,9 +274,9 @@ void main() {
 
     test('every list of the new design uses the filtered Termine', () {
       for (final path in [
-        'lib/features/redesign/presentation/pages/rd_events_page.dart',
-        'lib/features/redesign/presentation/pages/rd_own_event_page.dart',
-        'lib/features/redesign/presentation/widgets/today/rd_player_today.dart',
+        'lib/features/attendance/presentation/pages/rd_events_page.dart',
+        'lib/features/attendance/presentation/pages/rd_own_event_page.dart',
+        'lib/features/today/presentation/widgets/rd_player_today.dart',
       ]) {
         final source = File(path).readAsStringSync();
         expect(source, isNot(contains('ref.watch(signoutDataProvider)')), reason: path);

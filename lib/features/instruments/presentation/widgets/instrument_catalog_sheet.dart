@@ -6,7 +6,7 @@ import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/app_dialog.dart';
-import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart'
+import '../../../attendance/presentation/widgets/event/rd_form_widgets.dart'
     show RdFieldRow, RdFormBody, rdInputDecoration;
 import '../../../redesign/presentation/widgets/manage/rd_settings_sheets.dart'
     show RdSheetHead, showRdSettingsSheet, showRdTextSheet;

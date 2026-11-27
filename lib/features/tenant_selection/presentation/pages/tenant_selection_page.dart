@@ -14,7 +14,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../redesign/presentation/pages/rd_no_group_page.dart';
+import '../../../today/presentation/pages/rd_no_group_page.dart';
 import '../../../redesign/presentation/pages/rd_tenants_view.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../core/providers/dashboard_providers.dart';

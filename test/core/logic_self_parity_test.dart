@@ -194,7 +194,7 @@ void main() {
     });
 
     test('viewer cannot open the Termin detail', () {
-      final src = read('lib/features/redesign/presentation/pages/rd_events_page.dart');
+      final src = read('lib/features/attendance/presentation/pages/rd_events_page.dart');
       expect(src, contains('final canOpen = role.canAddAttendance;'));
       expect(src, contains('onTap: a.id != null && canOpen'));
     });
@@ -206,7 +206,7 @@ void main() {
     });
 
     test('parents view consumes the pending attendance id', () {
-      final src = read('lib/features/redesign/presentation/pages/rd_events_page.dart');
+      final src = read('lib/features/attendance/presentation/pages/rd_events_page.dart');
       final start = src.indexOf('void _openParentPending()');
       expect(start, isNot(-1));
       final body = src.substring(start, start + 600);

@@ -117,8 +117,8 @@ void main() {
 
   test('person page is read-only for non-admins and archived persons', () {
     final providers = readDartLibrary('lib/core/providers/person_detail_providers.dart');
-    final page = readDartLibrary('lib/features/redesign/presentation/pages/rd_person_page.dart');
-    final history = readDartLibrary('lib/features/redesign/presentation/pages/rd_person_history_page.dart');
+    final page = readDartLibrary('lib/features/people/presentation/pages/rd_person_page.dart');
+    final history = readDartLibrary('lib/features/people/presentation/pages/rd_person_history_page.dart');
     expect(history, contains('final canEdit = (role.isAdmin || role.isResponsible) && !hasLeft;'));
     expect(page, contains('if (person != null && person.left == null && role.canEdit)'));
     expect(page, contains('reactivatePersonWithConfirmation'));

@@ -14,7 +14,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/ion_button_label.dart';
 import '../../../planning/presentation/widgets/rd_plan_widgets.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
-import '../../../redesign/presentation/widgets/today/rd_today_common.dart';
+import '../../../today/presentation/widgets/rd_today_common.dart';
 
 /// Dienstplan part of "Meine Termine" (self service): "Bitte bestätigen",
 /// and – when the tenant uses the Dienstplan view – "Nächster Dienst",

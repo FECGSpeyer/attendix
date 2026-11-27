@@ -12,7 +12,7 @@ void main() {
 
   setUpAll(() {
     source = File(
-      'lib/features/parents/data/providers/parents_providers.dart',
+      'lib/features/people/data/providers/parents_providers.dart',
     ).readAsStringSync();
   });
 

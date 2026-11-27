@@ -1,7 +1,7 @@
 
 import 'package:attendix/core/providers/signout_providers.dart';
 import 'package:attendix/data/repositories/sign_in_out_repository.dart';
-import 'package:attendix/features/parents/data/providers/parents_providers.dart';
+import 'package:attendix/features/people/data/providers/parents_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import '../../helpers/source_reader.dart';
@@ -48,10 +48,10 @@ void main() {
     });
 
     test('groups carry extra plans and the page passes them to the viewer', () {
-      final providers = readDartLibrary('lib/features/parents/data/providers/parents_providers.dart');
+      final providers = readDartLibrary('lib/features/people/data/providers/parents_providers.dart');
       expect(providers, contains("extraPlans: parseExtraPlans(attendance?['extra_plans'])"));
       expect(providers, contains('extraPlans: first.extraPlans'));
-      final card = readDartLibrary('lib/features/redesign/presentation/widgets/event/rd_parent_event_card.dart');
+      final card = readDartLibrary('lib/features/attendance/presentation/widgets/event/rd_parent_event_card.dart');
       expect(card, contains('extraPlans: group.extraPlans'));
       expect(card, contains('durationDays: group.durationDays'));
     });
@@ -93,7 +93,7 @@ void main() {
     });
 
     test('parent today widget uses signInAll and checks result before toast', () {
-      final page = readDartLibrary('lib/features/redesign/presentation/widgets/today/rd_parent_today.dart');
+      final page = readDartLibrary('lib/features/today/presentation/widgets/rd_parent_today.dart');
       expect(page, contains('.signInAll(entries)'));
       expect(page, isNot(contains('notifier.signIn(')));
     });

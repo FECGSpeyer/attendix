@@ -19,7 +19,7 @@ import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/data/models/tenant/tenant.dart';
 import 'package:attendix/features/people/presentation/widgets/ion/ion_widgets.dart';
-import 'package:attendix/features/redesign/presentation/pages/rd_person_history_page.dart';
+import 'package:attendix/features/people/presentation/pages/rd_person_history_page.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -150,7 +150,7 @@ void main() {
       expect(RedesignRoutes.isRedesignRoute('/mitglieder/5/verlauf'), isTrue);
       final router = readDartLibrary('lib/core/router/app_router.dart');
       expect(router, contains("name: 'redesignPersonHistory'"));
-      final page = readDartLibrary('lib/features/redesign/presentation/pages/rd_person_page.dart');
+      final page = readDartLibrary('lib/features/people/presentation/pages/rd_person_page.dart');
       expect(page, contains('RedesignRoutes.personHistory(personId)'));
     });
   });

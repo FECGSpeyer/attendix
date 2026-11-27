@@ -50,12 +50,12 @@ import '../../../../core/services/register_plan_service.dart';
 import '../../data/planning_write_sync.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../attendance/presentation/widgets/songs_selection_sheet.dart' show SongHistoryEntry, SongHistoryEntryExtension;
-import '../../../redesign/data/providers/rd_event_works_providers.dart';
-import '../../../redesign/data/rd_event_works_sync.dart';
+import '../../../attendance/data/providers/rd_event_works_providers.dart';
+import '../../../attendance/data/rd_event_works_sync.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
-import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart' show RdFieldRow, rdInputDecoration;
-import '../../../redesign/presentation/widgets/event/rd_plan_take_over.dart';
-import '../../../redesign/presentation/widgets/today/rd_today_common.dart' show RdInfoCard;
+import '../../../attendance/presentation/widgets/event/rd_form_widgets.dart' show RdFieldRow, rdInputDecoration;
+import '../../../attendance/presentation/widgets/event/rd_plan_take_over.dart';
+import '../../../today/presentation/widgets/rd_today_common.dart' show RdInfoCard;
 
 part 'planning_page_beta.dart';
 part 'planning_page_beta_timeline.dart';

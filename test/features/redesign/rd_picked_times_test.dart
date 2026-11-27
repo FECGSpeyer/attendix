@@ -1,5 +1,5 @@
-import 'package:attendix/features/redesign/data/rd_create_logic.dart';
-import 'package:attendix/features/redesign/presentation/widgets/event/rd_event_now.dart';
+import 'package:attendix/features/attendance/data/rd_create_logic.dart';
+import 'package:attendix/features/attendance/presentation/widgets/event/rd_event_now.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

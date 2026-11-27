@@ -1,5 +1,5 @@
 import 'package:attendix/data/models/tenant/tenant.dart';
-import 'package:attendix/features/redesign/data/rd_critical_logic.dart';
+import 'package:attendix/features/people/data/rd_critical_logic.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';

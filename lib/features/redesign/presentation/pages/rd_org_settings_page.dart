@@ -21,7 +21,7 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../organisation/presentation/widgets/org_link_dialogs.dart';
 import '../../../planning/presentation/widgets/plan_field_dialogs.dart' show showPlanConfirm;
 import '../../data/rd_manage_logic.dart' show RdManageArea;
-import '../widgets/today/rd_today_common.dart' show RdInfoCard;
+import '../../../today/presentation/widgets/rd_today_common.dart' show RdInfoCard;
 import '../widgets/manage/rd_settings_sheets.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../../../../shared/widgets/redesign/rd_split_view.dart' show RdManageBackLink;

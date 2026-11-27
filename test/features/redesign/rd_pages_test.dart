@@ -2,7 +2,7 @@ import 'package:attendix/core/providers/redesign_providers.dart';
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_appearance_page.dart';
-import 'package:attendix/features/redesign/presentation/widgets/today/rd_leader_today.dart';
+import 'package:attendix/features/today/presentation/widgets/rd_leader_today.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

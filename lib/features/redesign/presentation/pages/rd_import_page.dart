@@ -28,7 +28,7 @@ import '../widgets/import/rd_import_widgets.dart';
 import '../widgets/manage/rd_settings_sheets.dart' show showRdTextSheet;
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../widgets/works/rd_collections_ui.dart';
-import '../widgets/today/rd_today_common.dart' show RdInfoCard;
+import '../../../today/presentation/widgets/rd_today_common.dart' show RdInfoCard;
 import 'rd_import_work_page.dart';
 
 part 'rd_import_page_question_cards.dart';

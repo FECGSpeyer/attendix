@@ -23,14 +23,14 @@ import 'package:attendix/data/models/person/person.dart';
 import 'package:attendix/features/attendance/presentation/attendance_song_history.dart';
 import 'package:attendix/data/models/plan/plan.dart' show PlanAttendance;
 import 'package:attendix/features/attendance/presentation/widgets/songs_selection_sheet.dart' show SongHistoryEntry;
-import 'package:attendix/features/redesign/data/providers/rd_event_works_providers.dart';
-import 'package:attendix/features/redesign/data/rd_event_logic.dart';
-import 'package:attendix/features/redesign/data/providers/rd_today_providers.dart' show rdOpenPersons, rdOpenPersonsProvider;
+import 'package:attendix/features/attendance/data/providers/rd_event_works_providers.dart';
+import 'package:attendix/features/attendance/data/rd_event_logic.dart';
+import 'package:attendix/features/today/data/providers/rd_today_providers.dart' show rdOpenPersons, rdOpenPersonsProvider;
 import 'package:attendix/core/providers/realtime_providers.dart';
-import 'package:attendix/features/redesign/presentation/pages/rd_event_edit_page.dart';
-import 'package:attendix/features/redesign/presentation/pages/rd_event_page.dart';
+import 'package:attendix/features/attendance/presentation/pages/rd_event_edit_page.dart';
+import 'package:attendix/features/attendance/presentation/pages/rd_event_page.dart';
 import 'package:attendix/shared/widgets/redesign/rd_desktop.dart';
-import 'package:attendix/features/redesign/presentation/widgets/event/rd_pult_view.dart';
+import 'package:attendix/features/attendance/presentation/widgets/event/rd_pult_view.dart';
 import 'package:attendix/shared/widgets/redesign/rd_split_view.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
@@ -562,7 +562,7 @@ void main() {
   });
 
   test('the Termin view writes only through the shared write path', () {
-    final source = readDartLibrary('lib/features/redesign/presentation/pages/rd_event_page.dart');
+    final source = readDartLibrary('lib/features/attendance/presentation/pages/rd_event_page.dart');
     expect(source, isNot(contains('updatePersonAttendance(')));
     expect(source, isNot(contains('.from(')));
     // Serialised per row, see "Rückgängig during a slow write";

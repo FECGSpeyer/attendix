@@ -72,7 +72,7 @@ void main() {
     });
 
     test('Regelmäßig verhindert only considers visible types', () {
-      final page = read('lib/features/redesign/presentation/pages/rd_unavailability_page.dart');
+      final page = read('lib/features/duty/presentation/pages/rd_unavailability_page.dart');
       expect(page, contains('countFutureMatches(rule, types)'));
       final providers = read('lib/core/providers/duty_providers.dart');
       expect(providers, contains('.where((t) => t.visible)'));

@@ -7,7 +7,7 @@ import '../../helpers/source_reader.dart';
 /// assignment shows "0 Spieler" until the app is reloaded.
 void main() {
   test('saving a person reloads playersProvider for the teacher counts', () {
-    final src = readDartLibrary('lib/features/redesign/presentation/pages/rd_person_edit_page.dart');
+    final src = readDartLibrary('lib/features/people/presentation/pages/rd_person_edit_page.dart');
     expect(src, contains('invalidate(playersProvider)'));
   });
 }

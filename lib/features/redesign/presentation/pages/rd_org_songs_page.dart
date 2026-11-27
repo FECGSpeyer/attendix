@@ -9,7 +9,7 @@ import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/song_copy.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../organisation/presentation/org_songs_logic.dart';
-import '../widgets/today/rd_today_common.dart' show RdInfoCard;
+import '../../../today/presentation/widgets/rd_today_common.dart' show RdInfoCard;
 import '../widgets/manage/rd_settings_sheets.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
 

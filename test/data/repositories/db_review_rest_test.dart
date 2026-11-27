@@ -37,7 +37,7 @@ void main() {
     });
 
     test('detail page no longer uses the unknown attendance-images bucket', () {
-      final page = read('lib/features/redesign/presentation/pages/rd_event_page.dart');
+      final page = read('lib/features/attendance/presentation/pages/rd_event_page.dart');
       final shared = read('lib/features/attendance/presentation/attendance_extra_actions.dart');
       expect(page, isNot(contains('attendance-images')));
       expect(shared, isNot(contains('attendance-images')));
@@ -47,7 +47,7 @@ void main() {
 
   group('M2 group change keeps future person_attendances', () {
     test('person detail disables the group branch of the sync', () {
-      final page = read('lib/features/redesign/presentation/pages/rd_person_edit_page.dart');
+      final page = read('lib/features/people/presentation/pages/rd_person_edit_page.dart');
       final call = body(page, 'syncPlayerWithUpcomingAttendances(', 400);
       expect(call, contains('oldInstrument: (_person ?? person).instrument'));
     });
@@ -61,11 +61,11 @@ void main() {
     });
 
     test('enabled flag is ignored when reading rules', () {
-      expect(read('lib/features/redesign/presentation/pages/rd_person_edit_page.dart'),
+      expect(read('lib/features/people/presentation/pages/rd_person_edit_page.dart'),
           isNot(contains('rule.enabled')));
-      expect(read('lib/features/redesign/presentation/pages/rd_critical_members_page.dart'),
+      expect(read('lib/features/people/presentation/pages/rd_critical_members_page.dart'),
           isNot(contains('rule.enabled')));
-      expect(read('lib/features/redesign/data/providers/rd_critical_providers.dart'),
+      expect(read('lib/features/people/data/providers/rd_critical_providers.dart'),
           isNot(contains('rule.enabled')));
     });
   });
@@ -301,7 +301,7 @@ void main() {
   });
 
   test('F3 admins lift expired pauses when opening the people list', () {
-    final page = read('lib/features/redesign/presentation/pages/rd_members_page.dart');
+    final page = read('lib/features/people/presentation/pages/rd_members_page.dart');
     final check = body(page, 'Future<void> _checkAndUnpause()', 500);
     expect(check, contains('role.isAdmin || role.isResponsible'));
     expect(check, contains('checkAndUnpausePlayers()'));
@@ -310,7 +310,7 @@ void main() {
   test('F4 account deletion without an instance', () {
     final page = read('lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart');
     expect(page, contains('const RdNoGroupPage()'));
-    final noGroup = read('lib/features/redesign/presentation/pages/rd_no_group_page.dart');
+    final noGroup = read('lib/features/today/presentation/pages/rd_no_group_page.dart');
     expect(noGroup, contains('redesignTenantsDeleteAccount'));
     expect(noGroup, contains('confirmDeleteAccountWithoutGroup(context, ref)'));
     expect(noGroup, isNot(contains("context.push('/register')")));
@@ -328,9 +328,9 @@ void main() {
   });
 
   test('F7 parents views have no hardcoded German note label', () {
-    expect(read('lib/features/redesign/presentation/widgets/event/rd_parent_event_card.dart'),
+    expect(read('lib/features/attendance/presentation/widgets/event/rd_parent_event_card.dart'),
         isNot(contains("'Notiz: ")));
-    expect(read('lib/features/redesign/presentation/widgets/today/rd_parent_today.dart'),
+    expect(read('lib/features/today/presentation/widgets/rd_parent_today.dart'),
         isNot(contains("'Notiz: ")));
   });
 

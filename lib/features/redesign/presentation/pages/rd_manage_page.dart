@@ -22,7 +22,7 @@ import '../../../../shared/widgets/redesign/rd_split_view.dart';
 import '../widgets/manage/rd_manage_entries.dart';
 import '../widgets/manage/rd_settings_sheets.dart' show RdListNote;
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
-import '../widgets/today/rd_today_common.dart' show RdInfoCard;
+import '../../../today/presentation/widgets/rd_today_common.dart' show RdInfoCard;
 
 /// REDESIGN: Ich › Verwaltung (canvas "Beta: Verwaltung neu gedacht"): only
 /// for Dirigent and Verantwortliche. The group on top, a search that also

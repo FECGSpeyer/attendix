@@ -20,7 +20,7 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
-import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart';
+import '../../../attendance/presentation/widgets/event/rd_form_widgets.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../../../redesign/presentation/widgets/manage/rd_settings_sheets.dart'
     show showRdTextSheet;

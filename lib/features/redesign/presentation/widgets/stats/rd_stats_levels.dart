@@ -18,7 +18,7 @@ import '../../../../../l10n/l10n.dart';
 import '../../../data/providers/rd_stats_providers.dart' show rdStatsPeopleOf;
 import '../../../data/rd_stats_logic.dart';
 import '../../../../../core/redesign/rd_words.dart';
-import '../../pages/rd_members_page.dart' show rdPercentColor;
+import '../../../../people/presentation/pages/rd_members_page.dart' show rdPercentColor;
 import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 import 'rd_stats_widgets.dart';
 

@@ -13,7 +13,7 @@ import '../../../export/presentation/export_logic.dart';
 import '../../../../core/redesign/rd_words.dart';
 import '../widgets/manage/rd_settings_sheets.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
-import 'rd_handover_page.dart' show RdStepButton;
+import '../../../people/presentation/pages/rd_handover_page.dart' show RdStepButton;
 
 /// REDESIGN: Verwaltung › Auswertung & Daten › Export (canvas "Beta: Gruppe
 /// und Daten", board "G3 Export"). Its own page with three questions: what,

@@ -96,11 +96,11 @@ void main() {
     });
 
     test('event, export and bulk edit use organisation fields (I2/I3)', () {
-      final event = read('lib/features/redesign/presentation/pages/rd_event_page.dart');
+      final event = read('lib/features/attendance/presentation/pages/rd_event_page.dart');
       expect(event, contains('hydrateSharedPersonFieldValues('));
       final export = read('lib/features/export/presentation/export_logic.dart');
       expect(export, contains('hydrateSharedPersonFieldValues('));
-      final bulk = read('lib/features/redesign/presentation/widgets/members/rd_member_bulk.dart');
+      final bulk = read('lib/features/people/presentation/widgets/members/rd_member_bulk.dart');
       expect(bulk, contains('updateSharedFieldValues('));
     });
   });

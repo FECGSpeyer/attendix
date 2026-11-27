@@ -20,7 +20,7 @@ import 'package:attendix/data/models/attendance/attendance.dart';
 import 'package:attendix/features/redesign/data/providers/rd_stats_providers.dart';
 import 'package:attendix/features/redesign/data/rd_manage_logic.dart';
 import 'package:attendix/features/redesign/data/rd_stats_logic.dart';
-import 'package:attendix/features/redesign/presentation/widgets/members/rd_member_bulk.dart' show rdApplyToAll;
+import 'package:attendix/features/people/presentation/widgets/members/rd_member_bulk.dart' show rdApplyToAll;
 import 'package:attendix/features/redesign/presentation/pages/rd_message_compose_page.dart';
 import 'package:flutter_test/flutter_test.dart';
 

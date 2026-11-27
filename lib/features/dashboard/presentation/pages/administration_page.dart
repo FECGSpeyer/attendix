@@ -8,7 +8,7 @@ import '../../../../core/providers/dashboard_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
-import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart';
+import '../../../attendance/presentation/widgets/event/rd_form_widgets.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/error_message.dart';

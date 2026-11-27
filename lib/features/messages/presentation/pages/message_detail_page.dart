@@ -22,9 +22,9 @@ import '../message_format.dart';
 import '../widgets/message_termin_section.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../core/services/native/native_file_service.dart';
-import '../../../redesign/presentation/widgets/event/rd_event_head.dart' show rdEventMeta;
+import '../../../attendance/presentation/widgets/event/rd_event_head.dart' show rdEventMeta;
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
-import '../../../redesign/presentation/widgets/today/rd_today_common.dart' show RdInfoCard;
+import '../../../today/presentation/widgets/rd_today_common.dart' show RdInfoCard;
 
 enum _Filter { all, read, open, problems }
 

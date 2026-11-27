@@ -60,7 +60,7 @@ import '../../attendance/presentation/widgets/attendance_date_change.dart'
     show calendarDayDifference, shiftByCalendarDays, shiftDeadline;
 import '../../attendance/presentation/widgets/songs_selection_sheet.dart' show SongHistoryEntry;
 import '../../help/data/help_content_service.dart';
-import '../../parents/data/providers/parents_providers.dart'
+import '../../people/data/providers/parents_providers.dart'
     show ChildPersonAttendance, childrenAttendancesProvider, parentChildrenProvider;
 import '../../self_service/data/providers/upcoming_songs_provider.dart' show signoutAttendanceSongsProvider;
 import '../../team_organization/team_org_utils.dart' show isTeamOrgEnabled;

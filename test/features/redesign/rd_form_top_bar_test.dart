@@ -1,6 +1,6 @@
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
-import 'package:attendix/features/redesign/presentation/widgets/event/rd_form_widgets.dart';
+import 'package:attendix/features/attendance/presentation/widgets/event/rd_form_widgets.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

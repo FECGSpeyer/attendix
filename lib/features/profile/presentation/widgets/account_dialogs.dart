@@ -5,7 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
-import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart';
+import '../../../attendance/presentation/widgets/event/rd_form_widgets.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../core/utils/demo_guard.dart';

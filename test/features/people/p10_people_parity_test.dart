@@ -8,7 +8,7 @@ void main() {
   String read(String path) => readDartLibrary(path);
 
   test('members list watches persisted list filter provider', () {
-    final src = read('lib/features/redesign/presentation/pages/rd_members_page.dart');
+    final src = read('lib/features/people/presentation/pages/rd_members_page.dart');
     expect(src, contains('rdMembersListFilterProvider'));
   });
 
@@ -20,13 +20,13 @@ void main() {
   });
 
   test('person create asks before discarding input (Ionic dismiss)', () {
-    final src = read('lib/features/redesign/presentation/pages/rd_person_create_page.dart');
+    final src = read('lib/features/people/presentation/pages/rd_person_create_page.dart');
     expect(src, contains('_confirmDiscard()'));
     expect(src, contains('context.l10n.personDiscardChanges'));
   });
 
   test('person actions section has header and closes after a transfer', () {
-    final src = read('lib/features/redesign/presentation/pages/rd_person_edit_page.dart');
+    final src = read('lib/features/people/presentation/pages/rd_person_edit_page.dart');
     expect(src, contains('RdGroupLabel(l10n.personActions)'));
     expect(src, contains('if (!copy) {'));
     expect(src, contains('context.go(RedesignRoutes.members);'));
@@ -34,7 +34,7 @@ void main() {
 
   test('late warning card uses the Ionic texts', () {
     final src = read(
-        'lib/features/redesign/presentation/pages/rd_person_edit_page.dart');
+        'lib/features/people/presentation/pages/rd_person_edit_page.dart');
     expect(src, contains('personLateWarningTitle'));
     expect(src, contains('personLateExcusedExtra'));
     expect(src, contains('personResetTalked'));

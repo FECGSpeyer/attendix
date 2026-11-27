@@ -24,14 +24,14 @@ import '../../../settings/data/account_provisioning_actions.dart' show playersOf
 import '../../data/rd_manage_logic.dart' show RdManageEntry, rdManageVisible;
 import '../../../../core/redesign/rd_roles_logic.dart';
 import 'rd_general_settings_page.dart' show RdTenantSettings, RdTenantSettingsBlock;
-import 'rd_person_edit_page.dart' show rdBaseRole;
+import '../../../people/presentation/pages/rd_person_edit_page.dart' show rdBaseRole;
 import '../../../../core/redesign/rd_words.dart';
 import '../widgets/manage/rd_manage_entries.dart' show rdManageAccessProvider, rdManageTitle;
 import '../widgets/manage/rd_manage_list.dart' show rdLoadedValue;
 import '../widgets/manage/rd_settings_sheets.dart' show RdListNote;
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../../../../shared/widgets/redesign/rd_split_view.dart' show RdManageBackLink, RdSplitScope, rdManageSplitOpen;
-import '../widgets/today/rd_today_common.dart' show RdInfoCard;
+import '../../../today/presentation/widgets/rd_today_common.dart' show RdInfoCard;
 
 /// REDESIGN: Verwaltung › Rollen und Rechte of the Beta (replaces
 /// `/settings/role-permissions` while the Beta is on): a list of the roles,

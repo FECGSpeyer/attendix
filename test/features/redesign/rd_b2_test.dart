@@ -11,8 +11,8 @@ import 'package:attendix/data/models/person/person.dart';
 import 'package:attendix/features/people/person_history_helpers.dart'
     show filterHistoryBySeason, historyWithoutEntry;
 import 'package:attendix/features/people/presentation/widgets/church_picker_sheet.dart';
-import 'package:attendix/features/redesign/presentation/pages/rd_unavailability_page.dart';
-import 'package:attendix/features/redesign/presentation/widgets/event/rd_absence_sheet.dart';
+import 'package:attendix/features/duty/presentation/pages/rd_unavailability_page.dart';
+import 'package:attendix/features/attendance/presentation/widgets/event/rd_absence_sheet.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

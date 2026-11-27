@@ -12,7 +12,7 @@ import '../../../data/models/tenant/tenant.dart';
 import '../../../l10n/l10n.dart';
 import '../layout/route_leave_guard.dart';
 import '../../../features/profile/presentation/widgets/profile_helpers.dart' show profileRoleName;
-import '../../../features/redesign/presentation/widgets/join/rd_join_sheet.dart';
+import '../../../features/today/presentation/widgets/join/rd_join_sheet.dart';
 import 'rd_widgets.dart';
 
 /// REDESIGN: group chip at the top of "Heute" ("SO Stadtorchester ⌄").

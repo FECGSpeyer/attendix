@@ -19,9 +19,9 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../planning/presentation/widgets/plan_field_dialogs.dart' show PlanSheetAction;
 import '../../../planning/presentation/widgets/rd_plan_widgets.dart';
-import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart' show RdFieldRow, rdInputDecoration;
+import '../../../attendance/presentation/widgets/event/rd_form_widgets.dart' show RdFieldRow, rdInputDecoration;
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
-import '../../../redesign/presentation/widgets/today/rd_today_common.dart' show RdInfoCard;
+import '../../../today/presentation/widgets/rd_today_common.dart' show RdInfoCard;
 
 part 'shift_detail_page_beta.dart';
 

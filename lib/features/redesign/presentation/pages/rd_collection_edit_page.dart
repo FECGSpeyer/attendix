@@ -15,9 +15,9 @@ import '../../../../shared/widgets/adaptive/app_dialog.dart';
 import '../../data/import/rd_import_controller.dart' show rdImportRunProvider;
 import '../../data/rd_collections_logic.dart';
 import '../../../../core/redesign/rd_words.dart';
-import '../widgets/event/rd_form_widgets.dart';
+import '../../../attendance/presentation/widgets/event/rd_form_widgets.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
-import '../widgets/today/rd_today_common.dart' show RdInfoCard;
+import '../../../today/presentation/widgets/rd_today_common.dart' show RdInfoCard;
 
 /// REDESIGN: "Sammlung bearbeiten" (template of "Gruppe bearbeiten", canvas
 /// "Noten-Bereich neu gedacht", board 4): Name, "Nummern mit" (also renames

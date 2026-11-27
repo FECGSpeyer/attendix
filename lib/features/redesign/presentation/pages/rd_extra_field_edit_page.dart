@@ -17,9 +17,9 @@ import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/extra_fields_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../settings/data/extra_fields_helpers.dart' show extraFieldChurchIds, extraFieldTypeName;
-import '../widgets/event/rd_form_widgets.dart';
+import '../../../attendance/presentation/widgets/event/rd_form_widgets.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
-import '../widgets/today/rd_today_common.dart' show RdInfoCard;
+import '../../../today/presentation/widgets/rd_today_common.dart' show RdInfoCard;
 import 'rd_extra_fields_page.dart' show rdSaveExtraFields, rdSerialExtraFieldWrite;
 
 /// The text the old page shows in the default field: a boolean has none, a

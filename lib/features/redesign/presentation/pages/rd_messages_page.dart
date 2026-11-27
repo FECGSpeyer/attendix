@@ -7,7 +7,7 @@ import '../../../../core/providers/message_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../data/models/message/message.dart';
 import '../../../../l10n/l10n.dart';
-import '../widgets/event/rd_event_head.dart' show rdEventMeta;
+import '../../../attendance/presentation/widgets/event/rd_event_head.dart' show rdEventMeta;
 import '../widgets/manage/rd_manage_list.dart';
 
 /// REDESIGN: Verwaltung › Mitteilungen in the template "Verwaltungsliste"

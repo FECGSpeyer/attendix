@@ -10,7 +10,7 @@ import '../../../../../data/repositories/attendance_type_repository.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../planning/presentation/widgets/rd_plan_widgets.dart' show showRdPlanSheet;
 import '../../../../settings/presentation/pages/attendance_type_edit_page.dart' show buildNewAttendanceType;
-import '../event/rd_form_widgets.dart' show RdFieldRow, rdInputDecoration;
+import '../../../../attendance/presentation/widgets/event/rd_form_widgets.dart' show RdFieldRow, rdInputDecoration;
 import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 
 /// Beta "Neue Terminart": a name and "Startet wie" (one of the group's

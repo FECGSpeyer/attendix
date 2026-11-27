@@ -27,8 +27,6 @@ void main() {
       'lib/features/people',
       'lib/features/instruments',
       'lib/features/teachers',
-      'lib/features/members',
-      'lib/features/voice_leader',
     ]) {
       for (final f in Directory(dir).listSync(recursive: true).whereType<File>()) {
         if (!f.path.endsWith('.dart')) continue;

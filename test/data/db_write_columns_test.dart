@@ -283,7 +283,7 @@ void main() {
           const AttendanceType(id: 't', name: 'P'), DateTime(2024));
       expect(row.containsKey('created_by'), isFalse);
       for (final path in const [
-        'lib/features/redesign/presentation/pages/rd_event_create_page.dart',
+        'lib/features/attendance/presentation/pages/rd_event_create_page.dart',
         'lib/features/attendance/presentation/attendance_create_writes.dart',
       ]) {
         expect(readDartLibrary(path), isNot(contains("'created_by':")));

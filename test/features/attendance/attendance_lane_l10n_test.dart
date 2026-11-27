@@ -38,9 +38,9 @@ void main() {
 
   test('lane pages contain no hard-coded German UI literals', () {
     const files = [
-      'lib/features/redesign/presentation/pages/rd_events_page.dart',
-      'lib/features/redesign/presentation/pages/rd_event_create_page.dart',
-      'lib/features/redesign/presentation/pages/rd_event_page.dart',
+      'lib/features/attendance/presentation/pages/rd_events_page.dart',
+      'lib/features/attendance/presentation/pages/rd_event_create_page.dart',
+      'lib/features/attendance/presentation/pages/rd_event_page.dart',
       'lib/features/redesign/presentation/pages/rd_work_history_page.dart',
       'lib/features/redesign/presentation/pages/rd_stats_page.dart',
       'lib/features/redesign/presentation/pages/rd_export_page.dart',

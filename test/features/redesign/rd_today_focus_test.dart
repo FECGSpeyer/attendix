@@ -1,7 +1,7 @@
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/signout_providers.dart';
 import 'package:attendix/data/repositories/sign_in_out_repository.dart';
-import 'package:attendix/features/redesign/data/providers/rd_today_providers.dart';
+import 'package:attendix/features/today/data/providers/rd_today_providers.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 CrossTenantPersonAttendance _att(

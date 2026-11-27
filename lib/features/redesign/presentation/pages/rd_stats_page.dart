@@ -23,7 +23,7 @@ import '../widgets/stats/rd_stats_fields.dart';
 import '../widgets/stats/rd_stats_levels.dart';
 import '../widgets/stats/rd_stats_widgets.dart';
 import 'rd_general_settings_page.dart' show RdTenantSettings, RdTenantSettingsBlock;
-import '../widgets/today/rd_today_common.dart' show RdInfoCard;
+import '../../../today/presentation/widgets/rd_today_common.dart' show RdInfoCard;
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../../../../shared/widgets/redesign/rd_split_view.dart' show RdManageBackLink;
 
