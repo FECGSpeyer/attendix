@@ -174,7 +174,7 @@ void main() {
 
     test('editor, viewer and PDF use the TOP display name', () {
       for (final path in [
-        'lib/features/planning/presentation/widgets/plan_fields_editor_beta.dart',
+        'lib/features/planning/presentation/widgets/plan_fields_editor_view.dart',
         'lib/features/planning/presentation/widgets/plan_view_list.dart',
         'lib/core/services/plan_export_service.dart',
       ]) {

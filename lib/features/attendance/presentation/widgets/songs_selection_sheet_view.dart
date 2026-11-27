@@ -3,9 +3,9 @@ part of 'songs_selection_sheet.dart';
 /// Conductor of one Werk: a group member ([id]) or a guest name ([other]).
 typedef _RdConductor = ({int? id, String? other});
 
-/// Beta (redesign) layout of "Werk(e) hinzufügen": all Werke are picked at
-/// once, then "Dirigent für alle" plus a conductor per Werk (tap a Werk to
-/// change only its conductor), so two conductors need one pass, not two.
+/// View layout for "Werk(e) hinzufügen": all Werke are picked at once, then
+/// "Dirigent für alle" plus a conductor per Werk (tap a Werk to change only
+/// its conductor), so two conductors need one pass, not two.
 extension _RdSongsSelection on _SongsSelectionSheetState {
   /// "Dirigent für alle"; without a choice yet the first conductor.
   _RdConductor? _rdForAll(List<Person> conductors) {
@@ -213,8 +213,8 @@ class _RdConductorPill extends StatelessWidget {
   }
 }
 
-/// Beta "Werke auswählen": search plus a multi-select list, "Weiter" at the
-/// top right.
+/// Multi-select "Werke auswählen" view: search plus a multi-select list,
+/// "Weiter" at the top right.
 class _RdSongMultiPicker extends ConsumerStatefulWidget {
   const _RdSongMultiPicker({required this.initialSelection});
 

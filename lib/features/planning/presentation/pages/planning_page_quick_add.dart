@@ -1,7 +1,7 @@
 part of 'planning_page.dart';
 
-/// Multi-entry quick-add sheet and stateful form body for the Beta Ablauf editor.
-extension _PlanningBetaQuickAdd on _PlanningPageState {
+/// Multi-entry quick-add sheet and stateful form body for [PlanningPage].
+extension _PlanningQuickAdd on _PlanningPageState {
   /// Adds several entries in a row in ONE sheet that stays open until
   /// "Fertig": Punkt or Notiz (form), "+ Werke" (the Werke of the Termin or
   /// the next Auftritt, else the Werk list) and "Block" (only its name; the

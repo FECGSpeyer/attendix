@@ -11,7 +11,7 @@ import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import 'rd_plan_widgets.dart';
 
-part 'plan_fields_editor_beta.dart';
+part 'plan_fields_editor_view.dart';
 
 /// A row of the editor: a field, or the "Unterpunkt hinzufügen" row closing an open block.
 class _EditorRow {
@@ -93,7 +93,7 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
 
   int? get _startMinutes => PlanUtils.parseTimeToMinutes(widget.startTime);
 
-  /// setState for the Beta extension (part file).
+  /// `setState` bridge for the view extension part file.
   void _update(VoidCallback fn) => setState(fn);
 
   void _emit(List<PlanField> fields) => widget.onChanged(PlanUtils.normalizeGroups(fields));

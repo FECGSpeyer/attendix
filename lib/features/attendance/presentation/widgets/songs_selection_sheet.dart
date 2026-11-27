@@ -19,7 +19,7 @@ import '../../../today/presentation/widgets/rd_today_common.dart';
 
 part 'songs_selection_sheet.freezed.dart';
 part 'songs_selection_sheet.g.dart';
-part 'songs_selection_sheet_beta.dart';
+part 'songs_selection_sheet_view.dart';
 
 /// Entry representing a song-conductor pair to be saved with attendance
 @freezed
@@ -94,10 +94,10 @@ class _SongsSelectionSheetState extends ConsumerState<SongsSelectionSheet> {
   bool _useOtherConductor = false;
   final _otherConductorController = TextEditingController();
 
-  /// Beta: conductor of single Werke that differs from "Dirigent für alle".
+  /// Conductor of single Werke that differs from "Dirigent für alle".
   final Map<int, _RdConductor> _rdOverrides = {};
 
-  /// Beta: Werk whose conductor chips are open.
+  /// Werk whose conductor chips are open.
   int? _rdExpandedSongId;
 
   @override

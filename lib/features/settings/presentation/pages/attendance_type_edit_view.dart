@@ -1,11 +1,9 @@
 part of 'attendance_type_edit_page.dart';
 
-/// REDESIGN (Termin-Werkzeuge T3): "Terminart bearbeiten" in the Beta look,
-/// like "Termin bearbeiten": every change is saved right away (no Speichern,
-/// no "Ungespeicherte Änderungen"). Often used settings on top, each
-/// feature is one row with its state that opens its own small page. The
-/// data, the update columns and the sub-editors are the classic page's.
-extension _AttendanceTypeBeta on _AttendanceTypeEditPageState {
+/// Main view of "Terminart bearbeiten": every change is saved right away.
+/// Often used settings sit on top; each feature is one row with its state that
+/// opens its own small subpage.
+extension _AttendanceTypeView on _AttendanceTypeEditPageState {
   Widget _rdBuild(BuildContext context) {
     final p = context.rd;
     final l10n = context.l10n;
@@ -328,69 +326,12 @@ extension _AttendanceTypeBeta on _AttendanceTypeEditPageState {
     picked.open();
   }
 
-  Widget _rdLookBody() {
-    final l10n = context.l10n;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        RdListRow(
-          title: l10n.typeSettingsColor,
-          onTap: _pickColor,
-          trailing: Icon(Icons.circle, color: ColorUtils.getColorForPicker(_color)),
-        ),
-        RdListRow(
-          title: l10n.typeSettingsHighlight,
-          subtitle: l10n.rdTypeLookHighlightHint,
-          showChevron: false,
-          onTap: () => _rdSet(() => _highlight = !_highlight),
-          trailing: Switch.adaptive(value: _highlight, onChanged: (v) => _rdSet(() => _highlight = v)),
-        ),
-        RdListRow(
-          title: l10n.rdTypeLookHideName,
-          subtitle: l10n.rdTypeLookHideNameHint,
-          showChevron: false,
-          onTap: () => _rdSet(() => _hideName = !_hideName),
-          trailing: Switch.adaptive(value: _hideName, onChanged: (v) => _rdSet(() => _hideName = v)),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(4, 12, 4, 4),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: _rdTypePill(_nameController.text.trim()),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _rdAttendanceBody() {
-    final l10n = context.l10n;
-    final current = _statusOrder.where(_availableStatuses.contains).toList();
-    final defaultStatus =
-        _availableStatuses.contains(_defaultStatus) ? _defaultStatus : (current.firstOrNull ?? _defaultStatus);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        RdListRow(
-          title: l10n.rdTypeStatuses,
-          subtitle: current.map(_getStatusName).join(', '),
-          onTap: _pickAvailableStatuses,
-        ),
-        RdListRow(
-          title: l10n.rdTypeDefaultStatus,
-          value: _getStatusName(defaultStatus),
-          onTap: () => _rdPickDefaultStatus(current),
-        ),
-      ],
-    );
-  }
-
   void _rdSet(VoidCallback fn) => _update(() {
     fn();
     _hasChanges = true;
   });
 
-  /// Text fields of the classic sections change without setState.
+  /// Text fields of sub-sections change without setState.
   void _rdOnText() {
     if (mounted) _update(() {});
   }
@@ -400,25 +341,12 @@ extension _AttendanceTypeBeta on _AttendanceTypeEditPageState {
     _durationDaysController.text = '$days';
   });
 
-  Future<void> _rdPickDefaultStatus(List<AttendanceStatus> statuses) async {
-    final picked = await showRdPlanActionSheet<AttendanceStatus>(
-      context,
-      title: context.l10n.redesignTypeDefault,
-      actions: [
-        for (final s in statuses)
-          PlanSheetAction(s, _getStatusName(s), icon: s == _defaultStatus ? Icons.check_circle : Icons.circle_outlined),
-      ],
-    );
-    if (picked == null || !mounted) return;
-    _rdSet(() => _defaultStatus = picked);
-  }
-
   /// Deleted while existing Termine still use it: only those keep it.
   bool get _rdDeletedButUsed => !_visible && _usageCount != 0; // -1 = count unknown
 
-  /// "Terminart löschen": unused → really deleted; used by existing
-  /// Termine (or count unknown, -1) → hidden for new ones (the classic delete would remove those
-  /// Termine with it).
+  /// "Terminart löschen": unused -> really deleted; used by existing
+  /// Termine (or count unknown, -1) -> hidden for new ones so existing
+  /// Termine keep their type.
   Future<void> _rdDeleteType() async {
     if (_usageCount == 0) return _deleteType();
     final l10n = context.l10n;
@@ -480,7 +408,7 @@ extension _AttendanceTypeBeta on _AttendanceTypeEditPageState {
       _rdScheduleSave();
       return;
     }
-    // Same rules as Speichern: a name and at least two statuses.
+    // Require a name and at least two statuses.
     final invalid = _nameController.text.trim().isEmpty || _availableStatuses.length < 2;
     if (invalid) {
       // No rebuild when it already shows (the build would schedule again).
@@ -540,104 +468,9 @@ extension _AttendanceTypeBeta on _AttendanceTypeEditPageState {
       if (mounted) _update(() => _rdSaving = false);
     }
   }
-
-  /// A small page per feature; it rebuilds with the type page.
-  void _rdOpenSub(String title, Widget Function() body) {
-    final l10n = context.l10n;
-    final name = _nameController.text.trim();
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder:
-            (ctx) => ValueListenableBuilder<int>(
-              valueListenable: _rdTick,
-              builder: (ctx, _, _) {
-                final p = ctx.rd;
-                return RdPage(
-                  children: [
-                    RdBackLink(
-                      label: name.isEmpty ? l10n.typeSettingsFlutterTypeTitle : name,
-                      onTap: () => Navigator.of(ctx).maybePop(),
-                    ),
-                    const SizedBox(height: 4),
-                    Semantics(header: true, child: Text(title, style: RdType.title(p))),
-                    const SizedBox(height: 16),
-                    RdCard(child: Material(type: MaterialType.transparency, child: body())),
-                  ],
-                );
-              },
-            ),
-      ),
-    );
-  }
-
-  Widget _rdRemindersBody() {
-    final l10n = context.l10n;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        SwitchListTile.adaptive(
-          contentPadding: EdgeInsets.zero,
-          title: Text(l10n.typeSettingsEventReminder),
-          subtitle: Text(l10n.typeSettingsEventReminderHelper),
-          value: _notification,
-          onChanged: (v) => _rdSet(() => _notification = v),
-        ),
-        if (_notification)
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            title: Text(l10n.typeSettingsConfigureReminders),
-            subtitle: Text(
-              _reminders.isNotEmpty
-                  ? l10n.typeSettingsRemindersActive(_reminders.length)
-                  : l10n.typeSettingsNoReminders,
-            ),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: _openReminders,
-          ),
-      ],
-    );
-  }
-
-  Widget _rdChecklistBody() {
-    final l10n = context.l10n;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        SwitchListTile.adaptive(
-          contentPadding: EdgeInsets.zero,
-          title: Text(l10n.typeSettingsEnableChecklist),
-          subtitle: Text(l10n.typeSettingsChecklistHelper),
-          value: _checklistEnabled,
-          onChanged:
-              (v) => _rdSet(() {
-                _checklistEnabled = v;
-                _checklist = [];
-              }),
-        ),
-        if (_checklistEnabled) _buildChecklistSection(),
-      ],
-    );
-  }
-
-  Widget _rdProtocolBody() => TypeProtocolSettingsTiles(
-    settings: _protocol,
-    showLearnMore: true,
-    hasPlaceholder: hasAgendaPlaceholder(_planFields),
-    onChanged: (v) => _rdSet(() => _protocol = v),
-    onInsertPlaceholder:
-        () => _rdSet(() {
-          if (!hasAgendaPlaceholder(_planFields)) _planFields.add(_withRowUid(agendaPlaceholderField()));
-        }),
-  );
-
-  Widget _rdSignupBody() => RegistrationFieldsEditor(
-    fields: _registrationFields,
-    onChanged: (fields) => _rdSet(() => _registrationFields = fields),
-  );
 }
 
-/// One feature of the type on the Beta page ("Neue Termine dieser Art
-/// bekommen automatisch" / "Hinzufügen").
+/// Feature entry shown in the attendance type configuration list.
 class _RdTypeFeature {
   const _RdTypeFeature({
     required this.id,

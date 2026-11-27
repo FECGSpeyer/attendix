@@ -22,6 +22,8 @@ import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../../../today/presentation/widgets/rd_today_common.dart' show RdInfoCard;
 import 'rd_extra_fields_page.dart' show rdSaveExtraFields, rdSerialExtraFieldWrite;
 
+part 'rd_extra_field_options.dart';
+
 /// The text the old page shows in the default field: a boolean has none, a
 /// legacy default `false` (Ionic emptyField) shows as empty.
 String _defaultText(ExtraField f) =>
@@ -34,13 +36,9 @@ bool _sameField(ExtraField a, ExtraField b) {
   return ja.keys.every((k) => k == 'options' ? listEquals(ja[k] as List, jb[k] as List) : ja[k] == jb[k]);
 }
 
-/// REDESIGN: "Zusatzfeld bearbeiten" (template of "Gruppe bearbeiten"):
-/// everything the old edit sheet offers (Name, Typ, Darstellung, sichtbar /
-/// bearbeitbar for persons, Optionen, Standardwert, "Alle Werte auf Standard
-/// zurücksetzen"), saved right away like "Speichern" of the old page (text
-/// fields when they lose focus or the page closes). "Zusatzfeld löschen" sits
-/// at the bottom with the old question. The field is addressed by its list
-/// ([song]) and id; the id stays when the name changes (old page).
+/// Edit page for a single extra field ("Zusatzfeld bearbeiten"): edits name,
+/// display mode, player visibility/editability, selection options, default
+/// value, value reset, and deletion with auto-save on blur or close.
 class RdExtraFieldEditPage extends ConsumerStatefulWidget {
   const RdExtraFieldEditPage({super.key, required this.song, required this.fieldId});
 
@@ -49,18 +47,6 @@ class RdExtraFieldEditPage extends ConsumerStatefulWidget {
 
   @override
   ConsumerState<RdExtraFieldEditPage> createState() => _RdExtraFieldEditPageState();
-}
-
-class _Option {
-  _Option(String text) : controller = TextEditingController(text: text);
-
-  final TextEditingController controller;
-  final FocusNode focus = FocusNode();
-
-  void dispose() {
-    controller.dispose();
-    focus.dispose();
-  }
 }
 
 class _RdExtraFieldEditPageState extends ConsumerState<RdExtraFieldEditPage> {
@@ -100,6 +86,8 @@ class _RdExtraFieldEditPageState extends ConsumerState<RdExtraFieldEditPage> {
   ExtraFieldsRepository? _repo;
   late final ProviderContainer _container;
   late final OfflineWriteSession _session;
+
+  void _update(VoidCallback fn) => setState(fn);
 
   @override
   void initState() {
@@ -150,15 +138,6 @@ class _RdExtraFieldEditPageState extends ConsumerState<RdExtraFieldEditPage> {
     for (final o in f.options ?? const <String>[]) {
       _addOptionRow(o);
     }
-  }
-
-  _Option _addOptionRow(String text) {
-    final option = _Option(text);
-    option.focus.addListener(() {
-      if (!option.focus.hasFocus) _saveOptions();
-    });
-    _options.add(option);
-    return option;
   }
 
   /// Puts [change] into the shared write queue right away (also from
@@ -243,44 +222,6 @@ class _RdExtraFieldEditPageState extends ConsumerState<RdExtraFieldEditPage> {
     );
   }
 
-  /// The options as shown without empty ones; null when a selection would be
-  /// left without any option (then nothing is written).
-  List<String>? get _optionValues {
-    final values = [
-      for (final o in _options)
-        if (o.controller.text.trim().isNotEmpty) o.controller.text,
-    ];
-    return values.isEmpty ? null : values;
-  }
-
-  /// Like the old page: the options of a selection, the first one is its
-  /// default.
-  /// A failed save shows the options last stored again, unless they were
-  /// edited meanwhile.
-  void _saveOptions() {
-    if (_type != 'select') return;
-    final values = _optionValues;
-    if (values == null) return;
-    _write(
-      (f) => f.copyWith(options: values, defaultValue: values.first),
-      onStored: () => _storedOptions = values,
-      revert: () {
-        if (!listEquals(_optionValues, values)) return;
-        final old = [..._options];
-        _options.clear();
-        for (final o in _storedOptions) {
-          _addOptionRow(o);
-        }
-        // Disposed after the frame: a removed row may still hold its focus.
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          for (final o in old) {
-            o.dispose();
-          }
-        });
-      },
-    );
-  }
-
   void _done() {
     FocusScope.of(context).unfocus();
     if (context.canPop()) {
@@ -325,118 +266,7 @@ class _RdExtraFieldEditPageState extends ConsumerState<RdExtraFieldEditPage> {
     });
   }
 
-  void _addOption() {
-    late _Option option;
-    setState(() => option = _addOptionRow(''));
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted && _options.contains(option)) option.focus.requestFocus();
-    });
-  }
-
-  /// Old page (removeEditExtraOption): a saved option asks first; for
-  /// persons the values are moved to the new default before it goes.
-  Future<void> _removeOption(_Option option) async {
-    final l10n = context.l10n;
-    final repo = _repo;
-    final value = option.controller.text;
-    // A selection keeps one option: removing the last one would move every
-    // person to an empty value while the stored field keeps the option.
-    if (value.trim().isNotEmpty &&
-        !_options.any((o) => !identical(o, option) && o.controller.text.trim().isNotEmpty)) {
-      ToastHelper.showError(context, l10n.redesignExtraFieldEditOptionsNeeded);
-      return;
-    }
-    final stored = _listOf(ref.read(currentTenantProvider), _song).where((f) => f.id == _fieldId).firstOrNull;
-    if (repo != null && value.isNotEmpty && (stored?.options ?? const []).contains(value)) {
-      final ok = await DialogHelper.showConfirmation(
-        context,
-        title: l10n.extraFieldsDeleteOption,
-        message: l10n.extraFieldsDeleteOptionMessage(value),
-        confirmText: l10n.commonDelete,
-        isDestructive: true,
-      );
-      if (!ok || !mounted) return;
-      if (_person) {
-        final current = [for (final o in _options) o.controller.text];
-        final newDefault = current.first == value ? (current.length > 1 ? current[1] : '') : current.first;
-        setState(() => _busy = true);
-        final rootNav = Navigator.of(context, rootNavigator: true);
-        unawaited(
-          showDialog<void>(
-            context: context,
-            useRootNavigator: true,
-            barrierDismissible: false,
-            builder: (_) => PopScope(
-              canPop: false,
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(32),
-                  child: RdInfoCard(text: l10n.extraFieldsFlutterUpdatingPersons, loading: true),
-                ),
-              ),
-            ),
-          ),
-        );
-        try {
-          final count = await repo.updateFieldValue(_fieldId, value, newDefault);
-          if (count > 0 && mounted) ToastHelper.showSuccess(context, l10n.extraFieldsPersonsUpdated(count));
-        } catch (_) {
-          if (mounted) ToastHelper.showError(context, l10n.dbLoadPeopleFailed);
-          return;
-        } finally {
-          rootNav.pop();
-          if (mounted) setState(() => _busy = false);
-        }
-      }
-    }
-    if (!mounted || !_options.contains(option)) return;
-    setState(() => _options.remove(option));
-    // Disposed after the frame: the removed row may still hold its focus.
-    WidgetsBinding.instance.addPostFrameCallback((_) => option.dispose());
-    _saveOptions();
-  }
-
-  /// Old page (resetExtraFieldValues): every person gets the default.
-  Future<void> _resetValues() async {
-    final l10n = context.l10n;
-    final repo = _repo;
-    if (repo == null) return;
-    final ok = await DialogHelper.showConfirmation(
-      context,
-      title: l10n.extraFieldsResetValues,
-      message: l10n.extraFieldsResetValuesMessage(_name.text),
-      confirmText: l10n.dashSettingsReset,
-      isDestructive: true,
-    );
-    if (!ok || !mounted) return;
-    setState(() => _busy = true);
-    try {
-      // The default as edited: pending text and options are saved first.
-      _saveDefaultText();
-      _saveOptions();
-      await _queue;
-      if (!mounted) return;
-      final field = _listOf(ref.read(currentTenantProvider), _song).where((f) => f.id == _fieldId).firstOrNull;
-      if (field == null) return;
-      final resolved = extraFieldDefaultValue(
-        field.type,
-        defaultValue: field.type == 'select' ? null : field.defaultValue,
-        options: field.options,
-        churchIds: extraFieldChurchIds(ref.read),
-      );
-      try {
-        final count = await repo.resetFieldValues(_fieldId, resolved);
-        if (mounted) ToastHelper.showSuccess(context, l10n.extraFieldsPersonsUpdated(count));
-      } catch (_) {
-        if (mounted) ToastHelper.showError(context, l10n.dbLoadPeopleFailed);
-      }
-    } finally {
-      if (mounted) setState(() => _busy = false);
-    }
-  }
-
-  /// Old page: asks, then the field goes from its list and its values are
-  /// cleaned (like "Speichern").
+  /// Asks for confirmation, removes the field from its list, and cleans values.
   Future<void> _delete(ExtraField field) async {
     if (_busy) return;
     final l10n = context.l10n;

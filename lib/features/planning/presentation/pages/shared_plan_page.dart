@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:attendix/core/theme/app_icons.dart';
@@ -11,6 +10,7 @@ import '../../../../core/utils/plan_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/plan/plan.dart';
 import '../../../../data/repositories/public_plan_repository.dart';
+import '../../data/own_write_log.dart';
 import '../public_brandings.dart';
 import '../widgets/plan_export_actions.dart';
 import '../widgets/plan_field_dialogs.dart';
@@ -21,6 +21,10 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/services/error_reporter.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+
+export '../../data/own_write_log.dart' show EchoKind, OwnWriteLog;
+
+part 'shared_plan_page_view.dart';
 
 /// Public plan link without login (Ionic `SharedPlanPage`, route `/plan`).
 ///
@@ -44,126 +48,6 @@ bool isAppVisible(AppLifecycleState? state) =>
           end: plan.endTime ?? '',
           fields: [...plan.fields],
         );
-
-/// SOL_FIX26: how a realtime row relates to the own writes of the page.
-enum EchoKind {
-  /// Echo of the newest own write (the state the editor already holds).
-  latestOwn,
-
-  /// Echo of an own write that a newer own write has replaced: stale.
-  olderOwn,
-
-  /// Not one of the remembered own writes (another editor, the app).
-  foreign,
-}
-
-/// SOL_FIX26: remembers the written columns of the last [capacity] own
-/// writes, so a delayed realtime echo of an older own write can be told apart
-/// from the echo of the newest one and from a foreign change. Values are
-/// compared as canonical JSON (sorted keys, nulls dropped), so the echo of a
-/// write matches no matter how the database orders the jsonb keys.
-///
-/// SOL_FIX27: the tables carry no server revision (`attendance` and
-/// `shared_plans` have no `updated_at`), so echoes are matched by content,
-/// but each own write suppresses at most ONE matching echo: a matching echo
-/// consumes its write. A write that completed more than [window] ago no
-/// longer matches. Once the echo of a write arrived (or its window
-/// expired), that write and every older one are dropped. So after the own
-/// edits 30 → 40 → 50 and their echoes, another editor setting the state
-/// back to 40 is a foreign change and is applied.
-class OwnWriteLog {
-  OwnWriteLog({this.capacity = 10, this.window = const Duration(seconds: 15), DateTime Function()? clock})
-      : _clock = clock ?? DateTime.now;
-
-  final int capacity;
-
-  /// How long after a write completed its echo is expected.
-  final Duration window;
-  final DateTime Function() _clock;
-  final _writes = <_OwnWrite>[];
-  int _nextId = 0;
-
-  /// Records a write of [columns] (call before sending it); returns its id.
-  int record(Map<String, dynamic> columns) {
-    final id = _nextId++;
-    _writes.add(_OwnWrite(id, {for (final e in columns.entries) e.key: canonicalJson(e.value)}));
-    if (_writes.length > capacity) _writes.removeAt(0);
-    return id;
-  }
-
-  /// SOL_FIX27: the write [id] was stored; its echo window starts now.
-  void complete(int id) {
-    for (final w in _writes) {
-      if (w.id == id) w.completedAt = _clock();
-    }
-  }
-
-  /// Forgets a write that failed (it is not the stored state).
-  void forget(int id) => _writes.removeWhere((w) => w.id == id);
-
-  /// Classifies an incoming [row]: the newest matching own write that has
-  /// not been echoed yet decides, and is consumed by it.
-  EchoKind classify(Map<String, dynamic> row) {
-    _prune();
-    for (var i = _writes.length - 1; i >= 0; i--) {
-      final w = _writes[i];
-      if (w.echoed) continue;
-      final matches = w.columns.entries.every((c) => row.containsKey(c.key) && canonicalJson(row[c.key]) == c.value);
-      if (!matches) continue;
-      final kind = i == _writes.length - 1 ? EchoKind.latestOwn : EchoKind.olderOwn;
-      w.echoed = true;
-      _prune();
-      return kind;
-    }
-    return EchoKind.foreign;
-  }
-
-  /// Drops the newest write that was echoed or whose window expired, and
-  /// every older write.
-  void _prune() {
-    final now = _clock();
-    for (var i = _writes.length - 1; i >= 0; i--) {
-      final w = _writes[i];
-      final done = w.completedAt;
-      if (w.echoed || (done != null && now.difference(done) > window)) {
-        _writes.removeRange(0, i + 1);
-        return;
-      }
-    }
-  }
-
-  /// Canonical JSON of [value]: map keys sorted, null values dropped,
-  /// integral doubles as ints (jsonb returns `1` for a written `1.0`).
-  static String canonicalJson(Object? value) {
-    Object? norm(Object? v) {
-      if (v is Map) {
-        final keys = v.keys.map((k) => k.toString()).toList()..sort();
-        return {
-          for (final k in keys)
-            if (v[k] != null) k: norm(v[k]),
-        };
-      }
-      if (v is List) return v.map(norm).toList();
-      if (v is double && v == v.truncateToDouble() && v.isFinite) return v.toInt();
-      return v;
-    }
-
-    return jsonEncode(norm(jsonDecode(jsonEncode(value))));
-  }
-}
-
-class _OwnWrite {
-  _OwnWrite(this.id, this.columns);
-
-  final int id;
-  final Map<String, String> columns;
-
-  /// Set once the write was stored (null while it runs: no expiry yet).
-  DateTime? completedAt;
-
-  /// Its echo arrived (it suppresses no further row).
-  bool echoed = false;
-}
 
 class SharedPlanPage extends ConsumerStatefulWidget {
   const SharedPlanPage({super.key, this.attendanceId, this.shareKey, this.editKey});
@@ -753,110 +637,8 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
   // Build
   // ---------------------------------------------------------------------------
 
-  @override
-  Widget build(BuildContext context) {
-    final date = _dateTime;
-    final liveNow = !_loading && !_notFound && _isLiveNow();
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text(date != null ? PlanUtils.longDate(date) : _title),
-        // IOS_PAGES3: iOS → the end ion-buttons share one glass capsule
-        actions: [
-          ToolbarButtonGroup(children: [
-          if (liveNow)
-            IconButton(
-              tooltip: context.l10n.planningFlutterLive,
-              // Ionic: radio / radio-outline, danger while live.
-              color: _live ? AppColors.danger : AppColors.primary,
-              icon: Icon(_live ? AppIcons.sensors : AppIcons.sensorsOutlined),
-              onPressed: () => setState(() => _live = !_live),
-            ),
-          if (!_loading && !_notFound)
-            IconButton(tooltip: context.l10n.planningExport, icon: Icon(AppIcons.iosShare), onPressed: _export),
-          ]),
-        ],
-      ),
-      body: _buildBody(date),
-    );
-  }
+  void _update(VoidCallback fn) => setState(fn);
 
-  Widget _buildBody(DateTime? date) {
-    if (_loading) return const Center(child: AppSpinner());
-    if (_notFound) {
-      return Padding(
-        padding: const EdgeInsets.all(16),
-        child: Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Text(context.l10n.plansNotFound),
-          ),
-        ),
-      );
-    }
-    return ListView(
-      padding: const EdgeInsets.only(bottom: 32),
-      children: [
-        if (_labels.isNotEmpty)
-          PlanChips(labels: _labels, selected: _planIndex, todayIndex: _todayIndex, onSelected: _selectPlan),
-        // Ionic: ion-list [inset]; header = plan title (+ edit icon and the
-        // "+" popover trigger in edit mode); start/end as ion-note.
-        IonInsetList(
-          // ABL-09: the inset-list header style (ion-list-header in an
-          // ion-list [inset]).
-          headerWidget: IonListHeader(
-            inset: true,
-            trailing: _editMode
-                ? Builder(
-                    builder: (anchor) => IconButton(
-                      color: AppColors.primary,
-                      tooltip: context.l10n.attendanceAdd,
-                      icon: Icon(AppIcons.add),
-                      onPressed: () => _showAddMenu(anchor),
-                    ),
-                  )
-                : null,
-            titleWidget: GestureDetector(
-              onTap: _editMode ? _editTitle : null,
-              child: Text.rich(TextSpan(children: [
-                TextSpan(text: _title),
-                if (_editMode)
-                  WidgetSpan(
-                    alignment: PlaceholderAlignment.middle,
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 4),
-                      child: Icon(AppIcons.editOutlined, size: 15, color: AppColors.mediumOf(context)),
-                    ),
-                  ),
-              ])),
-            ),
-          ),
-          dividerIndent: _editMode ? 16 : null,
-          children: _editMode
-              ? [
-                  ListTile(
-                    title: Text(context.l10n.attendanceStartLabel),
-                    trailing: IonNote(context.l10n.attendanceTimeOClock(PlanUtils.formatTime(_time))),
-                    onTap: _editStartTime,
-                  ),
-                  // Ionic: plain rows with trash + reorder handle.
-                  SharedPlanEditList(
-                    fields: _fields,
-                    startTime: PlanUtils.formatTime(_time),
-                    onChanged: (f) {
-                      setState(() => _fields = PlanUtils.normalizeGroups(f));
-                      unawaited(_save());
-                    },
-                  ),
-                  if (_end.isNotEmpty)
-                    ListTile(
-                      title: Text(context.l10n.attendanceEnd),
-                      trailing: IonNote(context.l10n.attendanceTimeOClock(PlanUtils.formatTime(_end))),
-                    ),
-                ]
-              : [PlanViewList(plan: _plan, date: date, liveMode: _live, groupRange: false)],
-        ),
-      ],
-    );
-  }
+  @override
+  Widget build(BuildContext context) => _buildScaffold(context);
 }

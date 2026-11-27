@@ -17,7 +17,7 @@ void main() {
 
     // Ionic keeps the public planning templates and branding names German
     // (public-planning-templates.ts), so they stay data in Flutter too.
-    const allowed = ['public_planning_page.dart'];
+    const allowed = ['public_planning_page.dart', 'public_planning_templates.dart'];
 
     for (final file in files) {
       if (allowed.any(file.path.endsWith)) continue;

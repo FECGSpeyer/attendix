@@ -53,7 +53,8 @@ void main() {
     test('type edit page no longer writes tenants directly', () {
       for (final path in [
         'lib/features/settings/presentation/pages/attendance_type_edit_page.dart',
-        'lib/features/settings/presentation/pages/attendance_type_edit_page_beta.dart',
+        'lib/features/settings/presentation/pages/attendance_type_edit_view.dart',
+        'lib/features/settings/presentation/pages/attendance_type_edit_subpages.dart',
       ]) {
         expect(src(path), isNot(contains(".from('tenants')")), reason: path);
       }

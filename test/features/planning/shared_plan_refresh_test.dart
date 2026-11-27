@@ -2,7 +2,6 @@
 // get the plan re-fetched every 15 s; paused in background, stopped on
 // dispose.
 import 'dart:async';
-import 'dart:io';
 
 import 'package:attendix/core/utils/plan_utils.dart';
 import 'package:attendix/data/models/plan/plan.dart';
@@ -12,6 +11,7 @@ import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
 class _FakeRepo extends PublicPlanRepository {
   _FakeRepo(super.ref);
@@ -217,16 +217,14 @@ void main() {
   });
 
   test('lifecycle listener is registered before the initial fetch', () {
-    final src = File('lib/features/planning/presentation/pages/shared_plan_page.dart')
-        .readAsStringSync();
+    final src = readDartLibrary('lib/features/planning/presentation/pages/shared_plan_page.dart');
     final init = src.substring(src.indexOf('void initState()'));
     expect(init.indexOf('AppLifecycleListener('), lessThan(init.indexOf('_load();')));
     expect(src, contains('isAppVisible(WidgetsBinding.instance.lifecycleState)'));
   });
 
   test('polling only for read links, realtime only for verified edit links', () {
-    final src = File('lib/features/planning/presentation/pages/shared_plan_page.dart')
-        .readAsStringSync();
+    final src = readDartLibrary('lib/features/planning/presentation/pages/shared_plan_page.dart');
     expect(src, contains('Duration(seconds: 15)'));
     expect(src, contains('if (!_notFound && !_editMode)'));
     expect(src, contains('_refreshTimer?.cancel()'));

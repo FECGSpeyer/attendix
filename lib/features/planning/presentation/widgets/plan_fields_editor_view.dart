@@ -1,11 +1,9 @@
 part of 'plan_fields_editor.dart';
 
-/// REDESIGN (Termin-Werkzeuge T2): [PlanFieldsEditor] in the Beta look, used
-/// by the Ad-hoc-Planung, shared edit links and the planning templates.
-/// Rows like the Termin's Ablauf-Editor (time, name, duration pill, drag
-/// handle); a tap opens one sheet with the fields inline (saved when the
-/// sheet closes) and the row actions. Same data, same [_emit].
-extension _PlanFieldsEditorBeta on _PlanFieldsEditorState {
+/// View layer for [PlanFieldsEditor], used by Ad-hoc-Planung, shared edit
+/// links, and planning templates. Rows display time, name, duration pill, and
+/// drag handle; tapping opens an inline edit sheet with row actions.
+extension _PlanFieldsEditorView on _PlanFieldsEditorState {
   Widget _rdBuild(BuildContext context) {
     final p = context.rd;
     if (_fields.isEmpty) {
@@ -394,7 +392,7 @@ extension _PlanFieldsEditorBeta on _PlanFieldsEditorState {
   }
 }
 
-/// Row frame of the Beta list: white surface, hairline, block indent line.
+/// Row frame for the editor list: surface fill, hairline divider, block indent line.
 class _RdRowFrame extends StatelessWidget {
   const _RdRowFrame({
     super.key,

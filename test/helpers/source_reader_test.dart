@@ -64,9 +64,9 @@ void main() {
       final combined = readDartLibrary(
         'lib/features/planning/presentation/pages/planning_page.dart',
       );
-      expect(combined, contains('planning_page_beta.dart'));
-      expect(combined, contains('planning_page_beta_timeline.dart'));
-      expect(combined, contains('planning_page_beta_actions.dart'));
+      expect(combined, contains('planning_page_scaffold.dart'));
+      expect(combined, contains('planning_page_timeline.dart'));
+      expect(combined, contains('planning_page_actions.dart'));
     });
   });
 }

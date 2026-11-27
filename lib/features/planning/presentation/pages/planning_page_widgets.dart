@@ -181,7 +181,7 @@ class _RdDurationEditorState extends State<_RdDurationEditor> {
   }
 }
 
-/// One row of the Beta timeline: a field ([index] in the plan) or the
+/// One row of the timeline: a field ([index] in the plan) or the
 /// "+ Punkt in „…“" end row of the open block [footer] ([index]: its head).
 class _RdSlot {
   const _RdSlot(this.index, {this.footer});
