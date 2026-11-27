@@ -37,8 +37,8 @@ import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../../data/rd_dates.dart';
 
-/// REDESIGN: "Neuer Termin" (canvas "TerminAnlegen"). Vorlagen from the
-/// group's earlier Termine, Art, Titel, Datum, Zeit, Ort, Abmeldeschluss,
+/// REDESIGN: "Neuer Termin" (canvas "TerminAnlegen"). Art, Titel, Datum,
+/// Zeit, Ort, Abmeldeschluss,
 /// weekly series with holiday preview, Werke. Creates through
 /// [AttendanceCreateWriter], the same write path as the old Termin sheet.
 class RdEventCreatePage extends ConsumerStatefulWidget {
@@ -55,7 +55,6 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
   final _place = TextEditingController();
 
   AttendanceType? _type;
-  String? _templateTitle;
   late DateTime _date = rdDay(widget.initialDate ?? DateTime.now());
   String? _start;
   String? _end;
@@ -81,8 +80,7 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
     userId: ref.read(currentAuthUserIdProvider),
   );
 
-  /// The user changed something (asks before discarding, stops the
-  /// automatic template).
+  /// The user changed something (asks before discarding).
   bool _touched = false;
 
   /// A tab switch replaces the page with `context.go`, which skips
@@ -130,21 +128,7 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
       _end ??= type.endTime;
     }
     if (!_durationEdited) _durationDays = type.allDay ? (type.durationDays ?? 1) : 1;
-    _templateTitle = null;
     _duty = {};
-  }
-
-  void _applyTemplate(RdCreateTemplate t) {
-    _titleEdited = false;
-    _timesEdited = false;
-    _durationEdited = false;
-    _applyType(t.type);
-    _templateTitle = t.title;
-    _start = t.startTime ?? t.type.startTime;
-    _end = t.endTime ?? t.type.endTime;
-    if (t.durationDays != null) _durationDays = t.durationDays!;
-    _title.text = t.typeInfo ?? t.type.name;
-    _place.text = t.place ?? '';
   }
 
   List<DateTime> _dates(HolidayData holidays) {
@@ -290,7 +274,6 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
     if (picked == null || !mounted || picked.id == _type?.id) return;
     _touch(() {
       _applyType(picked);
-      _templateTitle = null;
     });
   }
 
@@ -441,7 +424,7 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
     ];
     final history = ref.watch(realtimeAttendanceListProvider).valueOrNull ?? const <Attendance>[];
     final holidays = ref.watch(holidaysProvider).valueOrNull ?? const HolidayData();
-    final templates = rdTemplates(history, types);
+    final preferredType = rdTemplates(history, types).firstOrNull?.type;
 
     // Choose a useful type once; history refreshes never replace the draft.
     if (!_initialized && !loading && !failed && types.isNotEmpty && sameScope) {
@@ -449,7 +432,7 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
         if (!mounted || _initialized || _currentScope != _draftScope) return;
         setState(() {
           _initialized = true;
-          _applyType(templates.isEmpty ? types.first : templates.first.type);
+          _applyType(preferredType ?? types.first);
         });
       });
     }
@@ -497,14 +480,7 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
         absorbing: _saving,
         child: ExcludeFocus(
           excluding: _saving,
-          child: _form(
-            context,
-            types: types,
-            templates: templates,
-            history: history,
-            holidays: holidays,
-            dates: dates,
-          ),
+          child: _form(context, types: types, history: history, holidays: holidays, dates: dates),
         ),
       );
     }
@@ -648,7 +624,6 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
   Widget _form(
     BuildContext context, {
     required List<AttendanceType> types,
-    required List<RdCreateTemplate> templates,
     required List<Attendance> history,
     required HolidayData holidays,
     required List<DateTime> dates,
@@ -731,7 +706,6 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
                 onChanged:
                     (_) => _touch(() {
                       _titleEdited = true;
-                      _templateTitle = null;
                     }),
               ),
             ),
@@ -876,34 +850,6 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
                     ),
                   ),
               ],
-              if (history.isNotEmpty && templates.isNotEmpty)
-                RdFieldRow(
-                  label: l10n.redesignCreateTemplate,
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 6),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children: [
-                            for (final t in templates)
-                              RdChoiceChip(
-                                label: t.title,
-                                selected: t.title == _templateTitle,
-                                onTap: () => _touch(() => _applyTemplate(t)),
-                              ),
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8),
-                          child: Text(l10n.redesignCreateTemplateHint, style: RdType.meta(p, size: 12)),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
               Padding(
                 padding: const EdgeInsets.all(14),
                 child: Text(l10n.redesignCreateLaterHint, style: RdType.meta(p, size: 12)),

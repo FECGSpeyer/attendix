@@ -550,7 +550,7 @@ void main() {
       expect(tester.widget<FilledButton>(button).onPressed, isNotNull);
       expect(await guards.canLeave(), isTrue);
     });
-    testWidgets('starts with a type, explicit templates and weekly series remain available', (tester) async {
+    testWidgets('type selection, optional fields and weekly series remain available', (tester) async {
       tester.view.physicalSize = const Size(430, 1800);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
@@ -559,7 +559,7 @@ void main() {
 
       expect(find.text('Neuer Termin'), findsOneWidget);
       expect(find.text('Gesamtprobe'), findsNothing);
-      // Initially use type defaults; templates are an explicit shortcut.
+      // Start with the selected type's defaults.
       final title = tester.widget<TextField>(find.byType(TextField).first);
       expect(title.controller!.text, 'Probe');
       expect(find.text('Probenraum 2'), findsOneWidget);
@@ -570,12 +570,11 @@ void main() {
       expect(find.text('Termin anlegen'), findsOneWidget);
       await tester.tap(find.text('Weitere Optionen'));
       await _settle(tester);
-      await tester.tap(find.text('Gesamtprobe'));
-      await _settle(tester);
-      expect(title.controller!.text, 'Gesamtprobe');
+      expect(find.text('Antwort bis'), findsOneWidget);
+      expect(find.text('Werke'), findsOneWidget);
 
-      // Konzert template: its time; Ort is offered at every Art.
-      await tester.tap(find.text('Konzert').first);
+      // Changing the type still sets its time; Ort is offered at every Art.
+      await tester.tap(find.byKey(const ValueKey('rd-create-type-k')));
       await _settle(tester);
       expect(find.text('18:00'), findsOneWidget);
       expect(find.text('Ort'), findsOneWidget);
@@ -605,8 +604,7 @@ void main() {
       addTearDown(tester.view.reset);
       await tester.pumpWidget(eventCreateTestApp(history: const []));
       await _settle(tester);
-      // No history: the first visible type, its time, no template chips row
-      // for a single kind is still shown for two types.
+      // Without history, start with the first visible type and its time.
       expect(find.text('Probe'), findsWidgets);
       await tester.enterText(find.byType(TextField).first, 'Sonderprobe');
       await _settle(tester);
