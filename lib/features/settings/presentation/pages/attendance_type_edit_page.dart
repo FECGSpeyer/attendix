@@ -45,7 +45,8 @@ import '../../../attendance/presentation/widgets/event/rd_form_widgets.dart' sho
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../../../today/presentation/widgets/rd_today_common.dart' show RdInfoCard;
 
-part 'attendance_type_edit_page_beta.dart';
+part 'attendance_type_edit_view.dart';
+part 'attendance_type_edit_subpages.dart';
 part 'attendance_type_edit_plan_checklist.dart';
 part 'attendance_type_edit_sections.dart';
 
@@ -135,7 +136,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
   bool _isLoading = true;
   bool _hasChanges = false;
 
-  // REDESIGN: live saving of the Beta page (attendance_type_edit_page_beta.dart).
+  // Live saving for the view (attendance_type_edit_view.dart).
   final _rdTick = ValueNotifier<int>(0);
   Timer? _rdSaveTimer;
   bool _rdSaving = false;
@@ -143,7 +144,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
 
   /// What was last loaded or saved, and what last failed. A change is any
   /// difference in the saved data, whichever editor made it (also the
-  /// classic sub-editors and text fields without setState). A failed state
+  /// sub-editors and text fields without setState). A failed state
   /// is not retried in a loop; any further change is saved again.
   String? _rdSavedJson;
   String? _rdFailedJson;
@@ -338,7 +339,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
     return _rdBuild(context);
   }
 
-  /// The colour dialog of the Beta design (also attendance_type_edit_page_beta).
+  /// Opens the colour picker dialog for the attendance type.
   Future<void> _pickColor() async {
     final picked = await showAppDialog<String>(
       context: context,
@@ -542,7 +543,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
   Future<void> _deleteType() async {
     final confirmed = await DialogHelper.showConfirmation(
       context,
-      // Beta: only unused Terminarten get here (see _rdDeleteType), so no
+      // Only unused Terminarten get here (see _rdDeleteType), so no
       // Termin is deleted with it.
       title: context.l10n.rdTextTypeDeleteTitle,
       message: context.l10n.rdTextTypeDeleteMessage(_originalType!.name),

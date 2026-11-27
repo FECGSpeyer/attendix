@@ -59,13 +59,17 @@ import '../../../attendance/presentation/widgets/event/rd_form_widgets.dart' sho
 import '../../../attendance/presentation/widgets/event/rd_plan_take_over.dart';
 import '../../../today/presentation/widgets/rd_today_common.dart' show RdInfoCard;
 
-part 'planning_page_beta.dart';
-part 'planning_page_beta_timeline.dart';
-part 'planning_page_beta_actions.dart';
-part 'planning_page_beta_quick_add.dart';
-part 'planning_page_beta_widgets.dart';
+part 'planning_page_scaffold.dart';
+part 'planning_page_editor.dart';
+part 'planning_page_timeline.dart';
+part 'planning_page_timeline_blocks.dart';
+part 'planning_page_actions.dart';
+part 'planning_page_sheet_actions.dart';
+part 'planning_page_quick_add.dart';
+part 'planning_page_widgets.dart';
 part 'planning_page_drafts.dart';
 part 'planning_page_operations.dart';
+part 'planning_page_template_ops.dart';
 part 'planning_page_persistence.dart';
 
 /// Provider for songs list (for adding to plan)
@@ -220,11 +224,10 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   /// [dispose] can still show a toast.
   ScaffoldMessengerState? _messenger;
 
-  /// REDESIGN (Beta editor, [_PlanningBeta]): collapsed blocks and the row
-  /// whose duration field is open.
+  /// Collapsed blocks and the row whose duration field is open.
   final Set<String> _rdCollapsed = {};
 
-  /// Beta: the load ([_loadGen]) whose plan showed the Überschrift field;
+  /// The load ([_loadGen]) whose plan showed the Überschrift field;
   /// it then stays until another plan is loaded, also when emptied.
   int? _rdHeadingGen;
   int? _rdDurationIndex;

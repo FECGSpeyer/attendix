@@ -1,18 +1,14 @@
 part of 'files_page.dart';
 
-/// REDESIGN: Dateiablage in the Beta design (canvas "Beta: Gruppe und
-/// Daten", board "Dateiablage"). Same state, data and actions as the old
-/// page, only the look differs:
-/// * large title = the current folder, the back link goes one folder up
-///   (in the root: back to Werke, without a Werke tab to Ich);
-/// * storage as a thin bar under the title (only for editors, like before);
-/// * "•••" holds everything for the whole folder (Mehrere auswählen,
-///   Sortieren, Link teilen, Mehr Speicher anfragen, Suchhilfe), "+" asks
-///   "Dateien hochladen" or "Ordner anlegen";
-/// * entries as a grouped list; "•••" of an entry opens an action sheet
-///   (Öffnen first, Löschen red and last).
-extension _FilesPageBeta on _FilesPageState {
-  Widget _buildBeta(
+/// File browser view for Dateiablage:
+/// * large title = the current folder, back link goes one folder up
+///   (in the root: back to Werke, or Ich without a Werke tab);
+/// * storage as a thin bar under the title for editors;
+/// * "•••" holds folder actions (select, sort, share link, request storage,
+///   search help), "+" asks to upload files or create a folder;
+/// * entries as a grouped list; "•••" of an entry opens an action sheet.
+extension _FilesPageView on _FilesPageState {
+  Widget _buildView(
     BuildContext context, {
     required bool canAccess,
     required bool isRoleLoading,
@@ -24,46 +20,12 @@ extension _FilesPageBeta on _FilesPageState {
     final title = segments.isEmpty ? l10n.filesTitle : segments.last;
     final showAdd = canAccess && canEdit && !_selectionMode && !isRoleLoading;
 
-    final Widget topBar;
-    if (_selectionMode) {
-      topBar = Row(
-        children: [
-          RdTextLink(key: const Key('rd-files-selection-done'), label: l10n.filesSelectionDone, onTap: _exitSelection),
-          const Spacer(),
-          RdTextLink(
-            key: const Key('rd-files-select-all'),
-            label: _allVisibleSelected ? l10n.filesSelectNone : l10n.filesSelectAll,
-            onTap: _toggleSelectAll,
-          ),
-        ],
-      );
-    } else {
-      topBar = Row(
-        children: [
-          Expanded(
-            child: RdBackLink(
-              label:
-                  segments.isEmpty
-                      ? (_betaFromWorks ? l10n.redesignTabWorks : l10n.redesignTabMe)
-                      : segments.length == 1
-                      ? l10n.filesTitle
-                      : segments[segments.length - 2],
-              onTap: () => _betaBack(context),
-            ),
-          ),
-          if (canAccess && !isRoleLoading)
-            Builder(
-              builder:
-                  (button) => RdCircleButton(
-                    key: const Key('rd-files-more'),
-                    icon: Icons.more_horiz,
-                    label: l10n.a11yMoreActions,
-                    onPressed: () => _betaFolderActions(button),
-                  ),
-            ),
-        ],
-      );
-    }
+    final topBar = _buildTopBar(
+      context,
+      segments: segments,
+      canAccess: canAccess,
+      isRoleLoading: isRoleLoading,
+    );
 
     final List<Widget> body;
     if (isRoleLoading) {
@@ -72,10 +34,10 @@ extension _FilesPageBeta on _FilesPageState {
       body = [RdInfoCard(icon: Icons.lock_outline, text: l10n.filesNoAccess)];
     } else {
       body = [
-        if (canEdit && _usedBytes != null) ...[_betaStorage(context), const SizedBox(height: 16)],
-        _betaSearch(context),
+        if (canEdit && _usedBytes != null) ...[_buildStorageBar(context), const SizedBox(height: 16)],
+        _buildSearchField(context),
         const SizedBox(height: 16),
-        ..._betaList(context),
+        ..._buildEntriesList(context),
       ];
     }
 
@@ -83,7 +45,7 @@ extension _FilesPageBeta on _FilesPageState {
       // In a sub folder "back" goes one folder up, like the back link.
       canPop: segments.isEmpty && !_selectionMode,
       onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) _betaBack(context);
+        if (!didPop) _handleBack(context);
       },
       child: RdPage(
         onRefresh: canAccess ? _loadEntries : null,
@@ -91,7 +53,7 @@ extension _FilesPageBeta on _FilesPageState {
         floatingActionButtonLocation: _selectionMode ? FloatingActionButtonLocation.centerFloat : null,
         floatingActionButton:
             _selectionMode
-                ? _betaSelectionBar(context)
+                ? _buildSelectionBar(context)
                 : showAdd
                 ? FloatingActionButton(
                   key: const Key('rd-files-add'),
@@ -99,7 +61,7 @@ extension _FilesPageBeta on _FilesPageState {
                   backgroundColor: p.primary,
                   foregroundColor: p.onPrimary,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-                  onPressed: () => _betaAdd(context),
+                  onPressed: () => _showAddSheet(context),
                   child: const Icon(Icons.add, size: 28),
                 )
                 : null,
@@ -120,9 +82,56 @@ extension _FilesPageBeta on _FilesPageState {
     );
   }
 
+  Widget _buildTopBar(
+    BuildContext context, {
+    required List<String> segments,
+    required bool canAccess,
+    required bool isRoleLoading,
+  }) {
+    final l10n = context.l10n;
+    if (_selectionMode) {
+      return Row(
+        children: [
+          RdTextLink(key: const Key('rd-files-selection-done'), label: l10n.filesSelectionDone, onTap: _exitSelection),
+          const Spacer(),
+          RdTextLink(
+            key: const Key('rd-files-select-all'),
+            label: _allVisibleSelected ? l10n.filesSelectNone : l10n.filesSelectAll,
+            onTap: _toggleSelectAll,
+          ),
+        ],
+      );
+    }
+    return Row(
+      children: [
+        Expanded(
+          child: RdBackLink(
+            label:
+                segments.isEmpty
+                    ? (_isFromWorks ? l10n.redesignTabWorks : l10n.redesignTabMe)
+                    : segments.length == 1
+                    ? l10n.filesTitle
+                    : segments[segments.length - 2],
+            onTap: () => _handleBack(context),
+          ),
+        ),
+        if (canAccess && !isRoleLoading)
+          Builder(
+            builder:
+                (button) => RdCircleButton(
+                  key: const Key('rd-files-more'),
+                  icon: Icons.more_horiz,
+                  label: l10n.a11yMoreActions,
+                  onPressed: () => _showFolderActions(button),
+                ),
+          ),
+      ],
+    );
+  }
+
   /// Back link and system back: leave the selection, else one folder up,
   /// in the root back to Werke (or Ich).
-  void _betaBack(BuildContext context) {
+  void _handleBack(BuildContext context) {
     if (_selectionMode) {
       _exitSelection();
       return;
@@ -132,15 +141,15 @@ extension _FilesPageBeta on _FilesPageState {
       _navigateTo(segments.sublist(0, segments.length - 1).join('/'));
       return;
     }
-    rdBack(context, _betaFromWorks ? RedesignRoutes.works : RedesignRoutes.me);
+    rdBack(context, _isFromWorks ? RedesignRoutes.works : RedesignRoutes.me);
   }
 
   /// The Dateiablage opens from the Werke tab's "•••"; in groups without a
   /// Werke tab from Ich › Dateien.
-  bool get _betaFromWorks =>
+  bool get _isFromWorks =>
       canOpenSongsTab(ref.read(effectiveRoleProvider)) && ref.read(currentTenantProvider)?.type != 'general';
 
-  Widget _betaStorage(BuildContext context) {
+  Widget _buildStorageBar(BuildContext context) {
     final p = context.rd;
     final l10n = context.l10n;
     final max = _maxBytes;
@@ -170,7 +179,7 @@ extension _FilesPageBeta on _FilesPageState {
     );
   }
 
-  Widget _betaSearch(BuildContext context) {
+  Widget _buildSearchField(BuildContext context) {
     final p = context.rd;
     final l10n = context.l10n;
     return TextField(
@@ -195,7 +204,7 @@ extension _FilesPageBeta on _FilesPageState {
     );
   }
 
-  List<Widget> _betaList(BuildContext context) {
+  List<Widget> _buildEntriesList(BuildContext context) {
     final l10n = context.l10n;
     if (_isLoading && _entries.isEmpty) {
       return [RdInfoCard(text: l10n.redesignTodayLoading, loading: true)];
@@ -210,13 +219,13 @@ extension _FilesPageBeta on _FilesPageState {
     return [
       RdGroupedList(
         children: [
-          for (final e in filtered) _betaRow(context, e),
+          for (final e in filtered) _buildEntryRow(context, e),
         ],
       ),
     ];
   }
 
-  Widget _betaRow(BuildContext context, StorageEntry entry) {
+  Widget _buildEntryRow(BuildContext context, StorageEntry entry) {
     final p = context.rd;
     final l10n = context.l10n;
     final preview = _imagePreviewUrls[entry.path];
@@ -272,7 +281,7 @@ extension _FilesPageBeta on _FilesPageState {
               : IconButton(
                 key: ValueKey('rd-files-entry-more-${entry.path}'),
                 icon: Icon(Icons.more_horiz, color: p.text2, semanticLabel: l10n.a11yMoreActions),
-                onPressed: () => _betaEntryActions(entry),
+                onPressed: () => _showEntryActions(entry),
               ),
       onTap: () {
         if (_selectionMode) {
@@ -285,7 +294,7 @@ extension _FilesPageBeta on _FilesPageState {
   }
 
   /// Bottom bar while selecting: Verschieben and Löschen together.
-  Widget _betaSelectionBar(BuildContext context) {
+  Widget _buildSelectionBar(BuildContext context) {
     final p = context.rd;
     final l10n = context.l10n;
     final none = _selectedPaths.isEmpty;
@@ -318,7 +327,7 @@ extension _FilesPageBeta on _FilesPageState {
   }
 
   /// "+": Dateien hochladen or Ordner anlegen.
-  Future<void> _betaAdd(BuildContext context) async {
+  Future<void> _showAddSheet(BuildContext context) async {
     final l10n = context.l10n;
     final tenantId = ref.read(currentTenantIdProvider);
     final action = await showAppActionSheet<String>(
@@ -334,7 +343,7 @@ extension _FilesPageBeta on _FilesPageState {
   }
 
   /// "•••" of the page: everything for the whole folder.
-  Future<void> _betaFolderActions(BuildContext button) async {
+  Future<void> _showFolderActions(BuildContext button) async {
     final l10n = context.l10n;
     final tenantId = ref.read(currentTenantIdProvider);
     final canEdit = _canEdit;
@@ -362,7 +371,7 @@ extension _FilesPageBeta on _FilesPageState {
       case 'select':
         _startSelection();
       case 'sort':
-        await _betaSort();
+        await _showSortSheet();
       case 'share':
         await _shareEntry();
       case 'more':
@@ -372,9 +381,8 @@ extension _FilesPageBeta on _FilesPageState {
     }
   }
 
-  /// Sortieren: one choice of field and direction (same orders as the
-  /// old menu).
-  Future<void> _betaSort() async {
+  /// Sortieren: one choice of field and direction.
+  Future<void> _showSortSheet() async {
     final l10n = context.l10n;
     String label(FilesSortBy by, bool asc) {
       final dir = asc ? l10n.filesAscending : l10n.filesDescending;
@@ -403,9 +411,8 @@ extension _FilesPageBeta on _FilesPageState {
     });
   }
 
-  /// "•••" of an entry: Öffnen first, Löschen red and last (same entries
-  /// and conditions as the old popover).
-  Future<void> _betaEntryActions(StorageEntry entry) async {
+  /// "•••" of an entry: Öffnen first, Löschen red and last.
+  Future<void> _showEntryActions(StorageEntry entry) async {
     final l10n = context.l10n;
     final tenantId = ref.read(currentTenantIdProvider);
     final canEdit = _canEdit;

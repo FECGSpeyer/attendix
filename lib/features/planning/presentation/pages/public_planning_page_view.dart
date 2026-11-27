@@ -1,10 +1,8 @@
 part of 'public_planning_page.dart';
 
-/// REDESIGN (Termin-Werkzeuge T2): the Ad-hoc-Planung in the Beta look. Plan
-/// details in one card that saves right away, the Beta Ablauf rows below,
-/// sharing via the link button and everything else behind •••. Loading,
-/// saving, templates and exports are the classic page's.
-extension _PublicPlanningBeta on _PublicPlanningPageState {
+/// Main view of the Ad-hoc-Planung: plan details card that saves right away,
+/// the Ablauf rows below, sharing via the link button, and overflow actions.
+extension _PublicPlanningView on _PublicPlanningPageState {
   Widget _rdBuild(BuildContext context, {required bool loggedIn, required Organisation? org}) {
     final p = context.rd;
     final l10n = context.l10n;
@@ -159,7 +157,7 @@ extension _PublicPlanningBeta on _PublicPlanningPageState {
     _changed();
   }
 
-  /// Beta "Hinzufügen": one sheet instead of the popover.
+  /// Add menu bottom sheet.
   Future<String?> _rdAddMenu({
     required bool loggedIn,
     required bool isGeneral,
@@ -221,7 +219,7 @@ extension _PublicPlanningBeta on _PublicPlanningPageState {
     }
   }
 
-  /// Meine Pläne as a Beta sheet; ••• per plan deletes after a confirm.
+  /// Meine Pläne bottom sheet; ••• per plan deletes after confirmation.
   Future<SharedPlan?> _rdMyPlansSheet() {
     return showRdPlanSheet<SharedPlan>(
       context,

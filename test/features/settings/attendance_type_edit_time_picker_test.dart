@@ -11,7 +11,7 @@ void main() {
 
   setUpAll(() {
     pageSource = readDartLibrary('lib/features/settings/presentation/pages/attendance_type_edit_page.dart');
-    betaSource = readDartLibrary('lib/features/settings/presentation/pages/attendance_type_edit_page_beta.dart');
+    betaSource = readDartLibrary('lib/features/settings/presentation/pages/attendance_type_edit_view.dart');
   });
 
   group('AttendanceTypeEditPage - Time Input', () {

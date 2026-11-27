@@ -35,7 +35,7 @@ import '../widgets/manage/rd_settings_sheets.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../../../today/presentation/widgets/rd_today_common.dart' show RdInfoCard;
 
-part 'files_page_beta.dart';
+part 'files_page_view.dart';
 part 'files_page_actions.dart';
 
 enum FilesSortBy { name, updatedAt, size }
@@ -368,7 +368,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     ref.listen<int?>(currentTenantIdProvider, (prev, next) {
       if (prev != next) _onTenantChanged();
     });
-    return _buildBeta(context, canAccess: canAccess, isRoleLoading: isRoleLoading, canEdit: canEdit);
+    return _buildView(context, canAccess: canAccess, isRoleLoading: isRoleLoading, canEdit: canEdit);
   }
 }
 

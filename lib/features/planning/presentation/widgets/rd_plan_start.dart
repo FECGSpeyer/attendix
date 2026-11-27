@@ -7,7 +7,7 @@ import '../../../../data/models/plan/plan.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
-import '../pages/public_planning_page.dart' show publicPlanningTemplates;
+import '../../data/public_planning_templates.dart' show publicPlanningTemplates;
 import 'plan_song_helper.dart';
 
 // REDESIGN: how a new Ablauf starts ("Aus einer Vorlage", "Wie die Probe

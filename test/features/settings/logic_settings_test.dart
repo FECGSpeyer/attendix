@@ -92,11 +92,11 @@ void main() {
 
     test('edit page writes relevant_groups without null fallback', () {
       final src = readDartLibrary('lib/features/settings/presentation/pages/attendance_type_edit_page.dart');
-      final beta = readDartLibrary('lib/features/settings/presentation/pages/attendance_type_edit_page_beta.dart');
+      final view = readDartLibrary('lib/features/settings/presentation/pages/attendance_type_edit_view.dart');
       expect(src, isNot(contains("_relevantGroups.isNotEmpty ? _relevantGroups : null")));
       expect(src, contains("'relevant_groups': _relevantGroups,"));
       // save must check the update result (Ionic shows updateFailed)
-      expect(beta, contains('if (updated == null)'));
+      expect(view, contains('if (updated == null)'));
     });
   });
 

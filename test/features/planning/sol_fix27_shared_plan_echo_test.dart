@@ -3,7 +3,6 @@
 // earlier own state (after the own echoes arrived) is applied, not dropped
 // as a stale own echo.
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:attendix/data/models/plan/plan.dart';
 import 'package:attendix/data/repositories/public_plan_repository.dart';
@@ -14,6 +13,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../helpers/source_reader.dart';
 
 class _MockChannel extends Mock implements RealtimeChannel {}
 
@@ -250,7 +250,7 @@ void main() {
       final id = log.record(t('1'));
       log.forget(id);
       expect(log.classify(t('1')), EchoKind.foreign);
-      final src = File('lib/features/planning/presentation/pages/shared_plan_page.dart').readAsStringSync();
+      final src = readDartLibrary('lib/features/planning/presentation/pages/shared_plan_page.dart');
       expect(RegExp(r'_ownWrites\.complete\(writeId\)').allMatches(src), hasLength(2));
     });
   });
