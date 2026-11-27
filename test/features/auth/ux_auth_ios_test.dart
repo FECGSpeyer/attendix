@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:attendix/core/theme/app_theme.dart';
 import 'package:attendix/features/auth/presentation/widgets/otp_widgets.dart';
 import 'package:attendix/shared/widgets/redesign/rd_widgets.dart';
@@ -8,6 +6,8 @@ import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import '../../helpers/source_reader.dart';
 
 void main() {
   Widget app(Widget child, {TargetPlatform platform = TargetPlatform.iOS}) =>
@@ -141,10 +141,9 @@ void main() {
   });
 
   test('notification center does not use ListView.separated', () {
-    final src =
-        File(
-          'lib/features/messages/presentation/widgets/notification_bell.dart',
-        ).readAsStringSync();
+    final src = readDartLibrary(
+      'lib/features/messages/presentation/widgets/notification_bell.dart',
+    );
     expect(src, isNot(contains('ListView.separated(')));
   });
 }

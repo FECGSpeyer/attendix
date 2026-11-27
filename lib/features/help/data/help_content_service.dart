@@ -4,8 +4,8 @@ import '../../../core/providers/locale_provider.dart';
 import 'fuse_search.dart';
 import 'help_content.dart';
 import 'help_content_app.dart';
-import 'help_content_beta.dart';
 import 'help_content_en.dart';
+import 'help_content_overrides.dart';
 import 'help_models.dart';
 
 /// Help-center content access + search.
@@ -90,7 +90,7 @@ class HelpContentService {
 /// alias so `[[Begriff]]` links in German articles still resolve.
 HelpContentService localizedHelpContentService(String language) {
   final service = _languageHelpContentService(language);
-  final versions = language == 'en' ? betaHelpArticlesEn : betaHelpArticles;
+  final versions = language == 'en' ? redesignHelpArticlesEn : redesignHelpArticles;
   return HelpContentService(
     categories: service.categories,
     articles: [

@@ -23,7 +23,7 @@ import '../../../attendance/presentation/widgets/event/rd_form_widgets.dart' sho
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../../../today/presentation/widgets/rd_today_common.dart' show RdInfoCard;
 
-part 'shift_detail_page_beta.dart';
+part 'shift_detail_view.dart';
 
 /// Shift Detail Page
 ///
@@ -52,7 +52,7 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
   bool _hasChanges = false;
   bool _isInitialized = false;
 
-  // REDESIGN: live saving of the Beta page (shift_detail_page_beta.dart).
+  // Debounced live saving of the detail view (shift_detail_view.dart).
   Timer? _rdSaveTimer;
   ShiftNotifier? _rdNotifier;
 

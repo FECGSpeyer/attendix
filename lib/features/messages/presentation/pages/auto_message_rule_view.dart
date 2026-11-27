@@ -1,13 +1,9 @@
 part of 'auto_message_rule_page.dart';
 
-/// REDESIGN (canvas K2 "Regel und Verlauf"): page type "Bearbeiten".
-/// "Abbrechen · Regel · Fertig" on top, "Regel / Verlauf" below, the same
-/// options as the classic page in Beta lists, chips and segments, deleting
-/// at the very end. A rule saves only with "Fertig" (an active rule must
-/// not send half-done), which checks name, status, channel and text like
-/// the classic "Speichern".
-extension _RuleBeta on _AutoMessageRulePageState {
-  Widget _buildBeta() {
+/// "Regel und Verlauf" view for creating/editing an automatic message rule.
+/// A rule saves only with "Fertig" (checking name, status, channel, and text).
+extension _AutoMessageRuleView on _AutoMessageRulePageState {
+  Widget _buildView() {
     final p = context.rd;
     final l10n = context.l10n;
     return Scaffold(
@@ -37,7 +33,7 @@ extension _RuleBeta on _AutoMessageRulePageState {
             Expanded(
               child: _loading
                   ? Center(child: CircularProgressIndicator(color: p.primary))
-                  : RdFormBody(children: _tab == _Tab.history ? _historyBeta() : _ruleBeta()),
+                  : RdFormBody(children: _tab == _Tab.history ? _historyView() : _ruleView()),
             ),
           ],
         ),
@@ -73,7 +69,7 @@ extension _RuleBeta on _AutoMessageRulePageState {
     );
   }
 
-  /// A row that is ticked (checkbox or radio, Beta: check circle).
+  /// A row that is ticked (check circle).
   Widget _checkRow(String title, bool checked, VoidCallback onTap, {String? subtitle}) {
     final p = context.rd;
     return Semantics(
@@ -129,7 +125,7 @@ extension _RuleBeta on _AutoMessageRulePageState {
     );
   }
 
-  List<Widget> _ruleBeta() {
+  List<Widget> _ruleView() {
     final p = context.rd;
     final l10n = context.l10n;
     final kind = ref.watch(rdGroupKindProvider);
@@ -449,7 +445,7 @@ extension _RuleBeta on _AutoMessageRulePageState {
           RdInfoCard(text: l10n.redesignTodayLoading, loading: true),
         ],
         if (_previewError) _hint(l10n.autoMessagesPreviewFailed),
-        ..._previewBeta(groups.map((g) => (g.id!, g.name)).toList()),
+        ..._previewView(groups.map((g) => (g.id!, g.name)).toList()),
       ]),
       if (!_isNew) ...[
         const SizedBox(height: 28),
@@ -463,7 +459,7 @@ extension _RuleBeta on _AutoMessageRulePageState {
     ];
   }
 
-  List<Widget> _previewBeta(List<(int, String)> groups) {
+  List<Widget> _previewView(List<(int, String)> groups) {
     final preview = _preview;
     if (preview == null) return const [];
     final l10n = context.l10n;
@@ -524,7 +520,7 @@ extension _RuleBeta on _AutoMessageRulePageState {
     ];
   }
 
-  List<Widget> _historyBeta() {
+  List<Widget> _historyView() {
     final p = context.rd;
     final l10n = context.l10n;
     final id = _rule.id;

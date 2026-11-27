@@ -1,13 +1,12 @@
-// Help articles that describe where things are, in the wording of the new
-// design (Beta: Heute, Termine, Mitglieder, Werke, Ich). They replace the
-// article with the same id while the Beta is on; every other article stays
-// as it is. Edited by hand; tool/help/build_help.mjs does not touch this
+// Help articles that describe navigation in the wording of the redesigned UI
+// (Heute, Termine, Mitglieder, Werke, Ich). They replace the base article with
+// the same id. Edited by hand; tool/help/build_help.mjs does not touch this
 // file.
 
 import 'help_models.dart';
 
-/// Beta versions (German) by article id.
-const Map<String, HelpArticleTranslation> betaHelpArticles = {
+/// Redesign overrides (German) by article id.
+const Map<String, HelpArticleTranslation> redesignHelpArticles = {
   "gs-navigation": HelpArticleTranslation(
     title: "Wie ist die App aufgebaut?",
     keywords: ["tabs", "navigation", "menü", "übersicht", "reiter", "heute", "ich", "verwaltung", "wo finde ich", "einstellungen"],
@@ -35,8 +34,8 @@ const Map<String, HelpArticleTranslation> betaHelpArticles = {
   ),
 };
 
-/// Beta versions (English) by article id.
-const Map<String, HelpArticleTranslation> betaHelpArticlesEn = {
+/// Redesign overrides (English) by article id.
+const Map<String, HelpArticleTranslation> redesignHelpArticlesEn = {
   "gs-navigation": HelpArticleTranslation(
     title: "How is the app structured?",
     keywords: ["tabs", "navigation", "menu", "overview", "today", "me", "administration", "where do i find", "settings"],

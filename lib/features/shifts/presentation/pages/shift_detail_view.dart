@@ -1,10 +1,9 @@
 part of 'shift_detail_page.dart';
 
-/// REDESIGN (Termin-Werkzeuge T3): "Schichtplan bearbeiten" in the Beta look.
-/// Saves right away; Abschnitte and feste Schichten are rows that open a
-/// sheet; the Beispiel-Rechnung is a row; "In Gruppe kopieren" sits behind
-/// •••, Löschen at the bottom. Data and update are the classic page's.
-extension _ShiftDetailBeta on _ShiftDetailPageState {
+/// "Schichtplan bearbeiten" view: saves right away; Abschnitte and feste
+/// Schichten are rows that open a sheet; Beispiel-Rechnung is a row;
+/// "In Gruppe kopieren" sits behind •••, Löschen at the bottom.
+extension _ShiftDetailView on _ShiftDetailPageState {
   Widget _rdBuild(BuildContext context) {
     final p = context.rd;
     final l10n = context.l10n;

@@ -1,9 +1,9 @@
 part of 'protocol_page.dart';
 
-extension _ProtocolPageBeta on _ProtocolPageState {
-  /// Beta: same content, Beta frame (back link, title with date and
-  /// status, share as round button, footer with the Beta buttons).
-  Widget _buildBeta(BuildContext context, bool wide, bool showFooter) {
+extension _ProtocolPageView on _ProtocolPageState {
+  /// Protocol scaffold: back link, title with date and status, share button,
+  /// and phone footer with publish action.
+  Widget _buildView(BuildContext context, bool wide, bool showFooter) {
     final p = context.rd;
     final l10n = context.l10n;
     final ready = !_loading && !_notAvailable && !_loadFailed && _attendance != null;

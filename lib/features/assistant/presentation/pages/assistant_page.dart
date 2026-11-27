@@ -19,6 +19,7 @@ import '../../data/assistant_reply.dart';
 import '../assistant_voice.dart';
 import '../../../../core/utils/toast_helper.dart';
 
+part 'assistant_reply_previews.dart';
 part 'assistant_reply_view.dart';
 part 'assistant_reply_widgets.dart';
 
