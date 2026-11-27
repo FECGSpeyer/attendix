@@ -155,7 +155,7 @@ void main() {
     setUpAll(() {
       src = readDartLibrary('lib/data/repositories/sign_in_out_repository.dart');
       final start = src.indexOf('Future<List<CrossTenantPersonAttendance>> getAllPersonAttendancesAcrossTenants()');
-      final end = src.indexOf('static String tenantDisplayName', start);
+      final end = src.indexOf('\n}\n', start);
       body = src.substring(start, end);
     });
 
@@ -194,7 +194,10 @@ void main() {
     test('person_attendances are restricted to the tenant and the season', () {
       expect(body, contains('attendance_id!inner'));
       expect(body, contains(".eq('attendance.tenantId', tenantId)"));
-      expect(body, contains(".gt('attendance.date', overviewSeasonStart("));
+      expect(
+        body,
+        contains(RegExp(r"\.gt\('attendance\.date',\s*(?:SignInOutRepository\.)?overviewSeasonStart\(")),
+      );
     });
 
     test('tenant label is longName before shortName', () {

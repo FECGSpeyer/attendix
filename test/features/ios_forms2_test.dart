@@ -11,9 +11,10 @@ const _duty = AttendanceType(id: 'd', name: 'Dienst', dutyMode: true);
 void main() {
   group('Übersicht query and duty average', () {
     final repo = _read('lib/data/repositories/sign_in_out_repository.dart');
+    final start = repo.indexOf('Future<List<CrossTenantPersonAttendance>> _ownAttendancesOfTenant');
     final method = repo.substring(
-      repo.indexOf('Future<List<CrossTenantPersonAttendance>> _ownAttendancesOfTenant'),
-      repo.indexOf('static String tenantDisplayName'),
+      start,
+      repo.indexOf('\n}\n', start),
     );
 
     test('query uses the overview columns (no place / plan) and keeps the tenant filter', () {
