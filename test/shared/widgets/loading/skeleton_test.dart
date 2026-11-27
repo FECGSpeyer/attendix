@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shimmer/shimmer.dart';
 
-import '../../helpers/widget_test_helpers.dart';
+import '../../../helpers/widget_test_helpers.dart';
 
 void main() {
   widgetTestGroup('SkeletonBase', () {

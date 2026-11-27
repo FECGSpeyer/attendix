@@ -200,7 +200,7 @@ Leitlinien für neue Seiten:
 
 ## Tests
 
-- Tests der Oberfläche liegen in `test/features/redesign/`.
+- Tests der Oberfläche liegen passend zur Code-Struktur in `test/features/<domäne>/`, `test/shared/` und `test/core/`.
 - Ein Widget-Test baut die App mit `buildRdTheme(…)` auf.
 - Logik-Dateien bekommen Unit-Tests, Seiten nur dort Widget-Tests, wo ein
   Fehler wahrscheinlich und teuer ist. Nicht jede Zeile braucht einen Test.

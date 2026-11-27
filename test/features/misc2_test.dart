@@ -10,7 +10,7 @@ import 'package:attendix/data/models/song/song.dart';
 import 'package:attendix/features/self_service/data/providers/upcoming_songs_provider.dart';
 import 'package:attendix/features/self_service/presentation/widgets/upcoming_songs_sheet.dart';
 import 'package:flutter_test/flutter_test.dart';
-import '../../helpers/source_reader.dart';
+import '../helpers/source_reader.dart';
 
 /// MISC2: branding on exports, tracking call sites, AI synonyms,
 /// "Alle Noten drucken".

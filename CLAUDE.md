@@ -108,12 +108,15 @@ flutter run -d chrome
 
 ```
 test/
-├── mocks/           # Supabase & Repository Mocks
-├── factories/       # Test-Daten Factories
-├── helpers/         # Container Setup, Matchers
-├── core/providers/  # Provider Tests
-├── data/repositories/  # Repository Security Tests
-└── features/        # Feature Tests
+├── core/               # Core-, Provider-, Router-, Service- & Theme-Tests
+├── data/               # Model- & Repository-Security-Tests
+├── features/           # 1:1 Spiegelung von lib/features/ (today, attendance, people, songs, settings, …)
+├── shared/             # Shell- & Widget-Tests (spiegelt lib/shared/)
+├── factories/          # Test-Daten Factories
+├── fixtures/           # Test-Fixtures
+├── golden/             # Golden-Image-Tests
+├── helpers/            # Container Setup, Source-Reader, Matchers
+└── mocks/              # Supabase & Repository Mocks
 ```
 
 ### Security Tests

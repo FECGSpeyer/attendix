@@ -25,21 +25,15 @@ flutter test --name "Multi-Tenant Security"
 
 ```
 test/
-├── mocks/                           # Mock classes
-│   ├── supabase_mocks.dart         # SupabaseClient mocks
-│   └── repository_mocks.dart       # Repository mocks (mocktail)
-├── factories/                       # Test data factories
-│   └── test_factories.dart         # Person, Tenant, Attendance, etc.
-├── helpers/                         # Test utilities
-│   └── test_helpers.dart           # Container setup, matchers
-├── core/
-│   └── providers/                  # Provider tests
-│       └── player_providers_test.dart
-├── data/
-│   └── repositories/               # Repository tests
-│       ├── player_repository_test.dart
-│       └── attendance_repository_test.dart
-└── features/                       # Feature tests (existing)
+├── core/                            # Mirrors lib/core/ (providers, redesign, router, services, theme, utils)
+├── data/                            # Mirrors lib/data/ (models, repositories security tests)
+├── features/                        # Mirrors lib/features/ 1:1 (today, attendance, people, songs, settings, ...)
+├── shared/                          # Mirrors lib/shared/ (shell, widgets)
+├── factories/                       # Test data factories (test_factories.dart)
+├── fixtures/                        # Static test fixtures
+├── golden/                          # Golden image tests
+├── helpers/                         # Test utilities (source_reader.dart, test_helpers.dart)
+└── mocks/                           # Mock classes (supabase_mocks.dart, repository_mocks.dart)
 ```
 
 ## Security Tests
