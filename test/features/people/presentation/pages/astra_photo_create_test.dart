@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:attendix/core/constants/enums.dart';
@@ -19,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../../../helpers/source_reader.dart';
 
 /// ASTRA_PHOTO: person create page lets the user pick a Passbild while
 /// creating a person; it is uploaded after the insert (db.addPlayer).
@@ -49,7 +49,7 @@ Widget _app(PersonImagePicker picker) => ProviderScope(
       ),
     );
 
-String _read(String path) => File(path).readAsStringSync();
+String _read(String path) => readDartLibrary(path);
 
 Finder _avatarImage() => find.descendant(
       of: find.byType(RdPersonAvatar),

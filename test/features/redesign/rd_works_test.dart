@@ -47,6 +47,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../factories/test_factories.dart';
+import '../../helpers/source_reader.dart';
 
 class _TenantNotifier extends CurrentTenantNotifier {
   _TenantNotifier(super.ref) {
@@ -1363,14 +1364,14 @@ void main() {
         'lib/features/redesign/presentation/pages/rd_works_page.dart',
         'lib/features/redesign/presentation/pages/rd_work_page.dart',
       ]) {
-        final src = File(path).readAsStringSync();
+        final src = readDartLibrary(path);
         expect(src, isNot(contains('supabase')), reason: path);
         expect(src, isNot(contains('.from(')), reason: path);
       }
     });
 
     test('router: Werke routes', () {
-      final router = File('lib/core/router/app_router.dart').readAsStringSync();
+      final router = readDartLibrary('lib/core/router/app_router.dart');
       expect(router, contains("name: 'redesignWorks'"));
       expect(router, contains("name: 'redesignWork'"));
     });

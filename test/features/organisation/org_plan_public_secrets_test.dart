@@ -1,19 +1,17 @@
 // SOL_FIX7: public plan pages must never receive edit keys over realtime.
 // `postgres_changes` payloads carry the full row (share_key, share_edit_key,
 // edit_key), so the anonymous org page polls the whitelisted select instead.
-import 'dart:io';
 
 import 'package:attendix/core/providers/plan_providers.dart';
 import 'package:attendix/data/models/plan/plan.dart';
 import 'package:attendix/features/organisation/presentation/pages/org_plan_public_page.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
 void main() {
   group('Multi-Tenant Security: public plan secrets', () {
     test('org public page does not subscribe to postgres_changes rows', () {
-      final src = File(
-              'lib/features/organisation/presentation/pages/org_plan_public_page.dart')
-          .readAsStringSync()
+      final src = readDartLibrary('lib/features/organisation/presentation/pages/org_plan_public_page.dart')
           .replaceAll(RegExp(r'//[^\n]*'), '');
       expect(src, isNot(contains('watchSharedAttendancePlan')));
       expect(src, isNot(contains('watchSharedPlan')));
@@ -24,9 +22,7 @@ void main() {
     });
 
     test('shared plan page subscribes only after the edit key was verified', () {
-      final src = File(
-              'lib/features/planning/presentation/pages/shared_plan_page.dart')
-          .readAsStringSync();
+      final src = readDartLibrary('lib/features/planning/presentation/pages/shared_plan_page.dart');
       for (final (watch, verify) in [
         ('watchSharedAttendancePlan(', 'verifySharedAttendanceEditKey('),
         ('watchSharedPlan(', 'verifySharedPlanEditKey('),
@@ -44,15 +40,14 @@ void main() {
       for (final path in [
         'lib/features/planning/presentation/pages/public_planning_page.dart',
       ]) {
-        final src = File(path).readAsStringSync();
+        final src = readDartLibrary(path);
         expect(src, isNot(contains('onPostgresChanges')), reason: path);
         expect(src, isNot(contains('watchShared')), reason: path);
       }
     });
 
     test('public reads never select the secret columns', () {
-      final src = File('lib/data/repositories/public_plan_repository.dart')
-          .readAsStringSync();
+      final src = readDartLibrary('lib/data/repositories/public_plan_repository.dart');
       final selects = RegExp(r"\.select\(([^)]*)\)").allMatches(src);
       for (final m in selects) {
         final arg = m.group(1)!;

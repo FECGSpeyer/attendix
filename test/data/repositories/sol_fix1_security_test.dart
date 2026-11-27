@@ -1,5 +1,4 @@
 // SOL_FIX1: fixes for the external review of PR #225.
-import 'dart:io';
 
 import 'package:attendix/core/providers/attendance_providers.dart';
 import 'package:attendix/core/providers/player_providers.dart';
@@ -10,8 +9,9 @@ import 'package:attendix/data/repositories/player_repository.dart';
 import 'package:attendix/data/repositories/song_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
-String _read(String path) => File(path).readAsStringSync();
+String _read(String path) => readDartLibrary(path);
 
 /// Body of [method] in [source] (from its signature to the next method doc).
 String _method(String source, String signature) {

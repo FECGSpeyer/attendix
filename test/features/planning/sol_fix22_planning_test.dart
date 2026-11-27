@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/branding_providers.dart';
@@ -23,6 +22,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../factories/test_factories.dart';
 import '../../helpers/test_helpers.dart';
+import '../../helpers/source_reader.dart';
 
 class _MockPlanRepository extends Mock implements PlanRepository {}
 
@@ -44,12 +44,12 @@ void main() {
     });
 
     test('router resets negative plan values to null', () {
-      final src = File('lib/core/router/app_router.dart').readAsStringSync();
+      final src = readDartLibrary('lib/core/router/app_router.dart');
       expect(src, contains("rawPlan != null && rawPlan >= 0 ? rawPlan : null"));
     });
 
     test('editor falls back to the first plan via validPlanIndex', () {
-      final src = File('lib/features/planning/presentation/pages/planning_page.dart').readAsStringSync();
+      final src = readDartLibrary('lib/features/planning/presentation/pages/planning_page.dart');
       expect(src, contains('PlanUtils.validPlanIndex(planIndex, plans.length) ?? 0'));
       expect(src, isNot(contains('planIndex < plans.length ? planIndex : 0')));
     });
@@ -58,7 +58,7 @@ void main() {
   group('editor state after delete (source)', () {
     late String src;
     setUpAll(() {
-      src = File('lib/features/planning/presentation/pages/planning_page.dart').readAsStringSync();
+      src = readDartLibrary('lib/features/planning/presentation/pages/planning_page.dart');
     });
 
     test('_save only writes pending changes', () {

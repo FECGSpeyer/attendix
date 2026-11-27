@@ -1,11 +1,11 @@
-import 'dart:io';
 
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/utils/duty_utils.dart';
 import 'package:attendix/data/repositories/attendance_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
-String _read(String path) => File(path).readAsStringSync();
+String _read(String path) => readDartLibrary(path);
 
 /// Body of the method starting at [signature] (up to the next method).
 String _method(String src, String signature) {

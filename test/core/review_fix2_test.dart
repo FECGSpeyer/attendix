@@ -1,11 +1,11 @@
-import 'dart:io';
 
 import 'package:attendix/features/auth/data/auth_redirect_path.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../helpers/source_reader.dart';
 
 /// REVIEW_FIX2: review findings waves 4+5.
 void main() {
-  String src(String path) => File(path).readAsStringSync();
+  String src(String path) => readDartLibrary(path);
 
   String body(String source, String signature) {
     final start = source.indexOf(signature);

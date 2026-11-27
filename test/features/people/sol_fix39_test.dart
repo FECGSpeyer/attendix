@@ -1,10 +1,10 @@
-import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
 // SOL_FIX39: Sol review 6497424908 on PR #236.
 void main() {
-  String src(String p) => File(p).readAsStringSync();
+  String src(String p) => readDartLibrary(p);
 
   test('members list clears bulk selection when tenant changes', () {
     final s = src('lib/features/redesign/presentation/pages/rd_members_page.dart');

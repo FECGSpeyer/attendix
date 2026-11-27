@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:attendix/core/config/supabase_config.dart';
 import 'package:attendix/core/constants/enums.dart';
@@ -47,6 +46,7 @@ import 'package:supabase_flutter/supabase_flutter.dart' show AuthChangeEvent;
 import '../../factories/test_factories.dart';
 import '../../mocks/repository_mocks.dart';
 import '../../mocks/supabase_mocks.dart';
+import '../../helpers/source_reader.dart';
 
 MockGoTrueClient _auth() {
   final auth = MockGoTrueClient();
@@ -562,7 +562,7 @@ void main() {
   });
 
   test('the Termin view writes only through the shared write path', () {
-    final source = File('lib/features/redesign/presentation/pages/rd_event_page.dart').readAsStringSync();
+    final source = readDartLibrary('lib/features/redesign/presentation/pages/rd_event_page.dart');
     expect(source, isNot(contains('updatePersonAttendance(')));
     expect(source, isNot(contains('.from(')));
     // Serialised per row, see "Rückgängig during a slow write";

@@ -10,6 +10,7 @@ import 'package:attendix/core/services/native/store_update_service.dart';
 import 'package:attendix/shared/widgets/layout/root_back_button_scope.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
 /// NATIVE_MISC: native-only Ionic behaviour (Capacitor plugins) ported to
 /// the Flutter app – file viewer, printer fallback, store update, media
@@ -249,7 +250,7 @@ void main() {
   });
 
   group('source checks', () {
-    String read(String p) => File(p).readAsStringSync();
+    String read(String p) => readDartLibrary(p);
 
     test('app shell wraps the tabs in RootBackButtonScope', () {
       expect(read('lib/features/redesign/presentation/shell/rd_shell.dart'),

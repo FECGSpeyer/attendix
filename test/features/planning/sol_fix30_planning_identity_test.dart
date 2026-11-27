@@ -8,7 +8,6 @@
 // 3. Switching plans resolves the chosen plan by identity after the save.
 // 4. A write of a disposed editor skipped because a later editor stored the
 //    Termin is reported (conflict / loss toast).
-import 'dart:io';
 
 import 'package:attendix/core/services/planning_draft_store.dart';
 import 'dart:convert';
@@ -40,6 +39,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../factories/test_factories.dart';
 import '../../helpers/test_helpers.dart';
+import '../../helpers/source_reader.dart';
 
 class _MockPlanRepository extends Mock implements PlanRepository {}
 
@@ -315,7 +315,7 @@ void main() {
   group('item 2: "Themen aufnehmen" writes in the queue on the newest stored row', () {
     late String src;
     setUpAll(() {
-      src = File('lib/features/planning/presentation/pages/planning_page.dart').readAsStringSync();
+      src = readDartLibrary('lib/features/planning/presentation/pages/planning_page.dart');
     });
 
     test('the picker gets the queued write; no copy from before the save is registered', () {

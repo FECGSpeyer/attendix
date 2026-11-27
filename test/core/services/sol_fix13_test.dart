@@ -3,7 +3,6 @@
 // the tenant of its person list, protocol save chain on dispose, hash-route
 // app links).
 import 'dart:async';
-import 'dart:io';
 
 import 'package:attendix/core/providers/connectivity_provider.dart';
 import 'package:attendix/core/providers/tenant_providers.dart';
@@ -23,8 +22,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show AuthChangeEvent;
 
 import '../../factories/test_factories.dart';
+import '../../helpers/source_reader.dart';
 
-String _read(String path) => File(path).readAsStringSync();
+String _read(String path) => readDartLibrary(path);
 
 /// Runs [onUpdate] (e.g. an account switch) while the queue update is in
 /// progress, i.e. during the storage await of `_mergeIntoPending`.

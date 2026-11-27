@@ -1,9 +1,9 @@
-import 'dart:io';
 
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/utils/attendance_logic_utils.dart';
 import 'package:attendix/data/models/player_absence/player_absence.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
 /// WAVE 7 LOGIC_ATT: Termin creation/detail logic parity with Ionic.
 void main() {
@@ -108,18 +108,13 @@ void main() {
   });
 
   group('source parity', () {
-    final create = File('lib/features/redesign/presentation/pages/rd_event_create_page.dart')
-            .readAsStringSync() +
-        File('lib/features/attendance/presentation/attendance_create_writes.dart')
-            .readAsStringSync();
-    final detail = File('lib/features/redesign/presentation/pages/rd_event_page.dart')
-            .readAsStringSync() +
-        File('lib/features/redesign/presentation/pages/rd_event_edit_page.dart')
-            .readAsStringSync() +
-        File('lib/features/attendance/presentation/widgets/attendance_date_change.dart')
-            .readAsStringSync();
-    final realtime = File('lib/core/providers/realtime_providers.dart').readAsStringSync();
-    final repo = File('lib/data/repositories/attendance_repository.dart').readAsStringSync();
+    final create = readDartLibrary('lib/features/redesign/presentation/pages/rd_event_create_page.dart') +
+        readDartLibrary('lib/features/attendance/presentation/attendance_create_writes.dart');
+    final detail = readDartLibrary('lib/features/redesign/presentation/pages/rd_event_page.dart') +
+        readDartLibrary('lib/features/redesign/presentation/pages/rd_event_edit_page.dart') +
+        readDartLibrary('lib/features/attendance/presentation/widgets/attendance_date_change.dart');
+    final realtime = readDartLibrary('lib/core/providers/realtime_providers.dart');
+    final repo = readDartLibrary('lib/data/repositories/attendance_repository.dart');
 
     test('create: paused NULL counts as not paused, absences + shifts applied', () {
       expect(create, isNot(contains(".eq('paused', false)")));

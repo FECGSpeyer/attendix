@@ -6,7 +6,6 @@
 //
 // Column lists: test/fixtures/db_columns.dart, generated from the Ionic
 // schema by `dart run tool/db/extract_db_columns.dart`.
-import 'dart:io';
 
 import 'package:attendix/core/services/telegram_service.dart';
 import 'package:attendix/core/utils/db_helpers.dart';
@@ -26,6 +25,7 @@ import 'package:attendix/features/tenant_selection/tenant_defaults.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/db_columns.dart';
+import '../helpers/source_reader.dart';
 
 void expectColumns(String table, Iterable<String> keys, {String? reason}) {
   final cols = kDbColumns[table];
@@ -35,7 +35,7 @@ void expectColumns(String table, Iterable<String> keys, {String? reason}) {
       reason: '${reason ?? table}: keys not in $table schema: $unknown');
 }
 
-String _read(String path) => File(path).readAsStringSync();
+String _read(String path) => readDartLibrary(path);
 
 /// A Person with every field set, so toJson emits every key.
 Person _fullPerson() => Person(
@@ -286,7 +286,7 @@ void main() {
         'lib/features/redesign/presentation/pages/rd_event_create_page.dart',
         'lib/features/attendance/presentation/attendance_create_writes.dart',
       ]) {
-        expect(File(path).readAsStringSync(), isNot(contains("'created_by':")));
+        expect(readDartLibrary(path), isNot(contains("'created_by':")));
       }
     });
 

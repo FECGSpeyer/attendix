@@ -1,6 +1,6 @@
-import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
 /// Security tests for SignInOutRepository (self-service sign in / sign out).
 ///
@@ -10,7 +10,7 @@ void main() {
   late String source;
 
   setUpAll(() {
-    source = File('lib/data/repositories/sign_in_out_repository.dart').readAsStringSync();
+    source = readDartLibrary('lib/data/repositories/sign_in_out_repository.dart');
   });
 
   String body(String method) {

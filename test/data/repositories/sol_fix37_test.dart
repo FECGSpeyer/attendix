@@ -1,9 +1,9 @@
-import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
 String _body(String path, String start, String end) {
-  final s = File(path).readAsStringSync();
+  final s = readDartLibrary(path);
   final i = s.indexOf(start);
   return s.substring(i, s.indexOf(end, i + start.length));
 }

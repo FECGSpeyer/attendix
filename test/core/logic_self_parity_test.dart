@@ -1,6 +1,5 @@
 // LOGIC_SELF: parity of attendance percentages, duty notifications,
 // parents filter, timestamps and absence ranges with Ionic v4.17.5.
-import 'dart:io';
 
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/signout_providers.dart';
@@ -9,6 +8,7 @@ import 'package:attendix/data/models/attendance/attendance.dart';
 import 'package:attendix/data/repositories/player_absence_repository.dart';
 import 'package:attendix/data/repositories/sign_in_out_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../helpers/source_reader.dart';
 
 const _dutyType = AttendanceType(id: 'd', name: 'Dienst', dutyMode: true);
 const _normalType = AttendanceType(id: 'n', name: 'Probe');
@@ -165,7 +165,7 @@ void main() {
   });
 
   group('source analysis', () {
-    String read(String path) => File(path).readAsStringSync();
+    String read(String path) => readDartLibrary(path);
 
     test('changed_at is always written as UTC ISO', () {
       for (final path in [

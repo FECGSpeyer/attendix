@@ -5,7 +5,6 @@
 // 2. The topic picker never restores a deleted / changed main plan.
 // 3. Conflict drafts (and drafts whose base changed) are never restored or
 //    autosaved on their own; the user decides.
-import 'dart:io';
 
 import 'dart:convert';
 
@@ -36,6 +35,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../factories/test_factories.dart';
 import '../../helpers/test_helpers.dart';
+import '../../helpers/source_reader.dart';
 
 class _MockPlanRepository extends Mock implements PlanRepository {}
 
@@ -295,7 +295,7 @@ void main() {
   group('item 2: the topic picker never restores a deleted main plan', () {
     late String src;
     setUpAll(() {
-      src = File('lib/features/planning/presentation/pages/planning_page.dart').readAsStringSync();
+      src = readDartLibrary('lib/features/planning/presentation/pages/planning_page.dart');
     });
 
     test('a gone / changed main plan is a conflict; no copyWith(plan: null)', () {

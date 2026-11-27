@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:attendix/core/config/supabase_config.dart';
 import 'package:attendix/core/constants/enums.dart';
@@ -31,6 +30,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../factories/test_factories.dart';
 import '../../mocks/supabase_mocks.dart';
+import '../../helpers/source_reader.dart';
 
 class _TenantNotifier extends CurrentTenantNotifier {
   _TenantNotifier(super.ref);
@@ -148,9 +148,9 @@ void main() {
     test('route of the new design', () {
       expect(RedesignRoutes.personHistory(5), '/mitglieder/5/verlauf');
       expect(RedesignRoutes.isRedesignRoute('/mitglieder/5/verlauf'), isTrue);
-      final router = File('lib/core/router/app_router.dart').readAsStringSync();
+      final router = readDartLibrary('lib/core/router/app_router.dart');
       expect(router, contains("name: 'redesignPersonHistory'"));
-      final page = File('lib/features/redesign/presentation/pages/rd_person_page.dart').readAsStringSync();
+      final page = readDartLibrary('lib/features/redesign/presentation/pages/rd_person_page.dart');
       expect(page, contains('RedesignRoutes.personHistory(personId)'));
     });
   });

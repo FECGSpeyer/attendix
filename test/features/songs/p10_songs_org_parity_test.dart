@@ -1,9 +1,9 @@
-import 'dart:io';
 
 import 'package:attendix/features/team_organization/protocol_pdf.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
-String _read(String path) => File(path).readAsStringSync();
+String _read(String path) => readDartLibrary(path);
 
 /// P10_SONGS_ORG: final parity sweep (songs, team organisation, protocols).
 void main() {

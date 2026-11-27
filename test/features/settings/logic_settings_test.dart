@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/utils/statistics_utils.dart';
@@ -11,6 +10,7 @@ import 'package:attendix/features/settings/data/general_settings_helpers.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../factories/test_factories.dart';
+import '../../helpers/source_reader.dart';
 
 /// LOGIC_SETTINGS (wave 7): Ionic parity for settings and statistics.
 void main() {
@@ -91,12 +91,8 @@ void main() {
     });
 
     test('edit page writes relevant_groups without null fallback', () {
-      final src = File(
-        'lib/features/settings/presentation/pages/attendance_type_edit_page.dart',
-      ).readAsStringSync();
-      final beta = File(
-        'lib/features/settings/presentation/pages/attendance_type_edit_page_beta.dart',
-      ).readAsStringSync();
+      final src = readDartLibrary('lib/features/settings/presentation/pages/attendance_type_edit_page.dart');
+      final beta = readDartLibrary('lib/features/settings/presentation/pages/attendance_type_edit_page_beta.dart');
       expect(src, isNot(contains("_relevantGroups.isNotEmpty ? _relevantGroups : null")));
       expect(src, contains("'relevant_groups': _relevantGroups,"));
       // save must check the update result (Ionic shows updateFailed)
@@ -159,7 +155,7 @@ void main() {
   group('group deletion', () {
     test('deleteGroup counts archived people too', () {
       final src =
-          File('lib/data/repositories/group_repository.dart').readAsStringSync();
+          readDartLibrary('lib/data/repositories/group_repository.dart');
       expect(src, contains('getPlayerCountInGroup(id, includeArchived: true)'));
     });
   });

@@ -1,11 +1,11 @@
-import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
 /// P10_PEOPLE (final parity sweep): source checks for Ionic behaviour that is
 /// hard to reach in widget tests.
 void main() {
-  String read(String path) => File(path).readAsStringSync();
+  String read(String path) => readDartLibrary(path);
 
   test('members list watches persisted list filter provider', () {
     final src = read('lib/features/redesign/presentation/pages/rd_members_page.dart');

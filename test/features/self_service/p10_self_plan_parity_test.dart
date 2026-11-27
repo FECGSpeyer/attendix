@@ -1,8 +1,8 @@
-import 'dart:io';
 
 import 'package:attendix/data/repositories/sign_in_out_repository.dart';
 import 'package:attendix/features/self_service/presentation/widgets/self_service_event_actions.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
 /// P10_SELF_PLAN: final parity sweep of "Meine Termine", "Übersicht",
 /// Dienstplan, Dashboard and Ablaufplan export sheets with Ionic.
@@ -60,7 +60,7 @@ void main() {
   });
 
   group('source parity', () {
-    String read(String path) => File(path).readAsStringSync();
+    String read(String path) => readDartLibrary(path);
 
     test('"Kann nicht" on Meine Termine uses the excuse reason picker', () {
       final section = read('lib/features/duty/presentation/widgets/self_service_duty_section.dart');

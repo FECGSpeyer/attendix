@@ -1,6 +1,5 @@
 import 'package:attendix/core/theme/app_icons.dart';
 import 'dart:async';
-import 'dart:io';
 
 import 'package:attendix/core/providers/legal_providers.dart';
 import 'package:attendix/core/services/teams/teams_service.dart';
@@ -15,6 +14,7 @@ import 'package:attendix/shared/widgets/dialogs/ion_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
 /// Pre-login screens: login, register modal, legal modal, public planner.
 void main() {
@@ -103,18 +103,17 @@ void main() {
 
     test('errors are toasts, no inline error box; reset is a dialog', () {
       final src =
-          File('lib/features/auth/presentation/pages/login_page.dart').readAsStringSync();
+          readDartLibrary('lib/features/auth/presentation/pages/login_page.dart');
       expect(src, isNot(contains('_errorMessage')));
       expect(src, isNot(contains("'/forgot-password")));
       expect(src, contains('showRegisterModal('));
-      final reg = File('lib/features/auth/presentation/pages/register_page.dart')
-          .readAsStringSync();
+      final reg = readDartLibrary('lib/features/auth/presentation/pages/register_page.dart');
       expect(reg, isNot(contains('_errorMessage')));
       expect(reg, isNot(contains('_registrationSuccess')));
     });
 
     test('/forgot-password redirects to the login reset alert', () {
-      final src = File('lib/core/router/app_router.dart').readAsStringSync();
+      final src = readDartLibrary('lib/core/router/app_router.dart');
       final start = src.indexOf("path: '/forgot-password'");
       final block = src.substring(start, src.indexOf('),', start));
       expect(block, contains("'/login'"));
@@ -213,9 +212,7 @@ void main() {
     });
 
     test('times without "Uhr", add menu opens the Beta add sheet', () {
-      final src = File(
-              'lib/features/planning/presentation/pages/public_planning_page.dart')
-          .readAsStringSync();
+      final src = readDartLibrary('lib/features/planning/presentation/pages/public_planning_page.dart');
       expect(src, isNot(contains('attendanceTimeOClock')));
       final addMenu = src.substring(src.indexOf('Future<void> _showAddMenu('));
       expect(addMenu.substring(0, addMenu.indexOf('if (action == null')),

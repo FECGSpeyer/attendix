@@ -1,9 +1,9 @@
-import 'dart:io';
 
 import 'package:attendix/core/router/legacy_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import '../../helpers/source_reader.dart';
 
 String? _r(String location) => legacyRouteRedirect(Uri.parse(location));
 
@@ -293,7 +293,7 @@ void main() {
   });
 
   group('app_router wiring (source analysis)', () {
-    final source = File('lib/core/router/app_router.dart').readAsStringSync();
+    final source = readDartLibrary('lib/core/router/app_router.dart');
 
     test('legacy table runs before the public song routes check', () {
       final legacy = source.indexOf('legacyRouteRedirect(state.uri)');

@@ -1,9 +1,9 @@
-import 'dart:io';
 
 import 'package:attendix/features/attendance/presentation/widgets/attendance_date_change.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
-String _src(String path) => File(path).readAsStringSync();
+String _src(String path) => readDartLibrary(path);
 
 void main() {
   group('SOL_FIX35 calendar day shift', () {

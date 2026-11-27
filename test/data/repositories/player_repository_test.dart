@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:attendix/core/config/supabase_config.dart';
 import 'package:attendix/data/models/person/person.dart';
 import 'package:attendix/data/repositories/player_repository.dart';
@@ -9,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:supabase_flutter/supabase_flutter.dart'
     show AuthClientOptions, SupabaseClient;
+import '../../helpers/source_reader.dart';
 
 /// Security tests for PlayerRepository
 ///
@@ -24,8 +24,7 @@ void main() {
   late String playerRepoSource;
 
   setUpAll(() {
-    final file = File('lib/data/repositories/player_repository.dart');
-    playerRepoSource = file.readAsStringSync();
+        playerRepoSource = readDartLibrary('lib/data/repositories/player_repository.dart');
   });
 
   group('Multi-Tenant Security - PlayerRepository', () {

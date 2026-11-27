@@ -3,7 +3,6 @@
 // mutation. An account switch A -> B during the validation must not run A's
 // queued write as B; the entry stays queued for A.
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:attendix/core/config/supabase_config.dart';
 import 'package:attendix/core/providers/connectivity_provider.dart';
@@ -17,6 +16,7 @@ import 'package:http/testing.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart'
     show AuthChangeEvent, AuthClientOptions, SupabaseClient;
+import '../../helpers/source_reader.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -186,9 +186,7 @@ void main() {
 
   test('source: guard is checked between validation and update', () {
     final s =
-        File(
-          'lib/data/repositories/attendance_repository.dart',
-        ).readAsStringSync();
+        readDartLibrary('lib/data/repositories/attendance_repository.dart');
     final start = s.indexOf('Future<PersonAttendance> updatePersonAttendance(');
     final validation = s.indexOf(".from('person_attendances')", start);
     final guard = s.indexOf('!isSessionCurrent()', start);

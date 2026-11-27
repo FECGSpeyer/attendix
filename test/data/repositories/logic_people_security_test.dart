@@ -1,12 +1,12 @@
-import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
 /// LOGIC_PEOPLE: source analysis for the people / account parity fixes
 /// (Ionic db.service archivePlayer, removePlayer, removeUserFromTenant,
 /// deleteViewer/Parent, handoverPerson, activatePlayer, addPlayer).
 void main() {
-  String read(String path) => File(path).readAsStringSync();
+  String read(String path) => readDartLibrary(path);
 
   /// Body of a method: from its signature up to the next method doc comment.
   String body(String source, String name) {

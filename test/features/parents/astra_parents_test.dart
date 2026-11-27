@@ -1,10 +1,10 @@
-import 'dart:io';
 
 import 'package:attendix/core/providers/signout_providers.dart';
 import 'package:attendix/data/repositories/sign_in_out_repository.dart';
 import 'package:attendix/features/parents/data/providers/parents_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
 /// Records sign-ins and fails for the ids in [failing].
 class _FakeSignInOutRepository extends SignInOutRepository {
@@ -28,7 +28,7 @@ class _FakeSignInOutRepository extends SignInOutRepository {
 void main() {
   group('ASTRA_PARENTS extra_plans', () {
     test('parents load path selects attendance.extra_plans', () {
-      final src = File('lib/data/repositories/attendance_repository.dart').readAsStringSync();
+      final src = readDartLibrary('lib/data/repositories/attendance_repository.dart');
       final start = src.indexOf('getPersonAttendancesForPersons(');
       final body = src.substring(start, src.indexOf('handleError', start));
       expect(body, contains('extra_plans'));
@@ -48,10 +48,10 @@ void main() {
     });
 
     test('groups carry extra plans and the page passes them to the viewer', () {
-      final providers = File('lib/features/parents/data/providers/parents_providers.dart').readAsStringSync();
+      final providers = readDartLibrary('lib/features/parents/data/providers/parents_providers.dart');
       expect(providers, contains("extraPlans: parseExtraPlans(attendance?['extra_plans'])"));
       expect(providers, contains('extraPlans: first.extraPlans'));
-      final card = File('lib/features/redesign/presentation/widgets/event/rd_parent_event_card.dart').readAsStringSync();
+      final card = readDartLibrary('lib/features/redesign/presentation/widgets/event/rd_parent_event_card.dart');
       expect(card, contains('extraPlans: group.extraPlans'));
       expect(card, contains('durationDays: group.durationDays'));
     });
@@ -93,7 +93,7 @@ void main() {
     });
 
     test('parent today widget uses signInAll and checks result before toast', () {
-      final page = File('lib/features/redesign/presentation/widgets/today/rd_parent_today.dart').readAsStringSync();
+      final page = readDartLibrary('lib/features/redesign/presentation/widgets/today/rd_parent_today.dart');
       expect(page, contains('.signInAll(entries)'));
       expect(page, isNot(contains('notifier.signIn(')));
     });

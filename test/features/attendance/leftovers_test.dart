@@ -12,6 +12,7 @@ import 'package:attendix/features/attendance/presentation/attendance_permissions
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../helpers/source_reader.dart';
 
 void main() {
   group('attendanceDetailRedirect (Ionic att-list openAttendance)', () {
@@ -45,7 +46,7 @@ void main() {
     });
 
     test('router passes the resolved create permission', () {
-      final src = File('lib/core/router/app_router.dart').readAsStringSync();
+      final src = readDartLibrary('lib/core/router/app_router.dart');
       expect(src, contains('canCreateAttendance: ref.read(canCreateAttendanceProvider)')); // PARITY_R7
     });
 
@@ -56,7 +57,7 @@ void main() {
     });
 
     test('router applies the rule before the generic route table', () {
-      final src = File('lib/core/router/app_router.dart').readAsStringSync();
+      final src = readDartLibrary('lib/core/router/app_router.dart');
       final rule = src.indexOf('attendanceDetailRedirect(\n    location,\n    role,'); // PARITY_R7: roleRouteRedirect
       final table = src.indexOf('for (final entry in _protectedRoutes.entries)');
       expect(rule, greaterThan(0));
@@ -130,7 +131,7 @@ void main() {
     });
 
     test('detail providers use the cache and still filter by tenant', () {
-      final src = File('lib/core/providers/attendance_detail_providers.dart').readAsStringSync();
+      final src = readDartLibrary('lib/core/providers/attendance_detail_providers.dart');
       expect(RegExp('fetchWithCache').allMatches(src).length, 4);
       expect(src, contains(".eq('tenantId', tenant.id!)"));
       expect(src, contains(".eq('tenant_id', tenant.id!)"));
@@ -142,10 +143,8 @@ void main() {
   });
 
   group('offline queue on the Termin write path', () {
-    final writes = File('lib/features/attendance/presentation/person_attendance_writes.dart')
-            .readAsStringSync() +
-        File('lib/features/attendance/presentation/widgets/attendance_date_change.dart')
-            .readAsStringSync();
+    final writes = readDartLibrary('lib/features/attendance/presentation/person_attendance_writes.dart') +
+        readDartLibrary('lib/features/attendance/presentation/widgets/attendance_date_change.dart');
 
     test('date-change status resets are queued while offline', () {
       final start = writes.indexOf('final updates = dateChangeStatusUpdates(');
@@ -182,8 +181,7 @@ void main() {
     });
 
     test('event page reloads when it becomes visible again', () {
-      final page = File('lib/features/redesign/presentation/pages/rd_event_page.dart')
-          .readAsStringSync();
+      final page = readDartLibrary('lib/features/redesign/presentation/pages/rd_event_page.dart');
       expect(page, contains('AppLifecycleListener(onShow: _reload)'));
       expect(page, contains('_lifecycle?.dispose()'));
       final start = page.indexOf('void _reload()');

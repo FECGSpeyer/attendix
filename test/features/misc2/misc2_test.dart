@@ -10,6 +10,7 @@ import 'package:attendix/data/models/song/song.dart';
 import 'package:attendix/features/self_service/data/providers/upcoming_songs_provider.dart';
 import 'package:attendix/features/self_service/presentation/widgets/upcoming_songs_sheet.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
 /// MISC2: branding on exports, tracking call sites, AI synonyms,
 /// "Alle Noten drucken".
@@ -19,7 +20,7 @@ void main() {
   group('Multi-Tenant Security - OrganisationSettingsRepository.getBrandingSource', () {
     late String source;
     setUpAll(() {
-      source = File('lib/data/repositories/organisation_settings_repository.dart').readAsStringSync();
+      source = readDartLibrary('lib/data/repositories/organisation_settings_repository.dart');
     });
 
     test('tenant branding fallback is limited to the current tenant', () {
@@ -93,7 +94,7 @@ void main() {
     });
 
     test('call sites exist for all migrated events', () {
-      String read(String p) => File(p).readAsStringSync();
+      String read(String p) => readDartLibrary(p);
       final expectations = {
         'lib/core/router/app_router.dart': ['TrackingEvent.login'],
         'lib/core/providers/signout_providers.dart': ['TrackingEvent.attendanceCheckIn', 'TrackingEvent.attendanceCheckOut'],

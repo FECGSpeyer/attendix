@@ -1,10 +1,10 @@
-import 'dart:io';
 
 import 'package:attendix/data/models/person/person.dart';
 import 'package:attendix/features/settings/data/general_settings_helpers.dart';
 import 'package:attendix/features/settings/data/link_persons_logic.dart';
 import 'package:attendix/features/voice_leader/data/providers/voice_leader_providers.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
 /// PARITY_R10: final parity sweep of the settings / auth lane.
 void main() {
@@ -85,7 +85,7 @@ void main() {
     });
 
     test('query loads only current Termine, paged past the row limit', () {
-      final source = File('lib/data/repositories/attendance_repository.dart').readAsStringSync();
+      final source = readDartLibrary('lib/data/repositories/attendance_repository.dart');
       final start = source.indexOf('getUpcomingAbsencesForPersons(');
       final body = source.substring(start, source.indexOf('handleError', start));
       expect(body, contains(".gte('attendance.date', from)"));
@@ -94,7 +94,7 @@ void main() {
     });
 
     test('query joins the attendance type for the title, tenant-filtered', () {
-      final source = File('lib/data/repositories/attendance_repository.dart').readAsStringSync();
+      final source = readDartLibrary('lib/data/repositories/attendance_repository.dart');
       final start = source.indexOf('getUpcomingAbsencesForPersons(');
       final body = source.substring(start, source.indexOf('handleError', start));
       expect(body, contains('attType:type_id(name, hide_name)'));
@@ -103,9 +103,7 @@ void main() {
   });
 
   group('instances sheet: delete instance (Ionic db.deleteInstance)', () {
-    final source = File(
-      'lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart',
-    ).readAsStringSync();
+    final source = readDartLibrary('lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart');
     final start = source.indexOf('Future<void> _deleteInstance(');
     final body = source.substring(start, source.indexOf('Future<void> _logout(', start));
 

@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:attendix/data/models/message/message.dart';
 import 'package:attendix/data/models/team_org/team_org.dart';
@@ -6,6 +5,7 @@ import 'package:attendix/features/messages/presentation/message_format.dart';
 import 'package:attendix/features/team_organization/team_org_utils.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
 /// WAVE 5 i18n: Teamorganisation + Mitteilungen follow the active language,
 /// German output stays as before.
@@ -49,7 +49,7 @@ void main() {
       'lib/features/team_organization/presentation/widgets/topics_tab.dart',
       'lib/features/messages/presentation/pages/message_compose_page.dart',
     ]) {
-      final src = File(path).readAsStringSync();
+      final src = readDartLibrary(path);
       expect(words.hasMatch(src), isFalse, reason: path);
     }
   });

@@ -1,9 +1,9 @@
-import 'dart:io';
 
 import 'package:attendix/data/models/tenant/tenant.dart';
 import 'package:attendix/features/people/person_stats.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../../../helpers/source_reader.dart';
 
 /// P10_PEOPLE: person page statistics follow Ionic person.page
 /// getHistoryInfo (average over include_in_average types, late counts since
@@ -110,26 +110,22 @@ void main() {
 
   test('history for non-admins: group changes and pauses only', () {
     expect(visibleHistoryTypesForMembers, {7, 1, 6});
-    final source = File('lib/core/providers/person_detail_providers.dart')
-        .readAsStringSync();
+    final source = readDartLibrary('lib/core/providers/person_detail_providers.dart');
     expect(source, contains('visibleHistoryTypesForMembers.contains(h.type)'));
     expect(source, isNot(contains('allHistory.take(')));
   });
 
   test('person page is read-only for non-admins and archived persons', () {
-    final providers = File('lib/core/providers/person_detail_providers.dart')
-        .readAsStringSync();
-    final page = File('lib/features/redesign/presentation/pages/rd_person_page.dart')
-        .readAsStringSync();
-    final history = File('lib/features/redesign/presentation/pages/rd_person_history_page.dart')
-        .readAsStringSync();
+    final providers = readDartLibrary('lib/core/providers/person_detail_providers.dart');
+    final page = readDartLibrary('lib/features/redesign/presentation/pages/rd_person_page.dart');
+    final history = readDartLibrary('lib/features/redesign/presentation/pages/rd_person_history_page.dart');
     expect(history, contains('final canEdit = (role.isAdmin || role.isResponsible) && !hasLeft;'));
     expect(page, contains('if (person != null && person.left == null && role.canEdit)'));
     expect(page, contains('reactivatePersonWithConfirmation'));
     // Stats query (in PlayerRepository) stays tenant-bound via the
     // inner-joined attendance.
     expect(providers, contains('repo.getPersonAttendanceStatsRows(personId)'));
-    final repo = File('lib/data/repositories/player_repository.dart').readAsStringSync();
+    final repo = readDartLibrary('lib/data/repositories/player_repository.dart');
     final body = repo.substring(repo.indexOf('getPersonAttendanceStatsRows(int personId)'));
     expect(body.substring(0, body.indexOf('catch (e')), contains(".eq('attendance.tenantId', currentTenantId)"));
   });

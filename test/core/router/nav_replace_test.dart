@@ -1,22 +1,22 @@
-import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
 void main() {
   test('NAV_REPLACE: tenant pick and auto-navigation replace the history entry', () {
-    final s = File('lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart').readAsStringSync();
+    final s = readDartLibrary('lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart');
     expect(RegExp(r'goReplacingHistory\(').allMatches(s).length, 3); // + start page after deleting another instance
     expect(s, isNot(contains('router.go(home)')));
   });
 
   test('NAV_REPLACE: helper neglects the history report', () {
-    final s = File('lib/core/router/go_replace.dart').readAsStringSync();
+    final s = readDartLibrary('lib/core/router/go_replace.dart');
     expect(s, contains('Router.neglect('));
     expect(s, contains('navigatorKey.currentContext'));
   });
 
   test('NAV_REPLACE: Back onto /login with an open instance goes to its start page', () {
-    final s = File('lib/core/router/app_router.dart').readAsStringSync();
+    final s = readDartLibrary('lib/core/router/app_router.dart');
     final i = s.indexOf('// NAV_REPLACE: browser Back onto /login');
     expect(i, greaterThan(0));
     final block = s.substring(i, s.indexOf("return '/tenants';", i));

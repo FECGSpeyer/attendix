@@ -1,5 +1,5 @@
-import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
 /// Security tests for AttendanceRepository
 ///
@@ -9,8 +9,7 @@ void main() {
   late String attendanceRepoSource;
 
   setUpAll(() {
-    final file = File('lib/data/repositories/attendance_repository.dart');
-    attendanceRepoSource = file.readAsStringSync();
+        attendanceRepoSource = readDartLibrary('lib/data/repositories/attendance_repository.dart');
   });
 
   group('Multi-Tenant Security - AttendanceRepository', () {

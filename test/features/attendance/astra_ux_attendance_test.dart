@@ -1,8 +1,8 @@
-import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
-String _src(String p) => File(p).readAsStringSync();
+String _src(String p) => readDartLibrary(p);
 
 void main() {
   test('ASTRA_UX1: event deletion only for admin and responsible (not viewer)', () {

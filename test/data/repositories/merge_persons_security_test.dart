@@ -1,13 +1,13 @@
-import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
 /// SOL_FIX7: merging a pending registration into an existing person loads
 /// both attendance histories completely and only deletes the source person
 /// when every row was transferred.
 void main() {
   final source =
-      File('lib/data/repositories/player_repository.dart').readAsStringSync();
+      readDartLibrary('lib/data/repositories/player_repository.dart');
 
   /// Body of a method: from its signature up to the next method doc comment.
   String body(String name) {

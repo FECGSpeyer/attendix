@@ -9,8 +9,9 @@ import 'package:attendix/features/songs/presentation/widgets/copy_to_tenant_shee
 import 'package:attendix/features/team_organization/presentation/widgets/quick_create_attendance.dart';
 import 'package:attendix/features/tenant_selection/tenant_defaults.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
-String _read(String path) => File(path).readAsStringSync();
+String _read(String path) => readDartLibrary(path);
 
 void main() {
   group('songs/import uses the effective song library', () {

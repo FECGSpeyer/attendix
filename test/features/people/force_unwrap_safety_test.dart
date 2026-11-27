@@ -1,6 +1,6 @@
-import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
 /// RT-001/002/003: Force Unwrap auf tenant.id! und criticalRules! ohne null-Check
 /// These tests verify that no force-unwrap on tenant.id! or criticalRules! exists
@@ -8,9 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('RT-001/002/003: No force-unwrap on tenant fields', () {
     test('rd_members_page.dart has no tenant.id! force-unwrap', () {
-      final source = File(
-        'lib/features/redesign/presentation/pages/rd_members_page.dart',
-      ).readAsStringSync();
+      final source = readDartLibrary('lib/features/redesign/presentation/pages/rd_members_page.dart');
 
       expect(
         source.contains('tenant.id!'),
@@ -22,9 +20,7 @@ void main() {
     });
 
     test('rd_person_page.dart has no tenant.id! force-unwrap', () {
-      final source = File(
-        'lib/features/redesign/presentation/pages/rd_person_page.dart',
-      ).readAsStringSync();
+      final source = readDartLibrary('lib/features/redesign/presentation/pages/rd_person_page.dart');
 
       expect(
         source.contains('tenant.id!'),
@@ -37,9 +33,7 @@ void main() {
 
     test('rd_person_edit_page.dart has no tenant!.criticalRules! force-unwrap',
         () {
-      final source = File(
-        'lib/features/redesign/presentation/pages/rd_person_edit_page.dart',
-      ).readAsStringSync();
+      final source = readDartLibrary('lib/features/redesign/presentation/pages/rd_person_edit_page.dart');
 
       expect(
         source.contains('tenant!.criticalRules!'),

@@ -1,13 +1,14 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
 /// Source checks of the chat assistant (as rd_import_ai_test for the other
 /// KI functions): the guards stay in place and no data leaves.
 void main() {
   final fn = File('supabase/functions/ai-assistant/index.ts').readAsStringSync();
   final intent = File('supabase/functions/ai-assistant/intent.ts').readAsStringSync();
-  final repo = File('lib/data/repositories/assistant_repository.dart').readAsStringSync();
+  final repo = readDartLibrary('lib/data/repositories/assistant_repository.dart');
   final sql = File('supabase/sql/ai_assistant.sql').readAsStringSync();
 
   test('the function checks account, membership, switch and budget before the paid call', () {
@@ -62,8 +63,8 @@ void main() {
   });
 
   test('changes: the preview writes nothing, saving only after confirm', () {
-    final executor = File('lib/features/assistant/data/assistant_executor.dart').readAsStringSync();
-    final notifier = File('lib/core/providers/assistant_providers.dart').readAsStringSync();
+    final executor = readDartLibrary('lib/features/assistant/data/assistant_executor.dart');
+    final notifier = readDartLibrary('lib/core/providers/assistant_providers.dart');
     // Writes only inside apply*/revert*, never in run() or the previews.
     final runPart = executor.substring(
       executor.indexOf('Future<AssistantReply> run('),
@@ -101,13 +102,13 @@ void main() {
   });
 
   test('changes: limits and rights are in the app, no delete of Termine or people', () {
-    final logic = File('lib/features/assistant/data/assistant_logic.dart').readAsStringSync();
+    final logic = readDartLibrary('lib/features/assistant/data/assistant_logic.dart');
     expect(logic, contains('assistantMaxChanges = 30'));
     expect(logic, contains('assistantPastDays = 14'));
     expect(logic, contains('assistantFutureDays = 183'));
     expect(logic, contains('SetStatusCommand() => changesOthers'));
     expect(logic, contains('PlannedAbsenceCommand() => canManageAbsences'));
-    final executor = File('lib/features/assistant/data/assistant_executor.dart').readAsStringSync();
+    final executor = readDartLibrary('lib/features/assistant/data/assistant_executor.dart');
     for (final forbidden in ['deletePlayer', 'archivePlayer', 'deleteHistoryEntry', ".from(", "'archived':"]) {
       expect(executor, isNot(contains(forbidden)), reason: forbidden);
     }
@@ -120,9 +121,9 @@ void main() {
   });
 
   test('package 3: limits, rights and the write paths of the screens', () {
-    final logic = File('lib/features/assistant/data/assistant_logic.dart').readAsStringSync();
-    final command = File('lib/features/assistant/data/assistant_command.dart').readAsStringSync();
-    final executor = File('lib/features/assistant/data/assistant_executor.dart').readAsStringSync();
+    final logic = readDartLibrary('lib/features/assistant/data/assistant_logic.dart');
+    final command = readDartLibrary('lib/features/assistant/data/assistant_command.dart');
+    final executor = readDartLibrary('lib/features/assistant/data/assistant_executor.dart');
     expect(command, contains('assistantMaxNewEvents = 20'));
     expect(command, contains('assistantMaxSongs = 15'));
     expect(logic, contains('CreateEventsCommand() => canCreateEvents'));
@@ -150,8 +151,8 @@ void main() {
   });
 
   test('package 4: previews and drafts write and send nothing', () {
-    final executor = File('lib/features/assistant/data/assistant_executor.dart').readAsStringSync();
-    final notifier = File('lib/core/providers/assistant_providers.dart').readAsStringSync();
+    final executor = readDartLibrary('lib/features/assistant/data/assistant_executor.dart');
+    final notifier = readDartLibrary('lib/core/providers/assistant_providers.dart');
     for (final preview in [
       '_myTasks(',
       '_eventSongs(',
@@ -187,9 +188,9 @@ void main() {
   });
 
   test('package 4: rights and limits', () {
-    final logic = File('lib/features/assistant/data/assistant_logic.dart').readAsStringSync();
-    final command = File('lib/features/assistant/data/assistant_command.dart').readAsStringSync();
-    final executor = File('lib/features/assistant/data/assistant_executor.dart').readAsStringSync();
+    final logic = readDartLibrary('lib/features/assistant/data/assistant_logic.dart');
+    final command = readDartLibrary('lib/features/assistant/data/assistant_command.dart');
+    final executor = readDartLibrary('lib/features/assistant/data/assistant_executor.dart');
     expect(logic, contains('MyTasksCommand() => teamOrgEnabled && hasOwnPerson'));
     expect(logic, contains('CreateTaskCommand() => teamOrgEnabled && isTeamLeader'));
     expect(logic, contains('TakeDutyCommand() => hasOwnPerson'));
@@ -209,8 +210,8 @@ void main() {
   });
 
   test('parents: only the own children, through the Elternportal path', () {
-    final executor = File('lib/features/assistant/data/assistant_executor.dart').readAsStringSync();
-    final logic = File('lib/features/assistant/data/assistant_logic.dart').readAsStringSync();
+    final executor = readDartLibrary('lib/features/assistant/data/assistant_executor.dart');
+    final logic = readDartLibrary('lib/features/assistant/data/assistant_logic.dart');
     expect(logic, contains('role.isParent &&'));
     expect(logic, contains('SetStatusCommand() when forChildren(command) => true'));
     final preview = _method(executor, 'Future<AssistantReply> _childrenStatus(');
@@ -226,8 +227,8 @@ void main() {
   });
 
   test('voice input never sends by itself', () {
-    final page = File('lib/features/assistant/presentation/pages/assistant_page.dart').readAsStringSync();
-    final voice = File('lib/features/assistant/presentation/assistant_voice.dart').readAsStringSync();
+    final page = readDartLibrary('lib/features/assistant/presentation/pages/assistant_page.dart');
+    final voice = readDartLibrary('lib/features/assistant/presentation/assistant_voice.dart');
     final toggle = _method(page, 'Future<void> _toggleVoice(');
     expect(toggle, isNot(contains('_send(')));
     expect(toggle, isNot(contains('.send(')));
@@ -236,7 +237,7 @@ void main() {
   });
 
   test('undo of own rows checks the tenant and the own account', () {
-    final signs = File('lib/data/repositories/sign_in_out_repository.dart').readAsStringSync();
+    final signs = readDartLibrary('lib/data/repositories/sign_in_out_repository.dart');
     final restore = signs.substring(signs.indexOf('Future<int> restoreOwnStatuses('));
     final body = restore.substring(0, restore.indexOf('  /// Update attendance note'));
     expect(body, contains("r['person']?['appId'] == userId"));
@@ -245,7 +246,7 @@ void main() {
   });
 
   test('own changes across groups always go through the account check', () {
-    final executor = File('lib/features/assistant/data/assistant_executor.dart').readAsStringSync();
+    final executor = readDartLibrary('lib/features/assistant/data/assistant_executor.dart');
     final apply = executor.substring(
       executor.indexOf('Future<int> applyStatus('),
       executor.indexOf('Future<AssistantReply> _absencePreview('),

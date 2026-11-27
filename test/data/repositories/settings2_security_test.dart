@@ -1,10 +1,10 @@
-import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
 /// Multi-Tenant Security source analysis for the SETTINGS2 package.
 void main() {
-  String read(String path) => File(path).readAsStringSync();
+  String read(String path) => readDartLibrary(path);
 
   List<String> queries(String source, String table) => RegExp(
         "\\.from\\('$table'\\)[^;]*;",

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/services/live_activity_service.dart';
@@ -8,6 +7,7 @@ import 'package:attendix/data/models/plan/plan.dart';
 import 'package:attendix/data/repositories/org_plan_repository.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
 /// LIVE_ACTIVITY: LiveActivityService against a mocked MethodChannel.
 class FakeHost implements LiveActivityHost {
@@ -588,10 +588,10 @@ void main() {
     });
 
     test('logout is wired before sign-out', () {
-      final push = File('lib/core/providers/push_providers.dart').readAsStringSync();
+      final push = readDartLibrary('lib/core/providers/push_providers.dart');
       final fn = push.substring(push.indexOf('Future<void> removePushTokenBeforeSignOut('));
       expect(fn.substring(0, fn.indexOf('\n}\n')), contains('endLiveActivitiesBeforeSignOut('));
-      final repo = File('lib/data/repositories/live_activity_repository.dart').readAsStringSync();
+      final repo = readDartLibrary('lib/data/repositories/live_activity_repository.dart');
       final rm = repo.substring(repo.indexOf('Future<void> removeTokens('));
       expect(rm, contains(".from('live_activity_tokens')"));
       expect(rm, contains(".eq('user_id', userId)"));

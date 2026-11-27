@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/branding_providers.dart';
@@ -23,6 +22,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../factories/test_factories.dart';
 import '../../helpers/test_helpers.dart';
+import '../../helpers/source_reader.dart';
 
 class _MockPlanRepository extends Mock implements PlanRepository {}
 
@@ -300,7 +300,7 @@ void main() {
 
   group('source', () {
     test('every multi-plan write runs while the page is blocked', () {
-      final src = File('lib/features/planning/presentation/pages/planning_page.dart').readAsStringSync();
+      final src = readDartLibrary('lib/features/planning/presentation/pages/planning_page.dart');
       // SOL_FIX29: the plan list operations write via `_writePlanOp`.
       final calls = RegExp(r'await _writePlanOp\(attId, ').allMatches(src).toList();
       expect(calls, hasLength(5), reason: 'add, rename, day, move, delete');

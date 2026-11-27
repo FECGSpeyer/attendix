@@ -1,8 +1,8 @@
-import 'dart:io';
 
 import 'package:attendix/core/services/public_plan_draft_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../helpers/source_reader.dart';
 
 /// SOL_FIX12: Ablaufplanung drafts (plan content + plan id + edit key) are
 /// bound to the auth user and removed on sign-out / account switch.
@@ -31,13 +31,13 @@ void main() {
   });
 
   test('the account listener clears the draft of the previous user', () {
-    final main = File('lib/main.dart').readAsStringSync();
+    final main = readDartLibrary('lib/main.dart');
     final listener = main.substring(main.indexOf('ref.listen(currentUserProvider'));
     expect(listener, contains('clearPublicPlanDrafts(previous?.valueOrNull?.id)'));
   });
 
   test('the planning page reads and writes only the key of its user', () {
-    final page = File('lib/features/planning/presentation/pages/public_planning_page.dart').readAsStringSync();
+    final page = readDartLibrary('lib/features/planning/presentation/pages/public_planning_page.dart');
     expect(page, contains('PublicPlanDraftStorage.keyFor(_draftUserId)'));
     expect(page, contains('if (_currentUserId != _draftUserId) return;'));
     expect(page, isNot(contains("'attendix-public-plan'")));

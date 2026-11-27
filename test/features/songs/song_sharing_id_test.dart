@@ -1,7 +1,7 @@
-import 'dart:io';
 
 import 'package:attendix/features/songs/presentation/utils/song_utils.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
 void main() {
   group('public Werke link id (EINST-60 / OEFF-38)', () {
@@ -13,7 +13,7 @@ void main() {
     });
 
     test('router sends signed-in users of a non-UUID address to the start page', () {
-      final src = File('lib/core/router/app_router.dart').readAsStringSync();
+      final src = readDartLibrary('lib/core/router/app_router.dart');
       final route = src.indexOf("path: '/:songSharingId',");
       expect(route, isNonNegative);
       final block = src.substring(route, src.indexOf('builder:', route));

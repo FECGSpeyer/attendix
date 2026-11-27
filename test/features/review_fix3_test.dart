@@ -1,5 +1,4 @@
 // REVIEW_FIX3: fixes for the wave-7 review findings (review-w7.md #1–#10).
-import 'dart:io';
 
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/attendance_providers.dart';
@@ -25,6 +24,7 @@ import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import '../helpers/source_reader.dart';
 
 class _MockTypeRepo extends Mock implements AttendanceTypeRepository {}
 
@@ -36,7 +36,7 @@ class _MockViewerRepo extends Mock implements ViewerRepository {}
 
 class _MockParentRepo extends Mock implements ParentRepository {}
 
-String _read(String path) => File(path).readAsStringSync();
+String _read(String path) => readDartLibrary(path);
 
 void main() {
   setUpAll(() {

@@ -2,7 +2,6 @@
 // them. An account switch A→B while the save awaits the organisation
 // fields must never write A's master data into B's rows (nor propagate it
 // to B's other instances).
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:attendix/core/config/supabase_config.dart';
@@ -17,6 +16,7 @@ import 'package:attendix/data/repositories/profile_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../helpers/source_reader.dart';
 
 /// Records the writes; [onSharedFields] runs while the save awaits the
 /// organisation fields (where the account switch happens).
@@ -238,8 +238,7 @@ void main() {
     });
 
     test('getOwnProfile loads all rows instead of maybeSingle()', () {
-      final src = File('lib/data/repositories/profile_repository.dart')
-          .readAsStringSync();
+      final src = readDartLibrary('lib/data/repositories/profile_repository.dart');
       final start = src.indexOf('Future<OwnProfile?> getOwnProfile()');
       final body = src.substring(start, src.indexOf('handleError', start));
       expect(body, isNot(contains('.maybeSingle()')));
@@ -252,7 +251,7 @@ void main() {
 
   group('ProfileRepository source analysis', () {
     final src =
-        File('lib/data/repositories/profile_repository.dart').readAsStringSync();
+        readDartLibrary('lib/data/repositories/profile_repository.dart');
 
     String method(String signature) {
       final start = src.indexOf(signature);

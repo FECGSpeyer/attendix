@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/attendance_providers.dart';
 import 'package:attendix/core/providers/attendance_rate_filter_providers.dart';
@@ -37,6 +35,7 @@ import 'package:mocktail/mocktail.dart';
 
 import '../../factories/test_factories.dart';
 import '../../mocks/repository_mocks.dart';
+import '../../helpers/source_reader.dart';
 
 class _TenantNotifier extends CurrentTenantNotifier {
   _TenantNotifier(super.ref) {
@@ -881,7 +880,7 @@ void main() {
     });
 
     test('the router uses the split for Termine, Mitglieder and Werke', () {
-      final router = File('lib/core/router/app_router.dart').readAsStringSync();
+      final router = readDartLibrary('lib/core/router/app_router.dart');
       expect(RegExp('RdSplitView\\(').allMatches(router).length, 5);
       // Termine: the next Termin is open next to the list.
       expect(router, contains('RdEventsSplitHome()'));
@@ -892,8 +891,8 @@ void main() {
   });
 
   group('security (source)', () {
-    final members = File('lib/features/redesign/presentation/pages/rd_members_page.dart').readAsStringSync();
-    final person = File('lib/features/redesign/presentation/pages/rd_person_page.dart').readAsStringSync();
+    final members = readDartLibrary('lib/features/redesign/presentation/pages/rd_members_page.dart');
+    final person = readDartLibrary('lib/features/redesign/presentation/pages/rd_person_page.dart');
 
     test('no direct Supabase access in the new pages', () {
       for (final src in [members, person]) {
@@ -912,7 +911,7 @@ void main() {
     });
 
     test('router: Mitglieder routes and tab', () {
-      final router = File('lib/core/router/app_router.dart').readAsStringSync();
+      final router = readDartLibrary('lib/core/router/app_router.dart');
       expect(router, contains("name: 'redesignMembers'"));
       expect(router, contains("name: 'redesignPerson'"));
     });

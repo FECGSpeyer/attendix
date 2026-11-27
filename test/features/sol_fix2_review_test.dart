@@ -1,7 +1,7 @@
-import 'dart:io';
 
 import 'package:attendix/core/utils/duty_utils.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../helpers/source_reader.dart';
 
 /// SOL_FIX2: external review findings PR #225 (protocol publish, planning
 /// fallback, duty same-day lock). Items 1–4 are covered in
@@ -46,7 +46,7 @@ void main() {
     });
 
     test('duty staffing checks upcoming duties across all duty types', () {
-      final src = File('lib/features/duty/presentation/widgets/duty_staffing_section.dart').readAsStringSync();
+      final src = readDartLibrary('lib/features/duty/presentation/widgets/duty_staffing_section.dart');
       expect(src, contains('repo.getUpcomingDutyTermine('));
     });
   });
@@ -54,7 +54,7 @@ void main() {
   group('Protokoll veröffentlichen', () {
     late String src;
     setUpAll(() {
-      src = File('lib/features/team_organization/presentation/pages/protocol_page.dart').readAsStringSync();
+      src = readDartLibrary('lib/features/team_organization/presentation/pages/protocol_page.dart');
     });
 
     String body(String signature) {
@@ -90,7 +90,7 @@ void main() {
 
   group('Ablaufplan: angeforderter Termin', () {
     test('loads the requested Termin by id and never falls back', () {
-      final src = File('lib/features/planning/presentation/pages/planning_page.dart').readAsStringSync();
+      final src = readDartLibrary('lib/features/planning/presentation/pages/planning_page.dart');
       final start = src.indexOf('Future<void> _init(');
       final init = src.substring(start, src.indexOf('/// Ionic `Utils.getPlanningTitle`', start));
       expect(init, contains('_loadRequestedAttendance(requestedId)'));
@@ -103,7 +103,7 @@ void main() {
     });
 
     test('getPlanAttendanceById is tenant filtered', () {
-      final repo = File('lib/data/repositories/plan_repository.dart').readAsStringSync();
+      final repo = readDartLibrary('lib/data/repositories/plan_repository.dart');
       final start = repo.indexOf('Future<PlanAttendance?> getPlanAttendanceById(');
       final method = repo.substring(start, repo.indexOf('handleError', start));
       expect(method, contains(".eq('id', id)"));

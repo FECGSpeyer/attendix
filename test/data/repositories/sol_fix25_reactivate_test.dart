@@ -1,13 +1,13 @@
-import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
 /// SOL_FIX25 item 3: reactivating a person that kept its account link
 /// (transferred to another tenant: archived here with `appId` and the
 /// `tenantUsers` row) must not abort as a duplicate of itself before `left`
 /// is reset.
 void main() {
-  String read(String path) => File(path).readAsStringSync();
+  String read(String path) => readDartLibrary(path);
 
   /// Body of a method: from its signature up to the next method doc comment.
   String body(String source, String name) {

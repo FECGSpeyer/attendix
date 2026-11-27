@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/features/attendance/presentation/attendance_status_labels.dart';
@@ -6,6 +5,7 @@ import 'package:attendix/features/export/export_fields.dart';
 import 'package:attendix/features/history/history_utils.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
 /// i18n lane "attendance": attendance, history, statistics, export.
 void main() {
@@ -47,7 +47,7 @@ void main() {
     ];
     final literal = RegExp(r"(Text|tooltip:|title:|label:|showSuccess\(context,|showError\(context,|showWarning\(context,)\s*\(?'[^']*[äöüÄÖÜß][^']*'");
     for (final path in files) {
-      final source = File(path).readAsStringSync();
+      final source = readDartLibrary(path);
       expect(literal.hasMatch(source), isFalse, reason: path);
     }
   });

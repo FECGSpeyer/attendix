@@ -1,5 +1,4 @@
 import 'package:attendix/core/theme/app_icons.dart';
-import 'dart:io';
 
 import 'package:attendix/core/providers/profile_providers.dart';
 import 'package:attendix/data/repositories/profile_repository.dart';
@@ -11,8 +10,9 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../factories/test_factories.dart';
+import '../helpers/source_reader.dart';
 
-String _read(String path) => File(path).readAsStringSync();
+String _read(String path) => readDartLibrary(path);
 
 void main() {
   group('Mitglieder (Ionic people/members)', () {

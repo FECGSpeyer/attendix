@@ -1,7 +1,7 @@
-import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:attendix/core/utils/demo_guard.dart';
+import '../../helpers/source_reader.dart';
 
 /// DEMO_GUARD: Demo-mode write protection (Ionic db.service
 /// `checkDemoRestriction()` in 82 mutation methods).
@@ -90,8 +90,7 @@ void main() {
   group('Demo Guard - BaseRepository', () {
     late String base;
     setUpAll(() {
-      base = File('lib/data/repositories/base_repository.dart')
-          .readAsStringSync();
+      base = readDartLibrary('lib/data/repositories/base_repository.dart');
     });
 
     test('provides ensureNotDemo()', () {
@@ -104,7 +103,7 @@ void main() {
 
     test('Ionic toast text', () {
       final guard =
-          File('lib/core/utils/demo_guard.dart').readAsStringSync();
+          readDartLibrary('lib/core/utils/demo_guard.dart');
       // I18N: text comes from the Ionic key db.demoRestricted.
       expect(guard, contains('l10nWithoutContext.dbDemoRestricted'));
       expect(kDemoRestrictedMessage,
@@ -115,7 +114,7 @@ void main() {
   group('Demo Guard - guarded mutations (Ionic checkDemoRestriction)', () {
     guarded.forEach((repo, methods) {
       final source =
-          File('lib/data/repositories/${repo}_repository.dart').readAsStringSync();
+          readDartLibrary('lib/data/repositories/${repo}_repository.dart');
       for (final m in methods) {
         test('$repo.$m calls ensureNotDemo first', () {
           final body = _methodBody(source, m);
@@ -138,7 +137,7 @@ void main() {
   // write is blocked.
   test('player.checkAndUnpausePlayers checks demo before writing', () {
     final source =
-        File('lib/data/repositories/player_repository.dart').readAsStringSync();
+        readDartLibrary('lib/data/repositories/player_repository.dart');
     final body = _methodBody(source, 'checkAndUnpausePlayers');
     expect(body, isNotNull);
     final guardIdx = body!.indexOf("ensureNotDemo('checkAndUnpausePlayers')");
@@ -150,7 +149,7 @@ void main() {
   group('Demo Guard - operations Ionic keeps open', () {
     open.forEach((repo, methods) {
       final source =
-          File('lib/data/repositories/${repo}_repository.dart').readAsStringSync();
+          readDartLibrary('lib/data/repositories/${repo}_repository.dart');
       for (final m in methods) {
         test('$repo.$m is not demo-blocked', () {
           final body = _methodBody(source, m);
@@ -166,7 +165,7 @@ void main() {
       'lib/features/songs/presentation/pages/song_import_page.dart',
     ]) {
       test('$path blocks the demo account', () {
-        final src = File(path).readAsStringSync();
+        final src = readDartLibrary(path);
         expect(src, contains('ref.read(isDemoProvider)'));
         expect(src, contains('ToastHelper.showDemoRestricted(context)'));
       });

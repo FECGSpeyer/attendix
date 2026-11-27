@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/debug_providers.dart';
@@ -34,6 +33,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../factories/test_factories.dart';
+import '../../helpers/source_reader.dart';
 
 class _TenantNotifier extends CurrentTenantNotifier {
   _TenantNotifier(super.ref) {
@@ -837,7 +837,7 @@ void main() {
     });
 
     test('every write of songs.files goes through the per-song lock', () {
-      final src = File('lib/core/services/song_file_service.dart').readAsStringSync();
+      final src = readDartLibrary('lib/core/services/song_file_service.dart');
       for (final name in [
         'uploadFile',
         'deleteFile',
@@ -860,14 +860,14 @@ void main() {
         'lib/features/redesign/data/rd_work_files_controller.dart',
         'lib/features/redesign/data/rd_work_files_logic.dart',
       ]) {
-        final src = File(path).readAsStringSync();
+        final src = readDartLibrary(path);
         expect(src, isNot(contains('supabase')), reason: path);
         expect(src, isNot(contains('.from(')), reason: path);
       }
     });
 
     test('a copy from Drive is added under the lock; the Besetzung is kept in the same write', () {
-      final src = File('lib/core/services/song_file_service.dart').readAsStringSync();
+      final src = readDartLibrary('lib/core/services/song_file_service.dart');
       final via = src.substring(
         src.indexOf('Future<String> uploadFileVia('),
         src.indexOf('/// Delete a file from storage'),
@@ -887,7 +887,7 @@ void main() {
     });
 
     test('renameFile filters by song id and tenant', () {
-      final src = File('lib/core/services/song_file_service.dart').readAsStringSync();
+      final src = readDartLibrary('lib/core/services/song_file_service.dart');
       final start = src.indexOf('Future<void> _renameFile(');
       final body = src.substring(start, src.indexOf('/// Pick multiple files', start));
       expect(".eq('tenantId', _tenantId)".allMatches(body).length, 2);

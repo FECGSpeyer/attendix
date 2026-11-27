@@ -1,7 +1,7 @@
-import 'dart:io';
 
 import 'package:attendix/core/router/tracking_observer.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
 void main() {
   group('pageViewUrlToTrack (Ionic trackPageViews)', () {
@@ -68,7 +68,7 @@ void main() {
 
     test('the tracker passes the route pattern and never the raw uri', () {
       final tracker =
-          File('lib/core/router/tracking_observer.dart').readAsStringSync();
+          readDartLibrary('lib/core/router/tracking_observer.dart');
       expect(tracker, contains('routePattern = config.fullPath'));
       expect(tracker, contains("properties: {'url': toTrack}"));
       expect(tracker, isNot(contains("{'url': url}")));
@@ -76,10 +76,10 @@ void main() {
   });
 
   test('tracker sends {url} and is attached to the router, not only the root navigator', () {
-    final tracker = File('lib/core/router/tracking_observer.dart').readAsStringSync();
+    final tracker = readDartLibrary('lib/core/router/tracking_observer.dart');
     expect(tracker, contains("properties: {'url': toTrack}"));
     expect(tracker, isNot(contains("'route':")));
-    final router = File('lib/core/router/app_router.dart').readAsStringSync();
+    final router = readDartLibrary('lib/core/router/app_router.dart');
     expect(router, contains('PageViewTracker(ref.container, router)'));
   });
 }

@@ -1,11 +1,11 @@
 // SOL_FIX4: paginated backfill queries (player_repository) and the shift
 // recalculation trigger on the person detail page.
-import 'dart:io';
 
 import 'package:attendix/core/utils/people_shift_status.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
-String _read(String path) => File(path).readAsStringSync();
+String _read(String path) => readDartLibrary(path);
 
 /// Body of a method starting at [signature] up to the next doc comment of
 /// the following member.

@@ -1,10 +1,10 @@
 import 'package:attendix/core/providers/team_org_providers.dart';
 import 'package:attendix/data/models/team_org/team_org.dart';
 import 'package:attendix/data/repositories/protocol_repository.dart';
-import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
 class _Repo extends ProtocolRepository {
   _Repo(super.ref);
@@ -50,7 +50,7 @@ void main() {
   });
 
   test('updateAttendancePlan fails when no row was updated', () {
-    final src = File('lib/data/repositories/protocol_repository.dart').readAsStringSync();
+    final src = readDartLibrary('lib/data/repositories/protocol_repository.dart');
     final start = src.indexOf('updateAttendancePlan(');
     final body = src.substring(start, src.indexOf('catch (e, stack)', start));
     expect(body, contains('if (response == null)'));
@@ -58,8 +58,7 @@ void main() {
   });
 
   test('SOL_FIX33: spontaneous point aborts on a deleted plan', () {
-    final src = File('lib/features/team_organization/presentation/pages/protocol_page.dart')
-        .readAsStringSync();
+    final src = readDartLibrary('lib/features/team_organization/presentation/pages/protocol_page.dart');
     expect(src, contains('fresh.plan == null && current.plan != null'));
     // SOL_FIX34: the conflict is checked before the topic is created.
     expect(src.indexOf('fresh.plan == null && current.plan != null'),
@@ -72,7 +71,7 @@ void main() {
       'lib/features/team_organization/presentation/pages/protocol_page.dart',
       'lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart',
     ]) {
-      final src = File(path).readAsStringSync();
+      final src = readDartLibrary(path);
       expect(src, contains('container.invalidate(planAttendancesProvider);'), reason: path);
       expect(src, contains('container.invalidate(orgPlansProvider);'), reason: path);
       expect(src, contains('ProviderScope.containerOf(context, listen: false)'), reason: path);

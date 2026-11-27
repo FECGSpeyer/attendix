@@ -10,12 +10,13 @@ import 'package:attendix/data/models/shift/shift_definition.dart';
 import 'package:attendix/data/models/shift/shift_plan.dart';
 import 'package:attendix/features/auth/data/auth_link_listener.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
 /// DB_REVIEW_REST: findings of reviews/db-und-paritaets-review-v0.7.0.md
 /// (H4, M2–M9, F1–F7 and some NIEDRIG items) – unit tests for the pure
 /// helpers and source analysis for query shapes / native config.
 void main() {
-  String read(String path) => File(path).readAsStringSync();
+  String read(String path) => readDartLibrary(path);
 
   String body(String source, String start, [int length = 2500]) {
     final i = source.indexOf(start);

@@ -1,10 +1,10 @@
-import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
 /// REVIEW_FIX: source analysis for the security/riverpod review findings.
 void main() {
-  String read(String path) => File(path).readAsStringSync();
+  String read(String path) => readDartLibrary(path);
 
   String body(String source, String start, [int length = 2500]) {
     final i = source.indexOf(start);

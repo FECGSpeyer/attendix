@@ -1,12 +1,12 @@
 // IOS_ATT_PAGES: Übersicht numbers like Ionic OverviewPage, Meine Termine
 // row titles like Ionic signout, iOS look of the Termin pages.
-import 'dart:io';
 
 import 'package:attendix/core/providers/self_service_providers.dart';
 import 'package:attendix/core/services/cross_tenant_service.dart';
 import 'package:attendix/data/models/attendance/attendance.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import '../../helpers/source_reader.dart';
 
 const _uebung = AttendanceType(id: 'u', name: 'Übung', hideName: true);
 const _konzert = AttendanceType(id: 'k', name: 'Konzert');
@@ -153,7 +153,7 @@ void main() {
     late String src;
     late String body;
     setUpAll(() {
-      src = File('lib/data/repositories/sign_in_out_repository.dart').readAsStringSync();
+      src = readDartLibrary('lib/data/repositories/sign_in_out_repository.dart');
       final start = src.indexOf('Future<List<CrossTenantPersonAttendance>> getAllPersonAttendancesAcrossTenants()');
       final end = src.indexOf('static String tenantDisplayName', start);
       body = src.substring(start, end);

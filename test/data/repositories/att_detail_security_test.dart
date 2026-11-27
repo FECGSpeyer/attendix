@@ -1,6 +1,6 @@
-import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
 /// ATT_DETAIL: source analysis of the ad-hoc reminder and attachment
 /// helpers in AttendanceRepository.
@@ -8,7 +8,7 @@ void main() {
   late String source;
 
   setUpAll(() {
-    source = File('lib/data/repositories/attendance_repository.dart').readAsStringSync();
+    source = readDartLibrary('lib/data/repositories/attendance_repository.dart');
   });
 
   String methodBody(String name) {

@@ -1,10 +1,10 @@
-import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
 /// Multi-Tenant Security source analysis for the STATS_PEOPLE_FIXES package.
 void main() {
-  String read(String path) => File(path).readAsStringSync();
+  String read(String path) => readDartLibrary(path);
 
   /// All supabase query chains (from `.from(` up to the terminating `;`).
   List<String> queries(String source, String table) => RegExp(

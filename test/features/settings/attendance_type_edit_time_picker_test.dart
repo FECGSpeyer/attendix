@@ -1,5 +1,5 @@
-import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
 /// Source code verification tests for AttendanceTypeEditPage TimePicker
 ///
@@ -10,12 +10,8 @@ void main() {
   late String betaSource;
 
   setUpAll(() {
-    pageSource = File(
-      'lib/features/settings/presentation/pages/attendance_type_edit_page.dart',
-    ).readAsStringSync();
-    betaSource = File(
-      'lib/features/settings/presentation/pages/attendance_type_edit_page_beta.dart',
-    ).readAsStringSync();
+    pageSource = readDartLibrary('lib/features/settings/presentation/pages/attendance_type_edit_page.dart');
+    betaSource = readDartLibrary('lib/features/settings/presentation/pages/attendance_type_edit_page_beta.dart');
   });
 
   group('AttendanceTypeEditPage - Time Input', () {

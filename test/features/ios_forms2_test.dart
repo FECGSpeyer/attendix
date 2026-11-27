@@ -1,10 +1,10 @@
-import 'dart:io';
 
 import 'package:attendix/core/providers/self_service_providers.dart';
 import 'package:attendix/data/models/attendance/attendance.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../helpers/source_reader.dart';
 
-String _read(String path) => File(path).readAsStringSync();
+String _read(String path) => readDartLibrary(path);
 
 const _duty = AttendanceType(id: 'd', name: 'Dienst', dutyMode: true);
 

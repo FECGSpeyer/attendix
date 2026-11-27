@@ -1,14 +1,14 @@
-import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
 /// MEDIA_REALTIME: source-analysis checks for realtime wiring and haptics.
 void main() {
-  final realtime = File('lib/core/providers/realtime_providers.dart').readAsStringSync();
+  final realtime = readDartLibrary('lib/core/providers/realtime_providers.dart');
   final members =
-      File('lib/features/redesign/presentation/pages/rd_members_page.dart').readAsStringSync();
+      readDartLibrary('lib/features/redesign/presentation/pages/rd_members_page.dart');
   final pending =
-      File('lib/features/redesign/presentation/pages/rd_pending_page.dart').readAsStringSync();
+      readDartLibrary('lib/features/redesign/presentation/pages/rd_pending_page.dart');
 
   group('Multi-Tenant Security: realtime providers', () {
     test('every postgres channel filters by tenantId', () {
@@ -39,11 +39,11 @@ void main() {
   });
 
   test('haptics on destructive confirmations and attendance recording', () {
-    final dialog = File('lib/core/utils/dialog_helper.dart').readAsStringSync();
+    final dialog = readDartLibrary('lib/core/utils/dialog_helper.dart');
     final event =
-        File('lib/features/redesign/presentation/pages/rd_event_page.dart').readAsStringSync();
+        readDartLibrary('lib/features/redesign/presentation/pages/rd_event_page.dart');
     final eventEdit =
-        File('lib/features/redesign/presentation/pages/rd_event_edit_page.dart').readAsStringSync();
+        readDartLibrary('lib/features/redesign/presentation/pages/rd_event_edit_page.dart');
     expect(dialog, contains('if (isDestructive) HapticHelper.medium();'));
     expect(event, contains('HapticHelper.light();'));
     expect(eventEdit, contains('HapticHelper.medium();'));

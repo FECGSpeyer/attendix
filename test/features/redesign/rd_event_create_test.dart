@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
@@ -35,6 +34,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show SupabaseClient, AuthClientOptions;
 
 import '../../factories/test_factories.dart';
+import '../../helpers/source_reader.dart';
 
 class _TenantNotifier extends CurrentTenantNotifier {
   void switchGroup() {
@@ -200,7 +200,7 @@ void main() {
     );
     // The page moves the end only this way.
     final page =
-        File('lib/features/redesign/presentation/pages/rd_event_create_page.dart').readAsStringSync();
+        readDartLibrary('lib/features/redesign/presentation/pages/rd_event_create_page.dart');
     expect(page, contains('rdMovedSeriesEnd(_date, day, _until)'));
     expect(page, isNot(contains('.difference(_date)')));
   });
@@ -652,10 +652,10 @@ void main() {
 
   group('source', () {
     final page =
-        File('lib/features/redesign/presentation/pages/rd_event_create_page.dart').readAsStringSync();
+        readDartLibrary('lib/features/redesign/presentation/pages/rd_event_create_page.dart');
     final writes =
-        File('lib/features/attendance/presentation/attendance_create_writes.dart').readAsStringSync();
-    final router = File('lib/core/router/app_router.dart').readAsStringSync();
+        readDartLibrary('lib/features/attendance/presentation/attendance_create_writes.dart');
+    final router = readDartLibrary('lib/core/router/app_router.dart');
 
     test('creates through the shared write path with permission check', () {
       expect(page, contains('AttendanceCreateWriter(ref)'));

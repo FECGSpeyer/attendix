@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
 /// LIVE_ACTIVITY: source checks for the Live Activity repository, service
 /// and the native iOS side.
@@ -10,9 +11,9 @@ void main() {
   late String page;
 
   setUpAll(() {
-    repo = File('lib/data/repositories/live_activity_repository.dart').readAsStringSync();
-    service = File('lib/core/services/live_activity_service.dart').readAsStringSync();
-    page = File('lib/features/redesign/presentation/pages/rd_notifications_page.dart').readAsStringSync();
+    repo = readDartLibrary('lib/data/repositories/live_activity_repository.dart');
+    service = readDartLibrary('lib/core/services/live_activity_service.dart');
+    page = readDartLibrary('lib/features/redesign/presentation/pages/rd_notifications_page.dart');
   });
 
   Iterable<String> queries(String source, String table) => RegExp(

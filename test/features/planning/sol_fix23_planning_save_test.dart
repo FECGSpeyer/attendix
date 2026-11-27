@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/branding_providers.dart';
@@ -23,6 +22,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../factories/test_factories.dart';
 import '../../helpers/test_helpers.dart';
+import '../../helpers/source_reader.dart';
 
 class _MockPlanRepository extends Mock implements PlanRepository {}
 
@@ -290,7 +290,7 @@ void main() {
   group('source', () {
     late String src;
     setUpAll(() {
-      src = File('lib/features/planning/presentation/pages/planning_page.dart').readAsStringSync();
+      src = readDartLibrary('lib/features/planning/presentation/pages/planning_page.dart');
     });
 
     test('dirty and title baseline are reset only after a successful write', () {

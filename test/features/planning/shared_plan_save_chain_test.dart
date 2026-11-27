@@ -1,10 +1,10 @@
 // SOL_FIX15: autosaves of "Meine Pläne" (public planning page) are
 // serialised per plan, bound to the account and report success explicitly.
 import 'dart:async';
-import 'dart:io';
 
 import 'package:attendix/features/planning/data/shared_plan_save_chain.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
 void main() {
   group('SharedPlanSaveChain', () {
@@ -128,9 +128,7 @@ void main() {
   });
 
   group('public planning page wiring (source analysis)', () {
-    final src = File(
-            'lib/features/planning/presentation/pages/public_planning_page.dart')
-        .readAsStringSync();
+    final src = readDartLibrary('lib/features/planning/presentation/pages/public_planning_page.dart');
 
     String method(String signature) {
       final start = src.indexOf(signature);

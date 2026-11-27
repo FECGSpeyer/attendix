@@ -3,7 +3,6 @@
 // editor instance of a Termin run on one process-wide chain, so an editor
 // that was left can never overwrite what a later editor stored.
 import 'dart:async';
-import 'dart:io';
 
 import 'package:attendix/core/config/supabase_config.dart';
 import 'package:attendix/core/constants/enums.dart';
@@ -35,6 +34,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../factories/test_factories.dart';
 import '../../helpers/test_helpers.dart';
+import '../../helpers/source_reader.dart';
 
 class _MockPlanRepository extends Mock implements PlanRepository {}
 
@@ -277,7 +277,7 @@ void main() {
       await clearPlanningDrafts();
       expect((await SharedPreferences.getInstance()).getKeys(), {'offline_writes_v1', 'locale'});
 
-      final main = File('lib/main.dart').readAsStringSync();
+      final main = readDartLibrary('lib/main.dart');
       final listener = main.substring(main.indexOf('ref.listen(currentUserProvider'));
       final clearBlock = listener.substring(0, listener.indexOf('onUserChanged'));
       expect(clearBlock, contains('shouldClearOfflineReadCaches('));
@@ -408,7 +408,7 @@ void main() {
     });
 
     test('every editor write goes through the shared chain; drafts only by revision', () {
-      final src = File('lib/features/planning/presentation/pages/planning_page.dart').readAsStringSync();
+      final src = readDartLibrary('lib/features/planning/presentation/pages/planning_page.dart');
       expect(src, isNot(contains('Future<void> _writeChain')));
       expect(src, contains('PlanningWriteSync.run(PlanningWriteSync.keyFor(_tenantId, attId), task)'));
       expect(src, isNot(contains('prefs.remove(')));

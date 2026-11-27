@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:attendix/core/providers/org_song_providers.dart';
 import 'package:attendix/core/utils/song_copy.dart';
@@ -8,6 +7,7 @@ import 'package:attendix/data/models/song/song.dart';
 import 'package:attendix/data/models/tenant/tenant.dart' show ExtraField;
 import 'package:attendix/data/repositories/org_song_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
 Group _group(int id, String name, [String? synonyms]) =>
     Group(id: id, name: name, synonyms: synonyms, tenantId: 9);
@@ -180,7 +180,7 @@ void main() {
   });
 
   group('Multi-Tenant Security: org_song_repository', () {
-    final source = File('lib/data/repositories/org_song_repository.dart').readAsStringSync();
+    final source = readDartLibrary('lib/data/repositories/org_song_repository.dart');
 
     test('search runs only via the RPC with the current tenant', () {
       expect(source, matches(RegExp(r"rpc\(\s*'search_org_songs'")));

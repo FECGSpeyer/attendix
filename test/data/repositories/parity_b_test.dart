@@ -1,15 +1,15 @@
-import 'dart:io';
 
 import 'package:attendix/core/services/song_file_service.dart';
 import 'package:attendix/data/repositories/shared_person_fields.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../factories/test_factories.dart';
+import '../../helpers/source_reader.dart';
 
 /// PARITY_B: DB reads/writes identical to Ionic (organisation person fields,
 /// general settings, profile image, song categories/files, song copy).
 void main() {
-  String read(String path) => File(path).readAsStringSync();
+  String read(String path) => readDartLibrary(path);
 
   String methodBody(String source, String signature) {
     final start = source.indexOf(signature);

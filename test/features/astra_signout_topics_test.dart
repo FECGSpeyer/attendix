@@ -1,7 +1,6 @@
 // ASTRA_SIGNOUT_TOPICS: "Meine Termine" Dienstplan view (Ionic
 // applyDutyView / applyDutyLayout) and "Datum ändern" in the Themen tab
 // (Ionic topics-tab changeDate → promptAttendanceDateChange).
-import 'dart:io';
 
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/signout_providers.dart';
@@ -9,6 +8,7 @@ import 'package:attendix/data/models/attendance/attendance.dart';
 import 'package:attendix/data/repositories/sign_in_out_repository.dart';
 import 'package:attendix/features/attendance/presentation/widgets/attendance_date_change.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../helpers/source_reader.dart';
 
 const _duty = AttendanceType(id: 'd', name: 'Dienst', dutyMode: true);
 const _rehearsal = AttendanceType(id: 'r', name: 'Probe');
@@ -106,7 +106,7 @@ void main() {
     });
 
     test('Themen tab opens the shared date dialog and keeps the Termin selected', () {
-      final src = File('lib/features/team_organization/presentation/widgets/topics_tab.dart').readAsStringSync();
+      final src = readDartLibrary('lib/features/team_organization/presentation/widgets/topics_tab.dart');
       final start = src.indexOf('Future<void> _changeDate(ProtocolAttendance current)');
       expect(start, greaterThan(0));
       final body = src.substring(start, src.indexOf('Future<void> _createAttendance', start));
@@ -117,13 +117,13 @@ void main() {
     });
 
     test('event edit reuses the shared date change', () {
-      final src = File('lib/features/redesign/presentation/pages/rd_event_edit_page.dart').readAsStringSync();
+      final src = readDartLibrary('lib/features/redesign/presentation/pages/rd_event_edit_page.dart');
       expect(src, contains('promptAttendanceDateChange('));
       expect(src, isNot(contains('int calendarDayDifference(')));
     });
 
     test('shared date change writes only through tenant repositories', () {
-      final src = File('lib/features/attendance/presentation/widgets/attendance_date_change.dart').readAsStringSync();
+      final src = readDartLibrary('lib/features/attendance/presentation/widgets/attendance_date_change.dart');
       expect(src, contains('ref.read(attendanceRepositoryWithTenantProvider)'));
       expect(src, contains('ref.read(playerAbsenceRepositoryWithTenantProvider)'));
       expect(src, contains('if (!repo.hasTenantId) return false;'));

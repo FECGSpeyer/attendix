@@ -1,13 +1,13 @@
-import 'dart:io';
 
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/data/repositories/user_registration_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
 /// AUTH package: server-side account flows (attendix-user Edge Function)
 /// and Multi-Tenant Security source analysis.
 void main() {
-  String read(String path) => File(path).readAsStringSync();
+  String read(String path) => readDartLibrary(path);
 
   /// All supabase query chains (from `.from(` up to the terminating `;`).
   List<String> queries(String source, String table) => RegExp(
