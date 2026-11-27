@@ -1,13 +1,13 @@
 #!/usr/bin/env dart
 // ignore_for_file: avoid_print
 
-/// TypeScript to Dart/Freezed Model Converter
-/// 
-/// Usage:
-///   dart run scripts/ts_to_dart_converter.dart <typescript_file> [output_dir]
-/// 
-/// Example:
-///   dart run scripts/ts_to_dart_converter.dart ../attendance/src/app/utilities/interfaces.ts lib/data/models/generated
+// TypeScript to Dart/Freezed Model Converter
+//
+// Usage:
+//   dart run scripts/ts_to_dart_converter.dart <typescript_file> [output_dir]
+//
+// Example:
+//   dart run scripts/ts_to_dart_converter.dart ../attendance/src/app/utilities/interfaces.ts lib/data/models/generated
 
 import 'dart:io';
 
