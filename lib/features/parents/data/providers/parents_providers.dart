@@ -15,6 +15,7 @@ import '../../../../core/providers/signout_providers.dart';
 import '../../../../core/utils/event_list_utils.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/status_utils.dart';
+import '../../../../data/models/plan/plan.dart' show isPlanPublished;
 
 /// Statistics for a child
 class ChildStats {
@@ -101,7 +102,7 @@ class ChildPersonAttendance {
   bool get attended => status.countsAsPresent;
 
   bool get hasPlan {
-    if (!sharePlan || plan == null) return false;
+    if (!sharePlan || plan == null || !isPlanPublished(plan)) return false;
     final fields = plan?['fields'] as List?;
     return fields != null && fields.isNotEmpty;
   }
@@ -185,7 +186,7 @@ class ParentAttendanceGroup {
   }
 
   bool get hasPlan {
-    if (!sharePlan || plan == null) return false;
+    if (!sharePlan || plan == null || !isPlanPublished(plan)) return false;
     final fields = plan?['fields'] as List?;
     return fields != null && fields.isNotEmpty;
   }

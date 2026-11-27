@@ -329,12 +329,14 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
       if (id != null) {
         final fresh = await _repo.getSharedAttendancePlan(id, key);
         if (!mounted) return;
-        if (fresh == null || fresh.plan == null) return _onLinkGone();
+        if (fresh == null || fresh.plan == null || !PlanUtils.allPlans(fresh).any(isPlanPublished)) {
+          return _onLinkGone();
+        }
         _applyFreshAttendance(fresh);
       } else {
         final fresh = await _repo.getSharedPlan(key);
         if (!mounted) return;
-        if (fresh == null) return _onLinkGone();
+        if (fresh == null || !isPlanPublished(fresh)) return _onLinkGone();
         _applyFreshSharedPlan(fresh);
       }
     } catch (_) {
@@ -374,6 +376,8 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
       _editMode = true;
       _channel = _repo.watchSharedAttendancePlan(id, _onAttendanceUpdate);
     }
+    // Unpublished (Gemeinde App): the view link shows nothing until it is published.
+    if (!_editMode && !PlanUtils.allPlans(att).any(isPlanPublished)) _notFound = true;
   }
 
   void _applyAttendancePlan() {
@@ -457,6 +461,8 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
       _editMode = true;
       _channel = _repo.watchSharedPlan(key, _onSharedUpdate);
     }
+    // Unpublished (Gemeinde App): the view link shows nothing until it is published.
+    if (!_editMode && !isPlanPublished(plan)) _notFound = true;
   }
 
   /// Ionic loadSharedPlan: every displayed value comes from [plan]; empty

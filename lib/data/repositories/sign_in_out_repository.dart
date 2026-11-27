@@ -11,6 +11,7 @@ import '../../core/utils/duty_utils.dart';
 import 'base_repository.dart';
 import '../../l10n/l10n.dart';
 import '../../core/utils/status_utils.dart';
+import '../models/plan/plan.dart' show isPlanPublished;
 
 /// Provider for SignInOutRepository (without tenant – use the WithTenant variant).
 final signInOutRepositoryProvider = Provider<SignInOutRepository>((ref) {
@@ -967,7 +968,7 @@ class CrossTenantPersonAttendance {
 
   /// Check if plan is available for viewing
   bool get hasPlan {
-    if (!sharePlan || plan == null) return false;
+    if (!sharePlan || plan == null || !isPlanPublished(plan)) return false;
     final fields = plan?['fields'] as List?;
     return fields != null && fields.isNotEmpty;
   }

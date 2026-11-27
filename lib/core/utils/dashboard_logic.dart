@@ -8,6 +8,7 @@ import '../constants/enums.dart';
 import '../router/redesign_routes.dart';
 import 'attendance_percentage_utils.dart';
 import 'dashboard_utils.dart';
+import '../../data/models/plan/plan.dart' show isPlanPublished;
 
 // Pure (Riverpod-free) dashboard logic, ported from the Ionic home-dashboard
 // cards, dashboard settings and administration page. Kept separate from the
@@ -242,7 +243,8 @@ CurrentPlanData? selectCurrentPlan(
   final candidates = events.where((e) => !DashboardUtils.hasEnded(e, now: now));
   for (final e in candidates) {
     final plans = DashboardUtils.allPlans(e);
-    final hasFields = plans.any((p) => DashboardUtils.planFields(p).isNotEmpty);
+    // Unpublished plans (Gemeinde App) are only shown in the editor.
+    final hasFields = plans.any((p) => DashboardUtils.planFields(p).isNotEmpty && isPlanPublished(p));
     if (!hasFields || !(isAdmin || e.attendance.sharePlan)) continue;
     final index = DashboardUtils.todayPlanIndex(e, now: now);
     return CurrentPlanData(

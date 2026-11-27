@@ -319,7 +319,9 @@ void main() {
       // SOL_FIX27: the write queued by dispose() runs on the process-wide
       // chain directly; `_serialised` is that chain too.
       expect(RegExp(r'_serialised\(').allMatches(src), hasLength(5));
-      expect(RegExp(r'PlanningWriteSync\.run\(').allMatches(src), hasLength(2));
+      // Gemeinde App: + the reload after a remote change of an ORG plan
+      // (`_onRemotePlanChange`) runs on the chain too.
+      expect(RegExp(r'PlanningWriteSync\.run\(').allMatches(src), hasLength(3));
       expect(src, isNot(contains('_writeChain')));
     });
   });

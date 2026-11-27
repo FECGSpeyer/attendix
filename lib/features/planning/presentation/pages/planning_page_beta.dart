@@ -141,6 +141,14 @@ extension _PlanningBeta on _PlanningPageState {
           ],
         ),
       ],
+      if (_planUnpublished) ...[
+        const SizedBox(height: 16),
+        RdInfoCard(
+          key: const Key('rd-plan-unpublished'),
+          text: l10n.planningFlutterUnpublishedHint,
+          icon: Icons.visibility_off_outlined,
+        ),
+      ],
       const SizedBox(height: 16),
       _rdSummary(att, start, total),
       const SizedBox(height: 12),
@@ -2577,6 +2585,7 @@ extension _PlanningBeta on _PlanningPageState {
     } catch (_) {
       if (mounted) _rdSet(() => _isOrgPlan = !value);
     }
+    if (mounted) _watchOrgPlan();
   }
 
   // ---------------------------------------------------------------------------

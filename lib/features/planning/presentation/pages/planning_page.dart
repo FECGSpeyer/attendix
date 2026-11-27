@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show RealtimeChannel;
 
 import '../../../../core/providers/attendance_detail_providers.dart';
 import '../../../../core/providers/attendance_type_providers.dart' show attendanceTypesProvider;
@@ -46,6 +47,7 @@ import '../../../../data/repositories/plan_repository.dart';
 import '../../../../core/services/offline_queue_service.dart' show rootScaffoldMessengerKey;
 import '../../../../core/config/supabase_config.dart' show currentAuthUserIdProvider;
 import '../../../../core/services/planning_draft_store.dart';
+import '../../../../core/services/error_reporter.dart';
 import '../../../../core/services/register_plan_service.dart';
 import '../../data/planning_write_sync.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
@@ -119,6 +121,12 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   bool _sharePlan = false;
   bool _isOrgPlan = false;
   bool _loaded = false;
+
+  /// ORG plans: changes made elsewhere (Gemeinde App, other device) reach
+  /// the open editor live (see [_watchOrgPlan]).
+  RealtimeChannel? _planChannel;
+  int? _planChannelAttId;
+  PlanRepository? _planChannelRepo;
 
   /// [_init] has chosen the start Termin (or found none). Until then the
   /// page shows its loading state instead of the editor, since edits made
@@ -271,6 +279,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     } else {
       unawaited(_serialised(attId, () async => _invalidateCaches()));
     }
+    _unwatchOrgPlan();
     _titleController.dispose();
     super.dispose();
   }
@@ -850,6 +859,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       _sharePlan = att.sharePlan;
       _isOrgPlan = _resolveOrgPlan(att);
     });
+    _watchOrgPlan();
     if (plans.isNotEmpty) {
       _loadPlan(att, plans[index]);
     } else {
@@ -1180,6 +1190,62 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
         _replaceAtt(saved);
         return result.open;
       });
+  }
+
+  /// Follows the open Termin while it is an ORG plan: those are also edited
+  /// in the Gemeinde App, so a change made there must show up here before
+  /// this editor writes the whole plan again.
+  void _watchOrgPlan() {
+    final attId = _attId;
+    final watch = _isOrgPlan && attId != null && _att?.plan != null;
+    if (watch && _planChannelAttId == attId) return;
+    _unwatchOrgPlan();
+    if (!watch) return;
+    final repo = ref.read(planRepositoryWithTenantProvider);
+    if (!repo.hasTenantId) return;
+    _planChannelRepo = repo;
+    _planChannelAttId = attId;
+    _planChannel = repo.watchPlanAttendance(attId, () => unawaited(_onRemotePlanChange(attId)));
+  }
+
+  void _unwatchOrgPlan() {
+    final channel = _planChannel;
+    final repo = _planChannelRepo;
+    _planChannel = null;
+    _planChannelAttId = null;
+    _planChannelRepo = null;
+    if (channel != null && repo != null) unawaited(repo.unwatch(channel));
+  }
+
+  /// A change of Termin [attId] arrived. Runs on the Termin's write chain, so
+  /// it never overtakes an own write. Without pending edits the editor loads
+  /// the stored plan; with pending edits only the base row is replaced, so
+  /// the next save keeps the other plans and does not reset them.
+  Future<void> _onRemotePlanChange(int attId) async {
+    final repo = _planChannelRepo;
+    if (repo == null) return;
+    try {
+      await PlanningWriteSync.run(PlanningWriteSync.keyFor(_tenantId, attId), () async {
+        final fresh = await repo.getPlanAttendanceById(attId);
+        if (!mounted || fresh == null || _attId != attId) return;
+        final own = _att;
+        String plansJson(PlanAttendance? a) =>
+            jsonEncode([for (final p in PlanUtils.allPlans(a)) p.toJson()]);
+        if (own != null && plansJson(own) == plansJson(fresh)) return;
+        _replaceAtt(fresh);
+        if (_hasPendingChanges) return;
+        _loadAttendance(fresh, planIndex: _planIndex);
+        if (mounted) ToastHelper.showInfo(context, context.l10n.planningFlutterUpdatedElsewhere);
+      });
+    } catch (e, st) {
+      ErrorReporter.report(e, st, where: 'planning_page realtime');
+    }
+  }
+
+  /// "Unveröffentlicht" (set in the Gemeinde App) for the open plan.
+  bool get _planUnpublished {
+    final plans = PlanUtils.allPlans(_att);
+    return _isOrgPlan && _planIndex < plans.length && !isPlanPublished(plans[_planIndex]);
   }
 
   void _replaceAtt(PlanAttendance saved) {

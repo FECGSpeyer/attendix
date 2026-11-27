@@ -190,9 +190,25 @@ class Plan with _$Plan {
 
     /// Day within a multi-day Termin, 0 = first day.
     @PlanIntConverter() int? day,
+
+    /// "Unveröffentlicht" (set in the Gemeinde App): only shown in the
+    /// editor, see [isPlanPublished]. Kept on save so it survives edits here.
+    bool? unpublished,
   }) = _Plan;
 
   factory Plan.fromJson(Map<String, dynamic> json) => _$PlanFromJson(json);
+}
+
+/// "Unveröffentlicht" (Gemeinde App, ORG plans): a plan with
+/// `unpublished: true` is only shown in the editor. Viewers, public links, the
+/// dashboard and the Live Activity skip it until it is published in the
+/// Gemeinde App (same rule as Ionic `isPlanPublished`). Takes a [Plan], a
+/// [SharedPlan] or the raw plan JSON.
+bool isPlanPublished(Object? plan) {
+  if (plan is Plan) return plan.unpublished != true;
+  if (plan is SharedPlan) return plan.unpublished != true;
+  if (plan is Map) return plan['unpublished'] != true;
+  return false;
 }
 
 /// Saved Programmblock (head first, then its Unterpunkte) stored in
@@ -226,6 +242,9 @@ class SharedPlan with _$SharedPlan {
     @JsonKey(name: 'creator_user_id') String? creatorUserId,
     @JsonKey(name: 'created_at') String? createdAt,
     @JsonKey(name: 'org_id') @PlanIntConverter() int? orgId,
+
+    /// "Unveröffentlicht" (set in the Gemeinde App), see [isPlanPublished].
+    bool? unpublished,
   }) = _SharedPlan;
 
   factory SharedPlan.fromJson(Map<String, dynamic> json) =>

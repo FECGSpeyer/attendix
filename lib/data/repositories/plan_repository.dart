@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/plan/plan.dart';
 import '../../core/constants/enums.dart';
@@ -117,6 +118,35 @@ class PlanRepository extends BaseRepository with TenantAwareRepository {
       handleError(e, stack, 'getPlanAttendanceById');
       rethrow;
     }
+  }
+
+  /// Changes of Termin [id] made elsewhere (other device, Gemeinde App):
+  /// [onChange] runs after every update of the row. The payload is ignored
+  /// on purpose; the editor reloads the Termin with [getPlanAttendanceById]
+  /// (tenant filtered). Events of another instance are dropped.
+  RealtimeChannel watchPlanAttendance(int id, void Function() onChange) {
+    final tenantId = currentTenantId;
+    return supabase
+        .channel('plan-att-$tenantId-$id')
+        .onPostgresChanges(
+          event: PostgresChangeEvent.update,
+          schema: 'public',
+          table: 'attendance',
+          filter: PostgresChangeFilter(type: PostgresChangeFilterType.eq, column: 'id', value: id),
+          callback: (payload) {
+            final rowTenant = payload.newRecord['tenantId'];
+            if (rowTenant != null && rowTenant != tenantId) return;
+            onChange();
+          },
+        )
+        .subscribe();
+  }
+
+  /// Stops a channel from [watchPlanAttendance].
+  Future<void> unwatch(RealtimeChannel channel) async {
+    try {
+      await supabase.removeChannel(channel);
+    } catch (_) {}
   }
 
   /// Ionic live-activity `openFromUrl` loads the tapped Termin without a
