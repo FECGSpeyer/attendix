@@ -12,7 +12,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/team_org/team_org.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/loading/loading.dart';
-import '../../../planning/presentation/widgets/ion_items.dart';
+import '../../../../shared/widgets/layout/ion_items.dart';
 import '../../team_org_utils.dart';
 import 'task_form_sheet.dart';
 import '../../../../core/services/error_reporter.dart';

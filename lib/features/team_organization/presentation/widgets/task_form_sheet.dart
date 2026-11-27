@@ -8,7 +8,7 @@ import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/team_org/team_org.dart';
-import '../../../planning/presentation/widgets/ion_items.dart';
+import '../../../../shared/widgets/layout/ion_items.dart';
 import '../../../../l10n/l10n.dart';
 import '../../team_org_utils.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';

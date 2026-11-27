@@ -16,7 +16,7 @@ import '../widgets/plan_export_actions.dart';
 import '../widgets/plan_field_dialogs.dart';
 import '../widgets/shared_plan_edit_list.dart';
 import '../widgets/plan_view_list.dart';
-import '../widgets/ion_items.dart';
+import '../../../../shared/widgets/layout/ion_items.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/services/error_reporter.dart';

@@ -222,7 +222,7 @@ void main() {
     const pages = [
       'lib/features/organisation/presentation/pages/org_plan_public_page.dart',
       'lib/features/legal/presentation/pages/terms_page.dart',
-      'lib/features/planning/presentation/widgets/ion_items.dart',
+      'lib/shared/widgets/layout/ion_items.dart',
     ];
     for (final path in pages) {
       final src = File(path).readAsStringSync();

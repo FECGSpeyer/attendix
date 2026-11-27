@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/services.dart';
 
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/redesign/rd_theme.dart';
-import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart';
-import '../../../../shared/widgets/layout/ionic_ios.dart'
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/redesign/rd_theme.dart';
+import '../../../l10n/l10n.dart';
+import '../adaptive/adaptive.dart';
+import 'ionic_ios.dart'
     show IonTranslucentAppBar, IonContentTopInset, IonLargeTitle;
-import '../../../../shared/widgets/display/ion_badge_text.dart';
+import '../display/ion_badge_text.dart';
 
 /// Section header with optional trailing note/button.
 class IonListHeader extends StatelessWidget {

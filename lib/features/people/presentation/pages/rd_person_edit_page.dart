@@ -40,7 +40,7 @@ import '../../../../data/repositories/extra_fields_repository.dart' show extraFi
 import '../../../../data/repositories/player_repository.dart';
 import '../../../../data/repositories/profile_repository.dart';
 import '../../../../data/repositories/user_registration_repository.dart';
-import '../../../../data/services/auth_service.dart';
+import '../../../../core/services/auth/auth_service.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../duty/presentation/pages/unavailability_page.dart' show openUnavailabilityPage;

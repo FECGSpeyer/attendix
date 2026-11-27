@@ -19,7 +19,7 @@ import '../../data/models/person/person.dart';
 import '../../data/repositories/cross_tenant_person_repository.dart';
 import '../../data/repositories/player_repository.dart';
 import '../../data/repositories/profile_repository.dart';
-import '../../data/services/auth_service.dart';
+import '../../core/services/auth/auth_service.dart';
 import '../../l10n/l10n.dart';
 import '../../shared/widgets/adaptive/adaptive.dart';
 

@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import '../../../../data/models/shift/shift_instance.dart';
 import '../../../../data/models/shift/shift_plan.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../planning/presentation/widgets/ion_items.dart';
+import '../../../../shared/widgets/layout/ion_items.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Shows the calculated shifts sheet.

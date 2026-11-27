@@ -7,7 +7,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/plan_utils.dart';
 import '../../../../data/models/plan/plan.dart';
 import '../../../../l10n/l10n.dart';
-import 'ion_items.dart';
+import '../../../../shared/widgets/layout/ion_items.dart';
 
 /// Read-only list of an Ablaufplan with optional live mode (countdown of the
 /// running Programmpunkt), ported from Ionic `PlanViewerComponent`.
