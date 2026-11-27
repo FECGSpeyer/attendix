@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/source_reader.dart';
 
 /// Security tests for SongRepository / PublicSongRepository (source analysis)
 ///
@@ -16,7 +17,7 @@ void main() {
   late String publicRepo;
 
   setUpAll(() {
-    repo = File('lib/data/repositories/song_repository.dart').readAsStringSync();
+    repo = readDartLibrary('lib/data/repositories/song_repository.dart');
     publicRepo =
         File('lib/data/repositories/public_song_repository.dart').readAsStringSync();
   });

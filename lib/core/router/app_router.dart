@@ -129,7 +129,7 @@ import '../../shared/widgets/redesign/rd_split_view.dart';
 import '../../shared/widgets/redesign/rd_overview.dart';
 import '../../features/songs/presentation/pages/song_import_page.dart';
 
-part 'app_router_classic_routes.dart';
+part 'app_router_feature_routes.dart';
 part 'app_router_public_routes.dart';
 part 'app_router_redesign_routes.dart';
 
@@ -465,7 +465,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state, child) => RdShell(child: child),
         routes: [
           ..._redesignShellRoutes(ref),
-          ..._classicShellRoutes(ref),
+          ..._featureShellRoutes(ref),
         ],
       ),
       ..._publicTailRoutes(ref),

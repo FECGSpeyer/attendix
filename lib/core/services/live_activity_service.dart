@@ -27,19 +27,11 @@ import 'error_reporter.dart';
 
 part 'live_activity_host.dart';
 part 'live_activity_models.dart';
+part 'live_activity_sync.dart';
 
-/// Shows the currently running Ablaufplan as iOS Live Activity / Dynamic
-/// Island. While the app is open it starts and updates them itself; with the
-/// app closed the `live-activity-tick` Edge Function does it via push, using
-/// the tokens registered here.
-///
-/// Talks to ios/Runner/LiveActivityPlugin.swift and (DB_REVIEW_REST F2)
-/// android/.../liveplan/LiveActivityPlugin.kt (ongoing "Ablaufplan"
-/// notification, Ionic LiveActivityPlugin.java) over [channelName]. No-op on
-/// web; every native call is wrapped in try/catch, so builds without the
-/// native side simply skip everything.
-class LiveActivityService {
-  LiveActivityService({
+/// Core session, token, and deep-link lifecycle state for [LiveActivityService].
+abstract class _LiveActivityServiceCore {
+  _LiveActivityServiceCore({
     required LiveActivityHost host,
     MethodChannel? channel,
     bool? platformSupported,
@@ -48,44 +40,18 @@ class LiveActivityService {
     bool listenToLifecycle = true,
     this.nativeCloseTimeout = const Duration(seconds: 10),
   })  : _host = host,
-        _channel = channel ?? const MethodChannel(channelName),
-        _platformSupported = platformSupported ?? isSupportedPlatform,
-        _isAndroid = isAndroid ?? isAndroidPlatform,
+        _channel =
+            channel ?? const MethodChannel(LiveActivityService.channelName),
+        _platformSupported =
+            platformSupported ?? LiveActivityService.isSupportedPlatform,
+        _isAndroid = isAndroid ?? LiveActivityService.isAndroidPlatform,
         _now = now ?? (() => DateTime.now().millisecondsSinceEpoch),
         _listenToLifecycle = listenToLifecycle;
-
-  static const String channelName = 'de.attendix/live_activity';
 
   /// SOL_FIX18: how long [endSession] waits for the native side to stop its
   /// own token uploads (in-flight URLSession requests) – the logout must not
   /// hang on a slow network.
   final Duration nativeCloseTimeout;
-
-  /// How often the open app re-checks running plans (the widget counts down on its own).
-  static const Duration syncInterval = Duration(seconds: 20);
-
-  /// Multi-day Termine can have started up to this many days ago.
-  static const int lookbackDays = 14;
-
-  /// Native iOS or Android app (not the PWA).
-  static bool get isSupportedPlatform {
-    try {
-      return !kIsWeb &&
-          (defaultTargetPlatform == TargetPlatform.iOS ||
-              defaultTargetPlatform == TargetPlatform.android);
-    } catch (_) {
-      return false;
-    }
-  }
-
-  /// Native Android app: live plan notification instead of a Live Activity.
-  static bool get isAndroidPlatform {
-    try {
-      return !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
-    } catch (_) {
-      return false;
-    }
-  }
 
   final LiveActivityHost _host;
   final MethodChannel _channel;
@@ -121,19 +87,13 @@ class LiveActivityService {
   /// Account whose tokens are registered on this device (null = none).
   String? get sessionUserId => _sessionUserId;
 
-  /// SOL_FIX16: session generation, bumped synchronously by [endSession]
-  /// (logout / account switch). Every running init / sync captures it at
-  /// its start and re-checks it before each native change and token
-  /// registration, so a fetch that returns after logout never starts
-  /// activities with the previous account's plans again.
+  /// SOL_FIX16: session generation, bumped synchronously by [endSession].
   int _generation = 0;
 
   bool _isStale(int generation) => generation != _generation;
 
   /// SOL_FIX17: token registration is open only while a session is
   /// initialised ([init] opens it, [endSession] closes it synchronously).
-  /// Native token callbacks carry no generation and are dropped while it
-  /// is closed, so they cannot recreate rows the logout deletes.
   bool _registrationOpen = false;
 
   /// SOL_FIX17: token upserts still running; [endSession] waits for them
@@ -144,6 +104,9 @@ class LiveActivityService {
   /// toggle changed must not start or update activities afterwards.
   int _enableEpoch = 0;
 
+  /// SOL_FIX19: session teardowns ([endSession]) that are still running.
+  final Set<Future<void>> _teardowns = {};
+
   /// True when this build has the native side (Ionic `hasNativePlugin`);
   /// controls the toggle in the notification settings.
   bool get hasNativePlugin => _platformSupported;
@@ -153,6 +116,9 @@ class LiveActivityService {
   bool get isEnabled => _enabled;
   bool get isOrgPlansEnabled => _orgPlansEnabled;
   bool get isLoopRunning => _timer != null;
+
+  Future<void> startLoop();
+  void stopLoop();
 
   /// Once at app start: receives native events and a deep link that launched the app.
   Future<void> attach() async {
@@ -191,17 +157,11 @@ class LiveActivityService {
     await init();
   }
 
-  /// SOL_FIX15: logout / account switch. Ends every Live Activity (running
-  /// Ablaufpläne must not stay on the lock screen), and resets the session
-  /// state so tokens are registered again for the next account.
-  ///
-  /// With [removeTokensOf] (call BEFORE `auth.signOut()`, RLS needs the
-  /// session) this device's token rows of that account are deleted as
-  /// well, so the server stops pushing that account's plans to it.
+  /// SOL_FIX15: logout / account switch. Ends every Live Activity and resets
+  /// the session state so tokens are registered again for the next account.
   ///
   /// SOL_FIX19: the returned teardown is tracked; [init] (the next session)
-  /// and [sync] wait for every running teardown, so its global `endAll` and
-  /// token delete never hit the activities / rows of the next session.
+  /// and [sync] wait for every running teardown.
   Future<void> endSession({String? removeTokensOf}) {
     late final Future<void> teardown;
     teardown = _endSession(removeTokensOf).whenComplete(() {
@@ -211,11 +171,6 @@ class LiveActivityService {
     return teardown;
   }
 
-  /// SOL_FIX19: session teardowns ([endSession]) that are still running.
-  final Set<Future<void>> _teardowns = {};
-
-  /// SOL_FIX19: completes once no teardown is running any more (also the
-  /// ones started while waiting).
   Future<void> _awaitTeardowns() async {
     while (_teardowns.isNotEmpty) {
       try {
@@ -227,9 +182,7 @@ class LiveActivityService {
   }
 
   Future<void> _endSession(String? removeTokensOf) async {
-    // SOL_FIX16: invalidate running init / sync calls and reset the session
-    // state synchronously, before the first await, so neither a stale fetch
-    // nor a late reset can touch the next session.
+    // SOL_FIX16: invalidate running init / sync calls and reset synchronously.
     _generation++;
     _registrationOpen = false;
     _syncing = false;
@@ -248,9 +201,6 @@ class LiveActivityService {
     _started = false;
     _enabled = true;
     _orgPlansEnabled = true;
-    // SOL_FIX18: the iOS side uploads activity tokens on its own (straight
-    // to the live-activity-token Edge Function, not via Dart). Close that
-    // too and wait for its running uploads – before the rows are deleted.
     await _setNativeRegistrationOpen(false);
     if (_platformSupported) {
       try {
@@ -261,8 +211,6 @@ class LiveActivityService {
     }
     final owner = removeTokensOf;
     if (owner != null && (sessionUserId == null || sessionUserId == owner)) {
-      // SOL_FIX17: let the upserts already running finish first – their
-      // tokens are in [savedTokens] – so none of them lands after the delete.
       if (inFlight.isNotEmpty) await Future.wait(inFlight);
       final tokens = {...savedTokens, ...await _deviceTokens()}.toList();
       if (tokens.isNotEmpty) {
@@ -290,9 +238,7 @@ class LiveActivityService {
     }
   }
 
-  /// SOL_FIX18: opens / closes the native (iOS) token uploads. Closing
-  /// completes once the uploads already running have finished. Android has
-  /// no native uploads; a build without the call just logs.
+  /// SOL_FIX18: opens / closes the native (iOS) token uploads.
   Future<void> _setNativeRegistrationOpen(bool open) async {
     if (!_platformSupported || _isAndroid) return;
     try {
@@ -306,22 +252,16 @@ class LiveActivityService {
 
   Future<void> init() async {
     if (!_platformSupported) return;
-    // Captured before waiting: a teardown that is already running bumped it
-    // synchronously, one that starts while this waits makes this init stale.
     final generation = _generation;
-    // SOL_FIX19: the previous session's teardown (logout: native uploads,
-    // `endAll`, token delete) must be over before this session starts
-    // activities or registers tokens – its `endAll` would end them.
     if (_teardowns.isNotEmpty) {
       await _awaitTeardowns();
       if (_isStale(generation)) return;
     }
-    // SOL_FIX18: bound to the enable toggle as well – a setEnabled() that
-    // runs while this init loads the setting wins over the loaded value.
     final epoch = _enableEpoch;
     bool supported;
     try {
-      final result = await _channel.invokeMapMethod<String, dynamic>('isAvailable');
+      final result =
+          await _channel.invokeMapMethod<String, dynamic>('isAvailable');
       supported = result?['available'] == true;
     } catch (_) {
       supported = false;
@@ -380,292 +320,18 @@ class LiveActivityService {
     }
   }
 
-  /// Called from the notification settings toggle.
-  Future<void> setEnabled(bool enabled) async {
-    _enabled = enabled;
-    // SOL_FIX17: invalidate a sync that is still loading plans (it would
-    // restart the activities that are ended here), and release its flag.
-    _enableEpoch++;
-    _syncing = false;
-    if (!_supported) return;
-    if (!enabled) {
-      _lastKeys.clear();
-      _ownedKeys.clear();
-      try {
-        await _channel.invokeMethod<void>('endAll');
-      } catch (_) {}
-    } else {
-      await sync();
-    }
-  }
-
-  /// Called from the notification settings sub-toggle "ORG-Pläne anderer Gruppen".
-  Future<void> setOrgPlansEnabled(bool enabled) async {
-    _orgPlansEnabled = enabled;
-    _enableEpoch++;
-    _syncing = false;
-    if (!_supported || !_enabled) return;
-    await sync();
-  }
-
-  /// Syncs now and every [syncInterval]; completes after the first sync.
-  Future<void> startLoop() {
-    stopLoop();
-    _timer = Timer.periodic(syncInterval, (_) => sync());
-    return sync();
-  }
-
-  void stopLoop() {
-    _timer?.cancel();
-    _timer = null;
-  }
-
-  /// Starts, updates and ends Live Activities to match the plans running right now.
-  Future<void> sync() async {
-    if (!_supported || _syncing) return;
-    // SOL_FIX19: no native changes while a session teardown runs (its
-    // `endAll` would end them); the next [init] syncs once it is over.
-    if (_teardowns.isNotEmpty) return;
-    final generation = _generation;
-    final epoch = _enableEpoch;
-    // SOL_FIX16 session generation + SOL_FIX17 enable epoch.
-    bool stale() => _isStale(generation) || epoch != _enableEpoch;
-    if (_host.tenantId == null) {
-      // SOL_FIX15: no tenant (logged out / cleared) → nothing may stay
-      // on the lock screen.
-      if (_lastKeys.isNotEmpty) {
-        _lastKeys.clear();
-        try {
-          await _channel.invokeMethod<void>('endAll');
-        } catch (_) {}
-      }
-      return;
-    }
-    _syncing = true;
-    try {
-      final running = _enabled ? await runningPlans() : null;
-      // SOL_FIX16: plans loaded for a session that has ended meanwhile.
-      if (stale()) return;
-      final candidates = running?.candidates ?? const <LivePlanCandidate>[];
-      final attendanceIds = running?.attendanceIds;
-      final listed = await _channel.invokeMapMethod<String, dynamic>('list');
-      if (stale()) return;
-      final activities = ((listed?['activities'] as List?) ?? const [])
-          .map(LiveActivityTarget.fromMap)
-          .whereType<LiveActivityTarget>()
-          .toList();
-      final wanted = candidates.map((c) => c.key).toSet();
-
-      for (final c in candidates) {
-        final k = c.key;
-        final stateKey = liveStateKey(c.state);
-        final isRunning = activities.any((a) => a.key == k);
-        if (isRunning && _lastKeys[k] == stateKey) {
-          _ownedKeys.add(k);
-          continue;
-        }
-        // Ionic: iOS gets iosLiveState, Android the raw state.
-        final shown = (_isAndroid ? c.state : iosLiveState(c.state)).toMap();
-        // SOL_FIX16: re-checked before every native change.
-        if (stale()) return;
-        if (c.state.phase == 'ended') {
-          if (isRunning) {
-            await _channel.invokeMethod<void>('end', {
-              'attendanceId': c.attendanceId,
-              'planKey': c.planKey,
-              'state': shown,
-            });
-            _ownedKeys.remove(k);
-          }
-        } else if (isRunning) {
-          await _channel.invokeMethod<void>('update', {
-            'attendanceId': c.attendanceId,
-            'planKey': c.planKey,
-            'state': shown,
-          });
-          _ownedKeys.add(k);
-        } else {
-          // SOL_FIX17: never start an activity while disabled.
-          if (!_enabled) continue;
-          await _channel.invokeMethod<void>('start', {
-            'attendanceId': c.attendanceId,
-            'planKey': c.planKey,
-            'title': c.title,
-            'state': shown,
-          });
-          _ownedKeys.add(k);
-        }
-        _lastKeys[k] = stateKey;
-      }
-      // End plans that are over, deleted, archived, un-planned, or no longer
-      // visible to this user. Valid activities of the user's other tenants are
-      // left alone (the server keeps those up to date).
-      for (final a in activities) {
-        if (wanted.contains(a.key)) continue;
-        final isDisabledAdHocOrg =
-            !_orgPlansEnabled && a.attendanceId == 0 && a.planKey.startsWith('org-');
-        var shouldEnd = attendanceIds == null ||
-            attendanceIds.contains(a.attendanceId) ||
-            _ownedKeys.contains(a.key) ||
-            isDisabledAdHocOrg;
-        if (!shouldEnd) {
-          shouldEnd = !await _host.isActivityStillValid(a);
-          if (stale()) return;
-        }
-        if (shouldEnd) {
-          if (stale()) return;
-          await _channel.invokeMethod<void>('end', {
-            'attendanceId': a.attendanceId,
-            'planKey': a.planKey,
-            'immediate': true,
-          });
-          _lastKeys.remove(a.key);
-          _ownedKeys.remove(a.key);
-        }
-      }
-    } catch (e) {
-      _log('sync', e);
-    } finally {
-      // A stale sync must not release the flag of the next session's sync.
-      if (!stale()) _syncing = false;
-    }
-  }
-
-  /// Plans of the current tenant whose live window contains now.
-  Future<({List<LivePlanCandidate> candidates, Set<int> attendanceIds})> runningPlans() async {
-    final role = _host.role;
-    final isLeader = role.isAdmin || role.isResponsible;
-    final timezone = _host.timezone.isNotEmpty ? _host.timezone : 'Europe/Berlin';
-    final now = _now();
-    final today = DateTime.fromMillisecondsSinceEpoch(now);
-    final from = DateTime(today.year, today.month, today.day - lookbackDays);
-    final to = DateTime(today.year, today.month, today.day + 1, 23, 59, 59, 999);
-    final attendances = await _host.loadAttendances(from, to);
-    final types = await _host.termTypes();
-    final attendanceIds = attendances.map((a) => a.id).whereType<int>().toSet();
-    Set<int>? playerVisibleIds;
-    if (!role.canSeeAttendanceTab && !role.isViewer && attendanceIds.isNotEmpty) {
-      playerVisibleIds = await _host.loadVisiblePlayerAttendanceIds(attendanceIds.toList());
-    }
-
-    final result = <LivePlanCandidate>[];
-    for (final att in attendances) {
-      final id = att.id;
-      if (id == null) continue;
-      // Beobachter never see the plan; others only when it is shared and
-      // visible in their own Termine list (and not signed out).
-      if (role.isViewer || (!isLeader && !att.sharePlan)) continue;
-      if (playerVisibleIds != null && !playerVisibleIds.contains(id)) continue;
-      final plans = PlanUtils.allPlans(att);
-      final type = types[att.typeId];
-      final typeName = type?.name ?? '';
-      for (var index = 0; index < plans.length; index++) {
-        // Unpublished (Gemeinde App): no Live Activity until it is published.
-        if (!isPlanPublished(plans[index])) continue;
-        // Ionic 4.17.22: the activity has the colour of the Termin type.
-        final state = withLiveColor(
-          liveStateAt(liveSchedule(att, index, timezone, plans), now),
-          type?.color,
-        );
-        if (state == null) continue;
-        result.add(LivePlanCandidate(
-          attendanceId: id,
-          planKey: livePlanKey(plans[index]),
-          title: liveTitle(att, typeName, index, plans),
-          state: state,
-        ));
-      }
-    }
-    if (isLeader && _orgPlansEnabled) {
-      await _addOrgPlans(result, attendanceIds, timezone, now);
-    }
-    return (candidates: result, attendanceIds: attendanceIds);
-  }
-
-  /// ORG plans of the organisation (Termine of all its choirs marked as
-  /// ORG plan, plan 1 only, and ad-hoc ORG plans), for admins and
-  /// Verantwortliche like the ORG-Pläne page (Ionic 4.17.8 `addOrgPlans`).
-  /// Ad-hoc plans have no Termin: attendanceId 0 and plan key `org-<id>`,
-  /// as in the Edge Function.
-  Future<void> _addOrgPlans(
-    List<LivePlanCandidate> result,
-    Set<int> attendanceIds,
-    String timezone,
-    int now,
-  ) async {
-    final today = DateTime.fromMillisecondsSinceEpoch(now);
-    final from = DateTime(today.year, today.month, today.day - 1);
-    final to = DateTime(today.year, today.month, today.day + 1, 23, 59, 59, 999);
-    LiveOrgPlans? org;
-    try {
-      org = await _host.loadOrgPlans(from, to);
-    } catch (e) {
-      // Without the ORG plans their activities are left alone (not ended).
-      _log('org plans', e);
-      return;
-    }
-    if (org == null) return;
-
-    for (final entry in org.attendances) {
-      final att = entry.attendance;
-      final id = att.id;
-      final plan = att.plan;
-      if (id == null) continue;
-      attendanceIds.add(id);
-      if (plan == null || !isPlanPublished(plan)) continue;
-      if (result.any((c) => c.attendanceId == id && c.planKey == 'main')) continue;
-      final state = withLiveColor(
-        liveStateAt(liveSchedule(att, 0, timezone, [plan]), now),
-        entry.typeColor,
-      );
-      if (state == null) continue;
-      final baseTitle = liveTitle(att, entry.typeName, 0, [plan]);
-      final group = entry.tenantName.trim();
-      final orgTag = group.isNotEmpty ? 'ORG · $group' : 'ORG';
-      result.add(LivePlanCandidate(
-        attendanceId: id,
-        planKey: 'main',
-        title: '$baseTitle · $orgTag',
-        state: state,
-      ));
-    }
-
-    attendanceIds.add(0);
-    for (final sp in org.sharedPlans) {
-      final date = sp.date ?? '';
-      final time = sp.time ?? '';
-      if (date.isEmpty || time.isEmpty || sp.fields.isEmpty || !isPlanPublished(sp)) continue;
-      final state = liveStateAt(
-        buildSchedule(date: date, planTime: time, fields: sp.fields, timezone: timezone),
-        now,
-      );
-      if (state == null) continue;
-      final rawTitle = sp.planTitle?.trim() ?? '';
-      final title = rawTitle.isEmpty
-          ? 'ORG-Plan'
-          : (rawTitle.toUpperCase().contains('ORG') ? rawTitle : '$rawTitle · ORG');
-      result.add(LivePlanCandidate(
-        attendanceId: 0,
-        planKey: 'org-${sp.id}',
-        title: title,
-        state: state,
-      ));
-    }
-  }
-
   Future<void> _registerTokens(int generation) async {
     if (_isAndroid) {
-      // Tells the server this build can show live plan notifications (no
-      // ActivityKit token on Android) – Ionic registerTokenListeners.
       await _saveToken('start', 'android', generation: generation);
     } else {
-      // SOL_FIX18: re-open the native uploads [endSession] closed.
       if (_isStale(generation)) return;
       await _setNativeRegistrationOpen(true);
-      // Lets the native side register update tokens itself while the app only runs in the background.
       try {
         if (_isStale(generation)) return;
-        await _channel.invokeMethod<void>('configure', {'url': _host.apiUrl, 'key': _host.apiKey});
+        await _channel.invokeMethod<void>(
+          'configure',
+          {'url': _host.apiUrl, 'key': _host.apiKey},
+        );
       } catch (e, st) {
         ErrorReporter.report(e, st, where: 'live_activity_service');
       }
@@ -681,7 +347,12 @@ class LiveActivityService {
         final target = LiveActivityTarget.fromMap(raw);
         final token = raw is Map ? raw['token'] : null;
         if (token is String) {
-          await _saveToken('update', token, target: target, generation: generation);
+          await _saveToken(
+            'update',
+            token,
+            target: target,
+            generation: generation,
+          );
         }
       }
     } catch (e, st) {
@@ -697,17 +368,12 @@ class LiveActivityService {
     LiveActivityTarget? target,
     int? generation,
   }) async {
-    // SOL_FIX17: native callbacks (no generation) only while a session is
-    // registering; registrations of an ended session never write again.
     if (!_registrationOpen) return;
     if (generation != null && _isStale(generation)) return;
     final userId = _host.userId;
     if (userId == null || token.isEmpty) return;
-    // SOL_FIX15: tokens belong to the account of this session only.
     if (_sessionUserId != null && _sessionUserId != userId) return;
     _sessionUserId = userId;
-    // SOL_FIX17: remembered before the write, so a logout that starts while
-    // the upsert runs deletes this token too (after awaiting the write).
     if (kind != 'start' || token != 'android') _savedTokens.add(token);
     final write = _write(userId, kind, token, target);
     _pendingWrites.add(write);
@@ -761,11 +427,13 @@ class LiveActivityService {
     if (url.scheme != 'attendix' || url.host != 'live-plan') return false;
     final attendanceId = int.tryParse(url.queryParameters['attendance'] ?? '') ?? 0;
     final planKey = url.queryParameters['plan'] ?? '';
-    // Ionic 4.17.8: ad-hoc ORG plans have no Termin (attendance 0, plan "org-<id>").
-    final orgPlanId = attendanceId == 0 && planKey.startsWith('org-') ? planKey.substring(4) : null;
-    if (attendanceId == 0 && (orgPlanId == null || orgPlanId.isEmpty)) return true;
+    final orgPlanId = attendanceId == 0 && planKey.startsWith('org-')
+        ? planKey.substring(4)
+        : null;
+    if (attendanceId == 0 && (orgPlanId == null || orgPlanId.isEmpty)) {
+      return true;
+    }
     if (_host.tenantId == null) {
-      // Opened before the tenant was loaded (cold start): open after init.
       _pendingUri = url;
       return true;
     }
@@ -801,5 +469,56 @@ class LiveActivityService {
 
   void _log(String what, Object error) {
     if (kDebugMode) debugPrint('[LiveActivity] $what failed: $error');
+  }
+}
+
+/// Shows the currently running Ablaufplan as iOS Live Activity / Dynamic
+/// Island. While the app is open it starts and updates them itself; with the
+/// app closed the `live-activity-tick` Edge Function does it via push, using
+/// the tokens registered here.
+///
+/// Talks to ios/Runner/LiveActivityPlugin.swift and (DB_REVIEW_REST F2)
+/// android/.../liveplan/LiveActivityPlugin.kt (ongoing "Ablaufplan"
+/// notification, Ionic LiveActivityPlugin.java) over [channelName]. No-op on
+/// web; every native call is wrapped in try/catch, so builds without the
+/// native side simply skip everything.
+class LiveActivityService extends _LiveActivityServiceCore
+    with _LiveActivitySyncMixin {
+  LiveActivityService({
+    required super.host,
+    super.channel,
+    super.platformSupported,
+    super.isAndroid,
+    super.now,
+    super.listenToLifecycle,
+    super.nativeCloseTimeout,
+  });
+
+  static const String channelName = 'de.attendix/live_activity';
+
+  /// How often the open app re-checks running plans (the widget counts down on its own).
+  static const Duration syncInterval = Duration(seconds: 20);
+
+  /// Multi-day Termine can have started up to this many days ago.
+  static const int lookbackDays = 14;
+
+  /// Native iOS or Android app (not the PWA).
+  static bool get isSupportedPlatform {
+    try {
+      return !kIsWeb &&
+          (defaultTargetPlatform == TargetPlatform.iOS ||
+              defaultTargetPlatform == TargetPlatform.android);
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// Native Android app: live plan notification instead of a Live Activity.
+  static bool get isAndroidPlatform {
+    try {
+      return !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
+    } catch (_) {
+      return false;
+    }
   }
 }

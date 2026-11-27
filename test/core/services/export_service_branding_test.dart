@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:pdf/pdf.dart';
 
 import '../../factories/test_factories.dart';
+import '../../helpers/source_reader.dart';
 
 /// ASTRA_EXPORT: player list and attendance list PDFs carry the same
 /// tenant/org letterhead as Ionic export.page (`Utils.buildTenantBranding` +
@@ -82,7 +83,7 @@ void main() {
   });
 
   group('Source wiring', () {
-    final service = File('lib/core/services/export_service.dart').readAsStringSync();
+    final service = readDartLibrary('lib/core/services/export_service.dart');
     final page = File('lib/features/export/presentation/export_logic.dart').readAsStringSync();
 
     test('both list PDFs go through the shared branding header', () {

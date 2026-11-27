@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../../core/models/version_history.dart';
+import '../../../data/models/version_history/version_history.dart';
 import '../../../core/theme/redesign/rd_theme.dart';
 import '../redesign/rd_widgets.dart';
 import '../../../l10n/l10n.dart';

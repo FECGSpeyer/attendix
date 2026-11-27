@@ -8,6 +8,8 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../helpers/source_reader.dart';
+
 void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));
 
@@ -109,7 +111,7 @@ void main() {
           File('lib/core/providers/realtime_providers.dart').readAsStringSync();
       // SOL_FIX10: the whole load runs in purgeOfflineCachesOnAuthError.
       expect(realtime, contains('purgeOfflineCachesOnAuthError('));
-      final songs = File('lib/data/repositories/song_repository.dart').readAsStringSync();
+      final songs = readDartLibrary('lib/data/repositories/song_repository.dart');
       expect(songs, contains('isAuthOrPermissionError(e)'));
       expect(songs, contains('_purgeOfflineSongs(cacheKey, tenantId)'));
       expect(songs, contains('purgeOfflineReadCachesFor(userId, tenantId)'));

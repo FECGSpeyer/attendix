@@ -30,6 +30,7 @@ import '../../core/services/error_reporter.dart';
 import '../../core/utils/handover_request.dart';
 import '../../core/utils/parent_registration.dart';
 
+part 'player_repository_status_sync.dart';
 part 'player_repository_attendance_sync.dart';
 part 'player_repository_handover.dart';
 part 'player_repository_lifecycle.dart';
@@ -73,6 +74,7 @@ enum HandoverResult { success, requested, duplicate, error }
 /// Repository for player/person operations
 class PlayerRepository extends _PlayerRepositoryCore
     with
+        _PlayerStatusSyncMixin,
         _PlayerAttendanceSyncMixin,
         _PlayerLifecycleMixin,
         _PlayerQueriesMixin,

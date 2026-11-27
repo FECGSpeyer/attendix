@@ -4,6 +4,8 @@ import 'package:attendix/data/models/plan/plan.dart';
 import 'package:attendix/data/repositories/public_plan_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../helpers/source_reader.dart';
+
 /// SOL_FIX12: editing a shared ad-hoc plan persists the recomputed end time.
 void main() {
   const fields = [PlanField(id: 'a', name: 'Gebet', time: '10')];
@@ -27,7 +29,7 @@ void main() {
   });
 
   test('shared plan page saves the recomputed end', () {
-    final page = File('lib/features/planning/presentation/pages/shared_plan_page.dart').readAsStringSync();
+    final page = readDartLibrary('lib/features/planning/presentation/pages/shared_plan_page.dart');
     expect(page, contains('updateSharedPlan(key, editKey, fields: _fields, title: _title, time: _time, endTime: _end)'));
   });
 

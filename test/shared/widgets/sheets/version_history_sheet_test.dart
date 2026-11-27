@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:attendix/core/constants/app_constants.dart';
-import 'package:attendix/core/models/version_history.dart';
+import 'package:attendix/data/models/version_history/version_history.dart';
 import 'package:attendix/shared/widgets/sheets/version_history_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
