@@ -8,7 +8,7 @@ import '../../../../core/utils/event_list_utils.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import 'rd_today_providers.dart';
-import '../rd_dates.dart';
+import '../../../../core/redesign/rd_dates.dart';
 import '../rd_event_phase.dart';
 
 /// REDESIGN: data of the "Termine" tab. Only reads through the existing

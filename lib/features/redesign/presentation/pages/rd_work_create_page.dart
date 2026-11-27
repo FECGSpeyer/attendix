@@ -13,10 +13,10 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../l10n/l10n.dart';
 import '../../data/rd_collections_logic.dart';
-import '../../data/rd_words.dart';
+import '../../../../core/redesign/rd_words.dart';
 import '../../data/rd_works_logic.dart';
 import '../widgets/event/rd_form_widgets.dart';
-import '../widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../widgets/works/rd_collections_ui.dart';
 
 /// REDESIGN: "Neues Werk" (canvas "Werke neu gedacht", board "Neues

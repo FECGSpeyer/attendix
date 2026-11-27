@@ -14,8 +14,8 @@ import '../../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../people/rate_filter_labels.dart';
 import '../../../data/providers/rd_members_providers.dart';
 import '../../../data/rd_members_list_filter.dart';
-import '../../../data/rd_words.dart';
-import '../rd_widgets.dart';
+import '../../../../../core/redesign/rd_words.dart';
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../stats/rd_stats_widgets.dart' show showRdStatsRangeSheet;
 
 /// Label of a sort order of the Mitglieder tab.

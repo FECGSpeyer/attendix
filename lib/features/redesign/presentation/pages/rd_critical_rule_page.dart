@@ -17,7 +17,7 @@ import '../../data/rd_critical_logic.dart';
 import '../widgets/event/rd_form_widgets.dart';
 import '../widgets/manage/rd_manage_list.dart' show rdLoadedValue;
 import '../widgets/manage/rd_settings_sheets.dart';
-import '../widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 
 /// Opens "Neue Regel" / "Regel" in the content area (the sidebar stays);
 /// returns the rule's parts on "Fertig" (more than one = joined by "und"),

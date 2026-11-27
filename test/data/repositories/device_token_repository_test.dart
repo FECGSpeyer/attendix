@@ -104,7 +104,7 @@ void main() {
     // auth.signOut, whichever the file uses.
     for (final path in [
       'lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart',
-      'lib/features/redesign/presentation/rd_actions.dart',
+      'lib/shared/widgets/redesign/rd_actions.dart',
     ]) {
       final src = File(path).readAsStringSync();
       final remove = src.indexOf('removePushTokenBeforeSignOut(ref)');

@@ -8,7 +8,7 @@ import 'plan_field_dialogs.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
-import '../../../redesign/presentation/widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import 'rd_plan_widgets.dart';
 
 part 'plan_fields_editor_beta.dart';

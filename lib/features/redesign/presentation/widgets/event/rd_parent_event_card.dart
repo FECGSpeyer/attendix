@@ -14,8 +14,8 @@ import '../../../../../shared/widgets/event_list/excuse_reason_sheet.dart' show 
 import '../../../../parents/data/providers/parents_providers.dart';
 import '../../../../self_service/presentation/widgets/plan_viewer_sheet.dart';
 import '../../../../self_service/presentation/widgets/self_service_event_actions.dart' show SelfServiceActionType;
-import '../../../data/rd_dates.dart';
-import '../rd_widgets.dart';
+import '../../../../../core/redesign/rd_dates.dart';
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 import 'rd_own_program.dart';
 import '../today/rd_parent_today.dart' show RdAllChildrenAnswer, RdChildAnswerRow, rdChildrenLine, rdOpenChildren;
 import '../today/rd_today_common.dart';

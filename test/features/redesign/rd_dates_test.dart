@@ -1,4 +1,4 @@
-import 'package:attendix/features/redesign/data/rd_dates.dart';
+import 'package:attendix/core/redesign/rd_dates.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// Day arithmetic across the daylight saving switches (25.10.2026 and

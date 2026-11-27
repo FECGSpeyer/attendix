@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/providers/tenant_providers.dart';
+import '../providers/tenant_providers.dart';
 
 /// Kind of the open group ("Art der Gruppe"). The words of the new design
 /// for the parts of a group depend on it, because "Gruppe" is the tenant

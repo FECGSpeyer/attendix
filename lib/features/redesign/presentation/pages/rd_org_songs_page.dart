@@ -11,7 +11,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../organisation/presentation/org_songs_logic.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/manage/rd_settings_sheets.dart';
-import '../widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 
 /// REDESIGN: Werke der Organisation (canvas "Beta: Gruppe und Daten", board
 /// "G2 Werke der Organisation"). Search like the Werke tab; "Schon bei dir"

@@ -8,7 +8,7 @@ import '../../../../../data/models/attendance/attendance.dart';
 import '../../../../../data/models/plan/plan.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../planning/presentation/attendance_plan_viewer.dart';
-import '../rd_widgets.dart';
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 
 /// REDESIGN (concept "Termin-Bereich neu", Schritt 2): the Ablauf of a
 /// Termin in the page itself: "Jetzt im Ablauf" while it runs, the

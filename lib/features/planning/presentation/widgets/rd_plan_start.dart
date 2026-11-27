@@ -6,7 +6,7 @@ import '../../../../core/utils/plan_utils.dart';
 import '../../../../data/models/plan/plan.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../redesign/presentation/widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../pages/public_planning_page.dart' show publicPlanningTemplates;
 import 'plan_song_helper.dart';
 

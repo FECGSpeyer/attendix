@@ -17,15 +17,15 @@ import '../../../../l10n/l10n.dart';
 import '../../../export/presentation/export_logic.dart' show showExportModal;
 import '../../data/providers/rd_stats_providers.dart';
 import '../../data/rd_stats_logic.dart';
-import '../../data/rd_words.dart';
+import '../../../../core/redesign/rd_words.dart';
 import '../widgets/manage/rd_data_sheets.dart' show rdGenerateCertificates;
 import '../widgets/stats/rd_stats_fields.dart';
 import '../widgets/stats/rd_stats_levels.dart';
 import '../widgets/stats/rd_stats_widgets.dart';
 import 'rd_general_settings_page.dart' show RdTenantSettings, RdTenantSettingsBlock;
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
-import '../widgets/rd_widgets.dart';
-import '../widgets/rd_split_view.dart' show RdManageBackLink;
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_split_view.dart' show RdManageBackLink;
 
 /// REDESIGN: Verwaltung › Auswertung (canvas "Auswertung neu gedacht",
 /// variant B): period (presets or Von / Bis) and filter (Terminart,

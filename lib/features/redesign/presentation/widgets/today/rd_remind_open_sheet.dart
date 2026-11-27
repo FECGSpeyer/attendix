@@ -8,9 +8,9 @@ import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../data/models/person/person.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../data/providers/rd_today_providers.dart';
-import '../../../data/rd_words.dart';
-import '../../rd_actions.dart' show rdShareLink;
-import '../rd_widgets.dart';
+import '../../../../../core/redesign/rd_words.dart';
+import '../../../../../shared/widgets/redesign/rd_actions.dart' show rdShareLink;
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 import 'rd_today_common.dart';
 
 /// "Fr 2.11., 19:30" of a Termin for the reminder text.

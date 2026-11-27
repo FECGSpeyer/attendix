@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/redesign/rd_theme.dart';
 import '../../../data/models/church/church.dart';
 import '../../../features/planning/presentation/widgets/rd_plan_widgets.dart';
-import '../../../features/redesign/presentation/widgets/rd_widgets.dart';
+import '../redesign/rd_widgets.dart';
 import '../../../l10n/l10n.dart';
 
 /// One church with its number of persons.

@@ -14,7 +14,7 @@ import '../../../../../l10n/l10n.dart';
 import '../../../../../core/utils/error_message.dart';
 import '../../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../../core/services/native/native_file_service.dart';
-import '../../../../redesign/presentation/widgets/rd_widgets.dart';
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 
 /// "Beschreibung & Anhang" editor of a Termin (Ionic descriptionModal):
 /// rich text description (stored as HTML like the Ionic quill editor) and

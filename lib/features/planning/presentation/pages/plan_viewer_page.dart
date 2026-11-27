@@ -9,7 +9,7 @@ import '../widgets/plan_export_actions.dart';
 import '../widgets/plan_view_list.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
-import '../../../redesign/presentation/widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../../../../shared/widgets/common/escape_to_close.dart';
 
 /// Read-only Ablaufplan with chips for several plans, live mode and export

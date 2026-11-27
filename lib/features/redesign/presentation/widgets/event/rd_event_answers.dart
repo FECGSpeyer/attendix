@@ -8,9 +8,9 @@ import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../data/models/attendance/attendance.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../attendance/presentation/widgets/attendance_detail/auto_message_panel.dart';
-import '../../../data/rd_dates.dart';
+import '../../../../../core/redesign/rd_dates.dart';
 import '../../../data/rd_event_logic.dart';
-import '../rd_widgets.dart';
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 
 /// "07:12" today, "gestern", "Mo" within a week, else "3.11.".
 String rdChangedShort(AppLocalizations l10n, String? changedAt, {DateTime? now}) {

@@ -29,9 +29,9 @@ import 'package:attendix/features/redesign/data/providers/rd_today_providers.dar
 import 'package:attendix/core/providers/realtime_providers.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_event_edit_page.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_event_page.dart';
-import 'package:attendix/features/redesign/presentation/widgets/rd_desktop.dart';
+import 'package:attendix/shared/widgets/redesign/rd_desktop.dart';
 import 'package:attendix/features/redesign/presentation/widgets/event/rd_pult_view.dart';
-import 'package:attendix/features/redesign/presentation/widgets/rd_split_view.dart';
+import 'package:attendix/shared/widgets/redesign/rd_split_view.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

@@ -5,7 +5,7 @@ import 'package:attendix/data/models/team_org/team_org.dart';
 import 'package:attendix/data/repositories/agenda_item_repository.dart';
 import 'package:attendix/data/repositories/protocol_repository.dart';
 import 'package:attendix/data/repositories/task_repository.dart';
-import 'package:attendix/features/redesign/presentation/widgets/rd_widgets.dart';
+import 'package:attendix/shared/widgets/redesign/rd_widgets.dart';
 import 'package:attendix/features/team_organization/presentation/pages/protocol_page.dart';
 import 'package:attendix/features/team_organization/presentation/widgets/protocol_beta_widgets.dart';
 import 'package:attendix/l10n/l10n.dart';

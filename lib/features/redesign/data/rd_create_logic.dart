@@ -3,7 +3,7 @@ import '../../../core/utils/type_circle.dart';
 import '../../../data/models/attendance/attendance.dart';
 import '../../../data/models/person/person.dart';
 import '../../../data/repositories/profile_repository.dart' show ProfileExtraField;
-import 'rd_dates.dart';
+import '../../../core/redesign/rd_dates.dart';
 
 /// REDESIGN: pure logic of "Termin anlegen" (canvas "TerminAnlegen").
 

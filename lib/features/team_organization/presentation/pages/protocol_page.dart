@@ -15,7 +15,7 @@ import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/branding_providers.dart';
 import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
-import '../../../redesign/presentation/widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../../../redesign/presentation/widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../../../../core/services/pdf_branding.dart';
 import '../../../../core/providers/plan_providers.dart';

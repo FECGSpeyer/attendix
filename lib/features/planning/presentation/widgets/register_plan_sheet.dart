@@ -27,7 +27,7 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../core/services/native/native_file_service.dart';
 import '../../../../core/services/pdf_fonts.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
-import '../../../redesign/presentation/widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 
 /// Opens the Registerprobenplan modal (Ionic `isPlanModalOpen`, a sheet with
 /// breakpoints `[0, 1]`, i.e. full height).

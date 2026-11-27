@@ -18,10 +18,10 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../planning/presentation/widgets/plan_song_helper.dart';
 import '../../../songs/presentation/widgets/song_categories_sheet.dart';
 import '../../data/providers/rd_shared_library.dart';
-import '../../data/rd_words.dart';
+import '../../../../core/redesign/rd_words.dart';
 import '../../data/rd_works_logic.dart';
 import '../widgets/event/rd_form_widgets.dart';
-import '../widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/works/rd_collections_ui.dart';
 

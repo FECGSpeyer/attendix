@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../../core/theme/redesign/rd_theme.dart';
-import '../../../../../l10n/l10n.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Design-system buttons, links, and sub-page back navigation helpers.
 

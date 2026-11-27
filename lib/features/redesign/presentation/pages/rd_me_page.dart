@@ -37,14 +37,14 @@ import '../../../settings/presentation/widgets/calendar_subscription_dialog.dart
 import '../../../assistant/presentation/widgets/assistant_entry_card.dart';
 import '../../data/providers/rd_today_providers.dart' show rdOwnSeasonRateProvider, rdSignoutDataProvider;
 import '../../data/rd_manage_logic.dart';
-import '../../data/rd_words.dart';
-import '../rd_actions.dart';
+import '../../../../core/redesign/rd_words.dart';
+import '../../../../shared/widgets/redesign/rd_actions.dart';
 import '../widgets/manage/rd_manage_entries.dart';
-import '../widgets/rd_account_switch.dart';
+import '../../../../shared/widgets/redesign/rd_account_switch.dart';
 import '../widgets/event/rd_absence_sheet.dart';
-import '../widgets/rd_group_switch.dart';
-import '../widgets/rd_logo.dart';
-import '../widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_group_switch.dart';
+import '../../../../shared/widgets/redesign/rd_logo.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../widgets/work/rd_work_files.dart' show rdWorkFilesMinWidth, showRdWorkFilesShortcuts;
 import 'rd_appearance_page.dart' show rdModeName, rdWorldName;
 

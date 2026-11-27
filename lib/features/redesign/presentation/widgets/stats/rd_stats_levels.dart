@@ -17,9 +17,9 @@ import '../../../../../data/models/instrument/instrument.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../data/providers/rd_stats_providers.dart' show rdStatsPeopleOf;
 import '../../../data/rd_stats_logic.dart';
-import '../../../data/rd_words.dart';
+import '../../../../../core/redesign/rd_words.dart';
 import '../../pages/rd_members_page.dart' show rdPercentColor;
-import '../rd_widgets.dart';
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 import 'rd_stats_widgets.dart';
 
 // REDESIGN: the levels Register and Personen of the Auswertung (canvas

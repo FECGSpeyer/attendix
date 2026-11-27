@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/providers/redesign_providers.dart';
-import '../../../../core/theme/redesign/rd_palette.dart';
-import '../../../../shared/widgets/display/attendix_logo.dart';
+import '../../../core/providers/redesign_providers.dart';
+import '../../../core/theme/redesign/rd_palette.dart';
+import '../display/attendix_logo.dart';
 
 /// REDESIGN: the Attendix logo in the colours of each Farbwelt. Petrol is
 /// the Ionic app's original; the home screen icons (ios/Runner/

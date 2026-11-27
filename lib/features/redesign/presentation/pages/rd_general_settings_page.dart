@@ -23,12 +23,12 @@ import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../settings/data/general_settings_helpers.dart'
     show holidayRegions, initialRegistrationFields, normalizeReasons, normalizeShowAllInfoText;
-import '../../data/rd_words.dart';
+import '../../../../core/redesign/rd_words.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/manage/rd_manage_list.dart' show rdLoadedValue;
 import '../widgets/manage/rd_settings_sheets.dart';
-import '../widgets/rd_widgets.dart';
-import '../widgets/rd_split_view.dart' show RdManageBackLink;
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_split_view.dart' show RdManageBackLink;
 import 'rd_critical_rule_page.dart';
 import '../../data/providers/rd_critical_providers.dart';
 import '../../data/rd_critical_logic.dart';

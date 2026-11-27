@@ -4,9 +4,9 @@ import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../core/utils/choir_file_utils.dart';
 import '../../../../../data/models/instrument/instrument.dart';
 import '../../../../../l10n/l10n.dart';
-import '../../../data/rd_words.dart';
+import '../../../../../core/redesign/rd_words.dart';
 import '../manage/rd_settings_sheets.dart';
-import '../rd_widgets.dart';
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 
 /// REDESIGN: "Für wen ist die Datei?" (canvas "Beta: Gruppe und Daten",
 /// board "Datei-Dialoge im Werk"). Same options and result as the old

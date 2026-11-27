@@ -9,7 +9,7 @@ import '../../../../../l10n/l10n.dart';
 import '../../../../../core/utils/error_message.dart';
 import '../../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../planning/presentation/widgets/rd_plan_widgets.dart';
-import '../../../../redesign/presentation/widgets/rd_widgets.dart';
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 
 /// Result of [showPersonNoteSheet]: `null` = cancelled, `''` = delete note,
 /// anything else = the new note.

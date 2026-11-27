@@ -1,7 +1,7 @@
-import '../../../data/models/person/person.dart';
-import '../../../data/models/song/song.dart';
-import 'rd_members_logic.dart' show rdDaysToBirthday;
-import '../../../core/utils/helper_member.dart';
+import '../../data/models/person/person.dart';
+import '../../data/models/song/song.dart';
+import '../../features/redesign/data/rd_members_logic.dart' show rdDaysToBirthday;
+import '../utils/helper_member.dart';
 
 /// REDESIGN: pure logic of the overview shown in the empty detail column of
 /// the split view (Werke / Mitglieder, nothing chosen on the left).

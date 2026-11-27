@@ -12,7 +12,7 @@ import '../../../../../data/models/team_org/team_org.dart' show agendaItemsPlace
 import '../../../../../l10n/l10n.dart';
 import '../../../../settings/presentation/pages/attendance_type_edit_page.dart' show buildDefaultPlanUpdate;
 import '../../../../settings/presentation/widgets/type_protocol_settings.dart' show agendaPlaceholderField;
-import '../../../data/rd_type_flags.dart';
+import '../../../../../core/redesign/rd_type_flags.dart';
 
 /// "Für neue Termine dieser Art übernehmen" (••• of the Ablauf editor):
 /// the Ablauf [rows] become the template of [type] after a confirmation

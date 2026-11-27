@@ -5,17 +5,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show AuthException, Session;
 
-import '../../../../core/config/supabase_config.dart';
-import '../../../../core/providers/account_switch_providers.dart';
-import '../../../../core/providers/push_providers.dart';
-import '../../../../core/providers/tenant_providers.dart';
-import '../../../../core/services/account_switch/account_switch_service.dart';
-import '../../../../core/theme/redesign/rd_theme.dart';
-import '../../../../core/utils/toast_helper.dart';
-import '../../../../core/utils/dialog_helper.dart';
-import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/layout/route_leave_guard.dart';
-import '../../../auth/data/auth_flow_service.dart';
+import '../../../core/config/supabase_config.dart';
+import '../../../core/providers/account_switch_providers.dart';
+import '../../../core/providers/push_providers.dart';
+import '../../../core/providers/tenant_providers.dart';
+import '../../../core/services/account_switch/account_switch_service.dart';
+import '../../../core/theme/redesign/rd_theme.dart';
+import '../../../core/utils/toast_helper.dart';
+import '../../../core/utils/dialog_helper.dart';
+import '../../../l10n/l10n.dart';
+import '../layout/route_leave_guard.dart';
+import '../../../features/auth/data/auth_flow_service.dart';
 import 'rd_widgets.dart';
 
 /// ACCOUNT_SWITCH (Beta): "Konto wechseln" sheet on the Ich page and the

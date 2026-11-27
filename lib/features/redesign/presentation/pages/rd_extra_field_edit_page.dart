@@ -18,7 +18,7 @@ import '../../../../data/repositories/extra_fields_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../settings/data/extra_fields_helpers.dart' show extraFieldChurchIds, extraFieldTypeName;
 import '../widgets/event/rd_form_widgets.dart';
-import '../widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import 'rd_extra_fields_page.dart' show rdSaveExtraFields, rdSerialExtraFieldWrite;
 

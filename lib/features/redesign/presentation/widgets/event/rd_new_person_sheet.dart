@@ -18,9 +18,9 @@ import '../../../../../data/repositories/player_repository.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../people/person_write.dart';
-import '../../../data/rd_words.dart';
+import '../../../../../core/redesign/rd_words.dart';
 import '../manage/rd_settings_sheets.dart';
-import '../rd_widgets.dart';
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 import 'rd_form_widgets.dart' show rdInputDecoration;
 
 /// REDESIGN: "Neue Person anlegen" from "Person hinzufügen" of a Termin

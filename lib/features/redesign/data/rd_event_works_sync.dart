@@ -14,7 +14,7 @@ import '../../attendance/presentation/attendance_song_history.dart';
 import '../../attendance/presentation/widgets/songs_selection_sheet.dart' show SongHistoryEntry;
 import '../presentation/widgets/event/rd_event_now.dart' show rdPlanOf;
 import 'providers/rd_event_works_providers.dart';
-import 'rd_type_flags.dart';
+import '../../../core/redesign/rd_type_flags.dart';
 
 /// REDESIGN: a Werk that stands in the Ablauf of the Termin
 /// [attendanceId] belongs to its Werke (Überblick › "Werke").

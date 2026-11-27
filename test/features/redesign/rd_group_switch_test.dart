@@ -5,7 +5,7 @@ import 'package:attendix/core/providers/user_preferences_provider.dart';
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/data/models/tenant/tenant.dart';
-import 'package:attendix/features/redesign/presentation/widgets/rd_group_switch.dart';
+import 'package:attendix/shared/widgets/redesign/rd_group_switch.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:attendix/shared/widgets/layout/route_leave_guard.dart';
 import 'package:flutter/material.dart';

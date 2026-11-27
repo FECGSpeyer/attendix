@@ -8,8 +8,8 @@ import '../../../../core/services/app_icon_service.dart';
 import '../../../../core/theme/redesign/rd_palette.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../l10n/l10n.dart';
-import '../widgets/rd_logo.dart';
-import '../widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_logo.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 
 /// Name of a Farbwelt ("Petrol", "Konzertsaal" …).
 String rdWorldName(AppLocalizations l10n, RdFarbwelt world) => switch (world) {

@@ -9,7 +9,7 @@ import '../../../../../data/repositories/cross_tenant_person_repository.dart' sh
 import '../../../../../l10n/l10n.dart';
 import '../../../../../shared/widgets/adaptive/adaptive.dart' show showAppDatePicker;
 import '../../../../people/presentation/widgets/pause_person_sheet.dart' show PauseInput;
-import '../rd_widgets.dart';
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 
 /// REDESIGN: "{Name} pausieren" (Leitung) and Ich › "Pausieren" in the
 /// Beta: reason as chips (absence reasons of the group) plus a text field,

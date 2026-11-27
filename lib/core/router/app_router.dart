@@ -66,7 +66,7 @@ import 'route_access.dart';
 import '../../l10n/l10n.dart';
 // Standard app design
 import 'redesign_routes.dart';
-import '../../features/redesign/presentation/shell/rd_shell.dart';
+import '../../shared/shell/rd_shell.dart';
 import '../../features/redesign/presentation/pages/rd_export_page.dart';
 import '../../features/redesign/presentation/pages/rd_work_categories_page.dart';
 import '../../features/redesign/presentation/pages/rd_group_categories_page.dart';
@@ -122,11 +122,11 @@ import '../../features/redesign/presentation/pages/rd_parents_page.dart';
 import '../../features/redesign/presentation/pages/rd_pending_page.dart';
 import '../../features/redesign/presentation/pages/rd_pending_review_page.dart';
 import '../../features/redesign/data/rd_manage_logic.dart' show RdManageArea, RdManageEntry;
-import '../../features/redesign/data/rd_roles_logic.dart' show RdRoleView;
+import '../redesign/rd_roles_logic.dart' show RdRoleView;
 import '../../features/redesign/presentation/pages/rd_manage_page.dart';
 import '../../features/redesign/presentation/pages/rd_help_pages.dart';
-import '../../features/redesign/presentation/widgets/rd_split_view.dart';
-import '../../features/redesign/presentation/widgets/rd_overview.dart';
+import '../../shared/widgets/redesign/rd_split_view.dart';
+import '../../shared/widgets/redesign/rd_overview.dart';
 import '../../features/songs/presentation/pages/song_import_page.dart';
 
 part 'app_router_classic_routes.dart';

@@ -1,5 +1,5 @@
 import 'package:attendix/features/redesign/data/providers/rd_today_providers.dart';
-import 'package:attendix/features/redesign/presentation/widgets/rd_widgets.dart';
+import 'package:attendix/shared/widgets/redesign/rd_widgets.dart';
 import 'package:attendix/features/redesign/presentation/widgets/today/rd_today_common.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

@@ -9,7 +9,7 @@ import '../../../../l10n/l10n.dart';
 import '../../data/rd_manage_logic.dart' show RdManageEntry;
 import '../widgets/manage/rd_manage_entries.dart' show rdManageTitle;
 import '../widgets/manage/rd_manage_list.dart';
-import '../widgets/rd_widgets.dart' show rdBack;
+import '../../../../shared/widgets/redesign/rd_widgets.dart' show rdBack;
 
 /// REDESIGN: Verwaltung › Freigaben in the template "Verwaltungsliste"
 /// (replaces the old pending sheet while the Beta is on; leads only). The

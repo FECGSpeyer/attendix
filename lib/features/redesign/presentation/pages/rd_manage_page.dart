@@ -16,12 +16,12 @@ import '../../../../l10n/l10n.dart';
 import '../../../settings/data/general_settings_helpers.dart' show holidayRegions;
 import '../../../settings/data/left_players_actions.dart' show leftPlayersProvider;
 import '../../data/rd_manage_logic.dart';
-import '../../data/rd_words.dart';
-import '../widgets/rd_desktop.dart' show rdSidebarBreakpoint;
-import '../widgets/rd_split_view.dart';
+import '../../../../core/redesign/rd_words.dart';
+import '../../../../shared/widgets/redesign/rd_desktop.dart' show rdSidebarBreakpoint;
+import '../../../../shared/widgets/redesign/rd_split_view.dart';
 import '../widgets/manage/rd_manage_entries.dart';
 import '../widgets/manage/rd_settings_sheets.dart' show RdListNote;
-import '../widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 
 /// REDESIGN: Ich › Verwaltung (canvas "Beta: Verwaltung neu gedacht"): only

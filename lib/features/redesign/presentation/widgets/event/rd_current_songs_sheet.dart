@@ -5,7 +5,7 @@ import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../data/models/song/song.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../planning/presentation/widgets/rd_plan_widgets.dart' show showRdPlanSheet;
-import '../rd_widgets.dart';
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 
 /// "Aktuelle Werke" sheet for self-service & parents views.
 /// "Nr. Name" / "Dirigent: …" with the download icon when the song has a

@@ -16,7 +16,7 @@ import '../../../data/providers/rd_today_providers.dart'
     show rdDeadlineLabel, rdDeadlineUrgent, rdNotMemberInfo, rdOpenDeadline, rdSignoutDataProvider, rdStartOf, rdTodayFocus;
 import '../event/rd_own_event_cards.dart' show RdStatusBox;
 import '../event/rd_signout_sheet.dart';
-import '../rd_widgets.dart';
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 import 'rd_today_common.dart';
 import 'rd_duty_section.dart';
 

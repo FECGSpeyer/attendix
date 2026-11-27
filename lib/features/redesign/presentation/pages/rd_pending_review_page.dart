@@ -30,7 +30,7 @@ import '../../../people/presentation/widgets/parent_review_hint.dart';
 import '../widgets/manage/rd_manage_list.dart' show rdLoadedValue;
 import '../widgets/manage/rd_settings_sheets.dart';
 import '../widgets/members/rd_person_form.dart' show applyPersonColumns;
-import '../widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard, RdLinkButton;
 
 /// REDESIGN: Verwaltung › Freigaben › "Anfrage prüfen" (replaces the old

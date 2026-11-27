@@ -1,6 +1,6 @@
-import '../../../core/providers/attendance_type_providers.dart';
-import '../../../core/services/error_reporter.dart';
-import '../../../data/models/attendance/attendance.dart';
+import '../providers/attendance_type_providers.dart';
+import '../services/error_reporter.dart';
+import '../../data/models/attendance/attendance.dart';
 
 /// Beta: Ort and Werke can be added at every Termin; the type has no
 /// switches for them any more. When a Termin gets a place or Werke and its

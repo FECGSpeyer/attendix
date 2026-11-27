@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../core/theme/redesign/rd_theme.dart';
 import 'rd_split_view.dart';
 
 /// REDESIGN: desktop rules (canvas "Beta: Desktop-UX").

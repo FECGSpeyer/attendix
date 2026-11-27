@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
 
 /// Design-system attendance/status visualization widgets: proportional bars
 /// and aligned status counters.

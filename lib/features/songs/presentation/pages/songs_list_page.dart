@@ -21,7 +21,7 @@ import '../../../../shared/widgets/common/error_state_view.dart';
 import '../../../../shared/widgets/loading/skeleton_list_tile.dart';
 import '../../../redesign/presentation/widgets/event/rd_current_songs_sheet.dart';
 import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart' show rdInputDecoration;
-import '../../../redesign/presentation/widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../../data/song_print_service.dart';
 import '../utils/song_utils.dart';
 import '../widgets/group_files_sheet.dart';

@@ -35,8 +35,8 @@ import '../widgets/members/rd_critical_talk.dart' show RdCriticalTalkCard, rdCan
 import '../widgets/members/rd_pause_sheets.dart' show showRdArchiveSheet;
 import '../widgets/manage/rd_settings_sheets.dart' show RdListNote;
 import '../widgets/event/rd_record_widgets.dart' show rdStatusLook;
-import '../widgets/rd_split_view.dart';
-import '../widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_split_view.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import 'rd_members_page.dart' show rdPercentColor;
 import '../../../../core/utils/helper_member.dart';

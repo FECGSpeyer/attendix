@@ -3,7 +3,7 @@
 /// its head follow it, for the Leitung and for members.
 library;
 
-import 'rd_dates.dart';
+import '../../../core/redesign/rd_dates.dart';
 
 enum RdEventPhase {
   /// Before the Termin day.

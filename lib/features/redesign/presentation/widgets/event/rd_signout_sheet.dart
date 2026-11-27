@@ -4,7 +4,7 @@ import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../data/repositories/sign_in_out_repository.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../self_service/presentation/widgets/self_service_event_actions.dart';
-import '../rd_widgets.dart';
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 
 /// Result of the sign-out sheet: the reason and whether it is a delay.
 typedef RdSignoutChoice = ({String reason, bool isLate});

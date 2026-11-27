@@ -7,7 +7,7 @@ import '../../../../attendance/presentation/attendance_status_labels.dart'
     show ionicStatusLabel;
 import '../../../data/providers/rd_today_providers.dart';
 import '../../../data/rd_event_logic.dart';
-import '../rd_widgets.dart';
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 import 'rd_record_widgets.dart';
 
 /// REDESIGN: Pultmodus (canvas "TabletErfassen"): recording on a tablet at

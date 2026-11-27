@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/constants/enums.dart';
-import '../../../../core/router/redesign_routes.dart';
-import '../../../../core/router/route_access.dart' show canOpenSongsTab;
+import '../../core/constants/enums.dart';
+import '../../core/router/redesign_routes.dart';
+import '../../core/router/route_access.dart' show canOpenSongsTab;
 
 /// REDESIGN: the fixed tabs of the new design (concept "Rollen-Matrix").
 enum RdTab { today, events, members, works, me }

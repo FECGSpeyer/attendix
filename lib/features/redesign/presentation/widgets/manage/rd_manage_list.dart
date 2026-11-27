@@ -6,8 +6,8 @@ import '../../../../../core/router/redesign_routes.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../shared/widgets/adaptive/app_action_sheet.dart';
-import '../rd_widgets.dart';
-import '../rd_split_view.dart' show RdManageBackLink;
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
+import '../../../../../shared/widgets/redesign/rd_split_view.dart' show RdManageBackLink;
 import '../today/rd_today_common.dart' show RdInfoCard;
 
 /// REDESIGN: template "Verwaltungsliste" (canvas "Einheitliche Beta-UX",

@@ -14,9 +14,9 @@ import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/data/models/person/person.dart';
 import 'package:attendix/features/redesign/data/rd_manage_logic.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_manage_page.dart';
-import 'package:attendix/features/redesign/presentation/shell/rd_destinations.dart';
+import 'package:attendix/shared/shell/rd_destinations.dart';
 import 'package:attendix/features/redesign/presentation/widgets/manage/rd_manage_entries.dart';
-import 'package:attendix/features/redesign/presentation/widgets/rd_widgets.dart' show rdBack;
+import 'package:attendix/shared/widgets/redesign/rd_widgets.dart' show rdBack;
 import 'package:attendix/features/settings/data/left_players_actions.dart'
     show leftPlayersProvider;
 import 'package:attendix/l10n/l10n.dart';

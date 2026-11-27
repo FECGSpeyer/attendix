@@ -9,7 +9,7 @@ import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/data/models/instrument/instrument.dart';
 import 'package:attendix/data/repositories/group_repository.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_group_edit_page.dart';
-import 'package:attendix/features/redesign/presentation/widgets/rd_widgets.dart';
+import 'package:attendix/shared/widgets/redesign/rd_widgets.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

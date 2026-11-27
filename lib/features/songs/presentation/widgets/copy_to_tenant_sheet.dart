@@ -13,7 +13,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../redesign/presentation/widgets/manage/rd_settings_sheets.dart';
-import '../../../redesign/presentation/widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 
 /// `instrument_ids` of a copied song (Ionic copySongToTenant): the mapped
 /// target instrument ids of the copied files, without null and the reserved

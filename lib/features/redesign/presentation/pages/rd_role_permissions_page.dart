@@ -22,15 +22,15 @@ import '../../../../data/repositories/user_registration_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../settings/data/account_provisioning_actions.dart' show playersOfCurrentTenant;
 import '../../data/rd_manage_logic.dart' show RdManageEntry, rdManageVisible;
-import '../../data/rd_roles_logic.dart';
+import '../../../../core/redesign/rd_roles_logic.dart';
 import 'rd_general_settings_page.dart' show RdTenantSettings, RdTenantSettingsBlock;
 import 'rd_person_edit_page.dart' show rdBaseRole;
-import '../../data/rd_words.dart';
+import '../../../../core/redesign/rd_words.dart';
 import '../widgets/manage/rd_manage_entries.dart' show rdManageAccessProvider, rdManageTitle;
 import '../widgets/manage/rd_manage_list.dart' show rdLoadedValue;
 import '../widgets/manage/rd_settings_sheets.dart' show RdListNote;
-import '../widgets/rd_widgets.dart';
-import '../widgets/rd_split_view.dart' show RdManageBackLink, RdSplitScope, rdManageSplitOpen;
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_split_view.dart' show RdManageBackLink, RdSplitScope, rdManageSplitOpen;
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 
 /// REDESIGN: Verwaltung › Rollen und Rechte of the Beta (replaces

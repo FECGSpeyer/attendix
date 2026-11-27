@@ -15,10 +15,10 @@ import '../../../../messages/presentation/auto_message_texts.dart';
 import '../../../../messages/presentation/widgets/attendance_response_page.dart';
 import '../../../../songs/presentation/widgets/song_file_opener.dart';
 import '../../../data/providers/rd_event_details_providers.dart';
-import '../../../data/rd_dates.dart';
+import '../../../../../core/redesign/rd_dates.dart';
 import '../../../data/rd_event_details_logic.dart';
 import '../../../data/rd_works_logic.dart' show rdFileKind;
-import '../rd_widgets.dart';
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../today/rd_today_common.dart' show RdLinkButton;
 import 'rd_event_now.dart';
 

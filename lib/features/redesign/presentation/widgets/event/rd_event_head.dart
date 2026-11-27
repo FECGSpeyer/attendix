@@ -3,9 +3,9 @@ import 'package:intl/intl.dart';
 
 import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../l10n/l10n.dart';
-import '../../../data/rd_dates.dart';
+import '../../../../../core/redesign/rd_dates.dart';
 import '../../../data/rd_event_phase.dart';
-import '../rd_widgets.dart';
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 
 /// REDESIGN (concept "Termin-Bereich neu", Schritt 2): the same head on
 /// every Termin page, for the Leitung and for members: type and phase

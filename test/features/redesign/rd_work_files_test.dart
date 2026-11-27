@@ -17,7 +17,7 @@ import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/data/models/song/song.dart';
 import 'package:attendix/data/models/instrument/instrument.dart';
 import 'package:attendix/features/redesign/data/import/rd_import_ai.dart';
-import 'package:attendix/features/redesign/data/rd_words.dart';
+import 'package:attendix/core/redesign/rd_words.dart';
 import 'package:attendix/features/redesign/data/rd_work_files_controller.dart';
 import 'package:attendix/features/redesign/data/rd_work_files_logic.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_work_page.dart';

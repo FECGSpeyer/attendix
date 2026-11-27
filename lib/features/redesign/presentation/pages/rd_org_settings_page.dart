@@ -23,8 +23,8 @@ import '../../../planning/presentation/widgets/plan_field_dialogs.dart' show sho
 import '../../data/rd_manage_logic.dart' show RdManageArea;
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/manage/rd_settings_sheets.dart';
-import '../widgets/rd_widgets.dart';
-import '../widgets/rd_split_view.dart' show RdManageBackLink;
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_split_view.dart' show RdManageBackLink;
 
 /// REDESIGN: Verwaltung › Gruppe › Organisation (canvas "Beta: Gruppe und
 /// Daten", board "G2 Organisation"). Same functions and role checks as the

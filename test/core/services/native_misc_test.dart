@@ -253,7 +253,7 @@ void main() {
     String read(String p) => readDartLibrary(p);
 
     test('app shell wraps the tabs in RootBackButtonScope', () {
-      expect(read('lib/features/redesign/presentation/shell/rd_shell.dart'),
+      expect(read('lib/shared/shell/rd_shell.dart'),
           contains('RootBackButtonScope('));
     });
 

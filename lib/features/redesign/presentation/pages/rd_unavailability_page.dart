@@ -14,7 +14,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart' show showAppConfirm, showAppDatePicker;
 import '../widgets/event/rd_form_widgets.dart';
 import '../widgets/manage/rd_settings_sheets.dart';
-import '../widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 
 /// A rule being edited and how it was loaded (null: new, not saved yet).

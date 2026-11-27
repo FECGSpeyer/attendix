@@ -10,7 +10,7 @@ import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/utils/event_list_utils.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../self_service/presentation/widgets/self_service_event_actions.dart';
-import '../../data/providers/rd_phase_tick_provider.dart';
+import '../../../../core/redesign/rd_phase_tick_provider.dart';
 import '../../data/rd_event_phase.dart';
 import '../widgets/event/rd_event_head.dart';
 import '../widgets/event/rd_event_now.dart';
@@ -18,7 +18,7 @@ import '../widgets/event/rd_event_sections.dart' show RdSectionLabel;
 import '../widgets/event/rd_own_event_cards.dart';
 import '../widgets/event/rd_signout_sheet.dart';
 import '../widgets/event/rd_own_program.dart';
-import '../widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/today/rd_player_today.dart' show RdOwnAnswerSection;
 

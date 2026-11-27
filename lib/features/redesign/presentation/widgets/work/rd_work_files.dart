@@ -31,19 +31,19 @@ import '../../../../songs/data/file_category_guess.dart' show learnableTerm;
 import '../../../../songs/presentation/widgets/song_file_opener.dart';
 import '../../../data/import/rd_import_ai.dart' show rdImportAiProvider;
 import '../../../data/import/rd_import_logic.dart' show RdImportCategory, RdImportPlan, RdImportQuestion;
-import '../../../data/rd_words.dart';
+import '../../../../../core/redesign/rd_words.dart';
 import '../../../data/rd_work_files_controller.dart';
 import '../../../data/rd_work_files_logic.dart';
 import '../../../data/rd_work_upload_logic.dart';
 import '../../../data/rd_works_logic.dart';
 import '../../../data/sibelius/rd_sibelius_logic.dart' show RdSibeliusCheckout, rdIsSibeliusFile;
 import '../../../data/sibelius/rd_sibelius_sync.dart';
-import '../../rd_actions.dart';
+import '../../../../../shared/widgets/redesign/rd_actions.dart';
 import '../import/rd_import_widgets.dart' show rdImportCategoryLabel, rdImportCategoryOptions;
 import 'rd_file_category_sheet.dart';
 import 'rd_sibelius_actions.dart';
 import 'rd_work_file_actions.dart' show rdReplaceWorkFile, rdIsAudioFile;
-import '../rd_widgets.dart';
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 
 /// REDESIGN: desktop file workspace of a Werk (shown on wide screens to
 /// people who may edit it): the files as a table with part, type and

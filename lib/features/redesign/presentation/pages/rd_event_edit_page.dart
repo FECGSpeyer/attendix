@@ -36,13 +36,13 @@ import '../../data/providers/rd_today_providers.dart' show rdDeadlineLabel;
 import '../../data/rd_create_logic.dart' show rdEndAfter, rdEndBeforeStart, rdPickedTimes, rdRecentPlaces;
 import '../../data/rd_event_details_logic.dart';
 import '../../data/rd_event_phase.dart' show rdEffectiveDurationDays;
-import '../../data/rd_type_flags.dart';
+import '../../../../core/redesign/rd_type_flags.dart';
 import '../../../../shared/widgets/adaptive/app_dialog.dart';
 import '../widgets/event/rd_create_sheets.dart' show showRdTypePicker;
 import '../widgets/event/rd_event_now.dart' show rdPlanMovedWithStart;
 import '../widgets/manage/rd_manage_entries.dart' show rdManageAccessProvider;
 import '../widgets/event/rd_form_widgets.dart';
-import '../widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart';
 
 /// REDESIGN: "Termin bearbeiten" (concept "Vortrag im Beta-Design", board 2):

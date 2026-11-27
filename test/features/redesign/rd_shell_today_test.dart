@@ -18,8 +18,8 @@ import 'package:attendix/features/parents/data/providers/parents_providers.dart'
 import 'package:attendix/features/redesign/data/providers/rd_events_providers.dart';
 import 'package:attendix/features/redesign/data/providers/rd_today_providers.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_today_page.dart';
-import 'package:attendix/features/redesign/presentation/shell/rd_shell.dart';
-import 'package:attendix/features/redesign/presentation/widgets/rd_widgets.dart' show RdOutlineButton;
+import 'package:attendix/shared/shell/rd_shell.dart';
+import 'package:attendix/shared/widgets/redesign/rd_widgets.dart' show RdOutlineButton;
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

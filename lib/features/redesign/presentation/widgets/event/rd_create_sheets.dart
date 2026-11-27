@@ -8,7 +8,7 @@ import '../../../../../data/models/attendance/attendance.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../shared/widgets/adaptive/adaptive.dart' show showAppDatePicker;
 import '../../../data/rd_create_logic.dart';
-import '../rd_widgets.dart';
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 
 /// REDESIGN: sheets of "Termin anlegen" (Art, Abmeldeschluss, weitere
 /// Daten).

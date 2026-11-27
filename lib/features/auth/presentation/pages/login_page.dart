@@ -26,11 +26,11 @@ import '../../../../l10n/l10n.dart';
 import '../../../../core/providers/redesign_providers.dart' show redesignSettingsProvider;
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/display/attendix_logo.dart';
-import '../../../redesign/presentation/widgets/rd_account_switch.dart' show RdSavedAccountsOnLogin;
-import '../../../redesign/presentation/widgets/rd_logo.dart' show rdLogoColors;
+import '../../../../shared/widgets/redesign/rd_account_switch.dart' show RdSavedAccountsOnLogin;
+import '../../../../shared/widgets/redesign/rd_logo.dart' show rdLogoColors;
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart';
-import '../../../redesign/presentation/widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../widgets/reset_password_dialog.dart';
 
 /// Login page

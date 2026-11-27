@@ -20,7 +20,7 @@ import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../planning/presentation/widgets/plan_field_dialogs.dart' show PlanSheetAction;
 import '../../../planning/presentation/widgets/rd_plan_widgets.dart';
 import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart' show RdFieldRow, rdInputDecoration;
-import '../../../redesign/presentation/widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../../../redesign/presentation/widgets/today/rd_today_common.dart' show RdInfoCard;
 
 part 'shift_detail_page_beta.dart';

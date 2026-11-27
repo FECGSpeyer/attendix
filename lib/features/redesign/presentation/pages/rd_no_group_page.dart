@@ -6,9 +6,9 @@ import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../tenant_selection/presentation/pages/tenant_create_page.dart'
     show confirmDeleteAccountWithoutGroup;
-import '../rd_actions.dart';
+import '../../../../shared/widgets/redesign/rd_actions.dart';
 import '../widgets/join/rd_join_sheet.dart';
-import '../widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 
 /// REDESIGN (UX N1): signed in without any group. Instead of the bare
 /// "Neue Instanz" form: join with an invitation (the usual case) or start

@@ -14,7 +14,7 @@ import 'package:attendix/data/models/tenant/tenant.dart';
 import 'package:attendix/data/repositories/group_repository.dart';
 import 'package:attendix/features/instruments/data/catalog_selection.dart';
 import 'package:attendix/features/instruments/presentation/widgets/instrument_catalog_sheet.dart';
-import 'package:attendix/features/redesign/presentation/widgets/rd_widgets.dart';
+import 'package:attendix/shared/widgets/redesign/rd_widgets.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_groups_page.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';

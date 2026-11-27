@@ -10,9 +10,9 @@ import '../../../../../data/models/instrument/instrument.dart';
 import '../../../../../data/repositories/teacher_repository.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../teachers/data/teacher_helpers.dart' show isTeacherFormValid, loadTeacherGroups;
-import '../../../data/rd_words.dart';
+import '../../../../../core/redesign/rd_words.dart';
 import '../event/rd_form_widgets.dart' show rdInputDecoration;
-import '../rd_widgets.dart';
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 import 'rd_settings_sheets.dart';
 
 /// REDESIGN: "Neuer Lehrer" – the one create step of the Beta (Verwaltung ›

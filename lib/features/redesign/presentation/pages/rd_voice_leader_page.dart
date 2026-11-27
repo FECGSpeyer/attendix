@@ -10,7 +10,7 @@ import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../voice_leader/data/providers/voice_leader_providers.dart';
-import '../widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 
 /// REDESIGN: "Meine Stimme" of Stimmführer (the old

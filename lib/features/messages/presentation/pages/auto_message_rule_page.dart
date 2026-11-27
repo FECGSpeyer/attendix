@@ -18,10 +18,10 @@ import '../../../../l10n/l10n.dart';
 import '../widgets/message_editor_toolbar.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
-import '../../../redesign/data/rd_words.dart';
+import '../../../../core/redesign/rd_words.dart';
 import '../../../redesign/presentation/widgets/event/rd_event_head.dart' show rdEventMeta;
 import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart';
-import '../../../redesign/presentation/widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../../../redesign/presentation/widgets/today/rd_today_common.dart' show RdInfoCard;
 
 part 'auto_message_rule_beta.dart';

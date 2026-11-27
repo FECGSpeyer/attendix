@@ -17,7 +17,7 @@ import '../../../../people/person_write.dart' show personProblemSolvedColumns, p
 import '../../../data/providers/rd_critical_providers.dart';
 import '../../../data/rd_critical_logic.dart';
 import '../manage/rd_settings_sheets.dart' show RdListNote;
-import '../rd_widgets.dart';
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 
 /// REDESIGN: "Gespräch eintragen" for a Problemfall, right where the
 /// Problemfälle are shown (the list of the current Problemfälle and the

@@ -10,8 +10,8 @@ import '../../../../../core/router/redesign_routes.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../data/models/tenant/tenant.dart';
 import '../../../../../l10n/l10n.dart';
-import '../../rd_actions.dart' show rdShareLink;
-import '../rd_widgets.dart';
+import '../../../../../shared/widgets/redesign/rd_actions.dart' show rdShareLink;
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 
 /// Sign-up link of [tenant] (as in Verwaltung › Allgemein), null while
 /// registration is off.

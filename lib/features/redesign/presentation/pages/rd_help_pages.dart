@@ -9,7 +9,7 @@ import '../../../help/data/help_content_service.dart';
 import '../../../help/data/help_models.dart';
 import '../../../help/presentation/widgets/glossary_term_popover.dart';
 import '../../../help/presentation/widgets/help_markdown.dart';
-import '../widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 
 /// REDESIGN (Ich und Einstieg, E3): Hilfe, Artikel and Glossar in the new

@@ -22,7 +22,7 @@ import '../../data/rd_manage_logic.dart' show RdManageEntry;
 import '../widgets/manage/rd_manage_entries.dart' show rdManageTitle;
 import '../widgets/manage/rd_manage_list.dart';
 import '../widgets/members/rd_invite_sheet.dart' show showRdInviteSheet;
-import '../widgets/rd_widgets.dart' show RdPrimaryButton, rdBack;
+import '../../../../shared/widgets/redesign/rd_widgets.dart' show RdPrimaryButton, rdBack;
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import 'rd_general_settings_page.dart' show RdTenantSettings, RdTenantSettingsBlock;
 

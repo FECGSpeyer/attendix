@@ -20,7 +20,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../l10n/l10n.dart';
-import '../widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 
 /// REDESIGN: Ich › Benachrichtigungen (canvas "Benachrichtigungen"): the
 /// settings of the old notifications page in three blocks (Wie, Für mich,

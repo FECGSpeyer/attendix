@@ -13,7 +13,7 @@ import '../../../../shared/widgets/adaptive/app_action_sheet.dart';
 import '../../../profile/presentation/widgets/profile_helpers.dart' show profileRoleName;
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/join/rd_join_sheet.dart';
-import '../widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 
 /// REDESIGN (Ich und Einstieg, E1): the group list on /tenants in the new
 /// design. Only the look: [TenantSelectionPage] keeps its logic (automatic

@@ -15,7 +15,7 @@ import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/repositories/teacher_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../widgets/event/rd_form_widgets.dart';
-import '../widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 
 /// REDESIGN: "Lehrer bearbeiten" (template of "Gruppe bearbeiten"): the

@@ -5,7 +5,7 @@ import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/data/models/instrument/instrument.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_groups_page.dart';
 import 'package:attendix/features/redesign/presentation/widgets/manage/rd_manage_list.dart';
-import 'package:attendix/features/redesign/presentation/widgets/rd_widgets.dart' show RdPill;
+import 'package:attendix/shared/widgets/redesign/rd_widgets.dart' show RdPill;
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

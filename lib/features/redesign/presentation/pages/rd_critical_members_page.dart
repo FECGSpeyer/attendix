@@ -15,8 +15,8 @@ import '../../data/rd_critical_logic.dart';
 import '../../data/rd_members_logic.dart' show rdCriticalMembers;
 import '../widgets/manage/rd_manage_list.dart';
 import '../widgets/members/rd_critical_talk.dart';
-import '../widgets/rd_split_view.dart' show RdSplitView, rdUseSplit;
-import '../widgets/rd_widgets.dart' show RdGroupedList, RdListRow, RdRowIcon, rdBack;
+import '../../../../shared/widgets/redesign/rd_split_view.dart' show RdSplitView, rdUseSplit;
+import '../../../../shared/widgets/redesign/rd_widgets.dart' show RdGroupedList, RdListRow, RdRowIcon, rdBack;
 import 'rd_person_page.dart' show RdPersonPage;
 
 /// REDESIGN: the current Problemfälle as a page of their own (template

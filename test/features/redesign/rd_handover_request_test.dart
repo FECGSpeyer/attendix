@@ -8,7 +8,7 @@ import 'package:attendix/core/providers/tenant_providers.dart';
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_handover_page.dart';
-import 'package:attendix/features/redesign/presentation/widgets/rd_widgets.dart' show RdPrimaryButton;
+import 'package:attendix/shared/widgets/redesign/rd_widgets.dart' show RdPrimaryButton;
 import 'package:attendix/features/settings/data/handover_logic.dart' show HandoverData;
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';

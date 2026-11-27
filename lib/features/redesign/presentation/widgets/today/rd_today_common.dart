@@ -5,9 +5,9 @@ import '../../../../../core/constants/enums.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../core/utils/event_list_utils.dart';
 import '../../../../../l10n/l10n.dart';
-import '../rd_widgets.dart';
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../../../data/providers/rd_today_providers.dart' show RdStatusCounts;
-import '../../../data/rd_dates.dart';
+import '../../../../../core/redesign/rd_dates.dart';
 
 /// REDESIGN: shared pieces of the "Heute" cards.
 

@@ -13,8 +13,8 @@ import '../../../../../core/providers/player_absence_providers.dart' show player
 import '../../../../../data/repositories/player_absence_repository.dart' show PlayerAbsenceRepository;
 import '../../../../people/presentation/widgets/planned_absences.dart' show AbsenceInput;
 import '../../../../self_service/presentation/widgets/self_service_absences.dart';
-import '../rd_widgets.dart';
-import '../../../data/rd_dates.dart';
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
+import '../../../../../core/redesign/rd_dates.dart';
 
 /// Own upcoming Termine of the current group between [from] and [until]
 /// (both days included); what an absence in that period will excuse.

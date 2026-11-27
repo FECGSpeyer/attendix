@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
 
 /// Design-system surface and container primitives: cards, grouped lists,
 /// list rows, switches, hint boxes, and the standard [RdPage] frame.

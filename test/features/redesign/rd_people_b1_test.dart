@@ -20,7 +20,7 @@ import 'package:attendix/core/providers/person_detail_providers.dart';
 import 'package:attendix/features/people/presentation/widgets/pause_person_sheet.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_pending_review_page.dart';
 import 'package:attendix/features/redesign/presentation/widgets/members/rd_pause_sheets.dart';
-import 'package:attendix/features/redesign/presentation/widgets/rd_widgets.dart' show RdListRow;
+import 'package:attendix/shared/widgets/redesign/rd_widgets.dart' show RdListRow;
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

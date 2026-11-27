@@ -19,8 +19,8 @@ import '../../../../../data/models/tenant/tenant.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../data/providers/rd_stats_providers.dart' show rdStatsPeopleOf;
 import '../../../data/rd_stats_logic.dart';
-import '../../../data/rd_words.dart';
-import '../rd_widgets.dart';
+import '../../../../../core/redesign/rd_words.dart';
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 import 'rd_stats_widgets.dart' show rdPercent;
 
 // REDESIGN: "Zusatzfelder" and the organisation of the Auswertung (Ionic

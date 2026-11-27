@@ -4,7 +4,7 @@ import '../../../data/models/person/person.dart';
 import '../../../data/models/player_absence/player_absence.dart';
 import '../../attendance/presentation/attendance_group_sort.dart'
     show mainGroupIdOf, sortPersonsByGroup;
-import 'rd_dates.dart';
+import '../../../core/redesign/rd_dates.dart';
 import '../../../core/utils/helper_member.dart';
 
 /// REDESIGN: pure logic of the Mitglieder tab (canvas "Menschen",

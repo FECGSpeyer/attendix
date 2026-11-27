@@ -12,7 +12,7 @@ import '../../../../../data/models/song/song.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../shared/widgets/adaptive/app_action_sheet.dart';
 import '../../../data/rd_collections_logic.dart';
-import '../rd_widgets.dart';
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 
 /// REDESIGN: Sammlungen in the Werke tab (canvas "Noten-Bereich neu
 /// gedacht"): which Sammlungen the viewer sees, the chosen one, the chips,

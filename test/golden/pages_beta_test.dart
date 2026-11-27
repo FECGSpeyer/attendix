@@ -22,7 +22,7 @@ import 'package:attendix/features/redesign/presentation/pages/rd_me_page.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_members_page.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_today_page.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_works_page.dart';
-import 'package:attendix/features/redesign/presentation/shell/rd_shell.dart';
+import 'package:attendix/shared/shell/rd_shell.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';

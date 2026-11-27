@@ -7,7 +7,7 @@ import '../../../../../core/providers/tenant_providers.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../l10n/l10n.dart';
 import '../join/rd_join_sheet.dart';
-import '../rd_widgets.dart';
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 
 /// REDESIGN: "Heute" of Bewerber (canvas R4): the application is being
 /// checked; no tabs besides "Ich".

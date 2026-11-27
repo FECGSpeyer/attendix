@@ -23,7 +23,7 @@ import '../../data/rd_manage_logic.dart' show RdManageEntry;
 import '../widgets/manage/rd_manage_entries.dart' show rdManageTitle;
 import '../widgets/manage/rd_manage_list.dart';
 import '../widgets/manage/rd_settings_sheets.dart';
-import '../widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 
 /// REDESIGN: Verwaltung › Werkhistorie in the template "Verwaltungsliste"
 /// (canvas "Beta: Gruppe und Daten", board "G4 Werkhistorie"). Replaces the

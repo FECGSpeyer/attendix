@@ -1,5 +1,5 @@
-import 'package:attendix/features/redesign/presentation/shell/rd_shell.dart';
-import 'package:attendix/features/redesign/presentation/shell/rd_sidebar.dart';
+import 'package:attendix/shared/shell/rd_shell.dart';
+import 'package:attendix/shared/shell/rd_sidebar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';

@@ -8,7 +8,7 @@ import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../settings/data/link_persons_logic.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
-import '../widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 
 /// REDESIGN: Organisation › Personen verknüpfen (canvas "Beta: Gruppe und
 /// Daten", board "G2 Personen verknüpfen"). Same suggestions, linking and

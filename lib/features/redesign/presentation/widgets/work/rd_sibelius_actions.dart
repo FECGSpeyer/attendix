@@ -19,7 +19,7 @@ import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../shared/widgets/adaptive/app_dialog.dart';
 import '../../../data/sibelius/rd_sibelius_logic.dart';
 import '../../../data/sibelius/rd_sibelius_sync.dart';
-import '../rd_widgets.dart';
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 
 /// REDESIGN (Mac app): the actions of "In Sibelius bearbeiten" (see
 /// rd_sibelius_logic.dart).

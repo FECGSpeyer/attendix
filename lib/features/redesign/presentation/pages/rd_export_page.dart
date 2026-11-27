@@ -10,9 +10,9 @@ import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../export/export_fields.dart';
 import '../../../export/presentation/export_logic.dart';
-import '../../data/rd_words.dart';
+import '../../../../core/redesign/rd_words.dart';
 import '../widgets/manage/rd_settings_sheets.dart';
-import '../widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import 'rd_handover_page.dart' show RdStepButton;
 
 /// REDESIGN: Verwaltung › Auswertung & Daten › Export (canvas "Beta: Gruppe

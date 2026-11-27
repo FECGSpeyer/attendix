@@ -28,11 +28,11 @@ import '../../../../songs/presentation/widgets/copy_to_tenant_sheet.dart';
 import '../../../../songs/presentation/widgets/group_pdf_print.dart';
 import '../../../../songs/presentation/widgets/song_file_opener.dart';
 import '../../../data/providers/rd_shared_library.dart';
-import '../../../data/rd_words.dart';
+import '../../../../../core/redesign/rd_words.dart';
 import '../../../data/rd_work_files_controller.dart';
 import '../../../data/rd_work_files_logic.dart';
 import 'rd_sibelius_actions.dart';
-import '../../rd_actions.dart';
+import '../../../../../shared/widgets/redesign/rd_actions.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
 import 'rd_file_category_sheet.dart';
 

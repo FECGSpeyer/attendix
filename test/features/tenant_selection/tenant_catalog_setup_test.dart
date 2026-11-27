@@ -14,7 +14,7 @@ import 'package:attendix/data/repositories/group_repository.dart';
 import 'package:attendix/data/repositories/tenant_create_repository.dart';
 import 'package:attendix/features/tenant_selection/presentation/pages/tenant_create_page.dart';
 import 'package:attendix/l10n/l10n.dart';
-import 'package:attendix/features/redesign/presentation/widgets/rd_widgets.dart';
+import 'package:attendix/shared/widgets/redesign/rd_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';

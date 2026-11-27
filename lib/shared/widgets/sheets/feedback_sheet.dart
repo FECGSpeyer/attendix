@@ -5,7 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../core/providers/feedback_providers.dart';
 import '../../../core/theme/redesign/rd_theme.dart';
 import '../../../features/redesign/presentation/widgets/event/rd_form_widgets.dart';
-import '../../../features/redesign/presentation/widgets/rd_widgets.dart';
+import '../redesign/rd_widgets.dart';
 import '../../../core/utils/toast_helper.dart';
 import '../../../l10n/l10n.dart';
 import '../adaptive/adaptive.dart' show IonSwitch;

@@ -1,4 +1,4 @@
-import 'package:attendix/features/redesign/data/rd_type_flags.dart';
+import 'package:attendix/core/redesign/rd_type_flags.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

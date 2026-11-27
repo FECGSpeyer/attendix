@@ -9,7 +9,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../settings/data/handover_logic.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/manage/rd_settings_sheets.dart';
-import '../widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import 'rd_handover_page.dart' show RdStepButton;
 
 /// REDESIGN: Personen übergeben, step 2 (canvas "Beta: Gruppe und Daten",

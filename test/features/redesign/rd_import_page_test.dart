@@ -19,9 +19,9 @@ import 'package:attendix/features/redesign/data/import/rd_import_controller.dart
 import 'package:attendix/features/redesign/data/import/rd_import_drive.dart';
 import 'package:attendix/features/redesign/data/import/rd_import_logic.dart';
 import 'package:attendix/features/redesign/data/import/rd_import_source.dart';
-import 'package:attendix/features/redesign/data/rd_words.dart';
+import 'package:attendix/core/redesign/rd_words.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_import_page.dart';
-import 'package:attendix/features/redesign/presentation/widgets/rd_widgets.dart' show RdChoiceChip, RdPrimaryButton;
+import 'package:attendix/shared/widgets/redesign/rd_widgets.dart' show RdChoiceChip, RdPrimaryButton;
 import 'package:attendix/features/redesign/presentation/widgets/import/rd_import_widgets.dart' show RdImportQuestionPreview;
 import 'package:attendix/l10n/l10n.dart';
 import 'package:attendix/shared/widgets/layout/route_leave_guard.dart';

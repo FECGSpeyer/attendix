@@ -48,8 +48,8 @@ import '../../../../self_service/presentation/widgets/self_service_event_actions
 import '../../../data/providers/rd_event_works_providers.dart';
 import '../../../data/providers/rd_today_providers.dart' show rdDeadlineLabel;
 import '../../../data/rd_event_details_logic.dart';
-import '../../../data/rd_type_flags.dart';
-import '../rd_widgets.dart';
+import '../../../../../core/redesign/rd_type_flags.dart';
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../today/rd_today_common.dart';
 import 'rd_event_now.dart' show rdPlanOf;
 

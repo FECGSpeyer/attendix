@@ -19,7 +19,7 @@ import 'package:attendix/core/theme/app_theme.dart';
 import 'package:attendix/data/models/plan/plan.dart';
 import 'package:attendix/data/repositories/plan_repository.dart';
 import 'package:attendix/features/planning/presentation/pages/planning_page.dart';
-import 'package:attendix/features/redesign/presentation/shell/rd_shell.dart';
+import 'package:attendix/shared/shell/rd_shell.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:attendix/shared/widgets/layout/route_leave_guard.dart';
 import 'package:flutter/material.dart';

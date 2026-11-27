@@ -4,7 +4,7 @@ import '../../../data/models/instrument/instrument.dart';
 import '../../../data/models/song/song.dart';
 import '../../../data/repositories/song_repository.dart' show CurrentSongsGroup;
 import '../../songs/presentation/utils/song_utils.dart';
-import 'rd_dates.dart';
+import '../../../core/redesign/rd_dates.dart';
 import 'rd_event_phase.dart' show rdEffectiveDurationDays;
 
 /// REDESIGN: pure logic of the Werke tab (canvas "WerkeListe", "WerkDetail").

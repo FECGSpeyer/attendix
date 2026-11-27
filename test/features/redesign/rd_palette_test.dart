@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
-import 'package:attendix/features/redesign/presentation/widgets/rd_widgets.dart';
+import 'package:attendix/shared/widgets/redesign/rd_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

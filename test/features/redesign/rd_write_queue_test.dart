@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:attendix/core/constants/enums.dart';
-import 'package:attendix/features/redesign/data/rd_write_queue.dart';
+import 'package:attendix/core/redesign/rd_write_queue.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// REDESIGN: writes of one person_attendances row across page copies.

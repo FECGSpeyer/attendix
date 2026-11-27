@@ -14,7 +14,7 @@ import '../../../../../l10n/l10n.dart';
 import '../../../../parents/data/providers/parents_providers.dart';
 import '../../../data/providers/rd_today_providers.dart';
 import '../event/rd_signout_sheet.dart' show showRdReasonSheet;
-import '../rd_widgets.dart';
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 import 'rd_today_common.dart';
 
 /// REDESIGN: "Heute" of Eltern (canvas R2): the next Termine with the

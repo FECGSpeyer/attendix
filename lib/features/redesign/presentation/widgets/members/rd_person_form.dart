@@ -27,10 +27,10 @@ import '../../../../people/person_extra_fields.dart'
     show otherOrchestraOptions, personExtraFields;
 import '../../../../people/person_write.dart' show personUtcMidnightIso;
 import '../../../../people/presentation/widgets/church_picker_sheet.dart';
-import '../../../data/rd_words.dart';
+import '../../../../../core/redesign/rd_words.dart';
 import '../manage/rd_teacher_create_sheet.dart' show showRdAddTeacherSheet;
 import '../event/rd_form_widgets.dart';
-import '../rd_widgets.dart';
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 
 /// REDESIGN: form parts shared by "Neue Person" and "Person bearbeiten"
 /// (canvas "Einheitliche Beta-UX", board A). Changes are reported as

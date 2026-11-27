@@ -27,7 +27,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/audio_player/audio_player_widget.dart';
 import '../../../../shared/widgets/common/error_state_view.dart';
-import '../../../redesign/presentation/widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../../data/song_print_service.dart';
 import '../utils/song_utils.dart';
 import '../widgets/song_file_opener.dart';

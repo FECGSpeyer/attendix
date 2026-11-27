@@ -7,7 +7,7 @@ import '../../../../../l10n/l10n.dart';
 import '../../../../duty/presentation/widgets/duty_actions.dart';
 import '../../../../duty/presentation/widgets/self_service_duty_section.dart'
     show openDutiesTileSubtitle, showOpenDutiesSheet;
-import '../rd_widgets.dart';
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 import 'rd_today_common.dart';
 
 /// REDESIGN: the Dienstplan part of "Meine Termine"

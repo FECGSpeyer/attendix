@@ -14,7 +14,7 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../planning/presentation/widgets/rd_plan_widgets.dart';
 import '../../../redesign/data/rd_collections_logic.dart';
 import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart';
-import '../../../redesign/presentation/widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../../../redesign/presentation/widgets/today/rd_today_common.dart';
 
 part 'songs_selection_sheet.freezed.dart';

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../../../../core/theme/redesign/rd_palette.dart';
-import '../../../../../core/theme/redesign/rd_theme.dart';
-import '../../../../../l10n/l10n.dart';
+import '../../../../core/theme/redesign/rd_palette.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Design-system badges, pills, avatars, date tiles, and section headers.
 

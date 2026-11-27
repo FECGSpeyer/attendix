@@ -10,9 +10,9 @@ import '../../../../../l10n/l10n.dart';
 import '../../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../songs/presentation/widgets/song_categories_sheet.dart';
 import '../../../data/providers/rd_works_filter.dart';
-import '../../../data/rd_words.dart';
+import '../../../../../core/redesign/rd_words.dart';
 import '../../../data/rd_works_logic.dart';
-import '../rd_widgets.dart';
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 
 /// REDESIGN: the four sort orders of the Werke tab ("Nummer", "Titel",
 /// "Zuletzt gespielt", "Am längsten nicht gespielt").

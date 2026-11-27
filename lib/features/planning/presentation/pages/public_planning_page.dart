@@ -37,7 +37,7 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../data/models/organisation/organisation.dart' show Organisation;
-import '../../../redesign/presentation/widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../widgets/rd_plan_widgets.dart';
 
 part 'public_planning_page_beta.dart';

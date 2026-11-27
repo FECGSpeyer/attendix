@@ -15,7 +15,7 @@ import '../../../settings/presentation/widgets/settings_admins_sheet.dart'
 import '../../data/rd_manage_logic.dart' show RdManageEntry;
 import '../widgets/manage/rd_manage_entries.dart' show rdManageTitle;
 import '../widgets/manage/rd_manage_list.dart';
-import '../widgets/rd_widgets.dart' show rdBack;
+import '../../../../shared/widgets/redesign/rd_widgets.dart' show rdBack;
 
 /// REDESIGN: Verwaltung › Admins in the template "Verwaltungsliste"
 /// (replaces the old admins sheet while the Beta is on; super admins only,

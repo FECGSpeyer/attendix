@@ -21,7 +21,7 @@ import '../../../instruments/data/group_options.dart' show groupClefLabel;
 import '../../../instruments/presentation/widgets/instrument_catalog_sheet.dart';
 import '../../../instruments/presentation/widgets/instrument_categories_sheet.dart';
 import '../../data/rd_manage_logic.dart' show RdManageEntry;
-import '../../data/rd_words.dart';
+import '../../../../core/redesign/rd_words.dart';
 import '../widgets/manage/rd_manage_entries.dart' show rdManageTitle;
 import '../widgets/manage/rd_manage_list.dart';
 import '../widgets/manage/rd_settings_sheets.dart' show showRdTextSheet;

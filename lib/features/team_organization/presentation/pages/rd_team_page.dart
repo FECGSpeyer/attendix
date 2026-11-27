@@ -5,7 +5,7 @@ import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../redesign/presentation/widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../utils/route_return_reload.dart';
 import '../widgets/rd_meetings_tab.dart';
 import '../widgets/rd_team_tasks_tab.dart';

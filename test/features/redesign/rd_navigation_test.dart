@@ -2,7 +2,7 @@ import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/router/legacy_routes.dart';
 import 'package:attendix/core/router/redesign_routes.dart';
 import 'package:attendix/core/utils/dashboard_logic.dart';
-import 'package:attendix/features/redesign/presentation/shell/rd_destinations.dart';
+import 'package:attendix/shared/shell/rd_destinations.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 List<RdTab> _tabs(Role role, {bool members = true, String type = 'orchestra'}) =>

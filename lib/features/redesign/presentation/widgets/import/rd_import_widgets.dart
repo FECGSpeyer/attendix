@@ -10,8 +10,8 @@ import '../../../../../l10n/l10n.dart';
 import '../../../../../shared/widgets/adaptive/app_dialog.dart';
 import '../../../data/import/rd_import_controller.dart' show RdImportUpload, rdImportTimeLeft;
 import '../../../data/import/rd_import_logic.dart';
-import '../../../data/rd_words.dart';
-import '../rd_widgets.dart';
+import '../../../../../core/redesign/rd_words.dart';
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 
 /// REDESIGN: pieces shared by the pages of "Noten importieren".
 

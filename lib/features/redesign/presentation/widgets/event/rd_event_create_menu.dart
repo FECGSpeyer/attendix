@@ -13,7 +13,7 @@ import '../../../../../l10n/l10n.dart';
 import '../../../../team_organization/presentation/pages/rd_meeting_page.dart'
     show rdMeetingRoute;
 import '../../../../team_organization/presentation/widgets/rd_new_meeting_sheet.dart';
-import '../../../data/rd_words.dart';
+import '../../../../../core/redesign/rd_words.dart';
 
 /// The single creation entry for the event list, as a floating button on
 /// phones or a compact button in the desktop header.

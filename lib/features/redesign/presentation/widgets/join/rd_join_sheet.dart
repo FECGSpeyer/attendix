@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../registration/data/providers/registration_providers.dart';
-import '../rd_widgets.dart';
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 import 'rd_qr_scan_page.dart';
 
 /// Register id of an invitation: the part after ".../register/" of a

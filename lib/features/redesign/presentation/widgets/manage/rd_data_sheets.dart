@@ -8,8 +8,8 @@ import '../../../../../data/models/instrument/instrument.dart';
 import '../../../../../data/models/person/person.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../settings/presentation/widgets/vorkurs_certificates.dart';
-import '../../../data/rd_words.dart';
-import '../rd_widgets.dart';
+import '../../../../../core/redesign/rd_words.dart';
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 import 'rd_settings_sheets.dart';
 
 /// REDESIGN: "Urkunden" with the groups in a sheet (canvas board

@@ -32,7 +32,7 @@ import '../../../../core/router/route_access.dart' show canOpenSongsTab;
 import '../../../../core/providers/debug_providers.dart' show effectiveRoleProvider;
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../redesign/presentation/widgets/manage/rd_settings_sheets.dart';
-import '../../../redesign/presentation/widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../../../redesign/presentation/widgets/today/rd_today_common.dart' show RdInfoCard;
 
 part 'files_page_beta.dart';

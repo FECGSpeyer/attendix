@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/constants/enums.dart';
+import '../constants/enums.dart';
 
 /// REDESIGN: the writes of one `person_attendances` row (status, note) across
 /// every copy of the Termin page, also one that was left and opened again:

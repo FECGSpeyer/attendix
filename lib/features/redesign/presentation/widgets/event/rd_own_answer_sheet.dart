@@ -9,7 +9,7 @@ import '../../../../../data/repositories/sign_in_out_repository.dart' show Cross
 import '../../../../../l10n/l10n.dart';
 import '../../../data/providers/rd_today_providers.dart' show rdSignoutDataProvider;
 import '../../pages/rd_own_event_page.dart' show rdFindOwnEvent;
-import '../rd_widgets.dart';
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../today/rd_player_today.dart' show RdOwnAnswerSection;
 import '../today/rd_today_common.dart' show RdInfoCard, RdLinkButton;
 

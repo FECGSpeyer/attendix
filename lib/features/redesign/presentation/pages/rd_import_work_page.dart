@@ -7,7 +7,7 @@ import '../../../../l10n/l10n.dart';
 import '../../data/import/rd_import_controller.dart';
 import '../../data/import/rd_import_logic.dart';
 import '../widgets/import/rd_import_widgets.dart';
-import '../widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 
 /// REDESIGN: "Noten importieren" › one Werk (canvas H7 "Werk prüfen"): where
 /// its files go, which Fassung, each file with its part and whether it is

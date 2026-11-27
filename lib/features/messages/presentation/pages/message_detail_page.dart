@@ -23,7 +23,7 @@ import '../widgets/message_termin_section.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../core/services/native/native_file_service.dart';
 import '../../../redesign/presentation/widgets/event/rd_event_head.dart' show rdEventMeta;
-import '../../../redesign/presentation/widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../../../redesign/presentation/widgets/today/rd_today_common.dart' show RdInfoCard;
 
 enum _Filter { all, read, open, problems }

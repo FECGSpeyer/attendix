@@ -25,7 +25,7 @@ import '../../../../people/person_write.dart' show organisationPersonKey, person
 import '../../../../people/presentation/widgets/church_picker_sheet.dart';
 import '../../../../people/presentation/widgets/pause_person_sheet.dart' show buildPauseHistoryText;
 import '../../../../settings/data/left_players_actions.dart' show leftPlayersProvider;
-import '../../../data/rd_words.dart';
+import '../../../../../core/redesign/rd_words.dart';
 import '../manage/rd_settings_sheets.dart' show showRdChoiceSheet, showRdTextSheet;
 
 /// Runs [change] for every person and counts successes and failures, so

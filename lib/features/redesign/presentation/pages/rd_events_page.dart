@@ -31,10 +31,10 @@ import '../../../../core/providers/song_providers.dart';
 import '../../../../data/repositories/song_repository.dart' show CurrentSongsGroup;
 import '../widgets/event/rd_own_answer_sheet.dart';
 import '../widgets/event/rd_signout_sheet.dart';
-import '../widgets/rd_split_view.dart';
-import '../widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_split_view.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart';
-import '../../data/rd_dates.dart';
+import '../../../../core/redesign/rd_dates.dart';
 import '../../data/rd_event_phase.dart' show rdEffectiveDurationDays;
 import '../widgets/today/rd_duty_section.dart';
 

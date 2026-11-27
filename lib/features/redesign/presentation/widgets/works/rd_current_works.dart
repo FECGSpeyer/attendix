@@ -8,8 +8,8 @@ import '../../../../../data/models/instrument/instrument.dart';
 import '../../../../../data/models/song/song.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../data/rd_works_logic.dart';
-import '../rd_split_view.dart';
-import '../rd_widgets.dart';
+import '../../../../../shared/widgets/redesign/rd_split_view.dart';
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 
 /// REDESIGN: "Aktuell" of the Werke tab (canvas "Aktuelle Noten im
 /// Werke-Tab", variant A): one row of cards with the Werke of the coming

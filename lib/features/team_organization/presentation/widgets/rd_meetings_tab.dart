@@ -7,7 +7,7 @@ import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/team_org/team_org.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../redesign/presentation/widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../../team_org_utils.dart';
 import '../pages/rd_meeting_page.dart' show rdMeetingRoute;
 import 'rd_new_meeting_sheet.dart';

@@ -10,7 +10,7 @@ import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart'
     show RdFieldRow, RdFormBody, rdInputDecoration;
 import '../../../redesign/presentation/widgets/manage/rd_settings_sheets.dart'
     show RdSheetHead, showRdSettingsSheet, showRdTextSheet;
-import '../../../redesign/presentation/widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../../data/catalog_selection.dart';
 import '../../data/instrument_catalog.dart';
 import '../../data/instrument_presets.dart';

@@ -18,7 +18,7 @@ import '../../../../songs/presentation/widgets/song_file_opener.dart';
 import '../../../data/providers/rd_event_details_providers.dart';
 import '../../../data/rd_event_details_logic.dart';
 import '../../../data/rd_works_logic.dart' show rdFileKind;
-import '../rd_widgets.dart';
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../today/rd_today_common.dart';
 import 'rd_event_sections.dart' show RdProgramNumber;
 

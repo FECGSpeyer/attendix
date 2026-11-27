@@ -6,7 +6,7 @@ import '../../../../core/config/supabase_config.dart';
 import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/profile_providers.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
-import '../../../redesign/presentation/widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../l10n/l10n.dart';

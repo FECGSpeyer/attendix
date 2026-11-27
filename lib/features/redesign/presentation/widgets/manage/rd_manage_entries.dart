@@ -19,7 +19,7 @@ import '../../../../settings/data/account_provisioning_actions.dart'
     show createMissingAccounts, playersOfCurrentTenant;
 import '../../../../settings/presentation/widgets/calendar_subscription_dialog.dart';
 import '../../pages/rd_general_settings_page.dart' show showRdSharingSheet;
-import '../rd_split_view.dart' show rdManageSplitOpen;
+import '../../../../../shared/widgets/redesign/rd_split_view.dart' show rdManageSplitOpen;
 import 'rd_data_sheets.dart';
 import '../../../../songs/presentation/widgets/song_categories_sheet.dart';
 import '../../../data/providers/rd_members_providers.dart' show rdMembersSelectingProvider;

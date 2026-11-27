@@ -20,10 +20,10 @@ import '../../../../../shared/widgets/adaptive/adaptive.dart'
 import '../../../data/providers/rd_stats_providers.dart';
 import '../../../data/providers/rd_today_providers.dart' show rdEventInfo;
 import '../../../data/rd_stats_logic.dart';
-import '../../../data/rd_words.dart';
+import '../../../../../core/redesign/rd_words.dart';
 import '../../pages/rd_members_page.dart' show rdPercentColor;
 import '../manage/rd_settings_sheets.dart' show RdListNote;
-import '../rd_widgets.dart';
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 
 // REDESIGN: building blocks of the Auswertung (canvas "Auswertung neu
 // gedacht"): figures, the Termin bars, the status split, the Register rows,

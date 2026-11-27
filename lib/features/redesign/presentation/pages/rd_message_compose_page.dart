@@ -22,8 +22,8 @@ import '../../../messages/presentation/pages/message_compose_page.dart' show Mes
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../messages/presentation/widgets/message_editor_toolbar.dart';
-import '../../data/rd_words.dart';
-import '../widgets/rd_widgets.dart';
+import '../../../../core/redesign/rd_words.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 
 /// Tiptap document of a plain text (one paragraph per line), the format
 /// the send-message Edge Function renders.

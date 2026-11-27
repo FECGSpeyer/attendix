@@ -51,12 +51,12 @@ import '../../../people/presentation/widgets/person_detail/person_photo_actions.
 import '../../../people/presentation/widgets/person_transfer_sheet.dart' show showPersonTransferSheet;
 import '../../../people/presentation/widgets/planned_absences.dart'
     show addPlannedAbsenceFlow, deletePlannedAbsenceFlow;
-import '../../data/rd_words.dart';
+import '../../../../core/redesign/rd_words.dart';
 import '../widgets/event/rd_form_widgets.dart';
 import '../widgets/members/rd_person_form.dart';
 import '../widgets/members/rd_critical_talk.dart' show RdCriticalReasonRow, rdRecordTalk;
 import '../../data/providers/rd_critical_providers.dart';
-import '../widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 
 part 'rd_person_edit_actions.dart';

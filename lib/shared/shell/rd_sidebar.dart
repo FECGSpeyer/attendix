@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/providers/tenant_providers.dart';
-import '../../../../core/router/redesign_routes.dart';
-import '../../../../core/theme/redesign/rd_theme.dart';
-import '../../../../l10n/l10n.dart';
-import '../../data/rd_manage_logic.dart';
-import '../widgets/manage/rd_manage_entries.dart';
-import '../widgets/rd_desktop.dart';
-import '../widgets/rd_group_switch.dart';
-import '../widgets/rd_widgets.dart';
+import '../../core/providers/tenant_providers.dart';
+import '../../core/router/redesign_routes.dart';
+import '../../core/theme/redesign/rd_theme.dart';
+import '../../l10n/l10n.dart';
+import '../../features/redesign/data/rd_manage_logic.dart';
+import '../../features/redesign/presentation/widgets/manage/rd_manage_entries.dart';
+import '../widgets/redesign/rd_desktop.dart';
+import '../widgets/redesign/rd_group_switch.dart';
+import '../widgets/redesign/rd_widgets.dart';
 import 'rd_destinations.dart';
 import 'rd_shell.dart';
 

@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/constants/enums.dart';
-import '../../../../core/providers/tenant_providers.dart';
-import '../../../../core/providers/user_preferences_provider.dart';
-import '../../../../core/router/redesign_routes.dart';
-import '../../../../core/theme/redesign/rd_theme.dart';
-import '../../../../core/utils/toast_helper.dart';
-import '../../../../data/models/tenant/tenant.dart';
-import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/layout/route_leave_guard.dart';
-import '../../../profile/presentation/widgets/profile_helpers.dart' show profileRoleName;
-import 'join/rd_join_sheet.dart';
+import '../../../core/constants/enums.dart';
+import '../../../core/providers/tenant_providers.dart';
+import '../../../core/providers/user_preferences_provider.dart';
+import '../../../core/router/redesign_routes.dart';
+import '../../../core/theme/redesign/rd_theme.dart';
+import '../../../core/utils/toast_helper.dart';
+import '../../../data/models/tenant/tenant.dart';
+import '../../../l10n/l10n.dart';
+import '../layout/route_leave_guard.dart';
+import '../../../features/profile/presentation/widgets/profile_helpers.dart' show profileRoleName;
+import '../../../features/redesign/presentation/widgets/join/rd_join_sheet.dart';
 import 'rd_widgets.dart';
 
 /// REDESIGN: group chip at the top of "Heute" ("SO Stadtorchester ⌄").

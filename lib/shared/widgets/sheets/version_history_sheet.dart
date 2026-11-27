@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 
 import '../../../core/models/version_history.dart';
 import '../../../core/theme/redesign/rd_theme.dart';
-import '../../../features/redesign/presentation/widgets/rd_widgets.dart';
+import '../redesign/rd_widgets.dart';
 import '../../../l10n/l10n.dart';
 import '../../../core/utils/error_message.dart';
 import '../adaptive/adaptive.dart';

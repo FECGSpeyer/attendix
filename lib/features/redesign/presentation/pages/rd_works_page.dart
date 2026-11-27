@@ -30,13 +30,13 @@ import '../../data/providers/rd_shared_library.dart';
 import '../../data/providers/rd_works_filter.dart';
 import '../../data/rd_collections_logic.dart';
 import '../../data/rd_works_logic.dart';
-import '../widgets/rd_split_view.dart';
-import '../widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_split_view.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/works/rd_collections_ui.dart';
 import '../widgets/works/rd_current_works.dart';
 import '../widgets/works/rd_works_filter_sheet.dart';
-import '../rd_actions.dart' show rdShareLink;
+import '../../../../shared/widgets/redesign/rd_actions.dart' show rdShareLink;
 import 'rd_general_settings_page.dart' show rdEnableWorksSharing;
 
 /// Search text of the Werke list, shared by every copy of the list (the

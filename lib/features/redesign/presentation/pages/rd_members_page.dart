@@ -36,12 +36,12 @@ import '../../../members/data/providers/members_providers.dart' show membersEint
 import '../../../people/people_list_utils.dart' show withExtraFieldDefaults;
 import '../../../people/rate_filter_labels.dart' show rateFilterChip;
 import '../../../../shared/widgets/adaptive/app_action_sheet.dart';
-import '../../data/rd_words.dart';
+import '../../../../core/redesign/rd_words.dart';
 import '../widgets/members/rd_invite_sheet.dart';
 import '../widgets/members/rd_member_bulk.dart';
 import '../widgets/members/rd_members_filter_sheet.dart';
-import '../widgets/rd_split_view.dart';
-import '../widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_split_view.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/manage/rd_manage_entries.dart'
     show rdManageIcon, rdManageRecentProvider, rdManageTitle, rdMissingAccountsProvider, rdOpenManageEntry;

@@ -2,9 +2,9 @@
 // Rechte neu aufziehen", Stufe A): the page is a list of roles, each role
 // opens its own page. Same roles and rights as before, only sorted by role.
 
-import '../../../core/constants/enums.dart';
-import '../../../core/providers/admin_providers.dart' show TenantUser;
-import '../../../data/models/person/person.dart';
+import '../constants/enums.dart';
+import '../providers/admin_providers.dart' show TenantUser;
+import '../../data/models/person/person.dart';
 
 /// What `RdRolePermissionsPage` shows: the list of roles or one role.
 /// [key] is the path segment of `/ich/verwaltung/rollen/:role`.

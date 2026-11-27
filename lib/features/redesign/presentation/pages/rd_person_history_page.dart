@@ -28,7 +28,7 @@ import '../../../people/person_history_helpers.dart'
         showAllHistoryProvider,
         showOldHistoryNote;
 import '../widgets/manage/rd_settings_sheets.dart' show showRdChoiceSheet;
-import '../widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard, rdOwnStatusPill;
 import 'rd_members_page.dart' show rdPercentColor;
 

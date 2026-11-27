@@ -7,7 +7,7 @@ import '../../../../../l10n/l10n.dart';
 import '../../../../attendance/presentation/attendance_status_labels.dart'
     show ionicSelectableStatuses, ionicStatusLabel;
 import '../../../data/rd_event_logic.dart';
-import '../rd_widgets.dart';
+import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 
 /// Colour and icon of a status in the new design.
 ({Color color, Color soft, IconData icon}) rdStatusLook(RdPalette p, AttendanceStatus status) =>

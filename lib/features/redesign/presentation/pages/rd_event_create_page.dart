@@ -28,14 +28,14 @@ import '../../../attendance/presentation/attendance_create_writes.dart';
 import '../../../attendance/presentation/widgets/multi_date_calendar.dart';
 import '../../../attendance/presentation/widgets/songs_selection_sheet.dart';
 import '../../data/rd_create_logic.dart';
-import '../../data/rd_type_flags.dart';
+import '../../../../core/redesign/rd_type_flags.dart';
 import '../../../../shared/widgets/adaptive/app_dialog.dart';
 import '../widgets/event/rd_create_sheets.dart';
 import '../widgets/manage/rd_manage_entries.dart' show rdManageAccessProvider;
 import '../widgets/event/rd_form_widgets.dart';
-import '../widgets/rd_widgets.dart';
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
-import '../../data/rd_dates.dart';
+import '../../../../core/redesign/rd_dates.dart';
 
 part 'rd_event_create_form.dart';
 

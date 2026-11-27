@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
 
 /// Design-system bottom-sheet container, title, and selection checkmark.
 

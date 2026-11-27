@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
 
 /// Design-system selection controls: segmented control, swipe switcher,
 /// choice chips, removable filter chips, and horizontal chip scroller.
