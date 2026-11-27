@@ -3877,6 +3877,190 @@
   "@brandingTextPh": {
     "description": "branding.textPh"
   },
+  "catalogAddCount": "{kind, select, choir {{count, plural, one {1 Stimme hinzufügen} other {{count} Stimmen hinzufügen}}} other {{count, plural, one {1 Instrument hinzufügen} other {{count} Instrumente hinzufügen}}}}",
+  "@catalogAddCount": {
+    "description": "catalogAddCount",
+    "placeholders": {
+      "kind": {},
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "catalogAddPart": "Weitere Stimme anlegen",
+  "@catalogAddPart": {
+    "description": "catalogAddPart"
+  },
+  "catalogAllFamilies": "Alle",
+  "@catalogAllFamilies": {
+    "description": "catalogAllFamilies"
+  },
+  "catalogApply": "Auswahl übernehmen",
+  "@catalogApply": {
+    "description": "catalogApply"
+  },
+  "catalogBrowse": "Sammlung",
+  "@catalogBrowse": {
+    "description": "catalogBrowse"
+  },
+  "catalogCustom": "{kind, select, choir {Eigene Stimme} other {Eigenes Instrument}}",
+  "@catalogCustom": {
+    "description": "catalogCustom",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "catalogEditHint": "Mit einem anderen Namen kannst du eine weitere Stimme anlegen.",
+  "@catalogEditHint": {
+    "description": "catalogEditHint"
+  },
+  "catalogEditName": "Eigenen Namen verwenden",
+  "@catalogEditName": {
+    "description": "catalogEditName"
+  },
+  "catalogExisting": "Bereits vorhanden",
+  "@catalogExisting": {
+    "description": "catalogExisting"
+  },
+  "catalogImportFailed": "Die Auswahl konnte nicht übernommen werden. Bitte prüfe die Liste und versuche es erneut.",
+  "@catalogImportFailed": {
+    "description": "catalogImportFailed"
+  },
+  "catalogImportSuccess": "{count, plural, =0 {Alle ausgewählten Einträge sind bereits vorhanden.} one {1 Eintrag hinzugefügt} other {{count} Einträge hinzugefügt}}",
+  "@catalogImportSuccess": {
+    "description": "catalogImportSuccess",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "catalogName": "Name",
+  "@catalogName": {
+    "description": "catalogName"
+  },
+  "catalogNameHint": "{kind, select, choir {Name der Stimme} other {Name des Instruments}}",
+  "@catalogNameHint": {
+    "description": "catalogNameHint",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "catalogNoResults": "Keine passenden Einträge. Du kannst einen eigenen Namen hinzufügen.",
+  "@catalogNoResults": {
+    "description": "catalogNoResults"
+  },
+  "catalogOffline": "Die Sammlung ist offline verfügbar. Zum Übernehmen brauchst du eine Verbindung.",
+  "@catalogOffline": {
+    "description": "catalogOffline"
+  },
+  "catalogOptional": "Optional",
+  "@catalogOptional": {
+    "description": "catalogOptional"
+  },
+  "catalogPreset": "Vorlage",
+  "@catalogPreset": {
+    "description": "catalogPreset"
+  },
+  "catalogPresetChangeMessage": "Du kannst die neue Vorlage ergänzen oder deine Auswahl ersetzen. Beim Ersetzen gehen eigene Namen und Einträge verloren.",
+  "@catalogPresetChangeMessage": {
+    "description": "catalogPresetChangeMessage"
+  },
+  "catalogPresetChangeTitle": "Vorlage wechseln?",
+  "@catalogPresetChangeTitle": {
+    "description": "catalogPresetChangeTitle"
+  },
+  "catalogPresetMerge": "Ergänzen",
+  "@catalogPresetMerge": {
+    "description": "catalogPresetMerge"
+  },
+  "catalogPresetReplace": "Ersetzen",
+  "@catalogPresetReplace": {
+    "description": "catalogPresetReplace"
+  },
+  "catalogRemove": "Auswahl entfernen",
+  "@catalogRemove": {
+    "description": "catalogRemove"
+  },
+  "catalogSearch": "{kind, select, choir {Stimme suchen} other {Instrument oder anderen Namen suchen}}",
+  "@catalogSearch": {
+    "description": "catalogSearch",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "catalogSearchHint": "{kind, select, choir {z. B. Sopran oder Alt} other {z. B. Geige oder Bassflöte}}",
+  "@catalogSearchHint": {
+    "description": "catalogSearchHint",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "catalogSelected": "Ausgewählt",
+  "@catalogSelected": {
+    "description": "catalogSelected"
+  },
+  "catalogSelectedCount": "{count, plural, =0 {Keine Einträge ausgewählt} one {1 Eintrag ausgewählt} other {{count} Einträge ausgewählt}}",
+  "@catalogSelectedCount": {
+    "description": "catalogSelectedCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "catalogSetupChoose": "Auswahl anpassen",
+  "@catalogSetupChoose": {
+    "description": "catalogSetupChoose"
+  },
+  "catalogSetupCount": "{count, plural, one {1 Eintrag ausgewählt} other {{count} Einträge ausgewählt}}",
+  "@catalogSetupCount": {
+    "description": "catalogSetupCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "catalogSetupDiscard": "Auswahl verwerfen",
+  "@catalogSetupDiscard": {
+    "description": "catalogSetupDiscard"
+  },
+  "catalogSetupFailed": "Ensemble angelegt. Die Auswahl konnte nicht übernommen werden. Du kannst sie später in der Verwaltung ergänzen.",
+  "@catalogSetupFailed": {
+    "description": "catalogSetupFailed"
+  },
+  "catalogSetupLater": "Später einrichten",
+  "@catalogSetupLater": {
+    "description": "catalogSetupLater"
+  },
+  "catalogSetupNone": "Keine Auswahl",
+  "@catalogSetupNone": {
+    "description": "catalogSetupNone"
+  },
+  "catalogSetupSkipMessage": "Die ausgewählten Instrumente oder Stimmen werden nicht angelegt. Du kannst die Besetzung später in der Verwaltung einrichten.",
+  "@catalogSetupSkipMessage": {
+    "description": "catalogSetupSkipMessage"
+  },
+  "catalogSetupSkipTitle": "Auswahl verwerfen?",
+  "@catalogSetupSkipTitle": {
+    "description": "catalogSetupSkipTitle"
+  },
+  "catalogSetupTitle": "Besetzung wählen",
+  "@catalogSetupTitle": {
+    "description": "catalogSetupTitle"
+  },
+  "catalogTitle": "{kind, select, choir {Stimmen auswählen} other {Instrumente auswählen}}",
+  "@catalogTitle": {
+    "description": "catalogTitle",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "catalogWithoutPreset": "Ohne Vorlage",
+  "@catalogWithoutPreset": {
+    "description": "catalogWithoutPreset"
+  },
   "churchOverviewChurches": "Gemeinden",
   "@churchOverviewChurches": {
     "description": "churchOverview.churches"
@@ -5989,6 +6173,80 @@
   "editorUndo": "Rückgängig",
   "@editorUndo": {
     "description": "editor.undo"
+  },
+  "ensembleGuideBack": "Zurück",
+  "@ensembleGuideBack": {
+    "description": "ensembleGuideBack"
+  },
+  "ensembleGuideChange": "Ändern",
+  "@ensembleGuideChange": {
+    "description": "ensembleGuideChange"
+  },
+  "ensembleGuideCreate": "{kind, select, orchestra {Orchester erstellen} choir {Chor erstellen} other {Gruppe erstellen}}",
+  "@ensembleGuideCreate": {
+    "description": "ensembleGuideCreate",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "ensembleGuideCustom": "Selbst zusammenstellen",
+  "@ensembleGuideCustom": {
+    "description": "ensembleGuideCustom"
+  },
+  "ensembleGuideInstrumentsHint": "Wähle eine passende Vorlage und passe sie an dein Ensemble an. Du kannst die Besetzung auch später einrichten.",
+  "@ensembleGuideInstrumentsHint": {
+    "description": "ensembleGuideInstrumentsHint"
+  },
+  "ensembleGuideLeadership": "Leitungsgruppe",
+  "@ensembleGuideLeadership": {
+    "description": "ensembleGuideLeadership"
+  },
+  "ensembleGuideLeadershipDefault": "Leitung",
+  "@ensembleGuideLeadershipDefault": {
+    "description": "ensembleGuideLeadershipDefault"
+  },
+  "ensembleGuideLeadershipEdit": "Leitungsgruppe benennen",
+  "@ensembleGuideLeadershipEdit": {
+    "description": "ensembleGuideLeadershipEdit"
+  },
+  "ensembleGuideNameHint": "Das Kürzel schlagen wir aus dem Namen vor. Du kannst es anpassen.",
+  "@ensembleGuideNameHint": {
+    "description": "ensembleGuideNameHint"
+  },
+  "ensembleGuideNext": "Weiter",
+  "@ensembleGuideNext": {
+    "description": "ensembleGuideNext"
+  },
+  "ensembleGuideOtherGroup": "Andere Gruppe",
+  "@ensembleGuideOtherGroup": {
+    "description": "ensembleGuideOtherGroup"
+  },
+  "ensembleGuideProgress": "Schritt {current} von {total}",
+  "@ensembleGuideProgress": {
+    "description": "ensembleGuideProgress",
+    "placeholders": {
+      "current": {},
+      "total": {}
+    }
+  },
+  "ensembleGuideQuestionInstruments": "Mit welcher Besetzung möchtest du starten?",
+  "@ensembleGuideQuestionInstruments": {
+    "description": "ensembleGuideQuestionInstruments"
+  },
+  "ensembleGuideQuestionName": "{kind, select, orchestra {Wie heißt dein Orchester?} choir {Wie heißt dein Chor?} other {Wie heißt deine Gruppe?}}",
+  "@ensembleGuideQuestionName": {
+    "description": "ensembleGuideQuestionName",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "ensembleGuideQuestionType": "Welche Art von Gruppe möchtest du erstellen?",
+  "@ensembleGuideQuestionType": {
+    "description": "ensembleGuideQuestionType"
+  },
+  "ensembleGuideSummary": "Alles bereit",
+  "@ensembleGuideSummary": {
+    "description": "ensembleGuideSummary"
   },
   "excuseCustomOption": "Sonstiger Grund (Text)",
   "@excuseCustomOption": {
@@ -19153,7 +19411,7 @@
   "@redesignGroupEditClefs": {
     "description": "redesign.groupEdit.clefs"
   },
-  "redesignGroupEditClefsHint": "Mindestens ein Notenschlüssel bleibt ausgewählt.",
+  "redesignGroupEditClefsHint": "Wähle die verwendeten Notenschlüssel. Die Auswahl kann leer bleiben.",
   "@redesignGroupEditClefsHint": {
     "description": "redesign.groupEdit.clefsHint"
   },
@@ -23079,7 +23337,7 @@
   "@redesignTenantsNewMain": {
     "description": "redesign.tenants.newMain"
   },
-  "redesignTenantsNewMainHint": "Die Hauptgruppe ist für die Leitung (z. B. Dirigenten, Vorstand). Sie kann nicht gelöscht werden und bekommt mehr Rechte. {kind, select, orchestra{Instrumente wie Violine oder Trompete} choir{Stimmen wie Sopran oder Alt} other{Untergruppen}} legst du später in der Verwaltung an.",
+  "redesignTenantsNewMainHint": "Die Hauptgruppe ist für die Leitung (z. B. Dirigenten, Vorstand). Sie kann nicht gelöscht werden und bekommt mehr Rechte. {kind, select, orchestra{Instrumente wählst du oben aus und kannst sie später in der Verwaltung ergänzen.} choir{Stimmen wählst du oben aus und kannst sie später in der Verwaltung ergänzen.} other{Untergruppen legst du später in der Verwaltung an.}}",
   "@redesignTenantsNewMainHint": {
     "description": "redesign.tenants.newMainHint",
     "placeholders": {

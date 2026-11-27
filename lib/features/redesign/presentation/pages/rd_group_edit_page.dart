@@ -26,7 +26,10 @@ import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 
 /// Persons that are or were in a group (archived ones count, pending
 /// registrations not), like the delete check of the old group page.
-final rdGroupMemberCountProvider = FutureProvider.autoDispose.family<int, int>((ref, groupId) async {
+final rdGroupMemberCountProvider = FutureProvider.autoDispose.family<int, int>((
+  ref,
+  groupId,
+) async {
   final repo = ref.watch(groupRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return 0;
   return repo.getPlayerCountInGroup(groupId, includeArchived: true);
@@ -63,8 +66,8 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
   final Map<String, String?> _stored = {};
 
   int? _categoryId;
-  String _tuning = 'C';
-  Set<String> _clefs = {'G'};
+  String? _tuning;
+  Set<String> _clefs = {};
 
   /// The group this form writes to, bound once.
   late final int _groupId = widget.groupId;
@@ -93,7 +96,8 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
   void initState() {
     super.initState();
     _container = ProviderScope.containerOf(context, listen: false);
-    _session = ref.read(offlineQueueNotifierProvider.notifier).captureWriteSession();
+    _session =
+        ref.read(offlineQueueNotifierProvider.notifier).captureWriteSession();
     for (final (focus, column) in [
       (_nameFocus, 'name'),
       (_rangeFocus, 'range'),
@@ -134,10 +138,10 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
     _synonyms.text = group.synonyms ?? '';
     _notes.text = group.notes ?? '';
     _categoryId = group.categoryId;
-    // Like the old page: an unset tuning shows "C", unset clefs "G".
-    _tuning = groupTuningOptions.contains(group.tuning) ? group.tuning! : 'C';
-    _clefs = (group.clefs ?? const ['g']).map((c) => c.toUpperCase()).toSet();
-    if (_clefs.isEmpty) _clefs = {'G'};
+    // Unpitched and unspecified catalog metadata must stay visibly unset.
+    _tuning = group.tuning;
+    _clefs =
+        (group.clefs ?? const <String>[]).map((c) => c.toUpperCase()).toSet();
   }
 
   void _refresh() {
@@ -153,28 +157,43 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
   /// Writes [updates]; reports a failure while the page is open.
   Future<bool> _store(Map<String, dynamic> updates) async {
     final repo = _repo;
-    if (_deleted || repo == null || !repo.hasTenantId || !_session.isCurrent()) return false;
+    if (_deleted ||
+        repo == null ||
+        !repo.hasTenantId ||
+        !_session.isCurrent()) {
+      return false;
+    }
     try {
       await repo.updateGroup(_groupId, {...updates});
-      _container.read(trackingServiceProvider).track(TrackingEvent.instrumentUpdated);
+      _container
+          .read(trackingServiceProvider)
+          .track(TrackingEvent.instrumentUpdated);
       _refresh();
       return true;
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, context.l10n.extraFieldsSaveFailed);
+      if (mounted) {
+        ToastHelper.showError(context, context.l10n.extraFieldsSaveFailed);
+      }
       return false;
     }
   }
 
   /// Writes [updates]; on failure [revert] puts the shown value back.
-  void _write(Map<String, dynamic> updates, {VoidCallback? revert}) => _enqueue(() async {
-    if (!await _store(updates) && revert != null && mounted && !_deleted) setState(revert);
-  });
+  void _write(Map<String, dynamic> updates, {VoidCallback? revert}) =>
+      _enqueue(() async {
+        if (!await _store(updates) && revert != null && mounted && !_deleted) {
+          setState(revert);
+        }
+      });
 
   /// Saves a text column when it differs from what is stored when it runs
   /// (the last typed value wins). Like the old page: trimmed, an empty field
   /// that was never set stays unset, an empty name is not saved.
   void _saveText(String column) {
-    final value = _controllerOf(column).text.trim(); // read now: the page may be gone when it runs
+    final value =
+        _controllerOf(
+          column,
+        ).text.trim(); // read now: the page may be gone when it runs
     _enqueue(() async {
       if (!_stored.containsKey(column)) return;
       if (value == (_stored[column] ?? '')) return;
@@ -198,7 +217,10 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
       context,
       title: l10n.rdWordsCategory(ref.read(rdGroupKindProvider)),
       actions: [
-        AppActionSheetAction(value: -1, label: l10n.redesignGroupEditCategoryNone),
+        AppActionSheetAction(
+          value: -1,
+          label: l10n.redesignGroupEditCategoryNone,
+        ),
         for (final c in categories)
           if (c.id != null) AppActionSheetAction(value: c.id!, label: c.name),
       ],
@@ -208,19 +230,25 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
     if (id == _categoryId) return;
     final before = _categoryId;
     setState(() => _categoryId = id);
-    _write({'category': id}, revert: () {
-      if (_categoryId == id) _categoryId = before;
-    });
+    _write(
+      {'category': id},
+      revert: () {
+        if (_categoryId == id) _categoryId = before;
+      },
+    );
   }
 
   void _toggleClef(String clef) {
     final next = {..._clefs};
     if (next.contains(clef)) {
-      if (next.length == 1) return; // one clef stays (old page)
       next.remove(clef);
     } else {
       next.add(clef);
     }
+    _setClefs(next);
+  }
+
+  void _setClefs(Set<String> next) {
     final before = _clefs;
     setState(() => _clefs = next);
     _write(
@@ -247,20 +275,24 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
     setState(() => _generating = true);
     try {
       final others = ref.read(groupsProvider).valueOrNull ?? const <Group>[];
-      final synonyms = await ref.read(aiServiceProvider).getGroupSynonyms(
-        name,
-        existing: _synonyms.text,
-        otherGroups: [
-          for (final g in others)
-            if (g.id != _groupId) (name: g.name, synonyms: g.synonyms),
-        ],
-      );
+      final synonyms = await ref
+          .read(aiServiceProvider)
+          .getGroupSynonyms(
+            name,
+            existing: _synonyms.text,
+            otherGroups: [
+              for (final g in others)
+                if (g.id != _groupId) (name: g.name, synonyms: g.synonyms),
+            ],
+          );
       if (!mounted) return;
       _synonyms.text = synonyms;
       _saveText('synonyms');
       ToastHelper.showSuccess(context, l10n.instrumentsSynonymsGenerated);
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, l10n.instrumentsSynonymsFailed);
+      if (mounted) {
+        ToastHelper.showError(context, l10n.instrumentsSynonymsFailed);
+      }
     } finally {
       if (mounted) setState(() => _generating = false);
     }
@@ -276,22 +308,35 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
     try {
       int count;
       try {
-        count = await ref.read(groupRepositoryWithTenantProvider).getPlayerCountInGroup(_groupId, includeArchived: true);
+        count = await ref
+            .read(groupRepositoryWithTenantProvider)
+            .getPlayerCountInGroup(_groupId, includeArchived: true);
       } catch (_) {
         // Unknown member count: never delete a group that may still have people.
-        if (mounted) ToastHelper.showError(context, l10n.redesignGroupEditDeleteFailed(kind));
+        if (mounted) {
+          ToastHelper.showError(
+            context,
+            l10n.redesignGroupEditDeleteFailed(kind),
+          );
+        }
         return;
       }
       if (!mounted) return;
       if (count > 0) {
         ref.invalidate(rdGroupMemberCountProvider(_groupId));
-        ToastHelper.showError(context, l10n.redesignGroupEditDeleteMembers(kind, count));
+        ToastHelper.showError(
+          context,
+          l10n.redesignGroupEditDeleteMembers(kind, count),
+        );
         return;
       }
       final confirmed = await DialogHelper.showConfirmation(
         context,
         title: l10n.redesignGroupEditDelete(kind),
-        message: l10n.redesignGroupEditDeleteConfirm(kind, _name.text.trim().isEmpty ? group.name : _name.text.trim()),
+        message: l10n.redesignGroupEditDeleteConfirm(
+          kind,
+          _name.text.trim().isEmpty ? group.name : _name.text.trim(),
+        ),
         confirmText: l10n.commonDelete,
         isDestructive: true,
       );
@@ -306,7 +351,10 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
       if (!mounted) return;
       if (ref.read(groupNotifierProvider).hasError) {
         _deleted = false;
-        ToastHelper.showError(context, l10n.redesignGroupEditDeleteFailed(kind));
+        ToastHelper.showError(
+          context,
+          l10n.redesignGroupEditDeleteFailed(kind),
+        );
         return;
       }
       ref.invalidate(playerCountsForGroupsProvider);
@@ -335,7 +383,10 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
           async.isLoading || _deleted
               ? RdInfoCard(text: l10n.redesignTodayLoading, loading: true)
               : RdInfoCard(
-                text: async.hasError ? l10n.redesignTodayLoadFailed : l10n.redesignGroupEditNotFound(kind),
+                text:
+                    async.hasError
+                        ? l10n.redesignTodayLoadFailed
+                        : l10n.redesignGroupEditNotFound(kind),
                 icon: Icons.error_outline,
                 action: RdOutlineButton(
                   label: l10n.redesignCommonRetry,
@@ -356,7 +407,11 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
         bottom: false,
         child: Column(
           children: [
-            RdEditTopBar(title: l10n.redesignGroupEditTitle(kind), doneKey: const Key('rd-group-edit-done'), onDone: _done),
+            RdEditTopBar(
+              title: l10n.redesignGroupEditTitle(kind),
+              doneKey: const Key('rd-group-edit-done'),
+              onDone: _done,
+            ),
             Expanded(child: body),
           ],
         ),
@@ -369,7 +424,9 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
     final l10n = context.l10n;
     final tenantType = ref.watch(currentTenantProvider)?.type;
     final kind = ref.watch(rdGroupKindProvider);
-    final categories = ref.watch(groupCategoriesProvider).valueOrNull ?? const <GroupCategory>[];
+    final categories =
+        ref.watch(groupCategoriesProvider).valueOrNull ??
+        const <GroupCategory>[];
     // A choir has no level above its Stimmen (see [rdOffersCategories]).
     final withCategory = rdOffersCategories(kind, categories);
     final isMain = group.maingroup == true;
@@ -386,21 +443,30 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
       child: Text(text, style: RdType.meta(p, size: 13).copyWith(color: color)),
     );
 
-    Widget textField(String key, TextEditingController c, FocusNode f, {int maxLines = 1, String hintText = ''}) =>
-        TextField(
-          key: Key('rd-group-edit-$key'),
-          controller: c,
-          focusNode: f,
-          minLines: 1,
-          maxLines: maxLines,
-          textCapitalization: TextCapitalization.sentences,
-          textInputAction: maxLines == 1 ? TextInputAction.done : TextInputAction.newline,
-          style: textStyle,
-          decoration: rdInputDecoration(p, hintText),
-          onChanged: key == 'name' ? (_) => setState(() {}) : null,
-        );
+    Widget textField(
+      String key,
+      TextEditingController c,
+      FocusNode f, {
+      int maxLines = 1,
+      String hintText = '',
+    }) => TextField(
+      key: Key('rd-group-edit-$key'),
+      controller: c,
+      focusNode: f,
+      minLines: 1,
+      maxLines: maxLines,
+      textCapitalization: TextCapitalization.sentences,
+      textInputAction:
+          maxLines == 1 ? TextInputAction.done : TextInputAction.newline,
+      style: textStyle,
+      decoration: rdInputDecoration(p, hintText),
+      onChanged: key == 'name' ? (_) => setState(() {}) : null,
+    );
 
-    final memberCount = isMain ? null : ref.watch(rdGroupMemberCountProvider(_groupId)).valueOrNull;
+    final memberCount =
+        isMain
+            ? null
+            : ref.watch(rdGroupMemberCountProvider(_groupId)).valueOrNull;
     final String? deleteBlocked =
         isMain
             ? l10n.redesignGroupEditDeleteMain
@@ -411,12 +477,18 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
     return RdFormBody(
       children: [
         if (isMain) ...[
-          RdInfoCard(icon: Icons.star_outline, text: l10n.redesignGroupEditMainGroupHint),
+          RdInfoCard(
+            icon: Icons.star_outline,
+            text: l10n.redesignGroupEditMainGroupHint,
+          ),
           const SizedBox(height: 16),
         ],
         RdGroupedList(
           children: [
-            RdFieldRow(label: l10n.redesignGroupEditName, child: textField('name', _name, _nameFocus)),
+            RdFieldRow(
+              label: l10n.redesignGroupEditName,
+              child: textField('name', _name, _nameFocus),
+            ),
             if (withCategory)
               RdListRow(
                 key: const Key('rd-group-edit-category'),
@@ -426,7 +498,8 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
               ),
           ],
         ),
-        if (_name.text.trim().isEmpty) hint(l10n.redesignGroupEditNameEmpty, color: p.absent),
+        if (_name.text.trim().isEmpty)
+          hint(l10n.redesignGroupEditNameEmpty, color: p.absent),
         if (withCategory)
           Align(
             alignment: AlignmentDirectional.centerEnd,
@@ -438,19 +511,35 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
         if (showMusic) ...[
           const SizedBox(height: 12),
           RdGroupLabel(l10n.redesignGroupEditTuning),
-          RdSegmented<String>(
-            values: groupTuningOptions,
-            selected: _tuning,
-            semanticLabel: l10n.redesignGroupEditTuning,
-            labelOf: (v) => v,
-            onChanged: (v) {
-              if (v == _tuning) return;
-              final before = _tuning;
-              setState(() => _tuning = v);
-              _write({'tuning': v}, revert: () {
-                if (_tuning == v) _tuning = before;
-              });
-            },
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final tuning in <String?>[
+                null,
+                if (_tuning != null && !groupTuningOptions.contains(_tuning))
+                  _tuning,
+                ...groupTuningOptions,
+              ])
+                RdChoiceChip(
+                  key: Key('rd-group-edit-tuning-${tuning ?? 'unset'}'),
+                  label: tuning ?? l10n.personNotSet,
+                  selected: _tuning == tuning,
+                  semanticLabel:
+                      '${l10n.redesignGroupEditTuning}: ${tuning ?? l10n.personNotSet}',
+                  onTap: () {
+                    if (tuning == _tuning) return;
+                    final before = _tuning;
+                    setState(() => _tuning = tuning);
+                    _write(
+                      {'tuning': tuning},
+                      revert: () {
+                        if (_tuning == tuning) _tuning = before;
+                      },
+                    );
+                  },
+                ),
+            ],
           ),
           const SizedBox(height: 20),
           RdGroupLabel(l10n.redesignGroupEditClefs),
@@ -458,8 +547,19 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
             spacing: 8,
             runSpacing: 8,
             children: [
+              RdChoiceChip(
+                key: const Key('rd-group-edit-clefs-unset'),
+                label: l10n.personNotSet,
+                selected: _clefs.isEmpty,
+                semanticLabel:
+                    '${l10n.redesignGroupEditClefs}: ${l10n.personNotSet}',
+                onTap: () {
+                  if (_clefs.isNotEmpty) _setClefs({});
+                },
+              ),
               for (final clef in groupClefOptions)
                 RdChoiceChip(
+                  key: Key('rd-group-edit-clef-$clef'),
                   label: '${groupClefLabel(l10n, clef)} ($clef)',
                   selected: _clefs.contains(clef),
                   onTap: () => _toggleClef(clef),
@@ -471,22 +571,31 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
           RdGroupLabel(l10n.redesignGroupEditInstrument),
           RdGroupedList(
             children: [
-              RdFieldRow(label: l10n.redesignGroupEditRange, child: textField('range', _range, _rangeFocus)),
+              RdFieldRow(
+                label: l10n.redesignGroupEditRange,
+                child: textField('range', _range, _rangeFocus),
+              ),
             ],
           ),
         ],
         if (showSynonyms) ...[
           const SizedBox(height: 20),
-          Row(
+          Wrap(
+            spacing: 12,
+            runSpacing: 8,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              Expanded(child: RdGroupLabel(l10n.redesignGroupEditSynonyms)),
+              RdGroupLabel(l10n.redesignGroupEditSynonyms),
               if (_generating)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   child: SizedBox(
                     width: 18,
                     height: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: p.primary),
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: p.primary,
+                    ),
                   ),
                 )
               else
@@ -501,7 +610,12 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
             children: [
               RdFieldRow(
                 label: l10n.redesignGroupEditSynonymsLabel,
-                child: textField('synonyms', _synonyms, _synonymsFocus, maxLines: 4),
+                child: textField(
+                  'synonyms',
+                  _synonyms,
+                  _synonymsFocus,
+                  maxLines: 4,
+                ),
               ),
             ],
           ),
@@ -518,7 +632,10 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
         ),
         Padding(
           padding: const EdgeInsets.fromLTRB(4, 16, 4, 20),
-          child: Text(l10n.redesignGroupEditHint, style: RdType.meta(p, size: 13)),
+          child: Text(
+            l10n.redesignGroupEditHint,
+            style: RdType.meta(p, size: 13),
+          ),
         ),
         const SizedBox(height: 8),
         RdGroupedList(
@@ -527,9 +644,15 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
               key: const Key('rd-group-edit-delete'),
               title: l10n.redesignGroupEditDelete(kind),
               titleColor: deleteBlocked == null ? p.absent : p.text2,
-              leading: Icon(Icons.delete_outline, color: deleteBlocked == null ? p.absent : p.text2),
+              leading: Icon(
+                Icons.delete_outline,
+                color: deleteBlocked == null ? p.absent : p.text2,
+              ),
               showChevron: false,
-              onTap: deleteBlocked == null && !_deleting ? () => _delete(group) : null,
+              onTap:
+                  deleteBlocked == null && !_deleting
+                      ? () => _delete(group)
+                      : null,
             ),
           ],
         ),

@@ -608,14 +608,28 @@ Alles unter „Ich“ › „Verwaltung“. Die Suche oben findet jede Einstellu
 
 - **Wo:** Verwaltung › Mitglieder › „Instrumente“ (Chor: „Stimmen“)
 - **Schritte:**
-  1. Lege mit dem Plus ein neues Instrument an.
-  2. Tippe auf ein Instrument, um Name, Register, Stimmung, Notenschlüssel und
+  1. Öffne mit dem Plus die Sammlung. Suche ein Instrument oder eine Stimme,
+     wähle eine Vorlage oder ergänze über „Eigenes Instrument“ einen eigenen
+     Namen. Im Chor heißt dieser Eintrag „Eigene Stimme“. Allgemeine Gruppen
+     behalten die direkte Namenseingabe.
+  2. Prüfe „Ausgewählt“. Bei einem vorhandenen Eintrag kannst du über
+     „Weitere Stimme anlegen“ einen zusätzlichen Namen vergeben. Die Aktion
+     zum Hinzufügen zeigt die Anzahl der ausgewählten Instrumente oder Stimmen;
+     vorhandene Einträge werden nicht nochmals angelegt.
+  3. Tippe auf ein Instrument, um Name, Register, Stimmung, Notenschlüssel und
      „Synonyme“ zu ändern.
-  3. ••• › „Reihenfolge ändern“ sortiert die Liste.
+  4. ••• › „Reihenfolge ändern“ sortiert die Liste.
 - **Ergebnis:** Die Reihenfolge gilt für alle Listen und für die Noten.
 - **Gut zu wissen:** Über die Synonyme ordnet die App hochgeladene Noten
   automatisch zu. Ein Instrument, zu dem noch Personen gehören, lässt sich
   nicht löschen.
+  Die Vorlagen umfassen Sinfonieorchester, Streichorchester, Blasorchester,
+  Volksinstrumentenorchester (unter anderem Domra, Balalaika, Bajan,
+  Akkordeon und Mandoline) sowie gemischten Chor. Alle Auswahlen sind anpassbar.
+  Ein Vorlagenwechsel bietet Ergänzen oder Ersetzen an. „Ohne Vorlage“ entfernt
+  nur die Vorlagenzuordnung und behält deine Auswahl.
+  Die Sammlung lässt sich offline durchsuchen; die Übernahme braucht eine
+  Verbindung. Bei einem Fehler prüfe die Liste und wiederhole die Auswahl.
 
 ### L-47 Eigene Felder für Personen und Werke anlegen
 

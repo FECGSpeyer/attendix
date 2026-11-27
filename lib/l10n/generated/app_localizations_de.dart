@@ -3169,6 +3169,198 @@ class AppLocalizationsDe extends AppLocalizations {
   String get brandingTextPh => 'z.B. Verbandsname';
 
   @override
+  String catalogAddCount(String kind, num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Stimmen hinzufügen',
+      one: '1 Stimme hinzufügen',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Instrumente hinzufügen',
+      one: '1 Instrument hinzufügen',
+    );
+    String _temp2 = intl.Intl.selectLogic(kind, {
+      'choir': '$_temp0',
+      'other': '$_temp1',
+    });
+    return '$_temp2';
+  }
+
+  @override
+  String get catalogAddPart => 'Weitere Stimme anlegen';
+
+  @override
+  String get catalogAllFamilies => 'Alle';
+
+  @override
+  String get catalogApply => 'Auswahl übernehmen';
+
+  @override
+  String get catalogBrowse => 'Sammlung';
+
+  @override
+  String catalogCustom(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'choir': 'Eigene Stimme',
+      'other': 'Eigenes Instrument',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get catalogEditHint =>
+      'Mit einem anderen Namen kannst du eine weitere Stimme anlegen.';
+
+  @override
+  String get catalogEditName => 'Eigenen Namen verwenden';
+
+  @override
+  String get catalogExisting => 'Bereits vorhanden';
+
+  @override
+  String get catalogImportFailed =>
+      'Die Auswahl konnte nicht übernommen werden. Bitte prüfe die Liste und versuche es erneut.';
+
+  @override
+  String catalogImportSuccess(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Einträge hinzugefügt',
+      one: '1 Eintrag hinzugefügt',
+      zero: 'Alle ausgewählten Einträge sind bereits vorhanden.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get catalogName => 'Name';
+
+  @override
+  String catalogNameHint(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'choir': 'Name der Stimme',
+      'other': 'Name des Instruments',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get catalogNoResults =>
+      'Keine passenden Einträge. Du kannst einen eigenen Namen hinzufügen.';
+
+  @override
+  String get catalogOffline =>
+      'Die Sammlung ist offline verfügbar. Zum Übernehmen brauchst du eine Verbindung.';
+
+  @override
+  String get catalogOptional => 'Optional';
+
+  @override
+  String get catalogPreset => 'Vorlage';
+
+  @override
+  String get catalogPresetChangeMessage =>
+      'Du kannst die neue Vorlage ergänzen oder deine Auswahl ersetzen. Beim Ersetzen gehen eigene Namen und Einträge verloren.';
+
+  @override
+  String get catalogPresetChangeTitle => 'Vorlage wechseln?';
+
+  @override
+  String get catalogPresetMerge => 'Ergänzen';
+
+  @override
+  String get catalogPresetReplace => 'Ersetzen';
+
+  @override
+  String get catalogRemove => 'Auswahl entfernen';
+
+  @override
+  String catalogSearch(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'choir': 'Stimme suchen',
+      'other': 'Instrument oder anderen Namen suchen',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String catalogSearchHint(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'choir': 'z. B. Sopran oder Alt',
+      'other': 'z. B. Geige oder Bassflöte',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get catalogSelected => 'Ausgewählt';
+
+  @override
+  String catalogSelectedCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Einträge ausgewählt',
+      one: '1 Eintrag ausgewählt',
+      zero: 'Keine Einträge ausgewählt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get catalogSetupChoose => 'Auswahl anpassen';
+
+  @override
+  String catalogSetupCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Einträge ausgewählt',
+      one: '1 Eintrag ausgewählt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get catalogSetupDiscard => 'Auswahl verwerfen';
+
+  @override
+  String get catalogSetupFailed =>
+      'Ensemble angelegt. Die Auswahl konnte nicht übernommen werden. Du kannst sie später in der Verwaltung ergänzen.';
+
+  @override
+  String get catalogSetupLater => 'Später einrichten';
+
+  @override
+  String get catalogSetupNone => 'Keine Auswahl';
+
+  @override
+  String get catalogSetupSkipMessage =>
+      'Die ausgewählten Instrumente oder Stimmen werden nicht angelegt. Du kannst die Besetzung später in der Verwaltung einrichten.';
+
+  @override
+  String get catalogSetupSkipTitle => 'Auswahl verwerfen?';
+
+  @override
+  String get catalogSetupTitle => 'Besetzung wählen';
+
+  @override
+  String catalogTitle(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'choir': 'Stimmen auswählen',
+      'other': 'Instrumente auswählen',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get catalogWithoutPreset => 'Ohne Vorlage';
+
+  @override
   String get churchOverviewChurches => 'Gemeinden';
 
   @override
@@ -4909,6 +5101,74 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get editorUndo => 'Rückgängig';
+
+  @override
+  String get ensembleGuideBack => 'Zurück';
+
+  @override
+  String get ensembleGuideChange => 'Ändern';
+
+  @override
+  String ensembleGuideCreate(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Orchester erstellen',
+      'choir': 'Chor erstellen',
+      'other': 'Gruppe erstellen',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get ensembleGuideCustom => 'Selbst zusammenstellen';
+
+  @override
+  String get ensembleGuideInstrumentsHint =>
+      'Wähle eine passende Vorlage und passe sie an dein Ensemble an. Du kannst die Besetzung auch später einrichten.';
+
+  @override
+  String get ensembleGuideLeadership => 'Leitungsgruppe';
+
+  @override
+  String get ensembleGuideLeadershipDefault => 'Leitung';
+
+  @override
+  String get ensembleGuideLeadershipEdit => 'Leitungsgruppe benennen';
+
+  @override
+  String get ensembleGuideNameHint =>
+      'Das Kürzel schlagen wir aus dem Namen vor. Du kannst es anpassen.';
+
+  @override
+  String get ensembleGuideNext => 'Weiter';
+
+  @override
+  String get ensembleGuideOtherGroup => 'Andere Gruppe';
+
+  @override
+  String ensembleGuideProgress(Object current, Object total) {
+    return 'Schritt $current von $total';
+  }
+
+  @override
+  String get ensembleGuideQuestionInstruments =>
+      'Mit welcher Besetzung möchtest du starten?';
+
+  @override
+  String ensembleGuideQuestionName(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Wie heißt dein Orchester?',
+      'choir': 'Wie heißt dein Chor?',
+      'other': 'Wie heißt deine Gruppe?',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get ensembleGuideQuestionType =>
+      'Welche Art von Gruppe möchtest du erstellen?';
+
+  @override
+  String get ensembleGuideSummary => 'Alles bereit';
 
   @override
   String get excuseCustomOption => 'Sonstiger Grund (Text)';
@@ -15786,7 +16046,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignGroupEditClefsHint =>
-      'Mindestens ein Notenschlüssel bleibt ausgewählt.';
+      'Wähle die verwendeten Notenschlüssel. Die Auswahl kann leer bleiben.';
 
   @override
   String redesignGroupEditDelete(String kind) {
@@ -19173,11 +19433,13 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String redesignTenantsNewMainHint(String kind) {
     String _temp0 = intl.Intl.selectLogic(kind, {
-      'orchestra': 'Instrumente wie Violine oder Trompete',
-      'choir': 'Stimmen wie Sopran oder Alt',
-      'other': 'Untergruppen',
+      'orchestra':
+          'Instrumente wählst du oben aus und kannst sie später in der Verwaltung ergänzen.',
+      'choir':
+          'Stimmen wählst du oben aus und kannst sie später in der Verwaltung ergänzen.',
+      'other': 'Untergruppen legst du später in der Verwaltung an.',
     });
-    return 'Die Hauptgruppe ist für die Leitung (z. B. Dirigenten, Vorstand). Sie kann nicht gelöscht werden und bekommt mehr Rechte. $_temp0 legst du später in der Verwaltung an.';
+    return 'Die Hauptgruppe ist für die Leitung (z. B. Dirigenten, Vorstand). Sie kann nicht gelöscht werden und bekommt mehr Rechte. $_temp0';
   }
 
   @override

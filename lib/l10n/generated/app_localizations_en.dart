@@ -3141,6 +3141,197 @@ class AppLocalizationsEn extends AppLocalizations {
   String get brandingTextPh => 'e.g. association name';
 
   @override
+  String catalogAddCount(String kind, num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Add $count voices',
+      one: 'Add 1 voice',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Add $count instruments',
+      one: 'Add 1 instrument',
+    );
+    String _temp2 = intl.Intl.selectLogic(kind, {
+      'choir': '$_temp0',
+      'other': '$_temp1',
+    });
+    return '$_temp2';
+  }
+
+  @override
+  String get catalogAddPart => 'Add another voice';
+
+  @override
+  String get catalogAllFamilies => 'All';
+
+  @override
+  String get catalogApply => 'Use selection';
+
+  @override
+  String get catalogBrowse => 'Collection';
+
+  @override
+  String catalogCustom(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'choir': 'Custom voice',
+      'other': 'Custom instrument',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get catalogEditHint => 'A different name lets you add another voice.';
+
+  @override
+  String get catalogEditName => 'Use a custom name';
+
+  @override
+  String get catalogExisting => 'Already exists';
+
+  @override
+  String get catalogImportFailed =>
+      'The selection could not be applied. Please check the list and try again.';
+
+  @override
+  String catalogImportSuccess(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count entries added',
+      one: '1 entry added',
+      zero: 'All selected entries already exist.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get catalogName => 'Name';
+
+  @override
+  String catalogNameHint(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'choir': 'Voice name',
+      'other': 'Instrument name',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get catalogNoResults =>
+      'No matching entries. You can add a custom name.';
+
+  @override
+  String get catalogOffline =>
+      'The collection is available offline. You need a connection to apply it.';
+
+  @override
+  String get catalogOptional => 'Optional';
+
+  @override
+  String get catalogPreset => 'Preset';
+
+  @override
+  String get catalogPresetChangeMessage =>
+      'You can add the new preset or replace your selection. Replacing it discards custom names and entries.';
+
+  @override
+  String get catalogPresetChangeTitle => 'Change preset?';
+
+  @override
+  String get catalogPresetMerge => 'Add to selection';
+
+  @override
+  String get catalogPresetReplace => 'Replace';
+
+  @override
+  String get catalogRemove => 'Remove selection';
+
+  @override
+  String catalogSearch(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'choir': 'Search voices',
+      'other': 'Search an instrument or alternative name',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String catalogSearchHint(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'choir': 'e.g. soprano or alto',
+      'other': 'e.g. violin or bass flute',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get catalogSelected => 'Selected';
+
+  @override
+  String catalogSelectedCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count entries selected',
+      one: '1 entry selected',
+      zero: 'No entries selected',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get catalogSetupChoose => 'Adjust selection';
+
+  @override
+  String catalogSetupCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count entries selected',
+      one: '1 entry selected',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get catalogSetupDiscard => 'Discard selection';
+
+  @override
+  String get catalogSetupFailed =>
+      'Ensemble created. The selection could not be applied. You can add it later in management.';
+
+  @override
+  String get catalogSetupLater => 'Set up later';
+
+  @override
+  String get catalogSetupNone => 'No selection';
+
+  @override
+  String get catalogSetupSkipMessage =>
+      'The selected instruments or voices will not be created. You can set up the instrumentation later in Manage.';
+
+  @override
+  String get catalogSetupSkipTitle => 'Discard selection?';
+
+  @override
+  String get catalogSetupTitle => 'Choose instrumentation';
+
+  @override
+  String catalogTitle(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'choir': 'Choose voices',
+      'other': 'Choose instruments',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get catalogWithoutPreset => 'Without preset';
+
+  @override
   String get churchOverviewChurches => 'Churches';
 
   @override
@@ -4845,6 +5036,74 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get editorUndo => 'Undo';
+
+  @override
+  String get ensembleGuideBack => 'Back';
+
+  @override
+  String get ensembleGuideChange => 'Change';
+
+  @override
+  String ensembleGuideCreate(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Create orchestra',
+      'choir': 'Create choir',
+      'other': 'Create group',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get ensembleGuideCustom => 'Choose your own';
+
+  @override
+  String get ensembleGuideInstrumentsHint =>
+      'Choose a matching preset and adjust it for your ensemble. You can also set up the instrumentation later.';
+
+  @override
+  String get ensembleGuideLeadership => 'Leadership group';
+
+  @override
+  String get ensembleGuideLeadershipDefault => 'Leadership';
+
+  @override
+  String get ensembleGuideLeadershipEdit => 'Name the leadership group';
+
+  @override
+  String get ensembleGuideNameHint =>
+      'We suggest an abbreviation from the name. You can change it.';
+
+  @override
+  String get ensembleGuideNext => 'Next';
+
+  @override
+  String get ensembleGuideOtherGroup => 'Other group';
+
+  @override
+  String ensembleGuideProgress(Object current, Object total) {
+    return 'Step $current of $total';
+  }
+
+  @override
+  String get ensembleGuideQuestionInstruments =>
+      'Which instrumentation would you like to start with?';
+
+  @override
+  String ensembleGuideQuestionName(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'What is your orchestra called?',
+      'choir': 'What is your choir called?',
+      'other': 'What is your group called?',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get ensembleGuideQuestionType =>
+      'What kind of group would you like to create?';
+
+  @override
+  String get ensembleGuideSummary => 'Ready to create';
 
   @override
   String get excuseCustomOption => 'Other reason (text)';
@@ -15652,7 +15911,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignGroupEditClefs => 'Clefs';
 
   @override
-  String get redesignGroupEditClefsHint => 'At least one clef stays selected.';
+  String get redesignGroupEditClefsHint =>
+      'Select the clefs used. The selection may remain empty.';
 
   @override
   String redesignGroupEditDelete(String kind) {
@@ -19009,11 +19269,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String redesignTenantsNewMainHint(String kind) {
     String _temp0 = intl.Intl.selectLogic(kind, {
-      'orchestra': 'instruments like violin or trumpet',
-      'choir': 'voices like soprano or alto',
-      'other': 'subgroups',
+      'orchestra': 'Choose instruments above and add more later in Manage.',
+      'choir': 'Choose voices above and add more later in Manage.',
+      'other': 'Add subgroups later in Manage.',
     });
-    return 'The main group is for the leaders (e.g. conductors, board). It cannot be deleted and gets more rights. Add $_temp0 later in Manage.';
+    return 'The main group is for the leaders (e.g. conductors, board). It cannot be deleted and gets more rights. $_temp0';
   }
 
   @override

@@ -54,15 +54,21 @@ void main() {
     await see($, 'Morgenstimmung');
   });
 
-  patrolTest('L-46 Ein Instrument anlegen', ($) async {
+  patrolTest('L-46 Ein Instrument aus der Sammlung hinzufügen', ($) async {
     await startApp($);
     await signInAs($, 'admin');
     await tapOn($, 'Verwaltung');
     await tapOn($, 'Instrumente');
     await pressAddButton($, const Key('rd-manage-list-add'));
-    await see($, 'Neues Instrument');
-    await $(field('z.B. Mädchen, Posaune, Alt 1, etc.')).enterText('Harfe');
-    await tapOn($, 'Fertig');
+    await see($, 'Instrumente auswählen');
+    await $(field('z. B. Geige oder Bassflöte')).enterText('Harf');
+    await tapOn($, 'Harfe');
+    await see($, '1 Instrument hinzufügen');
+    await $(const Key('catalog-apply')).tap(
+      settlePolicy: SettlePolicy.noSettle,
+    );
+    await see($, '1 Eintrag hinzugefügt');
+    seeNot($, 'Instrumente auswählen');
     await see($, 'Harfe');
   });
 }

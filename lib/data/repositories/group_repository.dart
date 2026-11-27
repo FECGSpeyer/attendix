@@ -125,6 +125,37 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
+  /// Creates a catalog selection in one database transaction. The caller's
+  /// maps are never modified; the main leadership group is kept separate.
+  Future<List<Group>> createGroups(List<Map<String, dynamic>> rows) async {
+    ensureNotDemo('createGroups');
+    if (rows.isEmpty) return const [];
+    final tenantId = currentTenantId;
+    final sanitized = <Map<String, dynamic>>[];
+    for (final row in rows) {
+      final name = (row['name'] as String? ?? '').trim();
+      if (name.isEmpty) throw ArgumentError.value(row['name'], 'name');
+      final data = pickGroupFields(row)
+        ..remove('id')
+        ..remove('created_at')
+        ..remove('legacyId')
+        ..['name'] = name
+        ..['tenantId'] = tenantId
+        ..['maingroup'] = false;
+      // Unknown tuning and unpitched percussion are intentionally not C/G.
+      data.putIfAbsent('tuning', () => null);
+      data.putIfAbsent('clefs', () => <String>[]);
+      sanitized.add(data);
+    }
+    try {
+      final response = await supabase.from('instruments').insert(sanitized).select();
+      return (response as List).map((row) => Group.fromJson(row as Map<String, dynamic>)).toList();
+    } catch (e, stack) {
+      handleError(e, stack, 'createGroups');
+      rethrow;
+    }
+  }
+
   /// Update a group
   Future<Group> updateGroup(int id, Map<String, dynamic> updates) async {
     ensureNotDemo('updateGroup'); // DEMO_GUARD
@@ -291,6 +322,7 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
   /// Create a group category
   Future<GroupCategory> createGroupCategory({
     required String name,
+    int? sortOrder,
   }) async {
     ensureNotDemo('createGroupCategory'); // DEMO_GUARD
     try {
@@ -300,6 +332,7 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
           .insert({
             'name': name,
             'tenant_id': currentTenantId,
+            if (sortOrder != null) 'sort_order': sortOrder,
           })
           .select()
           .maybeSingle();

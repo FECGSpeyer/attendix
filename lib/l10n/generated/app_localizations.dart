@@ -5067,6 +5067,228 @@ abstract class AppLocalizations {
   /// **'z.B. Verbandsname'**
   String get brandingTextPh;
 
+  /// catalogAddCount
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, choir {{count, plural, one {1 Stimme hinzufügen} other {{count} Stimmen hinzufügen}}} other {{count, plural, one {1 Instrument hinzufügen} other {{count} Instrumente hinzufügen}}}}'**
+  String catalogAddCount(String kind, num count);
+
+  /// catalogAddPart
+  ///
+  /// In de, this message translates to:
+  /// **'Weitere Stimme anlegen'**
+  String get catalogAddPart;
+
+  /// catalogAllFamilies
+  ///
+  /// In de, this message translates to:
+  /// **'Alle'**
+  String get catalogAllFamilies;
+
+  /// catalogApply
+  ///
+  /// In de, this message translates to:
+  /// **'Auswahl übernehmen'**
+  String get catalogApply;
+
+  /// catalogBrowse
+  ///
+  /// In de, this message translates to:
+  /// **'Sammlung'**
+  String get catalogBrowse;
+
+  /// catalogCustom
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, choir {Eigene Stimme} other {Eigenes Instrument}}'**
+  String catalogCustom(String kind);
+
+  /// catalogEditHint
+  ///
+  /// In de, this message translates to:
+  /// **'Mit einem anderen Namen kannst du eine weitere Stimme anlegen.'**
+  String get catalogEditHint;
+
+  /// catalogEditName
+  ///
+  /// In de, this message translates to:
+  /// **'Eigenen Namen verwenden'**
+  String get catalogEditName;
+
+  /// catalogExisting
+  ///
+  /// In de, this message translates to:
+  /// **'Bereits vorhanden'**
+  String get catalogExisting;
+
+  /// catalogImportFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Die Auswahl konnte nicht übernommen werden. Bitte prüfe die Liste und versuche es erneut.'**
+  String get catalogImportFailed;
+
+  /// catalogImportSuccess
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =0 {Alle ausgewählten Einträge sind bereits vorhanden.} one {1 Eintrag hinzugefügt} other {{count} Einträge hinzugefügt}}'**
+  String catalogImportSuccess(num count);
+
+  /// catalogName
+  ///
+  /// In de, this message translates to:
+  /// **'Name'**
+  String get catalogName;
+
+  /// catalogNameHint
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, choir {Name der Stimme} other {Name des Instruments}}'**
+  String catalogNameHint(String kind);
+
+  /// catalogNoResults
+  ///
+  /// In de, this message translates to:
+  /// **'Keine passenden Einträge. Du kannst einen eigenen Namen hinzufügen.'**
+  String get catalogNoResults;
+
+  /// catalogOffline
+  ///
+  /// In de, this message translates to:
+  /// **'Die Sammlung ist offline verfügbar. Zum Übernehmen brauchst du eine Verbindung.'**
+  String get catalogOffline;
+
+  /// catalogOptional
+  ///
+  /// In de, this message translates to:
+  /// **'Optional'**
+  String get catalogOptional;
+
+  /// catalogPreset
+  ///
+  /// In de, this message translates to:
+  /// **'Vorlage'**
+  String get catalogPreset;
+
+  /// catalogPresetChangeMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Du kannst die neue Vorlage ergänzen oder deine Auswahl ersetzen. Beim Ersetzen gehen eigene Namen und Einträge verloren.'**
+  String get catalogPresetChangeMessage;
+
+  /// catalogPresetChangeTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Vorlage wechseln?'**
+  String get catalogPresetChangeTitle;
+
+  /// catalogPresetMerge
+  ///
+  /// In de, this message translates to:
+  /// **'Ergänzen'**
+  String get catalogPresetMerge;
+
+  /// catalogPresetReplace
+  ///
+  /// In de, this message translates to:
+  /// **'Ersetzen'**
+  String get catalogPresetReplace;
+
+  /// catalogRemove
+  ///
+  /// In de, this message translates to:
+  /// **'Auswahl entfernen'**
+  String get catalogRemove;
+
+  /// catalogSearch
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, choir {Stimme suchen} other {Instrument oder anderen Namen suchen}}'**
+  String catalogSearch(String kind);
+
+  /// catalogSearchHint
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, choir {z. B. Sopran oder Alt} other {z. B. Geige oder Bassflöte}}'**
+  String catalogSearchHint(String kind);
+
+  /// catalogSelected
+  ///
+  /// In de, this message translates to:
+  /// **'Ausgewählt'**
+  String get catalogSelected;
+
+  /// catalogSelectedCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =0 {Keine Einträge ausgewählt} one {1 Eintrag ausgewählt} other {{count} Einträge ausgewählt}}'**
+  String catalogSelectedCount(num count);
+
+  /// catalogSetupChoose
+  ///
+  /// In de, this message translates to:
+  /// **'Auswahl anpassen'**
+  String get catalogSetupChoose;
+
+  /// catalogSetupCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Eintrag ausgewählt} other {{count} Einträge ausgewählt}}'**
+  String catalogSetupCount(num count);
+
+  /// catalogSetupDiscard
+  ///
+  /// In de, this message translates to:
+  /// **'Auswahl verwerfen'**
+  String get catalogSetupDiscard;
+
+  /// catalogSetupFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Ensemble angelegt. Die Auswahl konnte nicht übernommen werden. Du kannst sie später in der Verwaltung ergänzen.'**
+  String get catalogSetupFailed;
+
+  /// catalogSetupLater
+  ///
+  /// In de, this message translates to:
+  /// **'Später einrichten'**
+  String get catalogSetupLater;
+
+  /// catalogSetupNone
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Auswahl'**
+  String get catalogSetupNone;
+
+  /// catalogSetupSkipMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Die ausgewählten Instrumente oder Stimmen werden nicht angelegt. Du kannst die Besetzung später in der Verwaltung einrichten.'**
+  String get catalogSetupSkipMessage;
+
+  /// catalogSetupSkipTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Auswahl verwerfen?'**
+  String get catalogSetupSkipTitle;
+
+  /// catalogSetupTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Besetzung wählen'**
+  String get catalogSetupTitle;
+
+  /// catalogTitle
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, choir {Stimmen auswählen} other {Instrumente auswählen}}'**
+  String catalogTitle(String kind);
+
+  /// catalogWithoutPreset
+  ///
+  /// In de, this message translates to:
+  /// **'Ohne Vorlage'**
+  String get catalogWithoutPreset;
+
   /// churchOverview.churches
   ///
   /// In de, this message translates to:
@@ -7796,6 +8018,102 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Rückgängig'**
   String get editorUndo;
+
+  /// ensembleGuideBack
+  ///
+  /// In de, this message translates to:
+  /// **'Zurück'**
+  String get ensembleGuideBack;
+
+  /// ensembleGuideChange
+  ///
+  /// In de, this message translates to:
+  /// **'Ändern'**
+  String get ensembleGuideChange;
+
+  /// ensembleGuideCreate
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, orchestra {Orchester erstellen} choir {Chor erstellen} other {Gruppe erstellen}}'**
+  String ensembleGuideCreate(String kind);
+
+  /// ensembleGuideCustom
+  ///
+  /// In de, this message translates to:
+  /// **'Selbst zusammenstellen'**
+  String get ensembleGuideCustom;
+
+  /// ensembleGuideInstrumentsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Wähle eine passende Vorlage und passe sie an dein Ensemble an. Du kannst die Besetzung auch später einrichten.'**
+  String get ensembleGuideInstrumentsHint;
+
+  /// ensembleGuideLeadership
+  ///
+  /// In de, this message translates to:
+  /// **'Leitungsgruppe'**
+  String get ensembleGuideLeadership;
+
+  /// ensembleGuideLeadershipDefault
+  ///
+  /// In de, this message translates to:
+  /// **'Leitung'**
+  String get ensembleGuideLeadershipDefault;
+
+  /// ensembleGuideLeadershipEdit
+  ///
+  /// In de, this message translates to:
+  /// **'Leitungsgruppe benennen'**
+  String get ensembleGuideLeadershipEdit;
+
+  /// ensembleGuideNameHint
+  ///
+  /// In de, this message translates to:
+  /// **'Das Kürzel schlagen wir aus dem Namen vor. Du kannst es anpassen.'**
+  String get ensembleGuideNameHint;
+
+  /// ensembleGuideNext
+  ///
+  /// In de, this message translates to:
+  /// **'Weiter'**
+  String get ensembleGuideNext;
+
+  /// ensembleGuideOtherGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Andere Gruppe'**
+  String get ensembleGuideOtherGroup;
+
+  /// ensembleGuideProgress
+  ///
+  /// In de, this message translates to:
+  /// **'Schritt {current} von {total}'**
+  String ensembleGuideProgress(Object current, Object total);
+
+  /// ensembleGuideQuestionInstruments
+  ///
+  /// In de, this message translates to:
+  /// **'Mit welcher Besetzung möchtest du starten?'**
+  String get ensembleGuideQuestionInstruments;
+
+  /// ensembleGuideQuestionName
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, orchestra {Wie heißt dein Orchester?} choir {Wie heißt dein Chor?} other {Wie heißt deine Gruppe?}}'**
+  String ensembleGuideQuestionName(String kind);
+
+  /// ensembleGuideQuestionType
+  ///
+  /// In de, this message translates to:
+  /// **'Welche Art von Gruppe möchtest du erstellen?'**
+  String get ensembleGuideQuestionType;
+
+  /// ensembleGuideSummary
+  ///
+  /// In de, this message translates to:
+  /// **'Alles bereit'**
+  String get ensembleGuideSummary;
 
   /// excuse.customOption
   ///
@@ -24513,7 +24831,7 @@ abstract class AppLocalizations {
   /// redesign.groupEdit.clefsHint
   ///
   /// In de, this message translates to:
-  /// **'Mindestens ein Notenschlüssel bleibt ausgewählt.'**
+  /// **'Wähle die verwendeten Notenschlüssel. Die Auswahl kann leer bleiben.'**
   String get redesignGroupEditClefsHint;
 
   /// redesign.groupEdit.delete
@@ -29457,7 +29775,7 @@ abstract class AppLocalizations {
   /// redesign.tenants.newMainHint
   ///
   /// In de, this message translates to:
-  /// **'Die Hauptgruppe ist für die Leitung (z. B. Dirigenten, Vorstand). Sie kann nicht gelöscht werden und bekommt mehr Rechte. {kind, select, orchestra{Instrumente wie Violine oder Trompete} choir{Stimmen wie Sopran oder Alt} other{Untergruppen}} legst du später in der Verwaltung an.'**
+  /// **'Die Hauptgruppe ist für die Leitung (z. B. Dirigenten, Vorstand). Sie kann nicht gelöscht werden und bekommt mehr Rechte. {kind, select, orchestra{Instrumente wählst du oben aus und kannst sie später in der Verwaltung ergänzen.} choir{Stimmen wählst du oben aus und kannst sie später in der Verwaltung ergänzen.} other{Untergruppen legst du später in der Verwaltung an.}}'**
   String redesignTenantsNewMainHint(String kind);
 
   /// redesign.tenants.newMainName
