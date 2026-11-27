@@ -13836,7 +13836,7 @@
   "@rdAdminTeam": {
     "description": "rdAdmin.team"
   },
-  "rdAdminTeamHint": "Besprechungen und Aufgaben",
+  "rdAdminTeamHint": "Besprechungen, Themen & Aufgaben dieser Gruppe",
   "@rdAdminTeamHint": {
     "description": "rdAdmin.teamHint"
   },
@@ -14477,6 +14477,13 @@
   "@rdOrgCreate": {
     "description": "rdOrg.create"
   },
+  "rdOrgEventsOrgSubtitle": "Ablaufpläne der Leitungen in {org}",
+  "@rdOrgEventsOrgSubtitle": {
+    "description": "rdOrg.eventsOrgSubtitle",
+    "placeholders": {
+      "org": {}
+    }
+  },
   "rdOrgEventsTabOrgPlans": "Org-Pläne",
   "@rdOrgEventsTabOrgPlans": {
     "description": "rdOrg.eventsTabOrgPlans"
@@ -14600,6 +14607,51 @@
       "org": {}
     }
   },
+  "rdOrgInfoButtonTooltip": "Was ist eine Organisation?",
+  "@rdOrgInfoButtonTooltip": {
+    "description": "rdOrg.infoButtonTooltip"
+  },
+  "rdOrgInfoGroupBoundary": "Termine, Anwesenheiten, Mitteilungen und Team-Aufgaben gehören immer nur zu deiner jeweiligen Gruppe.",
+  "@rdOrgInfoGroupBoundary": {
+    "description": "rdOrg.infoGroupBoundary"
+  },
+  "rdOrgInfoPeopleBody": "Verknüpfte Personen und ORG-Zusatzfelder bleiben über alle Gruppen synchron.",
+  "@rdOrgInfoPeopleBody": {
+    "description": "rdOrg.infoPeopleBody"
+  },
+  "rdOrgInfoPeopleTitle": "Personen & ORG-Felder",
+  "@rdOrgInfoPeopleTitle": {
+    "description": "rdOrg.infoPeopleTitle"
+  },
+  "rdOrgInfoPlansBody": "Freigegebene Ablaufpläne für die Leitungen aller Gruppen und den öffentlichen Link. Mitglieder anderer Gruppen sehen sie nicht.",
+  "@rdOrgInfoPlansBody": {
+    "description": "rdOrg.infoPlansBody"
+  },
+  "rdOrgInfoPlansTitle": "Org-Pläne",
+  "@rdOrgInfoPlansTitle": {
+    "description": "rdOrg.infoPlansTitle"
+  },
+  "rdOrgInfoSharedLabel": "Gemeinsam in der Organisation",
+  "@rdOrgInfoSharedLabel": {
+    "description": "rdOrg.infoSharedLabel"
+  },
+  "rdOrgInfoSubtitle": "{count, plural, =1{1 verbundene Gruppe} other{{count} verbundene Gruppen}}",
+  "@rdOrgInfoSubtitle": {
+    "description": "rdOrg.infoSubtitle",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdOrgInfoWorksBody": "Gemeinsame Planvorlagen, PDF-Logo und gruppenübergreifende Werksuche.",
+  "@rdOrgInfoWorksBody": {
+    "description": "rdOrg.infoWorksBody"
+  },
+  "rdOrgInfoWorksTitle": "Werke, Vorlagen & Branding",
+  "@rdOrgInfoWorksTitle": {
+    "description": "rdOrg.infoWorksTitle"
+  },
   "rdOrgKeepMove": "Wechseln ganz",
   "@rdOrgKeepMove": {
     "description": "rdOrg.keepMove"
@@ -14636,7 +14688,7 @@
   "@rdOrgLiveActivityOrgPlans": {
     "description": "rdOrg.liveActivityOrgPlans"
   },
-  "rdOrgLiveActivityOrgPlansHint": "Zeigt laufende ORG-Pläne anderer Gruppen deiner Organisation auf diesem Gerät.",
+  "rdOrgLiveActivityOrgPlansHint": "Zeigt laufende Org-Pläne anderer Gruppen deiner Organisation auf diesem Gerät (auch wenn du dort nicht eingeteilt bist).",
   "@rdOrgLiveActivityOrgPlansHint": {
     "description": "rdOrg.liveActivityOrgPlansHint"
   },
@@ -14675,6 +14727,16 @@
   "@rdOrgNoneTitle": {
     "description": "rdOrg.noneTitle"
   },
+  "rdOrgOrgIntro": "{org} verbindet {count, plural, =1{1 Gruppe} other{{count} Gruppen}}. Einstellungen hier gelten gruppenübergreifend – Termine, Anwesenheiten und Team-Aufgaben bleiben in deiner Gruppe.",
+  "@rdOrgOrgIntro": {
+    "description": "rdOrg.orgIntro",
+    "placeholders": {
+      "org": {},
+      "count": {
+        "type": "num"
+      }
+    }
+  },
   "rdOrgPeopleCount": "{count} Personen",
   "@rdOrgPeopleCount": {
     "description": "rdOrg.peopleCount",
@@ -14703,6 +14765,13 @@
     "description": "rdOrg.planSwitchGroup",
     "placeholders": {
       "group": {}
+    }
+  },
+  "rdOrgPlanToggleHint": "Sichtbar für die Leitungen aller Gruppen in {org} (und im Org-Plan-Link) – nicht für Mitglieder anderer Gruppen.",
+  "@rdOrgPlanToggleHint": {
+    "description": "rdOrg.planToggleHint",
+    "placeholders": {
+      "org": {}
     }
   },
   "rdOrgRequest": "Anfragen ({count})",

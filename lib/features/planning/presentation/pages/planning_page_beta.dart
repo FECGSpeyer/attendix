@@ -183,9 +183,9 @@ extension _PlanningBeta on _PlanningPageState {
           ),
           if (org != null)
             RdListRow(
-              leading: const RdRowIcon(Icons.account_balance_outlined),
+              leading: const RdRowIcon(Icons.hub_outlined),
               title: l10n.planningOrgPlan,
-              subtitle: l10n.redesignPlanOrgHint,
+              subtitle: l10n.rdOrgPlanToggleHint(org.name),
               showChevron: false,
               onTap: () => _rdSetOrgPlan(!_isOrgPlan),
               trailing: Switch.adaptive(value: _isOrgPlan, onChanged: _rdSetOrgPlan),

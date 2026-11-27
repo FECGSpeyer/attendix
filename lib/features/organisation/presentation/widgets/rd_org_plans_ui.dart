@@ -15,6 +15,7 @@ import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../../../attendance/data/providers/rd_events_providers.dart' show RdEventSection, rdGroupEvents;
 import '../../../today/presentation/widgets/rd_today_common.dart' show RdEventDateBox, RdInfoCard;
 import '../pages/org_plans_page.dart' show openOrgPlanEntry, orgPlanPoints;
+import 'rd_org_info_sheet.dart' show showRdOrgInfoSheet;
 
 /// One ORG-Plan dated today, annotated with whether it is running right now.
 class RdTodayOrgPlan {
@@ -144,7 +145,13 @@ class RdTodayOrgPlansCard extends ConsumerWidget {
                     anyLive ? l10n.rdOrgTodayLiveEyebrow : l10n.rdOrgTodayEyebrow,
                   ),
                 ),
-                RdOrgPill(org.name, compact: true),
+                RdOrgPill(
+                  org.name,
+                  compact: true,
+                  showInfo: true,
+                  tooltip: l10n.rdOrgInfoButtonTooltip,
+                  onTap: () => showRdOrgInfoSheet(context),
+                ),
               ],
             ),
             const SizedBox(height: 10),
@@ -294,7 +301,18 @@ class RdOrgPlansSegmentBody extends ConsumerWidget {
         const SizedBox(height: 12),
         Row(
           children: [
-            if (org != null) Expanded(child: Align(alignment: AlignmentDirectional.centerStart, child: RdOrgPill(org.name))),
+            if (org != null)
+              Expanded(
+                child: Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: RdOrgPill(
+                    org.name,
+                    showInfo: true,
+                    tooltip: l10n.rdOrgInfoButtonTooltip,
+                    onTap: () => showRdOrgInfoSheet(context),
+                  ),
+                ),
+              ),
             if (org == null) const Spacer(),
             RdTextLink(
               key: const Key('rd-events-org-plans-manage'),
@@ -303,6 +321,10 @@ class RdOrgPlansSegmentBody extends ConsumerWidget {
             ),
           ],
         ),
+        if (org != null) ...[
+          const SizedBox(height: 4),
+          Text(l10n.rdOrgEventsOrgSubtitle(org.name), style: RdType.meta(p, size: 13)),
+        ],
         const SizedBox(height: 6),
         if (sections.isEmpty)
           Padding(

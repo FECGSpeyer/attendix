@@ -19,6 +19,7 @@ import '../../../../data/repositories/song_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../widgets/org_link_dialogs.dart';
+import '../widgets/rd_org_info_sheet.dart' show showRdOrgInfoSheet;
 import '../../../planning/presentation/widgets/plan_field_dialogs.dart' show showPlanConfirm;
 import '../../../settings/data/rd_manage_logic.dart' show RdManageArea;
 import '../../../today/presentation/widgets/rd_today_common.dart' show RdInfoCard;
@@ -134,13 +135,26 @@ class _RdOrgSettingsPageState extends ConsumerState<RdOrgSettingsPage> {
     }
   }
 
-  List<Widget> _header(BuildContext context) {
+  List<Widget> _header(BuildContext context, {bool showInfo = false}) {
     final p = context.rd;
     final l10n = context.l10n;
     return [
       RdManageBackLink(label: l10n.redesignMeAdmin, onTap: _back),
       const SizedBox(height: 4),
-      Semantics(header: true, child: Text(l10n.orgTitle, style: RdType.largeTitle(p))),
+      Row(
+        children: [
+          Expanded(
+            child: Semantics(header: true, child: Text(l10n.orgTitle, style: RdType.largeTitle(p))),
+          ),
+          if (showInfo)
+            RdCircleButton(
+              key: const Key('rd-org-settings-info'),
+              icon: Icons.info_outline,
+              label: l10n.rdOrgInfoButtonTooltip,
+              onPressed: () => showRdOrgInfoSheet(context, showManageButton: false),
+            ),
+        ],
+      ),
       const SizedBox(height: 18),
     ];
   }
@@ -207,9 +221,29 @@ class _RdOrgSettingsPageState extends ConsumerState<RdOrgSettingsPage> {
         : others.where((t) => t.id == songSource).map((t) => t.shortName).firstOrNull ?? l10n.orgNoneOwnSongs;
     const gap = SizedBox(height: 24);
 
+    final totalGroups = others.length + 1;
     return RdPage(
       children: [
-        ..._header(context),
+        ..._header(context, showInfo: true),
+        RdCard(
+          key: const Key('rd-org-settings-intro'),
+          padding: const EdgeInsets.all(14),
+          border: Border.all(color: p.primary.withValues(alpha: 0.25)),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              RdRowIcon(Icons.hub_outlined, color: p.softText, background: p.soft),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  l10n.rdOrgOrgIntro(org.name, totalGroups),
+                  style: RdType.meta(p, size: 13),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 14),
         RdGroupedList(children: [
           RdListRow(
             title: l10n.rdOrgName,

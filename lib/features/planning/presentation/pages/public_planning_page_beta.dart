@@ -78,8 +78,9 @@ extension _PublicPlanningBeta on _PublicPlanningPageState {
               ),
               if (org != null)
                 RdListRow(
-                  leading: const RdRowIcon(Icons.business_outlined),
+                  leading: const RdRowIcon(Icons.hub_outlined),
                   title: l10n.plansInOrg(org.name),
+                  subtitle: l10n.rdOrgPlanToggleHint(org.name),
                   showChevron: false,
                   onTap: _toggleOrg,
                   trailing: Switch.adaptive(value: _isOrgPlan, onChanged: (_) => _toggleOrg()),

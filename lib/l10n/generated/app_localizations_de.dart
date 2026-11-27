@@ -11247,7 +11247,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdAdminTeam => 'Team';
 
   @override
-  String get rdAdminTeamHint => 'Besprechungen und Aufgaben';
+  String get rdAdminTeamHint =>
+      'Besprechungen, Themen & Aufgaben dieser Gruppe';
 
   @override
   String get rdAdminTypes => 'Terminarten';
@@ -11780,6 +11781,11 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdOrgCreate => 'Organisation erstellen oder verknüpfen';
 
   @override
+  String rdOrgEventsOrgSubtitle(Object org) {
+    return 'Ablaufpläne der Leitungen in $org';
+  }
+
+  @override
   String get rdOrgEventsTabOrgPlans => 'Org-Pläne';
 
   @override
@@ -11873,6 +11879,48 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get rdOrgInfoButtonTooltip => 'Was ist eine Organisation?';
+
+  @override
+  String get rdOrgInfoGroupBoundary =>
+      'Termine, Anwesenheiten, Mitteilungen und Team-Aufgaben gehören immer nur zu deiner jeweiligen Gruppe.';
+
+  @override
+  String get rdOrgInfoPeopleBody =>
+      'Verknüpfte Personen und ORG-Zusatzfelder bleiben über alle Gruppen synchron.';
+
+  @override
+  String get rdOrgInfoPeopleTitle => 'Personen & ORG-Felder';
+
+  @override
+  String get rdOrgInfoPlansBody =>
+      'Freigegebene Ablaufpläne für die Leitungen aller Gruppen und den öffentlichen Link. Mitglieder anderer Gruppen sehen sie nicht.';
+
+  @override
+  String get rdOrgInfoPlansTitle => 'Org-Pläne';
+
+  @override
+  String get rdOrgInfoSharedLabel => 'Gemeinsam in der Organisation';
+
+  @override
+  String rdOrgInfoSubtitle(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count verbundene Gruppen',
+      one: '1 verbundene Gruppe',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdOrgInfoWorksBody =>
+      'Gemeinsame Planvorlagen, PDF-Logo und gruppenübergreifende Werksuche.';
+
+  @override
+  String get rdOrgInfoWorksTitle => 'Werke, Vorlagen & Branding';
+
+  @override
   String get rdOrgKeepMove => 'Wechseln ganz';
 
   @override
@@ -11903,7 +11951,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get rdOrgLiveActivityOrgPlansHint =>
-      'Zeigt laufende ORG-Pläne anderer Gruppen deiner Organisation auf diesem Gerät.';
+      'Zeigt laufende Org-Pläne anderer Gruppen deiner Organisation auf diesem Gerät (auch wenn du dort nicht eingeteilt bist).';
 
   @override
   String get rdOrgMainGroup => 'Hauptgruppe einbeziehen';
@@ -11934,6 +11982,17 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdOrgNoneTitle => 'Keine Organisation';
 
   @override
+  String rdOrgOrgIntro(Object org, num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Gruppen',
+      one: '1 Gruppe',
+    );
+    return '$org verbindet $_temp0. Einstellungen hier gelten gruppenübergreifend – Termine, Anwesenheiten und Team-Aufgaben bleiben in deiner Gruppe.';
+  }
+
+  @override
   String rdOrgPeopleCount(Object count) {
     return '$count Personen';
   }
@@ -11953,6 +12012,11 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String rdOrgPlanSwitchGroup(Object group) {
     return 'In „$group“ öffnen';
+  }
+
+  @override
+  String rdOrgPlanToggleHint(Object org) {
+    return 'Sichtbar für die Leitungen aller Gruppen in $org (und im Org-Plan-Link) – nicht für Mitglieder anderer Gruppen.';
   }
 
   @override

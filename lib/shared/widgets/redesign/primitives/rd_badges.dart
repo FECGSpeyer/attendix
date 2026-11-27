@@ -279,29 +279,39 @@ String rdInitialsOf(String name) {
 /// organisation (ORG-Pläne, cross-group Termine, shared libraries, shared
 /// person fields). Uses soft primary fill with a crisp border and hub icon so
 /// it stands apart from normal status/type pills across all Farbwelten.
+///
+/// When [onTap] is provided, tapping opens context/info (e.g. the organisation
+/// info sheet) and [showInfo] renders a subtle trailing info icon.
 class RdOrgPill extends StatelessWidget {
   const RdOrgPill(
     this.label, {
     super.key,
     this.compact = false,
     this.icon = Icons.hub_outlined,
+    this.onTap,
+    this.showInfo = false,
+    this.tooltip,
   });
 
   final String label;
   final bool compact;
   final IconData icon;
+  final VoidCallback? onTap;
+  final bool showInfo;
+  final String? tooltip;
 
   @override
   Widget build(BuildContext context) {
     final p = context.rd;
-    return Container(
+    final radius = BorderRadius.circular(compact ? 7 : 999);
+    final content = Container(
       padding: EdgeInsets.symmetric(
         horizontal: compact ? 7 : 10,
         vertical: compact ? 2 : 4,
       ),
       decoration: BoxDecoration(
         color: p.soft,
-        borderRadius: BorderRadius.circular(compact ? 7 : 999),
+        borderRadius: radius,
         border: Border.all(color: p.primary.withValues(alpha: 0.35)),
       ),
       child: Row(
@@ -321,9 +331,24 @@ class RdOrgPill extends StatelessWidget {
               ),
             ),
           ),
+          if (showInfo) ...[
+            const SizedBox(width: 4),
+            Icon(Icons.info_outline, size: compact ? 12 : 14, color: p.softText),
+          ],
         ],
       ),
     );
+    if (onTap == null) return content;
+    final tappable = Material(
+      type: MaterialType.transparency,
+      child: InkWell(
+        borderRadius: radius,
+        onTap: onTap,
+        child: content,
+      ),
+    );
+    if (tooltip == null) return Semantics(button: true, child: tappable);
+    return Tooltip(message: tooltip!, child: Semantics(button: true, label: tooltip, child: tappable));
   }
 }
 

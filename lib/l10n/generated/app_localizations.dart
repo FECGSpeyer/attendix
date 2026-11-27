@@ -18010,7 +18010,7 @@ abstract class AppLocalizations {
   /// rdAdmin.teamHint
   ///
   /// In de, this message translates to:
-  /// **'Besprechungen und Aufgaben'**
+  /// **'Besprechungen, Themen & Aufgaben dieser Gruppe'**
   String get rdAdminTeamHint;
 
   /// rdAdmin.types
@@ -18793,6 +18793,12 @@ abstract class AppLocalizations {
   /// **'Organisation erstellen oder verknüpfen'**
   String get rdOrgCreate;
 
+  /// rdOrg.eventsOrgSubtitle
+  ///
+  /// In de, this message translates to:
+  /// **'Ablaufpläne der Leitungen in {org}'**
+  String rdOrgEventsOrgSubtitle(Object org);
+
   /// rdOrg.eventsTabOrgPlans
   ///
   /// In de, this message translates to:
@@ -18943,6 +18949,66 @@ abstract class AppLocalizations {
   /// **'in {org}'**
   String rdOrgInOrgSubtitle(Object org);
 
+  /// rdOrg.infoButtonTooltip
+  ///
+  /// In de, this message translates to:
+  /// **'Was ist eine Organisation?'**
+  String get rdOrgInfoButtonTooltip;
+
+  /// rdOrg.infoGroupBoundary
+  ///
+  /// In de, this message translates to:
+  /// **'Termine, Anwesenheiten, Mitteilungen und Team-Aufgaben gehören immer nur zu deiner jeweiligen Gruppe.'**
+  String get rdOrgInfoGroupBoundary;
+
+  /// rdOrg.infoPeopleBody
+  ///
+  /// In de, this message translates to:
+  /// **'Verknüpfte Personen und ORG-Zusatzfelder bleiben über alle Gruppen synchron.'**
+  String get rdOrgInfoPeopleBody;
+
+  /// rdOrg.infoPeopleTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Personen & ORG-Felder'**
+  String get rdOrgInfoPeopleTitle;
+
+  /// rdOrg.infoPlansBody
+  ///
+  /// In de, this message translates to:
+  /// **'Freigegebene Ablaufpläne für die Leitungen aller Gruppen und den öffentlichen Link. Mitglieder anderer Gruppen sehen sie nicht.'**
+  String get rdOrgInfoPlansBody;
+
+  /// rdOrg.infoPlansTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Org-Pläne'**
+  String get rdOrgInfoPlansTitle;
+
+  /// rdOrg.infoSharedLabel
+  ///
+  /// In de, this message translates to:
+  /// **'Gemeinsam in der Organisation'**
+  String get rdOrgInfoSharedLabel;
+
+  /// rdOrg.infoSubtitle
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =1{1 verbundene Gruppe} other{{count} verbundene Gruppen}}'**
+  String rdOrgInfoSubtitle(num count);
+
+  /// rdOrg.infoWorksBody
+  ///
+  /// In de, this message translates to:
+  /// **'Gemeinsame Planvorlagen, PDF-Logo und gruppenübergreifende Werksuche.'**
+  String get rdOrgInfoWorksBody;
+
+  /// rdOrg.infoWorksTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Werke, Vorlagen & Branding'**
+  String get rdOrgInfoWorksTitle;
+
   /// rdOrg.keepMove
   ///
   /// In de, this message translates to:
@@ -19000,7 +19066,7 @@ abstract class AppLocalizations {
   /// rdOrg.liveActivityOrgPlansHint
   ///
   /// In de, this message translates to:
-  /// **'Zeigt laufende ORG-Pläne anderer Gruppen deiner Organisation auf diesem Gerät.'**
+  /// **'Zeigt laufende Org-Pläne anderer Gruppen deiner Organisation auf diesem Gerät (auch wenn du dort nicht eingeteilt bist).'**
   String get rdOrgLiveActivityOrgPlansHint;
 
   /// rdOrg.mainGroup
@@ -19051,6 +19117,12 @@ abstract class AppLocalizations {
   /// **'Keine Organisation'**
   String get rdOrgNoneTitle;
 
+  /// rdOrg.orgIntro
+  ///
+  /// In de, this message translates to:
+  /// **'{org} verbindet {count, plural, =1{1 Gruppe} other{{count} Gruppen}}. Einstellungen hier gelten gruppenübergreifend – Termine, Anwesenheiten und Team-Aufgaben bleiben in deiner Gruppe.'**
+  String rdOrgOrgIntro(Object org, num count);
+
   /// rdOrg.peopleCount
   ///
   /// In de, this message translates to:
@@ -19086,6 +19158,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'In „{group}“ öffnen'**
   String rdOrgPlanSwitchGroup(Object group);
+
+  /// rdOrg.planToggleHint
+  ///
+  /// In de, this message translates to:
+  /// **'Sichtbar für die Leitungen aller Gruppen in {org} (und im Org-Plan-Link) – nicht für Mitglieder anderer Gruppen.'**
+  String rdOrgPlanToggleHint(Object org);
 
   /// rdOrg.request
   ///

@@ -13,6 +13,7 @@ import '../../../core/utils/toast_helper.dart';
 import '../../../data/models/tenant/tenant.dart';
 import '../../../l10n/l10n.dart';
 import '../layout/route_leave_guard.dart';
+import '../../../features/organisation/presentation/widgets/rd_org_info_sheet.dart' show showRdOrgInfoSheet;
 import '../../../features/profile/presentation/widgets/profile_helpers.dart' show profileRoleName;
 import '../../../features/today/presentation/widgets/join/rd_join_sheet.dart';
 import 'rd_widgets.dart';
@@ -277,7 +278,13 @@ class _RdGroupSwitchSheetState extends ConsumerState<_RdGroupSwitchSheet> {
                             children: [
                               Row(
                                 children: [
-                                  RdOrgPill(org.name, compact: true),
+                                  RdOrgPill(
+                                    org.name,
+                                    compact: true,
+                                    showInfo: true,
+                                    tooltip: l10n.rdOrgInfoButtonTooltip,
+                                    onTap: () => showRdOrgInfoSheet(context, showManageButton: false),
+                                  ),
                                   const Spacer(),
                                   if (isOrgLead)
                                     RdTextLink(

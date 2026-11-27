@@ -11126,7 +11126,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdAdminTeam => 'Team';
 
   @override
-  String get rdAdminTeamHint => 'Meetings and tasks';
+  String get rdAdminTeamHint => 'Meetings, topics & tasks of this group';
 
   @override
   String get rdAdminTypes => 'Event types';
@@ -11658,6 +11658,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdOrgCreate => 'Create or link organisation';
 
   @override
+  String rdOrgEventsOrgSubtitle(Object org) {
+    return 'Schedules shared with leads in $org';
+  }
+
+  @override
   String get rdOrgEventsTabOrgPlans => 'Org plans';
 
   @override
@@ -11751,6 +11756,48 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get rdOrgInfoButtonTooltip => 'What is an organisation?';
+
+  @override
+  String get rdOrgInfoGroupBoundary =>
+      'Events, attendance, messages and team tasks always belong to your individual group.';
+
+  @override
+  String get rdOrgInfoPeopleBody =>
+      'Linked people and ORG custom fields stay in sync across all groups.';
+
+  @override
+  String get rdOrgInfoPeopleTitle => 'People & ORG fields';
+
+  @override
+  String get rdOrgInfoPlansBody =>
+      'Published schedules for leads of all groups and the public link. Members of other groups do not see them.';
+
+  @override
+  String get rdOrgInfoPlansTitle => 'Org plans';
+
+  @override
+  String get rdOrgInfoSharedLabel => 'Shared across the organisation';
+
+  @override
+  String rdOrgInfoSubtitle(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count connected groups',
+      one: '1 connected group',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdOrgInfoWorksBody =>
+      'Shared plan templates, PDF logo and cross-group work search.';
+
+  @override
+  String get rdOrgInfoWorksTitle => 'Works, templates & branding';
+
+  @override
   String get rdOrgKeepMove => 'They move completely';
 
   @override
@@ -11781,7 +11828,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rdOrgLiveActivityOrgPlansHint =>
-      'Shows running ORG plans of other groups in your organisation on this device.';
+      'Shows running org plans of other groups in your organisation on this device (even if you are not scheduled there).';
 
   @override
   String get rdOrgMainGroup => 'Include main group';
@@ -11812,6 +11859,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdOrgNoneTitle => 'No organisation';
 
   @override
+  String rdOrgOrgIntro(Object org, num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count groups',
+      one: '1 group',
+    );
+    return '$org connects $_temp0. Settings here apply across all groups — events, attendance and team tasks stay in your group.';
+  }
+
+  @override
   String rdOrgPeopleCount(Object count) {
     return '$count people';
   }
@@ -11831,6 +11889,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String rdOrgPlanSwitchGroup(Object group) {
     return 'Open in “$group”';
+  }
+
+  @override
+  String rdOrgPlanToggleHint(Object org) {
+    return 'Visible to leads of all groups in $org (and via the org plan link) — not to members of other groups.';
   }
 
   @override

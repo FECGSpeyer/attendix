@@ -12,6 +12,7 @@ import 'package:attendix/data/models/attendance/attendance.dart';
 import 'package:attendix/data/models/organisation/organisation.dart';
 import 'package:attendix/data/models/plan/plan.dart';
 import 'package:attendix/features/attendance/presentation/pages/rd_events_page.dart';
+import 'package:attendix/features/organisation/presentation/widgets/rd_org_info_sheet.dart';
 import 'package:attendix/features/organisation/presentation/widgets/rd_org_plans_ui.dart';
 import 'package:attendix/features/planning/presentation/pages/plan_viewer_page.dart';
 import 'package:attendix/l10n/l10n.dart';
@@ -300,6 +301,36 @@ void main() {
       expect(find.text('Posaunenchor'), findsOneWidget);
       expect(find.text('Jugendchor'), findsOneWidget);
       expect(find.text('Gastgruppe'), findsOneWidget);
+    });
+  });
+
+  group('RdOrgInfoSheet', () {
+    testWidgets('opens from tappable org pill and explains shared vs. group-local items', (tester) async {
+      await tester.pumpWidget(_wrap(
+        Builder(
+          builder: (context) => TextButton(
+            onPressed: () => showRdOrgInfoSheet(context),
+            child: const Text('open-info'),
+          ),
+        ),
+        overrides: [
+          currentOrganisationProvider.overrideWith((_) async => _org),
+          allLinkedTenantsProvider.overrideWith((_) async => [_tenantHome, _tenantOther]),
+        ],
+      ));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('open-info'));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('rd-org-info-sheet')), findsOneWidget);
+      expect(find.text('FECG Speyer'), findsOneWidget);
+      expect(find.text('2 verbundene Gruppen'), findsOneWidget);
+      expect(find.text('Posaunenchor · Diese Gruppe'), findsOneWidget);
+      expect(find.text('Jugendchor'), findsOneWidget);
+      expect(find.text('Org-Pläne'), findsOneWidget);
+      expect(find.textContaining('Team-Aufgaben gehören immer nur zu deiner jeweiligen Gruppe'), findsOneWidget);
+      expect(find.byKey(const Key('rd-org-info-manage')), findsOneWidget);
     });
   });
 
