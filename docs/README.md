@@ -42,7 +42,7 @@ Diese Dateien zeigen einen früheren Stand und werden nicht mehr gepflegt.
 
 | Seite | Stand |
 |-------|-------|
-| [MIGRATION.md](../MIGRATION.md) | Stand der Migration von Ionic, Februar 2026 |
-| [plans/](plans/) | Plan für den Vergleich Ionic und Flutter, Februar 2026 |
-| [reports/](reports/) | Ergebnis dieses Vergleichs, Februar 2026 |
-| [parity/status/](parity/status/) | Erledigte Punkte aus den Vergleichen mit Ionic |
+| [archive/MIGRATION.md](archive/MIGRATION.md) | Stand der Migration von Ionic, Februar 2026 |
+| [archive/plans/](archive/plans/) | Plan für den Vergleich Ionic und Flutter, Februar 2026 |
+| [archive/reports/](archive/reports/) | Ergebnis dieses Vergleichs, Februar 2026 |
+| [archive/parity/status/](archive/parity/status/) | Erledigte Punkte aus den Vergleichen mit Ionic |
