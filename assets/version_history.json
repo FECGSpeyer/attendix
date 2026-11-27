@@ -1,6 +1,15 @@
 {
   "versions": [
     {
+      "version": "0.159.0",
+      "date": "27.11.2026",
+      "changes": [
+        "✨ Instrumente und Chorstimmen aus einer durchsuchbaren Sammlung hinzufügen; anpassbare Vorlagen für Sinfonie-, Streich-, Blas- und Volksinstrumentenorchester sowie gemischten Chor direkt beim Anlegen auswählen.",
+        "✨ Klarere Auswahlaktionen und Vorlagenwechsel: eigene Namen und Ergänzungen bleiben erhalten, solange die Auswahl nicht ausdrücklich ersetzt wird.",
+        "✨ Ensembles mit einem kurzen Assistenten erstellen: Gruppenart, Name und Besetzung, mit vorgeschlagenem Kürzel und editierbarer Leitungsgruppe."
+      ]
+    },
+    {
       "version": "0.158.1",
       "date": "27.11.2026",
       "changes": [
