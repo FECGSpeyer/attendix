@@ -789,7 +789,7 @@ class _LeaderEventCard extends StatelessWidget {
                   ],
                 ),
                 if (meta.isNotEmpty || attendance.isOrgPlan) ...[
-                  const SizedBox(height: 3),
+                  const SizedBox(height: 2),
                   Wrap(
                     spacing: 8,
                     runSpacing: 4,

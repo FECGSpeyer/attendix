@@ -43,6 +43,16 @@ class _TenantNotifier extends CurrentTenantNotifier {
       type: type,
     );
   }
+
+  void switchTenant({required int id, String type = 'orchestra'}) {
+    state = TestFactories.createTenant(
+      id: id,
+      shortName: 'T$id',
+      longName: 'Tenant $id',
+      showMembersList: true,
+      type: type,
+    );
+  }
 }
 
 String _day(int offset, {DateTime? from}) {
@@ -287,32 +297,32 @@ void main() {
     await initializeDateFormatting('de');
   });
 
-  testWidgets('leader plus opens an anchored choice before creating an event', (
-    tester,
-  ) async {
-    _size(tester, const Size(393, 852));
-    await tester.pumpWidget(_app(Role.admin, shell: false));
-    await _settle(tester);
+  testWidgets(
+    'leader plus opens modal bottom sheet on phone before creating an event',
+    (tester) async {
+      _size(tester, const Size(393, 852));
+      await tester.pumpWidget(_app(Role.admin, shell: false));
+      await _settle(tester);
 
-    final plus = find.byTooltip('Neuer Termin');
-    final plusRect = tester.getRect(plus);
-    await tester.tap(plus);
-    await _settle(tester);
+      await tester.tap(find.byKey(const Key('rd-events-add')));
+      await _settle(tester);
 
-    expect(find.text('Orchestertermin'), findsOneWidget);
-    expect(find.text('Besprechung'), findsOneWidget);
-    expect(find.text('page new event'), findsNothing);
-    expect(
-      tester.getRect(find.text('Besprechung')).bottom,
-      lessThan(plusRect.top),
-    );
+      expect(find.byType(BottomSheet), findsOneWidget);
+      expect(find.text('Neuer Termin'), findsOneWidget);
+      expect(find.text('Orchestertermin'), findsOneWidget);
+      expect(find.text('Termin mit Anwesenheit'), findsOneWidget);
+      expect(find.text('Besprechung'), findsOneWidget);
+      expect(find.text('Tagesordnung und Protokoll'), findsOneWidget);
+      expect(find.text('Abbrechen'), findsOneWidget);
+      expect(find.text('page new event'), findsNothing);
 
-    await tester.tap(find.text('Orchestertermin'));
-    await _settle(tester);
-    expect(find.text('page new event'), findsOneWidget);
-    expect(find.text('Besprechung'), findsNothing);
-    expect(tester.takeException(), isNull);
-  });
+      await tester.tap(find.text('Orchestertermin'));
+      await _settle(tester);
+      expect(find.text('page new event'), findsOneWidget);
+      expect(find.byType(BottomSheet), findsNothing);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets('helper with create permission goes straight to the event form', (
     tester,
@@ -325,12 +335,13 @@ void main() {
     await _settle(tester);
 
     expect(find.text('page new event'), findsOneWidget);
+    expect(find.byType(BottomSheet), findsNothing);
     expect(find.text('Besprechung'), findsNothing);
     expect(tester.takeException(), isNull);
   });
 
   testWidgets(
-    'desktop header offers the same choices and opens the meeting sheet',
+    'desktop header opens anchored popup menu >= 840px and opens meeting sheet',
     (tester) async {
       _size(tester, const Size(1280, 900));
       await tester.pumpWidget(
@@ -344,11 +355,19 @@ void main() {
       await _settle(tester);
 
       expect(find.byType(FloatingActionButton), findsNothing);
-      await tester.tap(find.byKey(const Key('rd-events-add')));
+      final addButton = find.byKey(const Key('rd-events-add'));
+      final buttonRect = tester.getRect(addButton);
+      await tester.tap(addButton);
       await _settle(tester);
 
+      expect(find.byType(BottomSheet), findsNothing);
+      expect(find.text('Abbrechen'), findsNothing);
       expect(find.text('Termin'), findsOneWidget);
       expect(find.text('Orchestertermin'), findsNothing);
+      expect(
+        tester.getRect(find.text('Termin')).top,
+        greaterThanOrEqualTo(buttonRect.bottom),
+      );
       await tester.tap(find.text('Besprechung'));
       await _settle(tester);
 
@@ -359,38 +378,65 @@ void main() {
     },
   );
 
-  testWidgets('create choice closes with its button, outside tap and Escape', (
+  testWidgets('create sheet closes with cancel, outside tap and Escape', (
     tester,
   ) async {
     _size(tester, const Size(393, 852));
     await tester.pumpWidget(_app(Role.admin, shell: false));
     await _settle(tester);
 
-    await tester.tap(find.byTooltip('Neuer Termin'));
+    await tester.tap(find.byKey(const Key('rd-events-add')));
     await _settle(tester);
-    await tester.tap(find.byTooltip('Auswahl schließen'));
+    await tester.tap(find.text('Abbrechen'));
     await _settle(tester);
+    expect(find.byType(BottomSheet), findsNothing);
     expect(find.text('Orchestertermin'), findsNothing);
 
-    await tester.tap(find.byTooltip('Neuer Termin'));
+    await tester.tap(find.byKey(const Key('rd-events-add')));
     await _settle(tester);
-    await tester.tap(find.text('Vergangen · Ø 80 %'));
+    await tester.tapAt(const Offset(20, 20));
     await _settle(tester);
-    expect(find.text('Orchestertermin'), findsNothing);
+    expect(find.byType(BottomSheet), findsNothing);
     expect(
       find.text('Gesamtprobe'),
       findsOneWidget,
-      reason: 'outside tap only closes the menu',
+      reason: 'outside tap only closes the sheet',
     );
 
-    await tester.tap(find.byTooltip('Neuer Termin'));
+    await tester.tap(find.byKey(const Key('rd-events-add')));
     await _settle(tester);
     await tester.sendKeyEvent(LogicalKeyboardKey.escape);
     await _settle(tester);
-    expect(find.text('Orchestertermin'), findsNothing);
+    expect(find.byType(BottomSheet), findsNothing);
     expect(find.byTooltip('Neuer Termin'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets(
+    'tenant switch while create sheet is open prevents stale navigation',
+    (tester) async {
+      _size(tester, const Size(393, 852));
+      await tester.pumpWidget(_app(Role.admin, shell: false));
+      await _settle(tester);
+
+      await tester.tap(find.byKey(const Key('rd-events-add')));
+      await _settle(tester);
+      expect(find.text('Orchestertermin'), findsOneWidget);
+
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(RdEventCreateMenu)),
+      );
+      (container.read(currentTenantProvider.notifier) as _TenantNotifier)
+          .switchTenant(id: 99);
+      await tester.pump();
+
+      await tester.tap(find.text('Orchestertermin'));
+      await _settle(tester);
+      expect(find.text('page new event'), findsNothing);
+      expect(find.byType(BottomSheet), findsNothing);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets(
     'event choice forwards a picked date to the normal creation route',
@@ -474,10 +520,7 @@ void main() {
       expect(rect.left, greaterThanOrEqualTo(0));
       expect(rect.right, lessThanOrEqualTo(320));
       expect(rect.top, greaterThanOrEqualTo(0));
-      expect(
-        rect.bottom,
-        lessThan(tester.getRect(find.byKey(const Key('rd-events-add'))).top),
-      );
+      expect(rect.bottom, lessThanOrEqualTo(640));
     }
     expect(tester.takeException(), isNull);
   });

@@ -1,0 +1,8 @@
+{
+  "bump": "minor",
+  "changes": [
+    "✨ Organisation und Org-Pläne direkt in Heute, Termine und Einstellungen integriert.",
+    "✨ Live Activities reagieren zuverlässiger auf den App-Lebenszyklus und lassen sich klarer steuern.",
+    "✨ Einheitliches Erstellen-Menü bei Terminen als Bottom Sheet auf Mobilgeräten und Popover auf dem Desktop."
+  ]
+}
