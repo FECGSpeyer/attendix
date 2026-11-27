@@ -155,8 +155,8 @@ sieht.
   3. Prüfe unter „Wann?“ das „Datum“, „Beginn“ und „Ende“ oder bei ganztägigen
      Terminen die „Dauer“. Für eine Serie öffnest du dort „Wiederholen“.
   4. Ergänze bei Bedarf den „Ort“. Unter „Weitere Optionen“ findest du
-     „Antwort bis“ für eine Frist und eine „Vorlage“ aus früheren Terminen.
-     In Musikgruppen kannst du dort auch „Werke“ für das Programm wählen.
+     „Antwort bis“ für eine Frist. In Musikgruppen kannst du dort auch
+     „Werke“ für das Programm wählen.
   5. Tippe auf „Termin anlegen“, bei mehreren Daten auf „… Termine anlegen“.
 - **Ergebnis:** Der Termin steht in der Liste. Die Eingeladenen sehen ihn und
   können antworten.

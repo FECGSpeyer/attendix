@@ -1,0 +1,6 @@
+{
+  "bump": "patch",
+  "changes": [
+    "🐛 Terminerstellung: missverständlichen Vorlagenblock unter Weitere Optionen entfernt"
+  ]
+}
