@@ -45,6 +45,9 @@ jobs:
         # shows up here so the docs are updated in the same PR.
         run: python3 tool/docs/check_app_texts.py --strict
 
+      - name: Run Python test dashboard unit tests
+        run: python3 -m unittest tool/testing/test_dashboard.py
+
   test-shard:
     # The suite (~365 files) is split over 4 runners; most of the time is
     # compiling each test file, so 4 shards take about a quarter of it.
@@ -75,11 +78,23 @@ jobs:
         # --total-shards splits test cases instead, so every shard would
         # still compile all files and tests within a file could land on
         # different shards. Coverage stays off (Flutter segfault on Ubuntu).
+        # Run in a single flutter test invocation so the JSON reporter output
+        # is never overwritten by multiple xargs chunks.
         run: |
           find test -name '*_test.dart' | sort \
             | awk -v n=4 -v i=${{ matrix.shard }} 'NR % n == i % n' > shard.txt
           echo "$(wc -l < shard.txt) test files in this shard"
-          xargs flutter test < shard.txt
+          mapfile -t test_files < shard.txt
+          flutter test --file-reporter "json:test-results-shard-${{ matrix.shard }}.json" "${test_files[@]}"
+
+      - name: Upload shard test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-shard-${{ matrix.shard }}
+          path: test-results-shard-${{ matrix.shard }}.json
+          if-no-files-found: ignore
+          retention-days: 7
 
       - name: Upload golden failures
         # Expected picture, actual picture and their difference for every
@@ -95,8 +110,35 @@ jobs:
     # One "Test" check that is green only when every shard passed.
     name: Test
     needs: test-shard
-    if: ${{ !cancelled() }}
+    if: ${{ always() && !cancelled() }}
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+
+      - name: Download shard test results
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: test-results-shard-*
+          path: shard-results
+
+      - name: Generate test dashboard and step summary
+        if: always()
+        run: |
+          python3 tool/testing/generate_test_dashboard.py \
+            --results shard-results/**/test-results-shard-*.json \
+            --html build/test-dashboard/index.html \
+            --embed-goldens \
+            --markdown "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload test dashboard
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-dashboard
+          path: build/test-dashboard/index.html
+          if-no-files-found: ignore
+          retention-days: 14
+
       - name: All shards passed
         run: test "${{ needs.test-shard.result }}" = success
