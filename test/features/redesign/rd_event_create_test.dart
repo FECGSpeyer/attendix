@@ -671,7 +671,9 @@ void main() {
 
     test('route "neu" is matched before ":id"', () {
       expect(RedesignRoutes.newEvent, '/termine/neu');
-      final neu = router.indexOf("path: 'neu',\n                name: 'redesignEventCreate'");
+      final neu = router.indexOf(
+        RegExp(r"path:\s*'neu',\s*name:\s*'redesignEventCreate'"),
+      );
       final id = router.indexOf("name: 'redesignEvent',");
       expect(neu, isNot(-1));
       expect(neu, lessThan(id));
