@@ -6174,6 +6174,80 @@
   "@editorUndo": {
     "description": "editor.undo"
   },
+  "ensembleGuideBack": "Zurück",
+  "@ensembleGuideBack": {
+    "description": "ensembleGuideBack"
+  },
+  "ensembleGuideChange": "Ändern",
+  "@ensembleGuideChange": {
+    "description": "ensembleGuideChange"
+  },
+  "ensembleGuideCreate": "{kind, select, orchestra {Orchester erstellen} choir {Chor erstellen} other {Gruppe erstellen}}",
+  "@ensembleGuideCreate": {
+    "description": "ensembleGuideCreate",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "ensembleGuideCustom": "Selbst zusammenstellen",
+  "@ensembleGuideCustom": {
+    "description": "ensembleGuideCustom"
+  },
+  "ensembleGuideInstrumentsHint": "Wähle eine passende Vorlage und passe sie an dein Ensemble an. Du kannst die Besetzung auch später einrichten.",
+  "@ensembleGuideInstrumentsHint": {
+    "description": "ensembleGuideInstrumentsHint"
+  },
+  "ensembleGuideLeadership": "Leitungsgruppe",
+  "@ensembleGuideLeadership": {
+    "description": "ensembleGuideLeadership"
+  },
+  "ensembleGuideLeadershipDefault": "Leitung",
+  "@ensembleGuideLeadershipDefault": {
+    "description": "ensembleGuideLeadershipDefault"
+  },
+  "ensembleGuideLeadershipEdit": "Leitungsgruppe benennen",
+  "@ensembleGuideLeadershipEdit": {
+    "description": "ensembleGuideLeadershipEdit"
+  },
+  "ensembleGuideNameHint": "Das Kürzel schlagen wir aus dem Namen vor. Du kannst es anpassen.",
+  "@ensembleGuideNameHint": {
+    "description": "ensembleGuideNameHint"
+  },
+  "ensembleGuideNext": "Weiter",
+  "@ensembleGuideNext": {
+    "description": "ensembleGuideNext"
+  },
+  "ensembleGuideOtherGroup": "Andere Gruppe",
+  "@ensembleGuideOtherGroup": {
+    "description": "ensembleGuideOtherGroup"
+  },
+  "ensembleGuideProgress": "Schritt {current} von {total}",
+  "@ensembleGuideProgress": {
+    "description": "ensembleGuideProgress",
+    "placeholders": {
+      "current": {},
+      "total": {}
+    }
+  },
+  "ensembleGuideQuestionInstruments": "Mit welcher Besetzung möchtest du starten?",
+  "@ensembleGuideQuestionInstruments": {
+    "description": "ensembleGuideQuestionInstruments"
+  },
+  "ensembleGuideQuestionName": "{kind, select, orchestra {Wie heißt dein Orchester?} choir {Wie heißt dein Chor?} other {Wie heißt deine Gruppe?}}",
+  "@ensembleGuideQuestionName": {
+    "description": "ensembleGuideQuestionName",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "ensembleGuideQuestionType": "Welche Art von Gruppe möchtest du erstellen?",
+  "@ensembleGuideQuestionType": {
+    "description": "ensembleGuideQuestionType"
+  },
+  "ensembleGuideSummary": "Alles bereit",
+  "@ensembleGuideSummary": {
+    "description": "ensembleGuideSummary"
+  },
   "excuseCustomOption": "Sonstiger Grund (Text)",
   "@excuseCustomOption": {
     "description": "excuse.customOption"

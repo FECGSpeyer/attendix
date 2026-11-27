@@ -5038,6 +5038,74 @@ class AppLocalizationsEn extends AppLocalizations {
   String get editorUndo => 'Undo';
 
   @override
+  String get ensembleGuideBack => 'Back';
+
+  @override
+  String get ensembleGuideChange => 'Change';
+
+  @override
+  String ensembleGuideCreate(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Create orchestra',
+      'choir': 'Create choir',
+      'other': 'Create group',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get ensembleGuideCustom => 'Choose your own';
+
+  @override
+  String get ensembleGuideInstrumentsHint =>
+      'Choose a matching preset and adjust it for your ensemble. You can also set up the instrumentation later.';
+
+  @override
+  String get ensembleGuideLeadership => 'Leadership group';
+
+  @override
+  String get ensembleGuideLeadershipDefault => 'Leadership';
+
+  @override
+  String get ensembleGuideLeadershipEdit => 'Name the leadership group';
+
+  @override
+  String get ensembleGuideNameHint =>
+      'We suggest an abbreviation from the name. You can change it.';
+
+  @override
+  String get ensembleGuideNext => 'Next';
+
+  @override
+  String get ensembleGuideOtherGroup => 'Other group';
+
+  @override
+  String ensembleGuideProgress(Object current, Object total) {
+    return 'Step $current of $total';
+  }
+
+  @override
+  String get ensembleGuideQuestionInstruments =>
+      'Which instrumentation would you like to start with?';
+
+  @override
+  String ensembleGuideQuestionName(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'What is your orchestra called?',
+      'choir': 'What is your choir called?',
+      'other': 'What is your group called?',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get ensembleGuideQuestionType =>
+      'What kind of group would you like to create?';
+
+  @override
+  String get ensembleGuideSummary => 'Ready to create';
+
+  @override
   String get excuseCustomOption => 'Other reason (text)';
 
   @override

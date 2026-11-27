@@ -22,6 +22,8 @@ import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
+import '../../../redesign/presentation/widgets/manage/rd_settings_sheets.dart'
+    show showRdTextSheet;
 import '../../../instruments/data/catalog_import.dart';
 import '../../../instruments/data/catalog_selection.dart';
 import '../../../instruments/data/instrument_presets.dart';
@@ -106,7 +108,7 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
   void initState() {
     super.initState();
     _shortNameController.addListener(_onFieldChanged);
-    _longNameController.addListener(_onFieldChanged);
+    _longNameController.addListener(_onNameChanged);
     _mainGroupNameController.addListener(_onFieldChanged);
   }
 
@@ -115,7 +117,7 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
   @override
   void dispose() {
     _shortNameController.removeListener(_onFieldChanged);
-    _longNameController.removeListener(_onFieldChanged);
+    _longNameController.removeListener(_onNameChanged);
     _mainGroupNameController.removeListener(_onFieldChanged);
     _shortNameController.dispose();
     _longNameController.dispose();
@@ -132,10 +134,111 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
       _mainGroupName.isNotEmpty;
 
   void _close() {
-    if (context.canPop()) {
-      context.pop();
-    } else {
-      context.go('/tenants');
+    if (_busy) return;
+    setState(() => _isClosing = true);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      if (context.canPop()) {
+        context.pop();
+      } else {
+        context.go('/tenants');
+      }
+    });
+  }
+
+  int _step = 0;
+  bool _hasType = false;
+  bool _shortNameEdited = false;
+  bool _mainNameInitialized = false;
+  bool _isClosing = false;
+  final _typeSelections =
+      <String, ({String? presetId, List<CatalogGroupDraft> drafts})>{};
+  bool get _busy => _isLoading || _isChoosingCatalog || _isClosing;
+  int get _lastStep => _selectedType == 'general' ? 1 : 2;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_mainNameInitialized) {
+      _mainNameInitialized = true;
+      _mainGroupNameController.text =
+          context.l10n.ensembleGuideLeadershipDefault;
+    }
+  }
+
+  void _onNameChanged() {
+    if (!_shortNameEdited) {
+      final words =
+          _longNameController.text
+              .trim()
+              .split(RegExp(r'\s+'))
+              .where((word) => word.isNotEmpty)
+              .toList();
+      final suggestion =
+          words.length > 1
+              ? words.take(6).map((word) => word.characters.first).join()
+              : (words.isEmpty ? '' : words.first.characters.take(3).join());
+      _shortNameController.text = suggestion.toUpperCase();
+    }
+    _onFieldChanged();
+  }
+
+  void _chooseType(String type) {
+    if (_busy) return;
+    setState(() {
+      if (_selectedType != type) {
+        if (_hasType && _selectedType != 'general') {
+          _typeSelections[_selectedType] = (
+            presetId: _catalogPresetId,
+            drafts: _catalogSelection,
+          );
+        }
+        final saved = _typeSelections[type];
+        _catalogPresetId = saved?.presetId;
+        _catalogSelection = saved?.drafts ?? const [];
+        _selectedType = type;
+      }
+      _hasType = true;
+    });
+  }
+
+  void _nextStep() {
+    if (_busy || _creationComplete) return;
+    if ((_step == 0 && !_hasType) || (_step == 1 && !_isComplete)) return;
+    if (_step < _lastStep) {
+      FocusManager.instance.primaryFocus?.unfocus();
+      setState(() => _step++);
+    }
+  }
+
+  void _previousStep() {
+    if (_busy || _step == 0) return;
+    FocusManager.instance.primaryFocus?.unfocus();
+    setState(() => _step--);
+  }
+
+  Future<void> _editLeadership() async {
+    if (_busy) return;
+    final account = ref.read(currentAuthUserIdProvider);
+    final tenant = ref.read(currentTenantIdProvider);
+    setState(() => _isChoosingCatalog = true);
+    try {
+      final value = await showRdTextSheet(
+        context,
+        title: context.l10n.ensembleGuideLeadershipEdit,
+        initial: _mainGroupName,
+        hint: context.l10n.ensembleGuideLeadershipDefault,
+        required: true,
+      );
+      if (!mounted ||
+          value == null ||
+          ref.read(currentAuthUserIdProvider) != account ||
+          ref.read(currentTenantIdProvider) != tenant) {
+        return;
+      }
+      _mainGroupNameController.text = value;
+    } finally {
+      if (mounted) setState(() => _isChoosingCatalog = false);
     }
   }
 
@@ -150,95 +253,255 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
     );
     final selectedPreset =
         presets.where((preset) => preset.id == _catalogPresetId).firstOrNull;
-    final selectionCount =
+    final total = _hasType ? _lastStep + 1 : 3;
+    final finalStep = _hasType && _step == _lastStep;
+    final count =
         _catalogSelection.isEmpty
             ? l10n.catalogSetupNone
             : l10n.catalogSetupCount(_catalogSelection.length);
-    final textStyle = TextStyle(fontSize: 17, color: p.text);
-    Widget hint(String text) => Padding(
-      padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
-      child: Text(text, style: RdType.meta(p, size: 13)),
-    );
+    final question = switch (_step) {
+      0 => l10n.ensembleGuideQuestionType,
+      1 => l10n.ensembleGuideQuestionName(_selectedType),
+      _ => l10n.ensembleGuideQuestionInstruments,
+    };
     Widget field(
       String label,
       TextEditingController controller,
-      String placeholder, {
+      String placeholder,
+      String key, {
       int? maxLength,
-      String? key,
+      ValueChanged<String>? onChanged,
     }) => RdFieldRow(
       label: label,
       child: TextField(
-        key: key == null ? null : Key(key),
+        key: Key(key),
         controller: controller,
-        enabled: !_isLoading,
+        enabled: !_busy,
         maxLength: maxLength,
+        onChanged: onChanged,
         textCapitalization: TextCapitalization.sentences,
         textInputAction: TextInputAction.next,
-        style: textStyle,
+        style: TextStyle(fontSize: 17, color: p.text),
         decoration: rdInputDecoration(p, placeholder).copyWith(counterText: ''),
       ),
     );
+    Widget typeCard(String type) {
+      final typeTexts = TenantTypeTexts.of(type, l10n);
+      final selected = _hasType && _selectedType == type;
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 12),
+        child: Semantics(
+          selected: selected,
+          button: true,
+          child: Material(
+            color: selected ? p.primary.withValues(alpha: 0.10) : p.surface,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+              side: BorderSide(
+                color: selected ? p.primary : p.offBorder,
+                width: selected ? 2 : 1,
+              ),
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              key: Key('rd-tenant-type-$type'),
+              onTap: _busy ? null : () => _chooseType(type),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    Icon(typeTexts.icon, color: p.primary, size: 26),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            type == 'general'
+                                ? l10n.ensembleGuideOtherGroup
+                                : typeTexts.label,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: p.text,
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          Text(typeTexts.help, style: RdType.meta(p, size: 13)),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Icon(
+                      selected
+                          ? Icons.check_circle
+                          : Icons.radio_button_unchecked,
+                      color: selected ? p.primary : p.text2,
+                      size: 22,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    Widget summary() => Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const SizedBox(height: 24),
+        RdGroupLabel(l10n.ensembleGuideSummary),
+        RdGroupedList(
+          children: [
+            RdListRow(
+              title:
+                  _longName.isEmpty ? l10n.redesignTenantsNewName : _longName,
+              subtitle: _shortName,
+              showChevron: false,
+            ),
+            if (_selectedType != 'general')
+              RdListRow(
+                title:
+                    selectedPreset?.label(language) ?? l10n.catalogSetupTitle,
+                subtitle:
+                    _catalogSelection.isEmpty ? l10n.catalogSetupLater : count,
+                showChevron: false,
+              ),
+            RdListRow(
+              key: const Key('rd-tenant-guide-leadership'),
+              title: l10n.ensembleGuideLeadership,
+              subtitle: _mainGroupName,
+              value: l10n.ensembleGuideChange,
+              onTap: _busy ? null : _editLeadership,
+            ),
+          ],
+        ),
+      ],
+    );
+    final canContinue =
+        !_busy && !_creationComplete && (_step == 0 ? _hasType : _isComplete);
     return PopScope(
-      canPop: !_isLoading,
+      canPop: _isClosing || (!_busy && _step == 0),
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) _previousStep();
+      },
       child: Scaffold(
         backgroundColor: p.bg,
         body: SafeArea(
-          bottom: false,
           child: Column(
             children: [
-              RdFormTopBar(
-                title: l10n.redesignTenantsNewTitle,
-                cancel: l10n.redesignCommonCancel,
-                submit: l10n.redesignTenantsNewSubmit,
-                saving: _isLoading,
-                onCancel: !_isLoading ? _close : null,
-                onSubmit:
-                    _isLoading || _creationComplete || _isChoosingCatalog
-                        ? null
-                        : () =>
-                            _isComplete
-                                ? _createTenant()
-                                : ToastHelper.showError(
-                                  context,
-                                  l10n.redesignTenantsNewMissing,
-                                ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                child: Row(
+                  children: [
+                    Flexible(
+                      child: TextButton(
+                        onPressed: _busy ? null : _close,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(l10n.redesignCommonCancel, maxLines: 1),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        l10n.redesignTenantsNewTitle,
+                        textAlign: TextAlign.end,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w600,
+                          color: p.text,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
               Expanded(
                 child: RdFormBody(
+                  key: ValueKey(_step),
                   children: [
-                    RdGroupLabel(l10n.redesignTenantsNewType),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        for (final type in const [
-                          'choir',
-                          'orchestra',
-                          'general',
-                        ])
-                          RdChoiceChip(
-                            label:
-                                type == 'general'
-                                    ? l10n.redesignTenantsTypeGeneral
-                                    : TenantTypeTexts.of(type, l10n).label,
-                            selected: _selectedType == type,
-                            onTap:
-                                _isLoading || _isChoosingCatalog
-                                    ? null
-                                    : () => setState(() {
-                                      if (_selectedType != type) {
-                                        _catalogSelection = const [];
-                                        _catalogPresetId = null;
-                                      }
-                                      _selectedType = type;
-                                    }),
-                          ),
-                      ],
+                    const SizedBox(height: 12),
+                    Semantics(
+                      liveRegion: true,
+                      child: Text(
+                        l10n.ensembleGuideProgress(_step + 1, total),
+                        style: RdType.meta(p, size: 14),
+                      ),
                     ),
-                    hint(texts.help),
-                    if (_selectedType != 'general') ...[
-                      const SizedBox(height: 20),
-                      RdGroupLabel(l10n.catalogSetupTitle),
+                    const SizedBox(height: 10),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: LinearProgressIndicator(
+                        value: (_step + 1) / total,
+                        color: p.primary,
+                        backgroundColor: p.track,
+                        minHeight: 4,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    Semantics(
+                      header: true,
+                      child: Text(
+                        question,
+                        style: TextStyle(
+                          fontSize: 27,
+                          height: 1.18,
+                          fontWeight: FontWeight.w700,
+                          color: p.text,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    if (_step == 0) ...[
+                      for (final type in const [
+                        'orchestra',
+                        'choir',
+                        'general',
+                      ])
+                        typeCard(type),
+                    ],
+                    if (_step == 1) ...[
+                      RdGroupedList(
+                        children: [
+                          field(
+                            l10n.redesignTenantsNewName,
+                            _longNameController,
+                            texts.namePlaceholder,
+                            'rd-tenant-new-name',
+                            maxLength: 50,
+                          ),
+                          field(
+                            l10n.redesignTenantsNewShort,
+                            _shortNameController,
+                            texts.shortPlaceholder,
+                            'rd-tenant-new-short',
+                            onChanged: (_) => _shortNameEdited = true,
+                          ),
+                        ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
+                        child: Text(
+                          l10n.ensembleGuideNameHint,
+                          style: RdType.meta(p, size: 14),
+                        ),
+                      ),
+                    ],
+                    if (_step == 2) ...[
+                      Text(
+                        l10n.ensembleGuideInstrumentsHint,
+                        style: RdType.meta(p, size: 15),
+                      ),
+                      const SizedBox(height: 16),
                       Wrap(
                         spacing: 8,
                         runSpacing: 8,
@@ -248,10 +511,7 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
                               key: Key('rd-tenant-preset-${preset.id}'),
                               label: preset.label(language),
                               selected: _catalogPresetId == preset.id,
-                              onTap:
-                                  _isLoading || _isChoosingCatalog
-                                      ? null
-                                      : () => _choosePreset(preset),
+                              onTap: _busy ? null : () => _choosePreset(preset),
                             ),
                           RdChoiceChip(
                             key: const Key('rd-tenant-preset-later'),
@@ -259,66 +519,122 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
                             selected:
                                 _catalogPresetId == null &&
                                 _catalogSelection.isEmpty,
-                            onTap:
-                                _isLoading || _isChoosingCatalog
-                                    ? null
-                                    : () => _choosePreset(null),
+                            onTap: _busy ? null : () => _choosePreset(null),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 16),
                       RdGroupedList(
                         children: [
                           RdListRow(
                             key: const Key('rd-tenant-catalog'),
-                            title: l10n.catalogSetupChoose,
-                            subtitle:
-                                selectedPreset == null
-                                    ? selectionCount
-                                    : '${selectedPreset.label(language)} · $selectionCount',
-                            onTap:
-                                _isLoading || _isChoosingCatalog
-                                    ? null
-                                    : _chooseCatalog,
+                            title:
+                                _catalogSelection.isEmpty &&
+                                        _catalogPresetId == null
+                                    ? l10n.ensembleGuideCustom
+                                    : l10n.catalogSetupChoose,
+                            subtitle: count,
+                            leading: RdRowIcon(Icons.tune),
+                            onTap: _busy ? null : _chooseCatalog,
                           ),
                         ],
                       ),
                     ],
-                    const SizedBox(height: 20),
-                    RdGroupedList(
-                      children: [
-                        field(
-                          l10n.redesignTenantsNewName,
-                          _longNameController,
-                          texts.namePlaceholder,
-                          maxLength: 50,
-                          key: 'rd-tenant-new-name',
-                        ),
-                        field(
-                          l10n.redesignTenantsNewShort,
-                          _shortNameController,
-                          texts.shortPlaceholder,
-                          key: 'rd-tenant-new-short',
-                        ),
-                      ],
-                    ),
-                    hint(
-                      '${l10n.redesignTenantsNewNameHint} ${l10n.redesignTenantsNewShortHint}',
-                    ),
-                    const SizedBox(height: 20),
-                    RdGroupLabel(l10n.redesignTenantsNewMain),
-                    RdGroupedList(
-                      children: [
-                        field(
-                          l10n.redesignTenantsNewMainName,
-                          _mainGroupNameController,
-                          texts.mainGroupPlaceholder,
-                          key: 'rd-tenant-new-main',
-                        ),
-                      ],
-                    ),
-                    hint(l10n.redesignTenantsNewMainHint(_selectedType)),
+                    if (finalStep) summary(),
                   ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 640),
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        final back = TextButton(
+                          key: const Key('rd-tenant-guide-back'),
+                          onPressed: _busy ? null : _previousStep,
+                          style: TextButton.styleFrom(
+                            minimumSize: const Size(48, 48),
+                          ),
+                          child: Text(l10n.ensembleGuideBack),
+                        );
+                        final primary = FilledButton(
+                          key: Key(
+                            finalStep
+                                ? 'rd-tenant-guide-create'
+                                : 'rd-tenant-guide-next',
+                          ),
+                          onPressed:
+                              canContinue
+                                  ? (finalStep ? _createTenant : _nextStep)
+                                  : null,
+                          style: FilledButton.styleFrom(
+                            backgroundColor: p.primary,
+                            foregroundColor: p.onPrimary,
+                            disabledBackgroundColor: p.track,
+                            disabledForegroundColor: p.text2,
+                            minimumSize: const Size(48, 48),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 14,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                p.buttonRadius,
+                              ),
+                            ),
+                            textStyle: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          child:
+                              _isLoading
+                                  ? const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                  : Text(
+                                    finalStep
+                                        ? l10n.ensembleGuideCreate(
+                                          _selectedType,
+                                        )
+                                        : l10n.ensembleGuideNext,
+                                    textAlign: TextAlign.center,
+                                  ),
+                        );
+                        final stacked =
+                            constraints.maxWidth < 328 ||
+                            MediaQuery.textScalerOf(context).scale(16) > 21;
+                        if (stacked) {
+                          return Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              primary,
+                              if (_step > 0) ...[
+                                const SizedBox(height: 4),
+                                back,
+                              ],
+                            ],
+                          );
+                        }
+                        return Row(
+                          children: [
+                            if (_step > 0) ...[
+                              Flexible(child: back),
+                              const SizedBox(width: 12),
+                            ],
+                            Expanded(flex: 2, child: primary),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -329,7 +645,7 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
   }
 
   Future<void> _chooseCatalog() async {
-    if (_isLoading || _isChoosingCatalog) return;
+    if (_busy) return;
     final type = _selectedType;
     final accountId = ref.read(currentAuthUserIdProvider);
     final tenantId = ref.read(currentTenantIdProvider);
@@ -359,7 +675,7 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
   }
 
   Future<void> _choosePreset(CatalogPreset? preset) async {
-    if (_isLoading || _isChoosingCatalog || _creationComplete) return;
+    if (_busy || _creationComplete) return;
     if (preset?.id == _catalogPresetId &&
         (preset != null || _catalogSelection.isEmpty)) {
       return;
@@ -430,7 +746,7 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
   }
 
   Future<void> _createTenant() async {
-    if (_isLoading || _creationComplete) return;
+    if (_busy || _creationComplete || !_hasType || _step != _lastStep) return;
     if (!_isComplete) {
       ToastHelper.showError(context, context.l10n.registerFillAllToast);
       return;
@@ -439,7 +755,10 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
     final userId = ref.read(currentAuthUserIdProvider);
     if (userId == null) return;
     final startingTenantId = ref.read(currentTenantIdProvider);
-    final selection = List<CatalogGroupDraft>.of(_catalogSelection);
+    final selection =
+        _selectedType == 'general'
+            ? <CatalogGroupDraft>[]
+            : List<CatalogGroupDraft>.of(_catalogSelection);
     bool sameAccount() =>
         mounted && ref.read(currentAuthUserIdProvider) == userId;
     bool beforeSelection() =>

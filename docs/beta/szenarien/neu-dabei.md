@@ -103,19 +103,25 @@ Freigabe warten.
 - **Wo:** „Eigene Gruppe gründen“ auf der Startseite ohne Gruppe, oder „Ich“ ›
   „Meine Gruppen“ › „Neue Gruppe gründen“
 - **Schritte:**
-  1. Wähle die „Art der Gruppe“: Orchester, Chor oder Allgemein.
-  2. Bei Orchester oder Chor kannst du direkt eine „Besetzung wählen“ oder
+  1. Wähle Orchester, Chor oder „Andere Gruppe“ und tippe auf „Weiter“.
+  2. Gib den Namen ein. Die App schlägt ein Kürzel vor, das du anpassen kannst.
+     Bei Orchester und Chor führt „Weiter“ zur Besetzung.
+  3. Wähle eine passende Vorlage, nutze „Selbst zusammenstellen“ oder
      „Später einrichten“. Über „Auswahl anpassen“ ergänzt oder entfernst du
      Einträge. „Auswahl übernehmen“ merkt sie für die neue Gruppe vor.
-  3. Trag „Name“ und „Kürzel“ ein.
-  4. Benenne die „Hauptgruppe“. Sie ist für die Leitung, zum Beispiel
-     Dirigenten oder Vorstand.
-  5. Tippe auf „Gründen“.
+     Dieser Schritt entfällt bei anderen Gruppen.
+  4. Prüfe die Zusammenfassung. Die Leitungsgruppe heißt zunächst „Leitung“;
+     über „Ändern“ kannst du einen anderen Namen vergeben.
+  5. Bestätige mit „Orchester erstellen“, „Chor erstellen“ oder „Gruppe erstellen“.
+     Erst jetzt wird die Gruppe angelegt.
 - **Ergebnis:** Die Gruppe ist angelegt und du bist ihr Administrator. Weiter
   geht es mit Instrumenten, Mitgliedern und Terminen
   ([Leitung](leitung.md#gruppe-einrichten)).
 - **Gut zu wissen:** Die Art der Gruppe bestimmt die Wörter der App
   (Instrument, Stimme oder Untergruppe) und ob es den Reiter „Werke“ gibt.
+  „Zurück“ erhält deine Eingaben. Wenn du zwischen Orchester und Chor wechselst,
+  bleibt die jeweilige Besetzung vorgemerkt. Ein selbst eingegebenes Kürzel wird
+  bei späteren Namensänderungen beibehalten.
   Beim Wechsel einer Vorlage kannst du die bisherige Auswahl ergänzen oder
   bewusst ersetzen. Dieselbe Vorlage erneut anzutippen lässt Anpassungen
   bestehen. „Später einrichten“ fragt nach, bevor es eine Auswahl verwirft.

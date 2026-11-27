@@ -1,0 +1,38 @@
+{
+  "de": {
+    "ensembleGuideQuestionType": "Welche Art von Gruppe möchtest du erstellen?",
+    "ensembleGuideQuestionName": "{kind, select, orchestra {Wie heißt dein Orchester?} choir {Wie heißt dein Chor?} other {Wie heißt deine Gruppe?}}",
+    "ensembleGuideQuestionInstruments": "Mit welcher Besetzung möchtest du starten?",
+    "ensembleGuideProgress": "Schritt {current} von {total}",
+    "ensembleGuideOtherGroup": "Andere Gruppe",
+    "ensembleGuideNext": "Weiter",
+    "ensembleGuideBack": "Zurück",
+    "ensembleGuideCreate": "{kind, select, orchestra {Orchester erstellen} choir {Chor erstellen} other {Gruppe erstellen}}",
+    "ensembleGuideNameHint": "Das Kürzel schlagen wir aus dem Namen vor. Du kannst es anpassen.",
+    "ensembleGuideSummary": "Alles bereit",
+    "ensembleGuideLeadership": "Leitungsgruppe",
+    "ensembleGuideLeadershipDefault": "Leitung",
+    "ensembleGuideChange": "Ändern",
+    "ensembleGuideLeadershipEdit": "Leitungsgruppe benennen",
+    "ensembleGuideCustom": "Selbst zusammenstellen",
+    "ensembleGuideInstrumentsHint": "Wähle eine passende Vorlage und passe sie an dein Ensemble an. Du kannst die Besetzung auch später einrichten."
+  },
+  "en": {
+    "ensembleGuideQuestionType": "What kind of group would you like to create?",
+    "ensembleGuideQuestionName": "{kind, select, orchestra {What is your orchestra called?} choir {What is your choir called?} other {What is your group called?}}",
+    "ensembleGuideQuestionInstruments": "Which instrumentation would you like to start with?",
+    "ensembleGuideProgress": "Step {current} of {total}",
+    "ensembleGuideOtherGroup": "Other group",
+    "ensembleGuideNext": "Next",
+    "ensembleGuideBack": "Back",
+    "ensembleGuideCreate": "{kind, select, orchestra {Create orchestra} choir {Create choir} other {Create group}}",
+    "ensembleGuideNameHint": "We suggest an abbreviation from the name. You can change it.",
+    "ensembleGuideSummary": "Ready to create",
+    "ensembleGuideLeadership": "Leadership group",
+    "ensembleGuideLeadershipDefault": "Leadership",
+    "ensembleGuideChange": "Change",
+    "ensembleGuideLeadershipEdit": "Name the leadership group",
+    "ensembleGuideCustom": "Choose your own",
+    "ensembleGuideInstrumentsHint": "Choose a matching preset and adjust it for your ensemble. You can also set up the instrumentation later."
+  }
+}

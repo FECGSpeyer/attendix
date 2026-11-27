@@ -28,17 +28,21 @@ void main() {
   }
 
   group('AuthModeSegment', () {
-    testWidgets('labels only, no icons; tap switches the mode',
-        (tester) async {
+    testWidgets('labels only, no icons; tap switches the mode', (tester) async {
       var mode = AuthMode.password;
-      await tester.pumpWidget(app(Scaffold(
-        body: StatefulBuilder(
-          builder: (context, setState) => AuthModeSegment(
-            mode: mode,
-            onChanged: (m) => setState(() => mode = m),
+      await tester.pumpWidget(
+        app(
+          Scaffold(
+            body: StatefulBuilder(
+              builder:
+                  (context, setState) => AuthModeSegment(
+                    mode: mode,
+                    onChanged: (m) => setState(() => mode = m),
+                  ),
+            ),
           ),
         ),
-      )));
+      );
       expect(find.text('Passwort'), findsOneWidget);
       expect(find.text('Code per E-Mail'), findsOneWidget);
       expect(find.byType(Icon), findsNothing);
@@ -49,20 +53,25 @@ void main() {
   });
 
   group('OtpCodeField', () {
-    testWidgets('six boxes, label below, completes after six digits',
-        (tester) async {
+    testWidgets('six boxes, label below, completes after six digits', (
+      tester,
+    ) async {
       await setPhone(tester);
       final controller = TextEditingController();
       addTearDown(controller.dispose);
       String? completed;
-      await tester.pumpWidget(app(Scaffold(
-        body: Center(
-          child: OtpCodeField(
-            controller: controller,
-            onCompleted: (v) => completed = v,
+      await tester.pumpWidget(
+        app(
+          Scaffold(
+            body: Center(
+              child: OtpCodeField(
+                controller: controller,
+                onCompleted: (v) => completed = v,
+              ),
+            ),
           ),
         ),
-      )));
+      );
       expect(find.text('Code aus der E-Mail'), findsOneWidget);
       await tester.enterText(find.byType(TextField), '123456');
       await tester.pump();
@@ -73,26 +82,30 @@ void main() {
     });
   });
 
-  testWidgets('OtpCodeField keeps a text field semantics node (web a11y tree)',
-      (tester) async {
-    final handle = tester.ensureSemantics();
-    await setPhone(tester);
-    final controller = TextEditingController();
-    addTearDown(controller.dispose);
-    await tester.pumpWidget(app(Scaffold(
-      body: Center(child: OtpCodeField(controller: controller)),
-    )));
-    expect(
-      find.semantics.byPredicate((node) =>
-          node.getSemanticsData().flagsCollection.isTextField),
-      findsOneWidget,
-    );
-    handle.dispose();
-  });
+  testWidgets(
+    'OtpCodeField keeps a text field semantics node (web a11y tree)',
+    (tester) async {
+      final handle = tester.ensureSemantics();
+      await setPhone(tester);
+      final controller = TextEditingController();
+      addTearDown(controller.dispose);
+      await tester.pumpWidget(
+        app(
+          Scaffold(body: Center(child: OtpCodeField(controller: controller))),
+        ),
+      );
+      expect(
+        find.semantics.byPredicate(
+          (node) => node.getSemanticsData().flagsCollection.isTextField,
+        ),
+        findsOneWidget,
+      );
+      handle.dispose();
+    },
+  );
 
   group('Neue Gruppe anlegen', () {
-    testWidgets('dismissable: cancel button, no account menu',
-        (tester) async {
+    testWidgets('dismissable: cancel button, no account menu', (tester) async {
       await setPhone(tester);
       await tester.pumpWidget(app(const TenantCreatePage()));
       await tester.pumpAndSettle();
@@ -100,24 +113,38 @@ void main() {
       expect(find.byKey(const ValueKey('register-account-menu')), findsNothing);
     });
 
-    testWidgets('type chips and grouped fields render', (tester) async {
-      tester.view.physicalSize = const Size(393, 3000);
-      tester.view.devicePixelRatio = 1;
-      addTearDown(tester.view.reset);
-      await tester.pumpWidget(app(const TenantCreatePage()));
-      await tester.pumpAndSettle();
-      expect(find.byType(RdChoiceChip), findsNWidgets(3));
-      expect(find.byType(RdGroupedList), findsNWidgets(2));
-      expect(find.byKey(const Key('rd-tenant-new-name')), findsOneWidget);
-      expect(find.byKey(const Key('rd-tenant-new-short')), findsOneWidget);
-      expect(find.byKey(const Key('rd-tenant-new-main')), findsOneWidget);
-    });
+    testWidgets(
+      'guide starts with type cards and reveals grouped identity fields',
+      (tester) async {
+        tester.view.physicalSize = const Size(393, 3000);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        await tester.pumpWidget(app(const TenantCreatePage()));
+        await tester.pumpAndSettle();
+        expect(
+          find.byKey(const Key('rd-tenant-type-orchestra')),
+          findsOneWidget,
+        );
+        expect(find.byKey(const Key('rd-tenant-type-choir')), findsOneWidget);
+        expect(find.byKey(const Key('rd-tenant-type-general')), findsOneWidget);
+        expect(find.byKey(const Key('rd-tenant-new-name')), findsNothing);
+        await tester.tap(find.byKey(const Key('rd-tenant-type-orchestra')));
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const Key('rd-tenant-guide-next')));
+        await tester.pumpAndSettle();
+        expect(find.byType(RdGroupedList), findsOneWidget);
+        expect(find.byKey(const Key('rd-tenant-new-name')), findsOneWidget);
+        expect(find.byKey(const Key('rd-tenant-new-short')), findsOneWidget);
+        expect(find.byKey(const Key('rd-tenant-new-main')), findsNothing);
+      },
+    );
   });
 
   test('notification center does not use ListView.separated', () {
-    final src = File(
-            'lib/features/messages/presentation/widgets/notification_bell.dart')
-        .readAsStringSync();
+    final src =
+        File(
+          'lib/features/messages/presentation/widgets/notification_bell.dart',
+        ).readAsStringSync();
     expect(src, isNot(contains('ListView.separated(')));
   });
 }

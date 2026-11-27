@@ -26,23 +26,32 @@
 ### Task 1: Guide UI, local state, localization and behavior tests
 **Files:** Own lib/features/tenant_selection/presentation/pages/tenant_create_page.dart; optionally a small private guide widget/helper under the same feature; test/features/tenant_selection/tenant_catalog_setup_test.dart; test/features/auth/ux_auth_ios_test.dart; l10n fragments and generated outputs. Do not modify root-owned docs/changelog/plan or shared catalog files.
 **Interfaces:** Existing TenantCreatePage public API unchanged. Reuse showInstrumentCatalogSheet purpose setup, CatalogPickerResult, mergeCatalogDrafts and shared preset-change dialog. Existing creation/import pipeline stays intact. Keep current field keys; add rd-tenant-guide-next, rd-tenant-guide-back, rd-tenant-guide-create and rd-tenant-type-{orchestra,choir,general}. Main-group editing may reuse rd-tenant-new-main on its edit control. Preserve GoRouter.of(context).go(RedesignRoutes.today) spelling for existing source-parity assertions.
-- [ ] Write/run RED widget tests for step order, required type choice, dynamic questions, final-only writes, three/two steps, automatic acronym and manual override preservation, back navigation and active-type import isolation.
-- [ ] Implement the approved screens and state. Use selectable type cards, progress text, one large question, keyboard-safe scroll content and bottom actions. No preselected type. General groups skip instrumentation. Summary on final screen includes name/kürzel, active selection and editable default Leitung.
-- [ ] Retain instrument drafts per type; UI and system back preserve them. Returning orchestra -> choir -> orchestra restores its preset and custom entries. General creation imports none. Update existing setup tests to navigate the new flow, retaining prior import-failure, duplicate-create and stale-scope assertions.
-- [ ] Add generated DE/EN copy: question prompts, step progress, Andere Gruppe / Other group, Weiter / Next, Zurück / Back, contextual create actions, Leitung / Leadership, Leitungsgruppe / Leadership group, Ändern / Change, Selbst zusammenstellen / Choose instruments or voices. Reuse existing catalog copy where accurate. Remove the stale main-group hint that says choose instruments above from the new flow; unused localization can stay for other callers.
-- [ ] Tests cover default/edited leadership name submission, empty optional instrumentation, setup merge/reopen regression, same-preset preservation, custom-only setup, narrow/large-text operation, short-name Unicode/basic single-word inputs and no overwrite of a manual acronym.
-- [ ] Run flutter test --no-pub test/features/tenant_selection test/features/auth/ux_auth_ios_test.dart and changed-file analysis, then relevant catalog/l10n regression suite. Resolve tests meaningfully, not by weakening assertions.
-- [ ] Self-review and commit only owned paths using git commit --only. Report red/green evidence, changed files, commit and any concerns in the task report.
+- [x] Write/run RED widget tests for step order, required type choice, dynamic questions, final-only writes, three/two steps, automatic acronym and manual override preservation, back navigation and active-type import isolation.
+- [x] Implement the approved screens and state. Use selectable type cards, progress text, one large question, keyboard-safe scroll content and bottom actions. No preselected type. General groups skip instrumentation. Summary on final screen includes name/kürzel, active selection and editable default Leitung.
+- [x] Retain instrument drafts per type; UI and system back preserve them. Returning orchestra -> choir -> orchestra restores its preset and custom entries. General creation imports none. Update existing setup tests to navigate the new flow, retaining prior import-failure, duplicate-create and stale-scope assertions.
+- [x] Add generated DE/EN copy: question prompts, step progress, Andere Gruppe / Other group, Weiter / Next, Zurück / Back, contextual create actions, Leitung / Leadership, Leitungsgruppe / Leadership group, Ändern / Change, Selbst zusammenstellen / Choose instruments or voices. Reuse existing catalog copy where accurate. Remove the stale main-group hint that says choose instruments above from the new flow; unused localization can stay for other callers.
+- [x] Tests cover default/edited leadership name submission, empty optional instrumentation, setup merge/reopen regression, same-preset preservation, custom-only setup, narrow/large-text operation, short-name Unicode/basic single-word inputs and no overwrite of a manual acronym.
+- [x] Run flutter test --no-pub test/features/tenant_selection test/features/auth/ux_auth_ios_test.dart and changed-file analysis, then relevant catalog/l10n regression suite. Resolve tests meaningfully, not by weakening assertions.
+- [x] Self-review and commit only owned paths using git commit --only. Report red/green evidence, changed files, commit and any concerns in the task report.
 
 ### Task 2: Documentation and rendered verification (root)
 **Files:** docs/beta/szenarien/neu-dabei.md; existing changelog/unreleased/instrument-catalog.json; approved spec/plan. Render fixtures remain ignored and screenshots in the visualization output directory.
 **Interfaces:** Read Task 1's final text and stable guide keys. No ownership overlap in source/tests/localization.
-- [ ] Update the onboarding scenario to type -> name -> optional instrumentation -> contextual create. Explain editable default leadership and preserved back navigation.
-- [ ] Update existing minor changelog. Check patrol_test for an actual creation scenario; adapt if one exists (initial search found only entrypoint coverage).
-- [ ] Render actual Flutter guide screens with fake providers, including orchestra, general final, dark and narrow/enlarged type. Inspect images and fix reproduced defects via Task 1 owner.
-- [ ] Run docs text check and diff check. Create concise screen overview; keep fixtures out of tracked code.
+- [x] Update the onboarding scenario to type -> name -> optional instrumentation -> contextual create. Explain editable default leadership and preserved back navigation.
+- [x] Update existing minor changelog. Check patrol_test for an actual creation scenario; adapt if one exists (initial search found only entrypoint coverage).
+- [x] Render actual Flutter guide screens with fake providers, including orchestra, general final, dark and narrow/enlarged type. Inspect images and fix reproduced defects via Task 1 owner.
+- [x] Run docs text check and diff check. Create concise screen overview; keep fixtures out of tracked code.
 
 ### Task 3: Review and final verification
-- [ ] Generate review package from the recorded base. Parallel independent reviews for Flutter/state/tenant boundaries and general spec/quality, with max effort. Use normal available reviewer agents for the roles because named custom plugins are not callable here.
-- [ ] Fix reproduced findings; scoped recheck as appropriate. Root runs final focused suite and changed-file analysis. Broaden only for a concrete concern.
-- [ ] Complete ledger/plan, commit root-owned docs and verify clean local worktree. No push/merge/deploy.
+- [x] Generate review package from the recorded base. Parallel independent reviews for Flutter/state/tenant boundaries and general spec/quality, with max effort. Use normal available reviewer agents for the roles because named custom plugins are not callable here.
+- [x] Fix reproduced findings; scoped recheck as appropriate. Root runs final focused suite and changed-file analysis. Broaden only for a concrete concern.
+- [x] Complete ledger/plan, commit root-owned docs and verify clean local worktree. No push/merge/deploy.
+
+## Completion evidence — 2026-11-27
+- Implementation completed natively after the delegated implementer could not access tools; the public page API and existing final creation/import pipeline are retained.
+- RED/GREEN coverage verified for the guide, top-of-step scrolling, and rapid cancellation. The review found duplicate deferred cancellation could pop two routes or permit an immediate create; closing now locks actions while permitting the intended dismissal.
+- Final focused Flutter suite: **153 passed** across instruments, tenant selection, authentication UX, management lists and localization. All **14 dedicated guide tests** pass.
+- Changed-file Dart analysis: no issues. Strict beta-documentation text check and `git diff --check`: passed.
+- Actual Flutter screens rendered and inspected for the three orchestral steps, general-group completion, dark choir setup and 320px/1.8x text. Header constraints and stacked footer actions keep controls readable; keyboard reachability is covered by a widget test.
+- Independent Flutter and general reviews completed. The Flutter reviewer confirmed the cancellation fix and responsive layout. The machine-specific rendering harness has been removed from test discovery and retained only as ignored local tooling.
+- Existing local branch and managed worktree retained as agreed. No additional integration decision is needed for this local-only scope. Verification is intentionally limited to relevant suites under the task's testing guidance.

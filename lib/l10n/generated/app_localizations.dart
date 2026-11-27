@@ -8019,6 +8019,102 @@ abstract class AppLocalizations {
   /// **'Rückgängig'**
   String get editorUndo;
 
+  /// ensembleGuideBack
+  ///
+  /// In de, this message translates to:
+  /// **'Zurück'**
+  String get ensembleGuideBack;
+
+  /// ensembleGuideChange
+  ///
+  /// In de, this message translates to:
+  /// **'Ändern'**
+  String get ensembleGuideChange;
+
+  /// ensembleGuideCreate
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, orchestra {Orchester erstellen} choir {Chor erstellen} other {Gruppe erstellen}}'**
+  String ensembleGuideCreate(String kind);
+
+  /// ensembleGuideCustom
+  ///
+  /// In de, this message translates to:
+  /// **'Selbst zusammenstellen'**
+  String get ensembleGuideCustom;
+
+  /// ensembleGuideInstrumentsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Wähle eine passende Vorlage und passe sie an dein Ensemble an. Du kannst die Besetzung auch später einrichten.'**
+  String get ensembleGuideInstrumentsHint;
+
+  /// ensembleGuideLeadership
+  ///
+  /// In de, this message translates to:
+  /// **'Leitungsgruppe'**
+  String get ensembleGuideLeadership;
+
+  /// ensembleGuideLeadershipDefault
+  ///
+  /// In de, this message translates to:
+  /// **'Leitung'**
+  String get ensembleGuideLeadershipDefault;
+
+  /// ensembleGuideLeadershipEdit
+  ///
+  /// In de, this message translates to:
+  /// **'Leitungsgruppe benennen'**
+  String get ensembleGuideLeadershipEdit;
+
+  /// ensembleGuideNameHint
+  ///
+  /// In de, this message translates to:
+  /// **'Das Kürzel schlagen wir aus dem Namen vor. Du kannst es anpassen.'**
+  String get ensembleGuideNameHint;
+
+  /// ensembleGuideNext
+  ///
+  /// In de, this message translates to:
+  /// **'Weiter'**
+  String get ensembleGuideNext;
+
+  /// ensembleGuideOtherGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Andere Gruppe'**
+  String get ensembleGuideOtherGroup;
+
+  /// ensembleGuideProgress
+  ///
+  /// In de, this message translates to:
+  /// **'Schritt {current} von {total}'**
+  String ensembleGuideProgress(Object current, Object total);
+
+  /// ensembleGuideQuestionInstruments
+  ///
+  /// In de, this message translates to:
+  /// **'Mit welcher Besetzung möchtest du starten?'**
+  String get ensembleGuideQuestionInstruments;
+
+  /// ensembleGuideQuestionName
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, orchestra {Wie heißt dein Orchester?} choir {Wie heißt dein Chor?} other {Wie heißt deine Gruppe?}}'**
+  String ensembleGuideQuestionName(String kind);
+
+  /// ensembleGuideQuestionType
+  ///
+  /// In de, this message translates to:
+  /// **'Welche Art von Gruppe möchtest du erstellen?'**
+  String get ensembleGuideQuestionType;
+
+  /// ensembleGuideSummary
+  ///
+  /// In de, this message translates to:
+  /// **'Alles bereit'**
+  String get ensembleGuideSummary;
+
   /// excuse.customOption
   ///
   /// In de, this message translates to:

@@ -89,6 +89,8 @@ Future<ProviderContainer> launch(
   GroupsRepo groups, {
   Size screenSize = const Size(393, 1100),
   double textScale = 1,
+  Brightness brightness = Brightness.light,
+  Locale locale = const Locale('de'),
 }) async {
   SharedPreferences.setMockInitialValues({});
   tester.view.physicalSize = screenSize;
@@ -128,7 +130,8 @@ Future<ProviderContainer> launch(
         userTenantsProvider.overrideWith((ref) async => [created]),
       ],
       child: MaterialApp.router(
-        theme: buildRdTheme(RdFarbwelt.petrol, Brightness.light),
+        debugShowCheckedModeBanner: false,
+        theme: buildRdTheme(RdFarbwelt.petrol, brightness),
         builder:
             (context, child) => MediaQuery(
               data: MediaQuery.of(
@@ -136,7 +139,7 @@ Future<ProviderContainer> launch(
               ).copyWith(textScaler: TextScaler.linear(textScale)),
               child: child!,
             ),
-        locale: const Locale('de'),
+        locale: locale,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         routerConfig: router,
@@ -149,26 +152,59 @@ Future<ProviderContainer> launch(
   );
 }
 
-Future<void> choose(WidgetTester tester, String type, String preset) async {
-  await tester.tap(find.text(type));
+Future<void> beginGuide(WidgetTester tester, String type) async {
+  final kind = {'Orchester': 'orchestra', 'Chor': 'choir'}[type] ?? 'general';
+  final card = find.byKey(Key('rd-tenant-type-$kind'));
+  await tester.ensureVisible(card);
   await tester.pumpAndSettle();
+  await tester.tap(card);
+  await tester.pumpAndSettle();
+  await tester.tap(find.byKey(const Key('rd-tenant-guide-next')));
+  await tester.pumpAndSettle();
+}
+
+Future<void> prepareCatalog(WidgetTester tester, String type) async {
+  await beginGuide(tester, type);
+  await tester.enterText(
+    find.byKey(const Key('rd-tenant-new-name')),
+    'Ensemble',
+  );
+  await tester.pumpAndSettle();
+  await tester.tap(find.byKey(const Key('rd-tenant-guide-next')));
+  await tester.pumpAndSettle();
+}
+
+Future<void> choose(WidgetTester tester, String type, String preset) async {
+  await prepareCatalog(tester, type);
   await tester.ensureVisible(find.text(preset));
   await tester.pumpAndSettle();
   await tester.tap(find.text(preset));
   await tester.pumpAndSettle();
 }
 
+Finder selectionCount(String text) => find.descendant(
+  of: find.byKey(const Key('rd-tenant-catalog')),
+  matching: find.textContaining(text),
+);
+
 Future<void> submit(WidgetTester tester) async {
+  if (find.byKey(const Key('rd-tenant-type-general')).evaluate().isNotEmpty) {
+    await beginGuide(tester, 'Allgemein');
+  } else if (find.byKey(const Key('rd-tenant-new-name')).evaluate().isEmpty) {
+    await tester.tap(find.byKey(const Key('rd-tenant-guide-back')));
+    await tester.pumpAndSettle();
+  }
   await tester.enterText(
     find.byKey(const Key('rd-tenant-new-name')),
     'Orchester',
   );
   await tester.enterText(find.byKey(const Key('rd-tenant-new-short')), 'O');
-  await tester.enterText(
-    find.byKey(const Key('rd-tenant-new-main')),
-    'Leitung',
-  );
-  await tester.tap(find.text('Gründen'));
+  await tester.pumpAndSettle();
+  if (find.byKey(const Key('rd-tenant-guide-next')).evaluate().isNotEmpty) {
+    await tester.tap(find.byKey(const Key('rd-tenant-guide-next')));
+    await tester.pumpAndSettle();
+  }
+  await tester.tap(find.byKey(const Key('rd-tenant-guide-create')));
   await tester.pumpAndSettle();
 }
 
@@ -188,7 +224,7 @@ void main() {
       final selection = find.byKey(const Key('rd-tenant-catalog'));
       await tester.ensureVisible(selection);
       await tester.pumpAndSettle();
-      expect(find.textContaining('9 Einträge ausgewählt'), findsOneWidget);
+      expect(selectionCount('9 Einträge ausgewählt'), findsOneWidget);
       await tester.tap(selection);
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
@@ -196,36 +232,32 @@ void main() {
       await tester.tap(find.byKey(const Key('catalog-apply')));
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
-      expect(find.textContaining('9 Einträge ausgewählt'), findsOneWidget);
+      expect(selectionCount('9 Einträge ausgewählt'), findsOneWidget);
     },
   );
 
-  testWidgets(
-    'setup offers presets immediately after type, before the name fields',
-    (tester) async {
-      final groups = GroupsRepo();
-      await launch(tester, CreateRepo(), groups);
-      await tester.tap(find.text('Orchester'));
-      await tester.pumpAndSettle();
-      expect(find.text('Volksinstrumentenorchester'), findsOneWidget);
-      expect(find.text('Später einrichten'), findsOneWidget);
-      expect(
-        tester.getTopLeft(find.text('Sinfonieorchester')).dy,
-        lessThan(
-          tester.getTopLeft(find.byKey(const Key('rd-tenant-new-name'))).dy,
-        ),
-      );
-      await tester.tap(find.text('Sinfonieorchester'));
-      await tester.pumpAndSettle();
-      expect(find.textContaining('14 Einträge ausgewählt'), findsOneWidget);
-      expect(find.byKey(const Key('catalog-search')), findsNothing);
-      expect(groups.writes, 0);
-      await tester.tap(find.byKey(const Key('rd-tenant-catalog')));
-      await tester.pumpAndSettle();
-      expect(find.text('Auswahl übernehmen'), findsOneWidget);
-      expect(find.text('Sinfonieorchester'), findsWidgets);
-    },
-  );
+  testWidgets('setup offers presets directly in the instrumentation step', (
+    tester,
+  ) async {
+    final groups = GroupsRepo();
+    await launch(tester, CreateRepo(), groups);
+    await prepareCatalog(tester, 'Orchester');
+    expect(find.text('Volksinstrumentenorchester'), findsOneWidget);
+    expect(find.byKey(const Key('rd-tenant-preset-later')), findsOneWidget);
+    expect(find.byKey(const Key('rd-tenant-new-name')), findsNothing);
+    expect(find.text('Schritt 3 von 3'), findsOneWidget);
+    await tester.tap(
+      find.byKey(const Key('rd-tenant-preset-symphony_orchestra')),
+    );
+    await tester.pumpAndSettle();
+    expect(selectionCount('14 Einträge ausgewählt'), findsOneWidget);
+    expect(find.byKey(const Key('catalog-search')), findsNothing);
+    expect(groups.writes, 0);
+    await tester.tap(find.byKey(const Key('rd-tenant-catalog')));
+    await tester.pumpAndSettle();
+    expect(find.text('Auswahl übernehmen'), findsOneWidget);
+    expect(find.text('Sinfonieorchester'), findsWidgets);
+  });
 
   testWidgets(
     'same preset preserves custom additions; switching can merge, cancel, or replace',
@@ -241,25 +273,33 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('catalog-apply')));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Sinfonieorchester'));
+      await tester.tap(
+        find.byKey(const Key('rd-tenant-preset-symphony_orchestra')),
+      );
       await tester.pumpAndSettle();
-      expect(find.textContaining('15 Einträge ausgewählt'), findsOneWidget);
+      expect(selectionCount('15 Einträge ausgewählt'), findsOneWidget);
       expect(find.text('Ersetzen'), findsNothing);
-      await tester.tap(find.text('Streichorchester'));
+      await tester.tap(
+        find.byKey(const Key('rd-tenant-preset-string_orchestra')),
+      );
       await tester.pumpAndSettle();
       await tester.tap(find.text('Abbrechen').last);
       await tester.pumpAndSettle();
-      expect(find.textContaining('15 Einträge ausgewählt'), findsOneWidget);
-      await tester.tap(find.text('Streichorchester'));
+      expect(selectionCount('15 Einträge ausgewählt'), findsOneWidget);
+      await tester.tap(
+        find.byKey(const Key('rd-tenant-preset-string_orchestra')),
+      );
       await tester.pumpAndSettle();
       await tester.tap(find.text('Ergänzen'));
       await tester.pumpAndSettle();
-      expect(find.textContaining('15 Einträge ausgewählt'), findsOneWidget);
-      await tester.tap(find.text('Volksinstrumentenorchester'));
+      expect(selectionCount('15 Einträge ausgewählt'), findsOneWidget);
+      await tester.tap(
+        find.byKey(const Key('rd-tenant-preset-folk_orchestra')),
+      );
       await tester.pumpAndSettle();
       await tester.tap(find.text('Ersetzen'));
       await tester.pumpAndSettle();
-      expect(find.textContaining('9 Einträge ausgewählt'), findsOneWidget);
+      expect(selectionCount('9 Einträge ausgewählt'), findsOneWidget);
     },
   );
 
@@ -273,7 +313,7 @@ void main() {
       expect(find.text('Auswahl verwerfen?'), findsOneWidget);
       await tester.tap(find.text('Abbrechen').last);
       await tester.pumpAndSettle();
-      expect(find.textContaining('4 Einträge ausgewählt'), findsOneWidget);
+      expect(selectionCount('4 Einträge ausgewählt'), findsOneWidget);
       await tester.tap(find.text('Später einrichten'));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Auswahl verwerfen'));
@@ -286,8 +326,7 @@ void main() {
     'custom instrument merged by setup remains selected and removable in the picker',
     (tester) async {
       await launch(tester, CreateRepo(), GroupsRepo());
-      await tester.tap(find.text('Orchester'));
-      await tester.pumpAndSettle();
+      await prepareCatalog(tester, 'Orchester');
       await tester.tap(find.byKey(const Key('rd-tenant-catalog')));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('catalog-custom')));
@@ -297,11 +336,13 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('catalog-apply')));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Sinfonieorchester'));
+      await tester.tap(
+        find.byKey(const Key('rd-tenant-preset-symphony_orchestra')),
+      );
       await tester.pumpAndSettle();
       await tester.tap(find.text('Ergänzen'));
       await tester.pumpAndSettle();
-      expect(find.textContaining('14 Einträge ausgewählt'), findsOneWidget);
+      expect(selectionCount('14 Einträge ausgewählt'), findsOneWidget);
       await tester.tap(find.byKey(const Key('rd-tenant-catalog')));
       await tester.pumpAndSettle();
       await tester.enterText(
@@ -325,7 +366,7 @@ void main() {
       expect(find.text('13 Einträge ausgewählt'), findsOneWidget);
       await tester.tap(find.byKey(const Key('catalog-apply')));
       await tester.pumpAndSettle();
-      expect(find.textContaining('13 Einträge ausgewählt'), findsOneWidget);
+      expect(selectionCount('13 Einträge ausgewählt'), findsOneWidget);
     },
   );
 
@@ -334,12 +375,14 @@ void main() {
     (tester) async {
       final container = await launch(tester, CreateRepo(), GroupsRepo());
       await choose(tester, 'Orchester', 'Sinfonieorchester');
-      await tester.tap(find.text('Volksinstrumentenorchester'));
+      await tester.tap(
+        find.byKey(const Key('rd-tenant-preset-folk_orchestra')),
+      );
       await tester.pumpAndSettle();
       container.read(account.notifier).state = 'u2';
       await tester.tap(find.text('Ersetzen'));
       await tester.pumpAndSettle();
-      expect(find.textContaining('14 Einträge ausgewählt'), findsOneWidget);
+      expect(selectionCount('14 Einträge ausgewählt'), findsOneWidget);
       final chip = tester.widget<RdChoiceChip>(
         find.byKey(const Key('rd-tenant-preset-symphony_orchestra')),
       );
@@ -352,8 +395,7 @@ void main() {
       'setup discards picker result after scope change (account: $switchAccount)',
       (tester) async {
         final container = await launch(tester, CreateRepo(), GroupsRepo());
-        await tester.tap(find.text('Orchester'));
-        await tester.pumpAndSettle();
+        await prepareCatalog(tester, 'Orchester');
         await tester.ensureVisible(find.byKey(const Key('rd-tenant-catalog')));
         await tester.tap(find.byKey(const Key('rd-tenant-catalog')));
         await tester.pumpAndSettle();
@@ -370,22 +412,24 @@ void main() {
         }
         await tester.tap(find.byKey(const Key('catalog-apply')));
         await tester.pumpAndSettle();
-        expect(find.textContaining('14 Einträge ausgewählt'), findsNothing);
+        expect(selectionCount('14 Einträge ausgewählt'), findsNothing);
         expect(find.text('Keine Auswahl'), findsOneWidget);
       },
     );
   }
 
   testWidgets(
-    'general starts without catalog; type change clears the selection',
+    'general starts without catalog; choir has an independent selection',
     (tester) async {
       await launch(tester, CreateRepo(), GroupsRepo());
       expect(find.byKey(const Key('rd-tenant-catalog')), findsNothing);
       await choose(tester, 'Orchester', 'Sinfonieorchester');
-      expect(find.textContaining('14 Einträge ausgewählt'), findsOneWidget);
-      await tester.ensureVisible(find.text('Chor'));
-      await tester.tap(find.text('Chor'));
+      expect(selectionCount('14 Einträge ausgewählt'), findsOneWidget);
+      await tester.tap(find.byKey(const Key('rd-tenant-guide-back')));
       await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('rd-tenant-guide-back')));
+      await tester.pumpAndSettle();
+      await prepareCatalog(tester, 'Chor');
       expect(find.text('Keine Auswahl'), findsOneWidget);
     },
   );
@@ -424,7 +468,7 @@ void main() {
       expect(groups.writes, 1);
       expect(find.text('groups destination'), findsOneWidget);
       expect(find.textContaining('Ensemble angelegt.'), findsOneWidget);
-      expect(find.text('Gründen'), findsNothing);
+      expect(find.byKey(const Key('rd-tenant-guide-create')), findsNothing);
       await tester.pump(const Duration(seconds: 5));
     },
   );
@@ -434,16 +478,14 @@ void main() {
       final create = CreateRepo()..pending = Completer<Tenant>();
       final groups = GroupsRepo();
       final container = await launch(tester, create, groups);
+      await beginGuide(tester, 'Allgemein');
       await tester.enterText(
         find.byKey(const Key('rd-tenant-new-name')),
         'Orchester',
       );
       await tester.enterText(find.byKey(const Key('rd-tenant-new-short')), 'O');
-      await tester.enterText(
-        find.byKey(const Key('rd-tenant-new-main')),
-        'Leitung',
-      );
-      await tester.tap(find.text('Gründen'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('rd-tenant-guide-create')));
       await tester.pump();
       container.read(account.notifier).state = 'u2';
       create.pending!.complete(created);

@@ -5103,6 +5103,74 @@ class AppLocalizationsDe extends AppLocalizations {
   String get editorUndo => 'Rückgängig';
 
   @override
+  String get ensembleGuideBack => 'Zurück';
+
+  @override
+  String get ensembleGuideChange => 'Ändern';
+
+  @override
+  String ensembleGuideCreate(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Orchester erstellen',
+      'choir': 'Chor erstellen',
+      'other': 'Gruppe erstellen',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get ensembleGuideCustom => 'Selbst zusammenstellen';
+
+  @override
+  String get ensembleGuideInstrumentsHint =>
+      'Wähle eine passende Vorlage und passe sie an dein Ensemble an. Du kannst die Besetzung auch später einrichten.';
+
+  @override
+  String get ensembleGuideLeadership => 'Leitungsgruppe';
+
+  @override
+  String get ensembleGuideLeadershipDefault => 'Leitung';
+
+  @override
+  String get ensembleGuideLeadershipEdit => 'Leitungsgruppe benennen';
+
+  @override
+  String get ensembleGuideNameHint =>
+      'Das Kürzel schlagen wir aus dem Namen vor. Du kannst es anpassen.';
+
+  @override
+  String get ensembleGuideNext => 'Weiter';
+
+  @override
+  String get ensembleGuideOtherGroup => 'Andere Gruppe';
+
+  @override
+  String ensembleGuideProgress(Object current, Object total) {
+    return 'Schritt $current von $total';
+  }
+
+  @override
+  String get ensembleGuideQuestionInstruments =>
+      'Mit welcher Besetzung möchtest du starten?';
+
+  @override
+  String ensembleGuideQuestionName(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Wie heißt dein Orchester?',
+      'choir': 'Wie heißt dein Chor?',
+      'other': 'Wie heißt deine Gruppe?',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get ensembleGuideQuestionType =>
+      'Welche Art von Gruppe möchtest du erstellen?';
+
+  @override
+  String get ensembleGuideSummary => 'Alles bereit';
+
+  @override
   String get excuseCustomOption => 'Sonstiger Grund (Text)';
 
   @override
