@@ -22,7 +22,7 @@ lib/
 ```
 
 Top-Level-Ordner außerhalb von `lib/`:
-- `test/`, `integration_test/`, `patrol_test/` – Unit-, Widget-, Security- und E2E-Tests (`test/helpers/source_reader.dart` folgt `part`-Dateien automatisch)
+- `test/`, `patrol_test/` – Unit-, Widget-, Security- und E2E-Tests (`test/helpers/source_reader.dart` folgt `part`-Dateien automatisch)
 - `supabase/`, `functions/`, `deploy/` – Edge Functions, SQL-Migrationen, Cloudflare Pages Function & VPS-Deployment
 - `tool/` – Entwickler- & CI-Werkzeuge (i18n, Help-Build, Service-Worker, Release-Versionierung, App-Text-Check)
 - `scripts/` – Build- & Store-Skripte (inkl. Xcode Cloud `scripts/xcode_cloud_post_clone.sh`)
@@ -87,7 +87,7 @@ Native APIs (Haptics etc.) immer in try-catch wrappen.
 dart run build_runner build --delete-conflicting-outputs
 
 # Code analysieren (wie in CI: 0 Errors, 0 Warnings, 0 Infos)
-dart analyze lib/ test/ tool/ scripts/ integration_test/ patrol_test/ test_driver/ --fatal-infos --fatal-warnings
+dart analyze lib/ test/ tool/ scripts/ patrol_test/ --fatal-infos --fatal-warnings
 
 # Tests ausführen
 flutter test
@@ -242,19 +242,6 @@ open /Applications/Attendix.app
 <key>com.apple.security.network.client</key>
 <true/>
 ```
-
-## Migration (Ionic → Flutter)
-
-Für Migrationen nutze: `/ionic-migrate [feature]`
-
-Der Skill orchestriert automatisch:
-- Worktree-Setup (optional)
-- Analyse mit `migration-analyzer` und `Explore` Agents
-- Task-Planung
-- Code Review mit `flutter-reviewer`
-- Commit und Status-Update
-
-Status: `.claude/migration-status.md`
 
 ## Code Review
 

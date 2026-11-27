@@ -87,7 +87,7 @@ Die Projektordner `windows/` und `linux/` existieren (`flutter build windows` bz
 
 ```bash
 # Code analysieren (wie in CI)
-dart analyze lib/ test/ tool/ scripts/ integration_test/ patrol_test/ test_driver/ --fatal-infos --fatal-warnings
+dart analyze lib/ test/ tool/ scripts/ patrol_test/ --fatal-infos --fatal-warnings
 
 # Tests ausführen
 flutter test
@@ -99,7 +99,7 @@ flutter test
 - `lib/data/` – Freezed-Models und Mandanten-Repositories (`data/repositories/`)
 - `lib/features/` – Feature-First-Domänen (`today`, `attendance`, `people`, `songs`, `settings`, `planning`, `team_organization`, `assistant`, `profile`, `statistics`, …)
 - `lib/shared/` – App-Shell (`shared/shell/`) und Design-System-Bausteine (`shared/widgets/redesign/`, `shared/widgets/adaptive/`)
-- `test/`, `integration_test/`, `patrol_test/` – Unit-, Widget-, Security- und E2E-Tests
+- `test/`, `patrol_test/` – Unit-, Widget-, Security- und E2E-Tests
 - `supabase/`, `functions/`, `deploy/` – Edge Functions, SQL, Cloudflare Function und VPS-Setup
 - `tool/`, `scripts/` – Entwickler-, Release- und Store-/Xcode-Cloud-Skripte
 
