@@ -140,18 +140,21 @@ class _TenantRadioList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        for (final tenant in tenants)
-          RadioListTile<int>(
-            value: tenant.id ?? -1,
-            groupValue: selectedId,
-            onChanged: tenant.id == null ? null : onChanged,
-            title: Text(
-              tenant.longName.isNotEmpty ? tenant.longName : tenant.shortName,
+    return RadioGroup<int>(
+      groupValue: selectedId,
+      onChanged: onChanged,
+      child: Column(
+        children: [
+          for (final tenant in tenants)
+            RadioListTile<int>(
+              value: tenant.id ?? -1,
+              enabled: tenant.id != null,
+              title: Text(
+                tenant.longName.isNotEmpty ? tenant.longName : tenant.shortName,
+              ),
             ),
-          ),
-      ],
+        ],
+      ),
     );
   }
 }

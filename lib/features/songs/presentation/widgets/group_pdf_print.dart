@@ -146,21 +146,23 @@ class _GroupPdfRatioDialogState extends State<GroupPdfRatioDialog> {
         options: [for (final o in options) AppAlertOption(o.$1, o.$2)],
         groupValue: _ratio,
         onChanged: (v) => setState(() => _ratio = v),
-        beta: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(l10n.songsCopiesPerGroup),
-          for (final o in options)
-            RadioListTile<int>(
-              contentPadding: EdgeInsets.zero,
-              value: o.$1,
-              groupValue: _ratio,
-              title: Text(o.$2),
-              onChanged: (v) => setState(() => _ratio = v ?? 1),
-            ),
-        ],
-      ),
+        beta: RadioGroup<int>(
+          groupValue: _ratio,
+          onChanged: (v) => setState(() => _ratio = v ?? 1),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(l10n.songsCopiesPerGroup),
+              for (final o in options)
+                RadioListTile<int>(
+                  contentPadding: EdgeInsets.zero,
+                  value: o.$1,
+                  title: Text(o.$2),
+                ),
+            ],
+          ),
+        ),
       ),
       actions: [
         TextButton(

@@ -1077,7 +1077,7 @@ void main() {
     await tester.pump();
     final link = find.bySemanticsLabel(RegExp(r'^Stimme ändern: '));
     expect(link, findsWidgets);
-    expect(tester.getSemantics(link.first), containsSemantics(isButton: true, hasTapAction: true));
+    expect(tester.getSemantics(link.first), isSemantics(isButton: true, hasTapAction: true));
     semantics.dispose();
   });
 
@@ -1219,7 +1219,7 @@ void main() {
     await tester.pump();
     expect(
       tester.getSemantics(find.bySemanticsLabel('Neues Instrument „Saxophon“, Vorschlag der KI')),
-      containsSemantics(label: 'Neues Instrument „Saxophon“, Vorschlag der KI', isButton: true, isSelected: true, hasTapAction: true),
+      isSemantics(label: 'Neues Instrument „Saxophon“, Vorschlag der KI', isButton: true, isSelected: true, hasTapAction: true),
     );
     semantics.dispose();
 

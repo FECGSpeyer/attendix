@@ -16,7 +16,6 @@ import 'package:attendix/core/utils/person_matcher.dart';
 import 'package:attendix/data/models/person/person.dart';
 import 'package:attendix/data/models/tenant/tenant.dart';
 import 'package:attendix/data/repositories/cross_tenant_person_repository.dart' show LinkedTenantRef;
-import 'package:attendix/core/providers/person_detail_providers.dart' show personProvider;
 import 'package:attendix/core/providers/person_detail_providers.dart';
 import 'package:attendix/features/people/presentation/widgets/pause_person_sheet.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_pending_review_page.dart';

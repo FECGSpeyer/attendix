@@ -65,18 +65,20 @@ Future<void> showOrganisationLinkDialog(BuildContext context, WidgetRef ref) asy
           groupValue: selected,
           onChanged: (v) => setState(() => selected = v),
           beta: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                for (final org in organisations)
-                  RadioListTile<int?>(
-                    contentPadding: EdgeInsets.zero,
-                    value: org.id,
-                    groupValue: selected,
-                    title: Text(org.name),
-                    onChanged: (v) => setState(() => selected = v),
-                  ),
-              ],
+            child: RadioGroup<int?>(
+              groupValue: selected,
+              onChanged: (v) => setState(() => selected = v),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  for (final org in organisations)
+                    RadioListTile<int?>(
+                      contentPadding: EdgeInsets.zero,
+                      value: org.id,
+                      title: Text(org.name),
+                    ),
+                ],
+              ),
             ),
           ),
         ),

@@ -176,19 +176,21 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
             ],
             groupValue: priority,
             onChanged: (v) => setLocal(() => priority = v),
-            beta: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(ctx.l10n.teamOrgWhichPriority),
-                for (final p in const ['high', 'medium', 'low'])
-                  RadioListTile<String>(
-                    value: p,
-                    groupValue: priority,
-                    title: Text(priorityLabels[p]!),
-                    onChanged: (v) => setLocal(() => priority = v ?? 'medium'),
-                  ),
-              ],
+            beta: RadioGroup<String>(
+              groupValue: priority,
+              onChanged: (v) => setLocal(() => priority = v ?? 'medium'),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(ctx.l10n.teamOrgWhichPriority),
+                  for (final p in const ['high', 'medium', 'low'])
+                    RadioListTile<String>(
+                      value: p,
+                      title: Text(priorityLabels[p]!),
+                    ),
+                ],
+              ),
             ),
           ),
           actions: [

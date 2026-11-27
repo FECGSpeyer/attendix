@@ -121,13 +121,21 @@ class _ExcuseReasonSheetState extends State<_ExcuseReasonSheet> {
   }
 
   List<Widget> _rows(BuildContext context) => [
-        for (final reason in [...widget.reasons, _customReason])
-          RadioListTile<String>(
-            value: reason,
-            groupValue: _selection,
-            onChanged: (v) => setState(() => _selection = v ?? _selection),
-            title: Text(reason == _customReason ? context.l10n.excuseCustomOption : reason),
+        RadioGroup<String>(
+          groupValue: _selection,
+          onChanged: (v) => setState(() => _selection = v ?? _selection),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              for (final reason in [...widget.reasons, _customReason])
+                RadioListTile<String>(
+                  value: reason,
+                  title: Text(reason == _customReason ? context.l10n.excuseCustomOption : reason),
+                ),
+            ],
           ),
+        ),
         if (_selection == _customReason)
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),

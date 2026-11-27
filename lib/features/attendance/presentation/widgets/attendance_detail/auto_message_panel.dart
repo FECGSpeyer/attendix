@@ -112,12 +112,13 @@ final _autoMessagePanelProvider = FutureProvider.autoDispose.family<_PanelData, 
   attendanceId,
 ) async {
   final repo = ref.watch(autoMessageRepositoryWithTenantProvider);
-  if (!repo.hasTenantId)
+  if (!repo.hasTenantId) {
     return (
       rules: <AutoMessageRule>[],
       runs: <AutoMessageRun>[],
       responses: <AttendanceResponse>[],
     );
+  }
   final results = await Future.wait([
     repo.getRules(),
     repo.getRunsForAttendance(attendanceId),

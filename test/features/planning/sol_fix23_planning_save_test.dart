@@ -92,16 +92,12 @@ void main() {
   late _MockPlanRepository repo;
   late _FakeDb db;
   late int attendanceLoads;
-  late int orgPlanLoads;
   late ProviderContainer container;
-  bool? popResult;
   var popped = false;
 
   Future<void> openPage(WidgetTester tester, PlanAttendance att) async {
     db = _FakeDb(att);
     attendanceLoads = 0;
-    orgPlanLoads = 0;
-    popResult = null;
     popped = false;
     repo = _MockPlanRepository();
     when(() => repo.hasTenantId).thenReturn(true);
@@ -119,10 +115,7 @@ void main() {
           attendanceLoads++;
           return [att];
         }),
-        orgPlansProvider.overrideWith((ref) async {
-          orgPlanLoads++;
-          return const [];
-        }),
+        orgPlansProvider.overrideWith((ref) async => const []),
         planAttendanceTypesProvider.overrideWith((ref) async => const []),
         planBlockTemplatesProvider.overrideWith((ref) async => const []),
         planSongsProvider.overrideWith((ref) async => const []),
@@ -150,9 +143,8 @@ void main() {
             body: TextButton(
               onPressed: () => Navigator.of(context)
                   .push<bool>(MaterialPageRoute(builder: (_) => PlanningPage(attendanceId: att.id)))
-                  .then((v) {
+                  .then((_) {
                 popped = true;
-                popResult = v;
               }),
               child: const Text('open'),
             ),

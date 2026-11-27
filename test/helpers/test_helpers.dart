@@ -63,10 +63,10 @@ class _FakeRef extends Fake implements Ref<Object?> {
   @override
   T read<T>(ProviderListenable<T> provider) {
     // Return mock for supabaseAuthProvider
-    if (provider == supabaseAuthProvider) {
+    if (identical(provider, supabaseAuthProvider)) {
       return MockGoTrueClient() as T;
     }
-    if (provider == supabaseClientProvider) {
+    if (identical(provider, supabaseClientProvider)) {
       return MockSupabaseClient() as T;
     }
     throw UnimplementedError('Provider $provider not mocked');

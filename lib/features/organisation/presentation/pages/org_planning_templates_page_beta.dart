@@ -189,7 +189,10 @@ class _RdTemplateEditorState extends State<_RdTemplateEditor> {
       ],
     );
     if (!mounted || !_host.mounted) return;
-    if (action == 'rename') await _run(() => _host._renameTemplate(_index));
+    if (action == 'rename') {
+      await _run(() => _host._renameTemplate(_index));
+      return;
+    }
     if (action == 'delete') {
       final ok = await showPlanConfirm(
         context,
@@ -209,10 +212,11 @@ class _RdTemplateEditorState extends State<_RdTemplateEditor> {
     final p = context.rd;
     final l10n = context.l10n;
     final tpl = _tpl;
-    if (tpl == null)
+    if (tpl == null) {
       return RdPage(
         children: [RdBackLink(label: l10n.orgTemplatesTitle, onTap: () => Navigator.of(context).maybePop())],
       );
+    }
     final start = PlanUtils.formatTime(tpl.time);
     return RdPage(
       children: [

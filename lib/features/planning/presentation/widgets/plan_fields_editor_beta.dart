@@ -22,7 +22,7 @@ extension _PlanFieldsEditorBeta on _PlanFieldsEditorState {
       physics: const NeverScrollableScrollPhysics(),
       buildDefaultDragHandles: false,
       itemCount: rows.length,
-      onReorder: (o, n) => _onReorder(rows, o, n),
+      onReorderItem: (o, n) => _onReorder(rows, o, n),
       proxyDecorator: (child, _, _) => Material(color: p.surface, elevation: 4, child: child),
       itemBuilder: (context, i) {
         final row = rows[i];

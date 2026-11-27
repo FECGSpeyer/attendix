@@ -31,7 +31,7 @@ class _MockPlanRepository extends Mock implements PlanRepository {}
 void main() {
   setUpAll(() => SharedPreferences.setMockInitialValues({}));
 
-  final _att = PlanAttendance(
+  final baseAttendance = PlanAttendance(
     id: 7,
     tenantId: 1,
     date: DateTime.now().add(const Duration(days: 2)).toIso8601String().substring(0, 10),
@@ -50,7 +50,7 @@ void main() {
   late List<Map<String, dynamic>> calls;
 
   Future<void> pump(WidgetTester tester, {PlanAttendance? attendance}) async {
-    final att = attendance ?? _att;
+    final att = attendance ?? baseAttendance;
     tester.view.physicalSize = const Size(390, 1600);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
@@ -150,7 +150,7 @@ void main() {
   });
 
   testWidgets('a dragged block takes its Unterpunkte along as one card', (tester) async {
-    final withBlock = _att.copyWith(
+    final withBlock = baseAttendance.copyWith(
       plan: const Plan(
         time: '16:00',
         end: '2026-01-01T17:00',
@@ -189,7 +189,7 @@ void main() {
   });
 
   group('blocks', () {
-    final withBlock = _att.copyWith(
+    final withBlock = baseAttendance.copyWith(
       plan: const Plan(
         time: '16:00',
         end: '2026-01-01T17:00',
@@ -369,7 +369,7 @@ void main() {
     });
 
     testWidgets('Gruppen und Dirigenten ändern rebuilds the rounds', (tester) async {
-      final att = _att.copyWith(
+      final att = baseAttendance.copyWith(
         plan: const Plan(
           time: '16:00',
           end: '2026-01-01T17:00',

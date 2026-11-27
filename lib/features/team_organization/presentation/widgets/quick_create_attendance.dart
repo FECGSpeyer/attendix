@@ -200,18 +200,20 @@ Future<int?> promptCreateProtocolAttendance(BuildContext context, WidgetRef ref)
             options: [for (final t in types) AppAlertOption(t.id!, t.name)],
             groupValue: selected,
             onChanged: (v) => setLocal(() => selected = v),
-            beta: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              for (final t in types)
-                RadioListTile<String>(
-                  value: t.id!,
-                  groupValue: selected,
-                  title: Text(t.name),
-                  onChanged: (v) => setLocal(() => selected = v),
-                ),
-            ],
-          ),
+            beta: RadioGroup<String>(
+              groupValue: selected,
+              onChanged: (v) => setLocal(() => selected = v),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  for (final t in types)
+                    RadioListTile<String>(
+                      value: t.id!,
+                      title: Text(t.name),
+                    ),
+                ],
+              ),
+            ),
           ),
           actions: [
             TextButton(onPressed: () => Navigator.of(ctx).pop(), child: Text(ctx.l10n.commonCancel)),

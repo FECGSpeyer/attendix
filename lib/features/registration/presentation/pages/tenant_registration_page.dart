@@ -1000,18 +1000,6 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
               content: AppAlertInputGroup(
                 // SEL-07: Ionic has no message; only a login error is shown.
                 message: loginError.isNotEmpty ? Text(loginError) : null,
-                children: [
-                  AppAlertInput(
-                    controller: emailController,
-                    placeholder: context.l10n.tenantRegisterEmailAddress,
-                    keyboardType: TextInputType.emailAddress,
-                  ),
-                  AppAlertInput(
-                    controller: passwordController,
-                    placeholder: context.l10n.loginModePassword,
-                    obscureText: true,
-                  ),
-                ],
                 beta: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -1040,6 +1028,18 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
                     ],
                   ],
                 ),
+                children: [
+                  AppAlertInput(
+                    controller: emailController,
+                    placeholder: context.l10n.tenantRegisterEmailAddress,
+                    keyboardType: TextInputType.emailAddress,
+                  ),
+                  AppAlertInput(
+                    controller: passwordController,
+                    placeholder: context.l10n.loginModePassword,
+                    obscureText: true,
+                  ),
+                ],
               ),
               actions: [
                 TextButton(

@@ -131,34 +131,36 @@ class _RolePickerSheet extends StatelessWidget {
             // Role list
             Flexible(
               child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    for (final role in _testableRoles)
-                      RadioListTile<Role>(
-                        title: Text(_getRoleName(role)),
-                        subtitle: Text(
-                          _getRoleDescription(role),
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey.shade600,
+                child: RadioGroup<Role>(
+                  groupValue: effectiveRole,
+                  onChanged: (value) {
+                    if (value != null) {
+                      onRoleSelected(value);
+                    }
+                  },
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      for (final role in _testableRoles)
+                        RadioListTile<Role>(
+                          title: Text(_getRoleName(role)),
+                          subtitle: Text(
+                            _getRoleDescription(role),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                          value: role,
+                          secondary: Icon(
+                            _getRoleIcon(role),
+                            color: role == effectiveRole
+                                ? Theme.of(context).colorScheme.primary
+                                : Colors.grey,
                           ),
                         ),
-                        value: role,
-                        groupValue: effectiveRole,
-                        onChanged: (value) {
-                          if (value != null) {
-                            onRoleSelected(value);
-                          }
-                        },
-                        secondary: Icon(
-                          _getRoleIcon(role),
-                          color: role == effectiveRole
-                              ? Theme.of(context).colorScheme.primary
-                              : Colors.grey,
-                        ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

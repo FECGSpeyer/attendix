@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 import '../../core/constants/app_constants.dart';
 import '../../data/models/person/person.dart';
 import '../../l10n/l10n.dart';
-import '../../l10n/languages.dart';
 import '../../shared/widgets/adaptive/adaptive.dart';
 
 /// Toggle for showing all history entries instead of only the current season.

@@ -108,8 +108,9 @@ class _Backend {
           for (final file in body['files'] as List)
             Map<String, Object?>.from(file as Map),
         ];
-        if (body['instrument_ids'] != null)
+        if (body['instrument_ids'] != null) {
           instrumentIds = List<int>.from(body['instrument_ids'] as List);
+        }
         if (loseUpdateAnswer) {
           loseUpdateAnswer = false;
           throw http.ClientException(
@@ -131,8 +132,9 @@ class _Backend {
     }
     if (request.method == 'DELETE' &&
         request.url.path == '/storage/v1/object/songs') {
-      if (deleteStarted != null && !deleteStarted!.isCompleted)
+      if (deleteStarted != null && !deleteStarted!.isCompleted) {
         deleteStarted!.complete();
+      }
       await allowDelete?.future;
       if (storageFailures > 0) {
         storageFailures--;

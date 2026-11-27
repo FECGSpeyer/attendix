@@ -1148,9 +1148,8 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
               physics: const NeverScrollableScrollPhysics(),
               buildDefaultDragHandles: false,
               itemCount: _checklist.length,
-              onReorder: (oldIndex, newIndex) {
+              onReorderItem: (oldIndex, newIndex) {
                 setState(() {
-                  if (newIndex > oldIndex) newIndex--;
                   final item = _checklist.removeAt(oldIndex);
                   _checklist.insert(newIndex, item);
                   _hasChanges = true;

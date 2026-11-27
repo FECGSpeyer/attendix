@@ -89,7 +89,6 @@ class _SharedPlanEditListState extends State<SharedPlanEditList> {
   void _remove(int index) => widget.onChanged(PlanUtils.normalizeGroups([...fields]..removeAt(index)));
 
   void _reorder(int oldIndex, int newIndex) {
-    if (newIndex > oldIndex) newIndex -= 1;
     if (oldIndex == newIndex) return;
     widget.onChanged(PlanUtils.moveField(fields, oldIndex, newIndex));
   }
@@ -101,7 +100,7 @@ class _SharedPlanEditListState extends State<SharedPlanEditList> {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       buildDefaultDragHandles: false,
-      onReorder: _reorder,
+      onReorderItem: _reorder,
       children: [
         for (var i = 0; i < fields.length; i++)
           _row(context, i, medium),

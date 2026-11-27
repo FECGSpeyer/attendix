@@ -571,32 +571,36 @@ class _SingleFieldDialogState extends State<_SingleFieldDialog> {
     final field = widget.field;
     switch (field.type) {
       case RegistrationFieldType.boolean:
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            for (final opt in const [true, false])
-              RadioListTile<bool>(
-                contentPadding: EdgeInsets.zero,
-                value: opt,
-                groupValue: _value is bool ? _value as bool : null,
-                title: Text(opt ? context.l10n.commonYes : context.l10n.commonNo),
-                onChanged: (v) => setState(() => _value = v),
-              ),
-          ],
+        return RadioGroup<bool>(
+          groupValue: _value is bool ? _value as bool : null,
+          onChanged: (v) => setState(() => _value = v),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (final opt in const [true, false])
+                RadioListTile<bool>(
+                  contentPadding: EdgeInsets.zero,
+                  value: opt,
+                  title: Text(opt ? context.l10n.commonYes : context.l10n.commonNo),
+                ),
+            ],
+          ),
         );
       case RegistrationFieldType.select:
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            for (final opt in field.options ?? const <String>[])
-              RadioListTile<String>(
-                contentPadding: EdgeInsets.zero,
-                value: opt,
-                groupValue: _value is String ? _value as String : null,
-                title: Text(opt),
-                onChanged: (v) => setState(() => _value = v),
-              ),
-          ],
+        return RadioGroup<String>(
+          groupValue: _value is String ? _value as String : null,
+          onChanged: (v) => setState(() => _value = v),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (final opt in field.options ?? const <String>[])
+                RadioListTile<String>(
+                  contentPadding: EdgeInsets.zero,
+                  value: opt,
+                  title: Text(opt),
+                ),
+            ],
+          ),
         );
       case RegistrationFieldType.multiSelect:
         final selected = _value as List<String>;

@@ -127,7 +127,6 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
   }
 
   void _onReorder(List<_EditorRow> rows, int oldIndex, int newIndex) {
-    if (newIndex > oldIndex) newIndex -= 1;
     final moved = rows[oldIndex];
     final field = moved.field;
     if (field == null) return;

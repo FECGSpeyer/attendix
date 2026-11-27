@@ -70,10 +70,10 @@ Future<void> rdEditInSibelius(BuildContext context, WidgetRef ref, SongDetailDat
     if (choice == _IntroChoice.plugin) {
       if (!context.mounted) return;
       await rdInstallSibeliusPlugin(context, ref);
-      if (!context.mounted) return;
     }
   }
 
+  if (!context.mounted) return;
   await _editOnMac(context, ref, data, file);
 }
 

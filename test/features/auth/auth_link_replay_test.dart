@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:attendix/features/auth/data/auth_flow_service.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:gotrue/gotrue.dart' show GotrueAsyncStorage;
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';

@@ -16,7 +16,6 @@ import 'package:attendix/data/repositories/song_repository.dart';
 import 'package:attendix/features/redesign/data/rd_works_logic.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_work_create_page.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_work_edit_page.dart';
-import 'package:attendix/features/redesign/presentation/widgets/rd_widgets.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

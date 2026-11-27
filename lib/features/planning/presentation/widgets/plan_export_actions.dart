@@ -182,6 +182,7 @@ String _safeName(String name) => name.replaceFirst('(', '').replaceFirst(')', ''
 /// toast. share_plus reports "unavailable" on the web even after a
 /// successful share, so it is not used there.
 Future<void> sharePlanLink(BuildContext context, String url, {String? title}) async {
+  final shareOrigin = shareOriginFor(context);
   final shared = await shareUrlInBrowser(url, title: title);
   if (shared != null) {
     if (!shared) {
@@ -194,7 +195,7 @@ Future<void> sharePlanLink(BuildContext context, String url, {String? title}) as
     final result = await Share.share(
       url,
       subject: title,
-      sharePositionOrigin: shareOriginFor(context),
+      sharePositionOrigin: shareOrigin,
     );
     if (result.status == ShareResultStatus.unavailable) {
       throw Exception('unavailable');

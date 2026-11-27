@@ -2382,7 +2382,7 @@ extension _PlanningBeta on _PlanningPageState {
     await _flushSaves(blockInvalid: false);
     // Another plan was loaded while the last change was written: the
     // choice was made for the old one.
-    if (!_samePlan(loadGen) || !_validate(showToast: true)) return;
+    if (!mounted || !_samePlan(loadGen) || !_validate(showToast: true)) return;
     final att = _att;
     if (att == null) return;
     final plans = PlanUtils.allPlans(att);

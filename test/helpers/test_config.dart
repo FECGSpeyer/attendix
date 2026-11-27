@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 /// Test configuration for integration tests.
@@ -82,11 +83,11 @@ class TestConfig {
 
   /// Print current configuration (for debugging)
   static void printConfig() {
-    print('Test Configuration:');
-    print('  Environment: $environment');
-    print('  Supabase URL: $supabaseUrl');
-    print('  Database URL: ${databaseUrl.replaceAll(RegExp(r':[^:@]+@'), ':***@')}');
-    print('  Is Mock: $isMock');
+    debugPrint('Test Configuration:');
+    debugPrint('  Environment: $environment');
+    debugPrint('  Supabase URL: $supabaseUrl');
+    debugPrint('  Database URL: ${databaseUrl.replaceAll(RegExp(r':[^:@]+@'), ':***@')}');
+    debugPrint('  Is Mock: $isMock');
   }
 }
 

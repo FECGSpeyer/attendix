@@ -1,7 +1,6 @@
+import 'package:attendix/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import '../../../lib/core/theme/app_colors.dart';
 
 /// Test for color parsing functionality.
 /// These tests verify that all named colors are correctly parsed.

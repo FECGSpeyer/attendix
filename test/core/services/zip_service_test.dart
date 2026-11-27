@@ -6,11 +6,12 @@ import 'package:archive/archive.dart';
 import 'package:attendix/core/services/zip_service.dart';
 import 'package:attendix/core/utils/error_message.dart';
 import 'package:attendix/data/models/song/song.dart';
-import 'package:cross_file/cross_file.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
+// ignore: depend_on_referenced_packages
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
+// ignore: depend_on_referenced_packages
 import 'package:share_plus_platform_interface/share_plus_platform_interface.dart';
 
 class _Path extends PathProviderPlatform {

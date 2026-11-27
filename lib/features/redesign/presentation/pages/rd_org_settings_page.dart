@@ -106,7 +106,7 @@ class _RdOrgSettingsPageState extends ConsumerState<RdOrgSettingsPage> {
           if (t.id != null) (t.id!, t.shortName),
       ],
     );
-    if (picked == null || !_stillIn(tenantId)) return;
+    if (!mounted || picked == null || !_stillIn(tenantId)) return;
     final next = picked == 0 ? null : picked;
     if (next == current) return;
     if (current != null && next == null) {
@@ -117,7 +117,7 @@ class _RdOrgSettingsPageState extends ConsumerState<RdOrgSettingsPage> {
         confirmText: l10n.orgDisable,
         destructive: true,
       );
-      if (!ok || !_stillIn(tenantId)) return;
+      if (!mounted || !ok || !_stillIn(tenantId)) return;
     }
     final container = ProviderScope.containerOf(context, listen: false);
     final repo = ref.read(songRepositoryForTenantProvider((tenantId: tenantId!, songSourceTenantId: null)));

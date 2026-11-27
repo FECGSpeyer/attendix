@@ -186,20 +186,22 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
             groupValue: selected,
             onChanged: (v) => setDialogState(() => selected = v),
             beta: SizedBox(
-            width: double.maxFinite,
-            child: ListView(
-              shrinkWrap: true,
-              children: [
-                for (final c in targets)
-                  RadioListTile<String>(
-                    value: c.id!,
-                    groupValue: selected,
-                    title: Text(c.name),
-                    onChanged: (v) => setDialogState(() => selected = v),
-                  ),
-              ],
+              width: double.maxFinite,
+              child: RadioGroup<String>(
+                groupValue: selected,
+                onChanged: (v) => setDialogState(() => selected = v),
+                child: ListView(
+                  shrinkWrap: true,
+                  children: [
+                    for (final c in targets)
+                      RadioListTile<String>(
+                        value: c.id!,
+                        title: Text(c.name),
+                      ),
+                  ],
+                ),
+              ),
             ),
-          ),
           ),
           actions: [
             TextButton(

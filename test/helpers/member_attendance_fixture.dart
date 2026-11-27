@@ -133,13 +133,16 @@ class MemberAttendanceFixture {
                   if (!_equals(
                     query['attendance.tenantId'],
                     attendance['tenantId'],
-                  ))
+                  )) {
                     return false;
-                  if (!_equals(query['person_id'], row['person_id']))
+                  }
+                  if (!_equals(query['person_id'], row['person_id'])) {
                     return false;
+                  }
                   final date = DateTime.parse(attendance['date'] as String);
-                  if (!_dateMatches(query['attendance.date'], date))
+                  if (!_dateMatches(query['attendance.date'], date)) {
                     return false;
+                  }
                   // A query can have both gte and lt under the same parameter.
                   for (final value
                       in request.url.queryParametersAll['attendance.date'] ??

@@ -25,7 +25,6 @@ void main() {
       // Arrange
       final tenantAdditionalFields = <Map<String, dynamic>>[];
       final filterKey = 'deleted_field_id';
-      final filterOption = 'some_value';
 
       // Act: Simulate the filter logic with safe null handling
       final fieldDef = tenantAdditionalFields

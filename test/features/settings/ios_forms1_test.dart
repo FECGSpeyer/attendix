@@ -4,7 +4,6 @@ import 'package:attendix/features/profile/presentation/widgets/account_dialogs.d
 import 'package:attendix/features/profile/presentation/widgets/profile_helpers.dart';
 import 'package:attendix/features/settings/presentation/widgets/calendar_subscription_dialog.dart';
 import 'package:attendix/l10n/l10n.dart';
-import 'package:attendix/shared/widgets/adaptive/adaptive.dart';
 import 'package:attendix/shared/widgets/sheets/feedback_sheet.dart';
 import 'package:attendix/shared/widgets/sheets/version_history_sheet.dart';
 import 'package:flutter/material.dart';

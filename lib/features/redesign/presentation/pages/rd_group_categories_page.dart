@@ -86,7 +86,7 @@ class _RdGroupCategoriesPageState extends ConsumerState<RdGroupCategoriesPage> {
         AppActionSheetAction(value: 'delete', label: l10n.commonDelete, icon: Icons.delete_outline, destructive: true),
       ],
     );
-    if (action == null || id == null || !_stillIn(tenantId)) return;
+    if (!mounted || action == null || id == null || !_stillIn(tenantId)) return;
     final notifier = ref.read(groupNotifierProvider.notifier);
     if (action == 'rename') {
       final name = await _askName(title: l10n.redesignGroupCategoriesEdit(kind), initial: category.name);

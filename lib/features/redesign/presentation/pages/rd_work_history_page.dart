@@ -114,7 +114,7 @@ class _RdWorkHistoryPageState extends ConsumerState<RdWorkHistoryPage> {
     } catch (_) {
       conductors = const [];
     }
-    if (!_stillIn(tenantId)) return;
+    if (!mounted || !_stillIn(tenantId)) return;
     if (songs.isEmpty) {
       ToastHelper.showWarning(context, l10n.historyNoneFound);
       return;

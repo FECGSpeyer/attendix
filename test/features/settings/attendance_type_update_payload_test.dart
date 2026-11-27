@@ -38,12 +38,12 @@ void main() {
       // .name gives strings - WRONG for DB
       final wrongPayload = statuses.map((s) => s.name).toList();
       expect(wrongPayload, equals(['present', 'absent', 'excused']));
-      expect(wrongPayload.every((e) => e is String), isTrue);
+      expect(wrongPayload, isA<List<String>>());
 
       // .value gives integers - CORRECT for DB
       final correctPayload = statuses.map((s) => s.value).toList();
       expect(correctPayload, equals([1, 4, 2]));
-      expect(correctPayload.every((e) => e is int), isTrue);
+      expect(correctPayload, isA<List<int>>());
     });
 
     test('all AttendanceStatus values have correct integer mapping', () {

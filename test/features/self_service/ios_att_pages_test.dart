@@ -2,7 +2,6 @@
 // row titles like Ionic signout, iOS look of the Termin pages.
 import 'dart:io';
 
-import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/self_service_providers.dart';
 import 'package:attendix/core/services/cross_tenant_service.dart';
 import 'package:attendix/data/models/attendance/attendance.dart';

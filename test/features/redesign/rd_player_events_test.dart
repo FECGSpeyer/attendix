@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/duty_providers.dart';
 import 'package:attendix/core/providers/player_absence_providers.dart';
 import 'package:attendix/core/providers/redesign_providers.dart';
@@ -10,8 +9,6 @@ import 'package:attendix/core/providers/tenant_providers.dart';
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/data/models/attendance/attendance.dart';
-import 'package:attendix/data/repositories/duty_repository.dart';
-import 'package:attendix/data/repositories/sign_in_out_repository.dart';
 import 'package:attendix/features/redesign/data/providers/rd_today_providers.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_own_event_page.dart';
 import 'package:attendix/features/redesign/presentation/widgets/event/rd_absence_sheet.dart';

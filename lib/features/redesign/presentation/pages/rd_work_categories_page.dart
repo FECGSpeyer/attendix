@@ -83,7 +83,7 @@ class _RdWorkCategoriesPageState extends ConsumerState<RdWorkCategoriesPage> {
         ),
       ],
     );
-    if (action == null || !_stillIn(tenantId) || category.id == null) return;
+    if (!mounted || action == null || !_stillIn(tenantId) || category.id == null) return;
     if (action == 'rename') {
       final name = await _askName(title: l10n.songsEditCategory, initial: category.name);
       if (name == null || !_stillIn(tenantId)) return;

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+// ignore: depend_on_referenced_packages
 import 'package:app_links_platform_interface/app_links_platform_interface.dart';
 import 'package:attendix/core/config/supabase_config.dart';
 import 'package:attendix/features/auth/data/auth_flow_service.dart';

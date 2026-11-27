@@ -34,10 +34,10 @@ class _FakeCurrentTenantNotifier extends CurrentTenantNotifier {
 class _FakeRef extends Fake implements Ref<Object?> {
   @override
   T read<T>(ProviderListenable<T> provider) {
-    if (provider == supabaseAuthProvider) {
+    if (identical(provider, supabaseAuthProvider)) {
       return _MockGoTrueClient() as T;
     }
-    if (provider == supabaseClientProvider) {
+    if (identical(provider, supabaseClientProvider)) {
       return _MockSupabaseClient() as T;
     }
     throw UnimplementedError('Provider $provider not mocked');
