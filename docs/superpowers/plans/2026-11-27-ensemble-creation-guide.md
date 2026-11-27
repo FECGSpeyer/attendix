@@ -8,7 +8,7 @@
 **Spec:** docs/superpowers/specs/2026-11-27-ensemble-creation-guide-design.md
 
 ## Global Constraints
-- Existing worktree /Users/I576226/.codex/worktrees/instrument-catalog/attendix, branch codex/instrument-catalog. Base 2cf2268f88a0062f1c32cd95cf187147ec87534e.
+- Use the existing codex/instrument-catalog branch and worktree. Base 2cf2268f88a0062f1c32cd95cf187147ec87534e.
 - No push, merge, deployment, live service writes, schema, repository, importer or permission changes.
 - No Big Band preset; existing Eastern European folk preset includes Mandoline.
 - Preserve all catalog merge/name/metadata and stale-scope behavior. Keep final tenant success independent of optional import failure.

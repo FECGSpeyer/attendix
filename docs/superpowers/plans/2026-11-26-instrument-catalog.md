@@ -17,7 +17,7 @@
 - Honor immutable tenant/account context, roles, demo guards and current offline rules.
 - All five Rd color worlds and light/dark; DE/EN interface strings through fragments, generated ARB and Dart.
 - No direct version bumps. One minor changelog fragment and updated beta scenarios.
-- Worktree `/Users/I576226/.codex/worktrees/instrument-catalog/attendix`, branch `codex/instrument-catalog`. No push, merge or production deployment as part of local implementation.
+- Use the existing `codex/instrument-catalog` branch and worktree. No push, merge or production deployment as part of local implementation.
 
 ## Review Focus
 
