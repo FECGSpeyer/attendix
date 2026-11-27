@@ -86,9 +86,20 @@ void main() {
       expect(betaFiles, isEmpty, reason: 'Unexpected *_beta*.dart files in lib/: $betaFiles');
     });
 
-    test('orphan directories lib/core/models/ and lib/data/services/ do not exist', () {
+    test('zero rd_*.dart filenames exist anywhere in lib/', () {
+      final rdFiles = _dartFilesIn('lib')
+          .map((f) => _normalize(f.path))
+          .where((path) => path.split('/').last.startsWith('rd_'))
+          .toList();
+      expect(rdFiles, isEmpty, reason: 'Unexpected rd_*.dart files in lib/: $rdFiles');
+    });
+
+    test('orphan and legacy directories do not exist in lib/', () {
       expect(Directory('lib/core/models').existsSync(), isFalse);
       expect(Directory('lib/data/services').existsSync(), isFalse);
+      expect(Directory('lib/core/redesign').existsSync(), isFalse);
+      expect(Directory('lib/core/theme/redesign').existsSync(), isFalse);
+      expect(Directory('lib/shared/widgets/redesign').existsSync(), isFalse);
     });
   });
 }

@@ -1,11 +1,11 @@
 import 'package:attendix/core/config/supabase_config.dart';
 import 'package:attendix/core/providers/account_switch_providers.dart';
 import 'package:attendix/core/providers/connectivity_provider.dart';
-import 'package:attendix/core/providers/redesign_providers.dart';
+import 'package:attendix/core/providers/appearance_providers.dart';
 import 'package:attendix/core/services/account_switch/saved_account.dart';
 import 'package:attendix/core/services/teams/teams_service.dart';
-import 'package:attendix/core/theme/redesign/rd_palette.dart';
-import 'package:attendix/core/theme/redesign/rd_theme.dart';
+import 'package:attendix/core/theme/app_palette.dart';
+import 'package:attendix/core/theme/design_theme.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:attendix/shared/widgets/debug/debug_role_fab.dart';
 import 'package:flutter/material.dart';

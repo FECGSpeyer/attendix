@@ -98,6 +98,12 @@ flutter test --coverage
 # Security-Tests ausführen
 flutter test --name "Multi-Tenant Security"
 
+# UI Layout-Invariants & Design-Guards
+flutter test test/ui/
+
+# Interaktives Test-Dashboard öffnen
+python3 tool/testing/generate_test_dashboard.py --open
+
 # PWA starten
 flutter run -d chrome
 ```
@@ -112,6 +118,7 @@ test/
 ├── data/               # Model- & Repository-Security-Tests
 ├── features/           # 1:1 Spiegelung von lib/features/ (today, attendance, people, songs, settings, …)
 ├── shared/             # Shell- & Widget-Tests (spiegelt lib/shared/)
+├── ui/                 # Mehr-Viewport-Layout-Invariants (320/390/1280, TextScale 1.6x, Overlaps) & Design-Guards
 ├── factories/          # Test-Daten Factories
 ├── fixtures/           # Test-Fixtures
 ├── golden/             # Golden-Image-Tests

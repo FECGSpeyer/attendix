@@ -89,8 +89,11 @@ Die Projektordner `windows/` und `linux/` existieren (`flutter build windows` bz
 # Code analysieren (wie in CI)
 dart analyze lib/ test/ tool/ scripts/ patrol_test/ --fatal-infos --fatal-warnings
 
-# Tests ausführen
+# Alle Tests inkl. UI-Layout-Invariants ausführen
 flutter test
+
+# Interaktives Test-Dashboard (Übersicht aller 4 Test-Schichten, Feature-Matrix & Goldens)
+python3 tool/testing/generate_test_dashboard.py --open
 ```
 
 ### Projektstruktur
