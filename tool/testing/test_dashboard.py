@@ -49,6 +49,8 @@ class ExtractionTests(unittest.TestCase):
             (tester) async {},
           );
           patrolTest('M-01 Termin zusagen', tags: ['pr', 'mobil'], ($) async {});
+          widgetTest('helper wrapper', (tester) async {});
+          tenantIdTest('repo filters', () async {});
         }
         """
         cases = dash.extract_dart_tests(source)
@@ -59,6 +61,8 @@ class ExtractionTests(unittest.TestCase):
                 ("test", 'double quoted "escaped"'),
                 ("testWidgets", "multiline widget test with // inside string"),
                 ("patrolTest", "M-01 Termin zusagen"),
+                ("widgetTest", "helper wrapper"),
+                ("tenantIdTest", "repo filters"),
             ],
         )
         self.assertEqual(cases[3].tags, ["pr", "mobil"])
@@ -84,6 +88,26 @@ class ExtractionTests(unittest.TestCase):
             py_cases = dash.extract_tool_tests(py_file)
             self.assertEqual([c.name for c in js_cases], ["first js behavior", "second behavior"])
             self.assertEqual([c.name for c in py_cases], ["test_alpha", "test_beta"])
+
+    def test_infer_features_from_imports_paths_and_ui_filenames(self) -> None:
+        known = {"shifts", "songs", "today", "people"}
+        source = (
+            "import 'package:attendix/features/songs/presentation/pages/works_page.dart';\n"
+            "final f = File('lib/features/shifts/presentation/widgets/x.dart');\n"
+            "final all = Directory('lib/features');\n"
+        )
+        self.assertEqual(
+            dash.infer_features_for_dart_file("test/data/guard_test.dart", source, known),
+            ["shifts", "songs"],
+        )
+        self.assertEqual(
+            dash.infer_features_for_dart_file("test/features/people/a_test.dart", "", known),
+            ["people"],
+        )
+        self.assertEqual(
+            dash.infer_features_for_dart_file("test/ui/today_layout_test.dart", "", known),
+            ["today"],
+        )
 
     def test_classify_test_file_layers(self) -> None:
         self.assertEqual(dash.classify_test_file("test/ui/layout_guard_test.dart"), "ui")
@@ -242,7 +266,7 @@ class NdjsonAndIntegrationTests(unittest.TestCase):
             self.assertIn("data:image/png;base64,", html_text)
             # Script injection inside test names must be escaped in embedded JSON
             self.assertNotIn("renders list </script>", html_text)
-            self.assertIn(r"renders list <\/script>", html_text)
+            self.assertIn(r"renders list \u003c/script>", html_text)
 
             md_text = md_out.read_text(encoding="utf-8")
             self.assertIn("❌ **1 Test(s) fehlgeschlagen**", md_text)
@@ -250,6 +274,203 @@ class NdjsonAndIntegrationTests(unittest.TestCase):
             self.assertIn("filters works", md_text)
             self.assertIn("Expected: 2", md_text)
             self.assertIn("`empty_feat`", md_text)
+
+
+def _ndjson(*events: dict) -> str:
+    return "\n".join(json.dumps(e) for e in events)
+
+
+def _suite(sid: int, path: str) -> dict:
+    return {"type": "suite", "suite": {"id": sid, "path": path}, "time": 0}
+
+
+def _start(tid: int, sid: int, name: str, time: int = 0) -> dict:
+    return {"type": "testStart", "test": {"id": tid, "name": name, "suiteID": sid}, "time": time}
+
+
+def _done(tid: int, result: str = "success", time: int = 10, **extra: object) -> dict:
+    event = {"type": "testDone", "testID": tid, "result": result, "hidden": False, "skipped": False, "time": time}
+    event.update(extra)
+    return event
+
+
+_DONE_OK = {"type": "done", "success": True, "time": 999}
+
+
+class MultiShardIdCollisionTests(unittest.TestCase):
+    """Every CI shard is its own `flutter test` process whose suite and test
+    IDs all start at 0; results of one shard must never overwrite, absorb or
+    misattribute results of another."""
+
+    def test_identical_ids_across_four_shards_stay_isolated(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            paths = []
+            for shard in range(1, 5):
+                shard_file = root / f"test-results-shard-{shard}.json"
+                result = "failure" if shard == 3 else "success"
+                events = [
+                    _suite(0, f"/runner/work/attendix/test/core/shard{shard}_test.dart"),
+                    _start(1, 0, f"loading shard {shard}"),
+                    _done(1, hidden=True),
+                    _start(2, 0, f"case A of shard {shard}", time=100),
+                    _done(2, time=100 + shard * 10),
+                    _start(3, 0, f"case B of shard {shard}", time=200),
+                ]
+                if shard == 3:
+                    events.append({"type": "error", "testID": 3, "error": "shard 3 boom"})
+                events += [_done(3, result=result, time=300), _DONE_OK]
+                shard_file.write_text(_ndjson(*events), encoding="utf-8")
+                paths.append(shard_file)
+
+            info: dict = {}
+            live = dash.parse_ndjson_results(paths, root, info)
+
+            self.assertEqual(
+                sorted(live),
+                [f"test/core/shard{n}_test.dart" for n in range(1, 5)],
+            )
+            for shard in range(1, 5):
+                entry = live[f"test/core/shard{shard}_test.dart"]
+                self.assertEqual(
+                    [c.name for c in entry["cases"]],
+                    [f"case A of shard {shard}", f"case B of shard {shard}"],
+                )
+                self.assertEqual(entry["cases"][0].duration_ms, shard * 10)
+                if shard == 3:
+                    self.assertEqual((entry["passed"], entry["failed"]), (1, 1))
+                    self.assertEqual(entry["cases"][1].error, "shard 3 boom")
+                else:
+                    self.assertEqual((entry["passed"], entry["failed"]), (2, 0))
+                    # The error of shard 3's test 3 must not leak into test 3 elsewhere.
+                    self.assertEqual(entry["cases"][1].error, "")
+            self.assertEqual(info["parsed"], [p.name for p in paths])
+            self.assertEqual(info["incomplete"], [])
+
+    def test_testdone_without_start_in_same_shard_is_not_borrowed(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            first = root / "shard-1.json"
+            second = root / "shard-2.json"
+            first.write_text(
+                _ndjson(_suite(0, "test/ui/a_test.dart"), _start(5, 0, "only in shard 1"), _done(5), _DONE_OK),
+                encoding="utf-8",
+            )
+            # Same IDs, but no suite/testStart in this file: must be ignored.
+            second.write_text(
+                _ndjson({"type": "error", "testID": 5, "error": "foreign"}, _done(5, result="error"), _DONE_OK),
+                encoding="utf-8",
+            )
+            live = dash.parse_ndjson_results([first, second], root)
+            self.assertEqual(list(live), ["test/ui/a_test.dart"])
+            case = live["test/ui/a_test.dart"]["cases"][0]
+            self.assertEqual((case.status, case.error), ("passed", ""))
+
+    def test_same_suite_split_over_two_files_is_merged_not_overwritten(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            first = root / "a.json"
+            second = root / "b.json"
+            for path, name in ((first, "first run"), (second, "second run")):
+                path.write_text(
+                    _ndjson(_suite(0, "test/ui/same_test.dart"), _start(1, 0, name), _done(1), _DONE_OK),
+                    encoding="utf-8",
+                )
+            live = dash.parse_ndjson_results([first, second], root)
+            entry = live["test/ui/same_test.dart"]
+            self.assertEqual([c.name for c in entry["cases"]], ["first run", "second run"])
+            self.assertEqual(entry["passed"], 2)
+
+
+class ResultHealthTests(unittest.TestCase):
+    def test_error_after_testdone_marks_test_failed(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            results = root / "late.json"
+            results.write_text(
+                _ndjson(
+                    _suite(0, "test/core/late_test.dart"),
+                    _start(1, 0, "late failure"),
+                    _done(1, result="success"),
+                    {"type": "error", "testID": 1, "error": "This test failed after it had already completed."},
+                    _DONE_OK,
+                ),
+                encoding="utf-8",
+            )
+            live = dash.parse_ndjson_results([results], root)
+            entry = live["test/core/late_test.dart"]
+            self.assertEqual((entry["passed"], entry["failed"]), (0, 1))
+            self.assertIn("already completed", entry["cases"][0].error)
+
+    def test_missing_and_incomplete_shards_produce_warnings(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "test" / "core").mkdir(parents=True)
+            (root / "test" / "core" / "a_test.dart").write_text(
+                "void main() { test('a', () {}); }\n", encoding="utf-8"
+            )
+            (root / "test" / "core" / "b_test.dart").write_text(
+                "void main() { test('b', () {}); }\n", encoding="utf-8"
+            )
+            crashed = root / "test-results-shard-1.json"
+            # No final `done` event: the run was killed mid-way.
+            crashed.write_text(
+                _ndjson(_suite(0, str(root / "test/core/a_test.dart")), _start(1, 0, "a"), _done(1)),
+                encoding="utf-8",
+            )
+            md_out = root / "summary.md"
+            html_out = root / "index.html"
+            exit_code = dash.main([
+                "--root", str(root),
+                "--results", str(crashed),
+                "--expected-results", "4",
+                "--html", str(html_out),
+                "--markdown", str(md_out),
+            ])
+            self.assertEqual(exit_code, 0)
+            md_text = md_out.read_text(encoding="utf-8")
+            self.assertNotIn("✅", md_text)
+            self.assertIn("Nur 1 von 4 erwarteten Ergebnisdateien", md_text)
+            self.assertIn("test-results-shard-1.json", md_text)
+            self.assertIn("`test/core/b_test.dart`", md_text)
+            html_text = html_out.read_text(encoding="utf-8")
+            self.assertIn("Live-Ergebnis unvollständig", html_text)
+            self.assertIn('class="result-warning"', html_text)
+
+    def test_markdown_escapes_backticks_pipes_and_newlines(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            results = root / "r.json"
+            results.write_text(
+                _ndjson(
+                    _suite(0, "test/core/x_test.dart"),
+                    _start(1, 0, "name with `tick` | pipe *bold*"),
+                    {"type": "error", "testID": 1, "error": "Expected: `a|b`\nActual: c"},
+                    _done(1, result="failure"),
+                    _DONE_OK,
+                ),
+                encoding="utf-8",
+            )
+            # x_test.dart does not exist on disk: its live failure must still be
+            # reported instead of silently vanishing from the summary.
+            report = dash.scan_repository(root, [str(results)])
+            self.assertEqual(report.totals["failed"], 1)
+            self.assertEqual([f.path for f in report.files], ["test/core/x_test.dart"])
+            md_text = dash.render_markdown(report)
+            failure_line = next(ln for ln in md_text.splitlines() if "x_test.dart" in ln)
+            self.assertIn(r"name with \`tick\` \| pipe \*bold\*", failure_line)
+            self.assertIn("`Expected: 'a¦b'`", failure_line)
+
+    def test_empty_markdown_path_is_skipped(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            exit_code = dash.main(["--root", str(root), "--html", str(root / "i.html"), "--markdown", ""])
+            self.assertEqual(exit_code, 0)
+            self.assertTrue((root / "i.html").is_file())
+
+    def test_classify_strips_only_dot_slash_prefix(self) -> None:
+        self.assertEqual(dash.classify_test_file("./test/ui/a_test.dart"), "ui")
+        self.assertEqual(dash.classify_test_file("././patrol_test/a_test.dart"), "patrol")
 
 
 if __name__ == "__main__":

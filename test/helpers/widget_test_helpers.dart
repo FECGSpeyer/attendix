@@ -280,5 +280,6 @@ void widgetTest(
     description,
     callback,
     skip: skip,
+    timeout: timeout == null ? null : Timeout(timeout),
   );
 }

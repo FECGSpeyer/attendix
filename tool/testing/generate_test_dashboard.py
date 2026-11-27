@@ -170,10 +170,13 @@ PATROL_FEATURE_KEYWORDS: list[tuple[str, tuple[str, ...]]] = [
 DART_IMPORT_FEATURE_RE = re.compile(
     r"""import\s+['"]package:attendix/features/([a-z0-9_]+)/([^'"]+)['"]"""
 )
+# `widgetTest` / `tenantIdTest` are the wrappers in test/helpers/.
 DART_TEST_RE = re.compile(
-    r"""(?:^|[;\s{}])\s*(testWidgets|patrolTest|test)\(\s*r?(['"])((?:\\.|(?!\2)[^\\\n])+)\2""",
+    r"""(?:^|[;\s{}])\s*(testWidgets|widgetTest|tenantIdTest|patrolTest|test)\(\s*r?(['"])((?:\\.|(?!\2)[^\\\n])+)\2""",
     re.MULTILINE,
 )
+# Source-scanner tests reference feature files by path ('lib/features/x/...').
+DART_PATH_FEATURE_RE = re.compile(r"""['"]lib/features/([a-z0-9_]+)/""")
 DART_PATROL_TAGS_RE = re.compile(r"""tags\s*:\s*\[([^\]]*)\]""")
 DART_EXPECT_GOLDEN_RE = re.compile(
     r"""expectGolden\([^;]*?['"]([a-zA-Z0-9_]+)['"]"""
@@ -190,7 +193,7 @@ class TestCaseEntry:
     """Single extracted or executed test case inside a test file."""
 
     name: str
-    kind: str = "test"  # test | testWidgets | patrolTest | js-test | py-test
+    kind: str = "test"  # test | testWidgets | widgetTest | tenantIdTest | patrolTest | executed | js-test | py-test
     line: int | None = None
     status: str = "unrun"  # passed | failed | skipped | unrun
     duration_ms: int | None = None
@@ -241,6 +244,38 @@ class DashboardReport:
     layer_stats: dict[str, dict[str, Any]]
     totals: dict[str, Any]
     failed_cases: list[dict[str, str]]
+    # Result-file health (CI shards): files without a final `done` event,
+    # how many result files were expected, and Flutter test files that have
+    # no live result although other files do.
+    incomplete_results: list[str] = field(default_factory=list)
+    expected_results: int | None = None
+    files_without_results: list[str] = field(default_factory=list)
+
+    @property
+    def result_warnings(self) -> list[str]:
+        """Human-readable (German) warnings about missing or partial results."""
+        warnings: list[str] = []
+        if (
+            self.expected_results is not None
+            and len(self.result_files) < self.expected_results
+        ):
+            warnings.append(
+                f"Nur {len(self.result_files)} von {self.expected_results} "
+                "erwarteten Ergebnisdateien gefunden – mindestens ein Test-Shard "
+                "hat keine Ergebnisse geliefert."
+            )
+        if self.incomplete_results:
+            warnings.append(
+                "Unvollständige Ergebnisdatei(en) ohne Abschluss-Event "
+                "(abgebrochener oder abgestürzter Lauf): "
+                + ", ".join(self.incomplete_results)
+            )
+        if self.has_live_results and self.files_without_results:
+            warnings.append(
+                f"{len(self.files_without_results)} Flutter-Testdatei(en) ohne "
+                "Live-Ergebnis."
+            )
+        return warnings
 
 
 def strip_dart_comments(source: str) -> str:
@@ -370,7 +405,9 @@ def extract_tool_tests(path: Path) -> list[TestCaseEntry]:
 
 def classify_test_file(rel_path: str) -> str:
     """Classifies a repository-relative test path into one of the 6 layers."""
-    norm = rel_path.replace("\\", "/").lstrip("./")
+    norm = rel_path.replace("\\", "/")
+    while norm.startswith("./"):
+        norm = norm[2:]
     if norm.startswith("test/ui/"):
         return "ui"
     if norm.startswith("test/golden/"):
@@ -420,6 +457,9 @@ def infer_features_for_dart_file(
             found.add(parts[2])
 
     for feat, _ in DART_IMPORT_FEATURE_RE.findall(source):
+        if feat in known_features:
+            found.add(feat)
+    for feat in DART_PATH_FEATURE_RE.findall(source):
         if feat in known_features:
             found.add(feat)
 
@@ -565,10 +605,27 @@ def expand_result_paths(raw_paths: list[str] | None) -> list[Path]:
     return collected
 
 
+def _as_int(value: Any) -> int | None:
+    """Returns [value] as int when it is a real integer (not bool), else None."""
+    if isinstance(value, bool) or not isinstance(value, int):
+        return None
+    return value
+
+
 def parse_ndjson_results(
-    result_paths: list[Path], repo_root: Path
+    result_paths: list[Path],
+    repo_root: Path,
+    run_info: dict[str, Any] | None = None,
 ) -> dict[str, dict[str, Any]]:
     """Parses one or more `flutter test --file-reporter json:...` NDJSON files.
+
+    Every result file is parsed in its own ID namespace: each CI shard is a
+    separate `flutter test` process whose suite and test IDs all start at 0,
+    so IDs must never be shared between files.
+
+    Errors reported after a test's `testDone` (e.g. "This test failed after it
+    had already completed") are still attached and turn the test into a
+    failure.
 
     Returns a mapping: rel_path -> {
         "cases": [TestCaseEntry, ...],
@@ -577,17 +634,27 @@ def parse_ndjson_results(
         "skipped": int,
         "duration_ms": int,
     }
+
+    When [run_info] is given it receives `parsed` (names of readable result
+    files) and `incomplete` (names of result files without a final `done`
+    event, i.e. a crashed, killed or cancelled `flutter test` run).
     """
     per_file: dict[str, dict[str, Any]] = {}
+    parsed_names: list[str] = []
+    incomplete_names: list[str] = []
 
     for json_path in result_paths:
         suites: dict[int, str] = {}
         tests: dict[int, dict[str, Any]] = {}
         errors: dict[int, list[str]] = {}
+        # Finished tests of this file, in completion order: (testID, rel_path, case).
+        finished: list[tuple[int, str, TestCaseEntry]] = []
+        saw_done = False
         try:
             lines = json_path.read_text(encoding="utf-8", errors="replace").splitlines()
         except OSError:
             continue
+        parsed_names.append(json_path.name)
 
         for raw_line in lines:
             line = raw_line.strip()
@@ -601,31 +668,34 @@ def parse_ndjson_results(
             etype = event.get("type")
             if etype == "suite":
                 suite = event.get("suite") or {}
-                sid = suite.get("id")
+                sid = _as_int(suite.get("id"))
                 spath = suite.get("path")
-                if isinstance(sid, int) and isinstance(spath, str):
+                if sid is not None and isinstance(spath, str):
                     suites[sid] = normalize_suite_path(spath, repo_root)
             elif etype == "testStart":
                 test_obj = event.get("test") or {}
-                tid = test_obj.get("id")
-                sid = test_obj.get("suiteID")
-                if isinstance(tid, int) and isinstance(sid, int):
+                tid = _as_int(test_obj.get("id"))
+                sid = _as_int(test_obj.get("suiteID"))
+                if tid is not None and sid is not None:
                     meta = test_obj.get("metadata") or {}
                     tests[tid] = {
                         "name": str(test_obj.get("name") or ""),
                         "suite_id": sid,
-                        "line": test_obj.get("root_line") or test_obj.get("line"),
-                        "start_time": int(event.get("time") or 0),
+                        "line": _as_int(test_obj.get("root_line"))
+                        or _as_int(test_obj.get("line")),
+                        "start_time": _as_int(event.get("time")) or 0,
                         "meta_skip": bool(meta.get("skip")),
                     }
             elif etype == "error":
-                tid = event.get("testID")
+                tid = _as_int(event.get("testID"))
                 msg = str(event.get("error") or "").strip()
-                if isinstance(tid, int) and msg:
+                if tid is not None and msg:
                     errors.setdefault(tid, []).append(msg)
+            elif etype == "done":
+                saw_done = True
             elif etype == "testDone":
-                tid = event.get("testID")
-                if not isinstance(tid, int) or tid not in tests:
+                tid = _as_int(event.get("testID"))
+                if tid is None or tid not in tests:
                     continue
                 if event.get("hidden"):
                     continue
@@ -633,7 +703,7 @@ def parse_ndjson_results(
                 rel_path = suites.get(info["suite_id"])
                 if not rel_path:
                     continue
-                done_time = int(event.get("time") or info["start_time"])
+                done_time = _as_int(event.get("time")) or info["start_time"]
                 duration_ms = max(0, done_time - info["start_time"])
                 skipped = bool(event.get("skipped")) or info["meta_skip"]
                 result = event.get("result")
@@ -643,31 +713,47 @@ def parse_ndjson_results(
                     status = "passed"
                 else:
                     status = "failed"
-
-                err_text = "\n".join(errors.get(tid, []))
-                entry = per_file.setdefault(
-                    rel_path,
-                    {
-                        "cases": [],
-                        "passed": 0,
-                        "failed": 0,
-                        "skipped": 0,
-                        "duration_ms": 0,
-                    },
-                )
-                entry["cases"].append(
-                    TestCaseEntry(
-                        name=info["name"],
-                        kind="executed",
-                        line=info["line"],
-                        status=status,
-                        duration_ms=duration_ms,
-                        error=err_text,
+                finished.append(
+                    (
+                        tid,
+                        rel_path,
+                        TestCaseEntry(
+                            name=info["name"],
+                            kind="executed",
+                            line=info["line"],
+                            status=status,
+                            duration_ms=duration_ms,
+                        ),
                     )
                 )
-                entry[status] += 1
-                entry["duration_ms"] += duration_ms
 
+        if not saw_done:
+            incomplete_names.append(json_path.name)
+
+        # Finalize after the whole file is read, so errors that arrive after
+        # `testDone` are not lost.
+        for tid, rel_path, case in finished:
+            test_errors = errors.get(tid, [])
+            case.error = "\n".join(test_errors)
+            if test_errors and case.status == "passed":
+                case.status = "failed"
+            entry = per_file.setdefault(
+                rel_path,
+                {
+                    "cases": [],
+                    "passed": 0,
+                    "failed": 0,
+                    "skipped": 0,
+                    "duration_ms": 0,
+                },
+            )
+            entry["cases"].append(case)
+            entry[case.status] += 1
+            entry["duration_ms"] += case.duration_ms or 0
+
+    if run_info is not None:
+        run_info["parsed"] = parsed_names
+        run_info["incomplete"] = incomplete_names
     return per_file
 
 
@@ -675,13 +761,15 @@ def scan_repository(
     repo_root: Path,
     result_paths: list[str] | None = None,
     embed_goldens: bool = False,
+    expected_results: int | None = None,
 ) -> DashboardReport:
     """Scans the repository and merges optional live NDJSON test results."""
     features = discover_features(repo_root)
     known_features = set(features)
 
     expanded_results = expand_result_paths(result_paths)
-    live_by_file = parse_ndjson_results(expanded_results, repo_root)
+    run_info: dict[str, Any] = {}
+    live_by_file = parse_ndjson_results(expanded_results, repo_root, run_info)
     has_live = bool(live_by_file)
 
     files: list[TestFileEntry] = []
@@ -787,6 +875,26 @@ def scan_repository(
                 )
             )
 
+    # 3b. Live results whose suite path matches no scanned file (renamed or
+    # deleted file, a different checkout root, an unexpected path format)
+    # must still count, otherwise their failures silently disappear.
+    scanned_paths = {f.path for f in files}
+    for rel_path in sorted(set(live_by_file) - scanned_paths):
+        live = live_by_file[rel_path]
+        files.append(
+            TestFileEntry(
+                path=rel_path,
+                layer=classify_test_file(rel_path),
+                features=[],
+                cases=live["cases"],
+                passed=live["passed"],
+                failed=live["failed"],
+                skipped=live["skipped"],
+                duration_ms=live["duration_ms"],
+                has_live_results=True,
+            )
+        )
+
     # 4. Scan test/golden/goldens/*.png
     golden_feature_map = map_goldens_to_features(repo_root, known_features)
     goldens: list[GoldenEntry] = []
@@ -872,6 +980,9 @@ def scan_repository(
                 )
 
     flutter_files = [f for f in files if f.layer in ("ui", "golden", "features", "core")]
+    files_without_results = (
+        [f.path for f in flutter_files if not f.has_live_results] if has_live else []
+    )
     totals = {
         "all_files": len(files),
         "all_cases": sum(len(f.cases) for f in files),
@@ -894,7 +1005,7 @@ def scan_repository(
         repo_root=repo_root,
         generated_at=datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
         has_live_results=has_live,
-        result_files=[p.name for p in expanded_results],
+        result_files=list(run_info.get("parsed", [])),
         files=files,
         goldens=goldens,
         features=features,
@@ -902,6 +1013,9 @@ def scan_repository(
         layer_stats=layer_stats,
         totals=totals,
         failed_cases=failed_cases,
+        incomplete_results=list(run_info.get("incomplete", [])),
+        expected_results=expected_results,
+        files_without_results=files_without_results,
     )
 
 
@@ -919,35 +1033,74 @@ def format_duration(ms: int | None) -> str:
     return f"{minutes}m {rem:.0f}s"
 
 
+def _md_text(value: str) -> str:
+    """Escapes free text (test names, paths) for one line of GFM / a table cell."""
+    flat = " ".join(str(value).split())
+    for ch in ("\\", "`", "*", "_", "[", "]", "<", ">", "|"):
+        flat = flat.replace(ch, "\\" + ch)
+    return flat
+
+
+def _md_code(value: str) -> str:
+    """Formats text as inline code that a backtick or pipe inside cannot break."""
+    flat = " ".join(str(value).split()).replace("`", "'").replace("|", "¦")
+    return f"`{flat}`" if flat else ""
+
+
 def render_markdown(report: DashboardReport) -> str:
-    """Renders a GitHub-Flavored Markdown summary for $GITHUB_STEP_SUMMARY."""
+    """Renders a GitHub-Flavored Markdown summary for $GITHUB_STEP_SUMMARY.
+
+    Durations are the sum of all test durations (shards run in parallel, so
+    this is not the wall-clock time of the CI run).
+    """
     t = report.totals
     lines: list[str] = ["## Attendix · Test- & Qualitäts-Dashboard", ""]
+    warnings = report.result_warnings
 
     if report.has_live_results:
-        if t["failed"] == 0:
+        if t["failed"] == 0 and not warnings:
             lines.append(
                 f"✅ **Alle {t['passed']} ausgeführten Tests bestanden** "
-                f"({t['skipped']} übersprungen · Laufzeit {format_duration(t['duration_ms'])} · "
+                f"({t['skipped']} übersprungen · Σ Testdauer {format_duration(t['duration_ms'])} · "
                 f"{len(report.result_files)} Ergebnisdatei(en))"
+            )
+        elif t["failed"] == 0:
+            lines.append(
+                f"⚠️ **Keine Fehlschläge in den gelieferten Ergebnissen, aber "
+                f"die Ergebnisse sind unvollständig** · {t['passed']} bestanden · "
+                f"{t['skipped']} übersprungen · {len(report.result_files)} Ergebnisdatei(en)"
             )
         else:
             lines.append(
                 f"❌ **{t['failed']} Test(s) fehlgeschlagen** · "
                 f"{t['passed']} bestanden · {t['skipped']} übersprungen "
-                f"(Laufzeit {format_duration(t['duration_ms'])})"
+                f"(Σ Testdauer {format_duration(t['duration_ms'])})"
             )
     else:
         lines.append(
-            f"ℹ️ **Statischer Repo-Scan** (ohne `--results`): "
+            f"ℹ️ **Statischer Repo-Scan** (keine Live-Ergebnisse): "
             f"**{t['all_files']} Testdateien** mit **{t['all_cases']} Testfällen** "
             f"über 4 Flutter-Schichten + Patrol E2E + Tooling."
         )
+    if warnings:
+        lines.append("")
+        lines.extend(f"> ⚠️ {w}" for w in warnings)
+        if report.has_live_results and report.files_without_results:
+            shown = report.files_without_results[:15]
+            lines.append(
+                "> Ohne Ergebnis: "
+                + ", ".join(_md_code(path) for path in shown)
+                + (
+                    f" … und {len(report.files_without_results) - len(shown)} weitere."
+                    if len(report.files_without_results) > len(shown)
+                    else ""
+                )
+            )
 
     lines.extend(
         [
             "",
-            "| Schicht | Pfad | Dateien | Testfälle | Bestanden | Fehlgeschlagen | Übersprungen | Laufzeit |",
+            "| Schicht | Pfad | Dateien | Testfälle | Bestanden | Fehlgeschlagen | Übersprungen | Σ Testdauer |",
             "|---|---|---:|---:|---:|---:|---:|---:|",
         ]
     )
@@ -977,8 +1130,10 @@ def render_markdown(report: DashboardReport) -> str:
                 (ln.strip() for ln in failure["error"].splitlines() if ln.strip()),
                 "",
             )
-            err_suffix = f" — `{first_line[:140]}`" if first_line else ""
-            lines.append(f"- `{failure['file']}` · **{failure['name']}**{err_suffix}")
+            err_suffix = f" — {_md_code(first_line[:140])}" if first_line else ""
+            lines.append(
+                f"- {_md_code(failure['file'])} · **{_md_text(failure['name'])}**{err_suffix}"
+            )
         if len(report.failed_cases) > 25:
             lines.append(f"- … und {len(report.failed_cases) - 25} weitere.")
 
@@ -1026,8 +1181,14 @@ def render_html(report: DashboardReport, html_path: Path) -> str:
     """Renders a self-contained, responsive HTML dashboard."""
     t = report.totals
 
+    warnings = report.result_warnings
     if report.has_live_results:
-        if t["failed"] == 0:
+        if t["failed"] == 0 and warnings:
+            status_badge = (
+                '<span class="pill pill-warn">Live-Ergebnis unvollständig · '
+                f'{t["passed"]} bestanden</span>'
+            )
+        elif t["failed"] == 0:
             status_badge = (
                 '<span class="pill pill-pass">Live-Ergebnis · '
                 f'{t["passed"]} bestanden</span>'
@@ -1042,7 +1203,9 @@ def render_html(report: DashboardReport, html_path: Path) -> str:
             f"{t['failed']} fehlgeschlagen · {t['skipped']} übersprungen · "
             f"{format_duration(t['duration_ms'])}"
         )
-        status_card_tone = "kpi-pass" if t["failed"] == 0 else "kpi-fail"
+        status_card_tone = (
+            "kpi-fail" if t["failed"] else ("kpi-neutral" if warnings else "kpi-pass")
+        )
     else:
         status_badge = '<span class="pill pill-info">Statischer Repo-Scan</span>'
         status_card_value = "Kein Lauf"
@@ -1178,8 +1341,17 @@ def render_html(report: DashboardReport, html_path: Path) -> str:
         }
         for f in report.files
     ]
-    explorer_json = json.dumps(explorer_payload, ensure_ascii=False).replace(
-        "</", "<\\/"
+    # Escape every "<" (covers </script> and <!--) plus the JS line
+    # separators, so test names or error texts can never end the <script>.
+    explorer_json = (
+        json.dumps(explorer_payload, ensure_ascii=False)
+        .replace("<", "\\u003c")
+        .replace("\u2028", "\\u2028")
+        .replace("\u2029", "\\u2029")
+    )
+    warnings_html = "".join(
+        f'<p class="result-warning" role="alert">⚠️ {html.escape(w)}</p>'
+        for w in warnings
     )
 
     return f"""<!DOCTYPE html>
@@ -1620,6 +1792,14 @@ def render_html(report: DashboardReport, html_path: Path) -> str:
       white-space: pre-wrap;
       overflow-x: auto;
     }}
+    .result-warning {{
+      margin: 0 0 1rem;
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius);
+      background: var(--warn-bg);
+      color: var(--warn);
+      font-weight: 600;
+    }}
     .empty-note {{
       padding: 1.5rem;
       text-align: center;
@@ -1674,6 +1854,7 @@ def render_html(report: DashboardReport, html_path: Path) -> str:
         <button type="button" class="btn" id="themeToggle" onclick="toggleTheme()">🌙 Design wechseln</button>
       </div>
     </header>
+    {warnings_html}
 
     <section class="kpi-grid" aria-label="Kennzahlen">
       <div class="kpi-card">
@@ -2023,6 +2204,16 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Optional output path for GitHub-Flavored Markdown summary.",
     )
     parser.add_argument(
+        "--expected-results",
+        type=int,
+        default=None,
+        metavar="N",
+        help=(
+            "Number of result files that should exist (e.g. 4 CI shards). "
+            "Fewer readable files are reported as a warning in HTML & Markdown."
+        ),
+    )
+    parser.add_argument(
         "--open",
         action="store_true",
         help="Open generated HTML dashboard in the default browser.",
@@ -2039,13 +2230,17 @@ def main(argv: list[str] | None = None) -> int:
         repo_root=repo_root,
         result_paths=args.results,
         embed_goldens=args.embed_goldens,
+        expected_results=args.expected_results,
     )
 
     html_out.parent.mkdir(parents=True, exist_ok=True)
     html_out.write_text(render_html(report, html_out), encoding="utf-8")
     print(f"Dashboard HTML written to {html_out}")
 
-    if args.markdown is not None:
+    if args.markdown is not None and str(args.markdown) in ("", "."):
+        # e.g. `--markdown "$GITHUB_STEP_SUMMARY"` outside GitHub Actions.
+        print("Markdown summary skipped: empty --markdown path", file=sys.stderr)
+    elif args.markdown is not None:
         md_out = (
             args.markdown
             if args.markdown.is_absolute()

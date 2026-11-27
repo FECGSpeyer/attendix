@@ -85,22 +85,29 @@ class UiViewportProfile {
 /// `RenderFlex overflowed`, layout assertions, or widget build errors).
 ///
 /// Always restores the previous [FlutterError.onError] in `finally` and fails
-/// immediately if any error was reported.
+/// if any error was reported. When [body] itself throws (e.g. a failed
+/// `expect`), the captured FlutterErrors are reported together with it, so an
+/// overflow that caused the failure is never swallowed.
 Future<void> runCapturingFlutterErrors(Future<void> Function() body) async {
   final errors = <FlutterErrorDetails>[];
   final previousOnError = FlutterError.onError;
-  FlutterError.onError = (details) {
-    errors.add(details);
-  };
+  FlutterError.onError = errors.add;
+  Object? bodyError;
+  StackTrace? bodyStack;
   try {
     await body();
+  } catch (error, stack) {
+    bodyError = error;
+    bodyStack = stack;
   } finally {
     FlutterError.onError = previousOnError;
   }
   if (errors.isNotEmpty) {
     final details = errors.map((e) => e.exceptionAsString()).join('\n---\n');
-    fail('Captured ${errors.length} FlutterError(s):\n$details');
+    final cause = bodyError == null ? '' : '\n\nThe test body also failed with:\n$bodyError\n$bodyStack';
+    fail('Captured ${errors.length} FlutterError(s):\n$details$cause');
   }
+  if (bodyError != null) Error.throwWithStackTrace(bodyError, bodyStack!);
 }
 
 /// Verifies every finder in [finders] resolves to a widget with a non-zero
@@ -143,6 +150,29 @@ void expectHorizontallyWithinViewport(
     rect.right,
     lessThanOrEqualTo(viewport.width + 0.5),
     reason: '$finder extends past right viewport edge (${viewport.width}): $rect',
+  );
+}
+
+/// Asserts that [finder] lies fully inside the viewport on both axes (with a
+/// 0.5 px subpixel tolerance): not clipped past any edge and not scrolled or
+/// pushed off-screen. Use it for elements that must always be visible, such
+/// as page headings and header actions.
+void expectWithinViewport(
+  WidgetTester tester,
+  Finder finder,
+  Size viewport,
+) {
+  expectHorizontallyWithinViewport(tester, finder, viewport);
+  final rect = tester.getRect(finder);
+  expect(
+    rect.top,
+    greaterThanOrEqualTo(-0.5),
+    reason: '$finder extends past top viewport edge: $rect',
+  );
+  expect(
+    rect.bottom,
+    lessThanOrEqualTo(viewport.height + 0.5),
+    reason: '$finder extends past bottom viewport edge (${viewport.height}): $rect',
   );
 }
 

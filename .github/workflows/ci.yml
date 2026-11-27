@@ -127,7 +127,7 @@ jobs:
         run: |
           shopt -s nullglob globstar
           results=(shard-results/**/test-results-shard-*.json)
-          args=(--html build/test-dashboard/index.html --embed-goldens --markdown "$GITHUB_STEP_SUMMARY")
+          args=(--expected-results 4 --html build/test-dashboard/index.html --embed-goldens --markdown "$GITHUB_STEP_SUMMARY")
           if (( ${#results[@]} > 0 )); then
             args=(--results "${results[@]}" "${args[@]}")
           fi

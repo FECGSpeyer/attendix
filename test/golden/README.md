@@ -30,7 +30,7 @@ expected picture, the actual one and the difference.
 testWidgets('Mitglieder', (tester) async {
   await pumpGolden(
     tester,
-    const RdPeoplePage(),
+    const RdMembersPage(),
     look: GoldenLook.beta,
     path: '/mitglieder',
     shell: _shell,
