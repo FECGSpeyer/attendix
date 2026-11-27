@@ -16165,11 +16165,23 @@ abstract class AppLocalizations {
   /// **'Per Telegram senden (PDF 2x A5)'**
   String get planningFlutterTelegramPdf2x;
 
+  /// planning.flutter.unpublishedHint
+  ///
+  /// In de, this message translates to:
+  /// **'Noch nicht veröffentlicht. Nur hier im Editor sichtbar, bis der Plan in der Gemeinde App veröffentlicht wird.'**
+  String get planningFlutterUnpublishedHint;
+
   /// planning.flutter.unshareAction
   ///
   /// In de, this message translates to:
   /// **'Freigabe aufheben'**
   String get planningFlutterUnshareAction;
+
+  /// planning.flutter.updatedElsewhere
+  ///
+  /// In de, this message translates to:
+  /// **'Der Plan wurde gerade an anderer Stelle geändert und ist aktualisiert.'**
+  String get planningFlutterUpdatedElsewhere;
 
   /// planning.groupName
   ///
