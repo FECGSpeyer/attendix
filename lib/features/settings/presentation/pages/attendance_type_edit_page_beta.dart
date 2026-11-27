@@ -25,7 +25,7 @@ extension _AttendanceTypeBeta on _AttendanceTypeEditPageState {
       _hasChanges = true;
       _rdScheduleSave();
     }
-    final statuses = _AttendanceTypeEditPageState._statusOrder.where(_availableStatuses.contains).toList();
+    final statuses = _statusOrder.where(_availableStatuses.contains).toList();
     final defaultStatus =
         _availableStatuses.contains(_defaultStatus) ? _defaultStatus : (statuses.firstOrNull ?? _defaultStatus);
     final start = _formatTime(_startTime ?? const TimeOfDay(hour: 19, minute: 0));
@@ -365,7 +365,7 @@ extension _AttendanceTypeBeta on _AttendanceTypeEditPageState {
 
   Widget _rdAttendanceBody() {
     final l10n = context.l10n;
-    final current = _AttendanceTypeEditPageState._statusOrder.where(_availableStatuses.contains).toList();
+    final current = _statusOrder.where(_availableStatuses.contains).toList();
     final defaultStatus =
         _availableStatuses.contains(_defaultStatus) ? _defaultStatus : (current.firstOrNull ?? _defaultStatus);
     return Column(
