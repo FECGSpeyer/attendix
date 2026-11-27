@@ -1,18 +1,16 @@
 part of 'duty_staffing_section.dart';
 
-/// REDESIGN: "Dienst" on the Beta Termin page. Same rows, rights and actions
-/// as the classic card (Besetzung with −/+, occupants with status and
-/// "Austragen", own request to confirm, "Person einteilen", present and
-/// available persons with "Einteilen", persons who cannot), shown as Beta
-/// grouped lists with pills.
-extension _DutyStaffingBeta on _DutyStaffingSectionState {
+/// "Dienst" section on the Termin page: staffing controls (`−/+`), occupants
+/// with status and "Austragen", own request confirmation, "Person einteilen",
+/// present/available persons with "Einteilen", and unavailable persons.
+extension _DutyStaffingView on _DutyStaffingSectionState {
   RdTone _fillTone(DutyFill fill) => switch (fill) {
     DutyFill.full => RdTone.present,
     DutyFill.requested || DutyFill.partial => RdTone.late,
     DutyFill.open => RdTone.absent,
   };
 
-  Widget _buildBeta({
+  Widget _buildView({
     required List<PersonAttendance> players,
     required List<PersonAttendance> occupants,
     required List<PersonAttendance> available,
@@ -177,7 +175,7 @@ extension _DutyStaffingBeta on _DutyStaffingSectionState {
     );
   }
 
-  /// "⋯" of an occupant: "Austragen" (asks like the classic button).
+  /// "⋯" of an occupant: "Austragen" confirmation sheet.
   Future<void> _occupantActions(PersonAttendance pa) async {
     final l10n = context.l10n;
     final action = await showAppActionSheet<String>(

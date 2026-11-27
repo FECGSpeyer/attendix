@@ -19,7 +19,7 @@ import '../../../planning/presentation/widgets/rd_plan_widgets.dart';
 import '../../../settings/presentation/widgets/manage/rd_manage_list.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
 
-part 'org_planning_templates_page_beta.dart';
+part 'org_planning_templates_view.dart';
 
 /// "Planvorlagen & Felder" of the organisation (Ionic `OrgPlanningTemplatesPage`).
 ///
@@ -34,7 +34,7 @@ class OrgPlanningTemplatesPage extends ConsumerStatefulWidget {
 class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesPage> {
   List<Plan>? _templates;
 
-  /// Bumped on every host rebuild so a pushed Beta Vorlagen-Editor shows
+  /// Bumped on every host rebuild so a pushed Vorlagen-Editor shows
   /// local changes at once, not only after saving.
   final _rdChanges = ValueNotifier<int>(0);
 
@@ -65,7 +65,7 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
     _notifier = ref.read(planSettingsNotifierProvider.notifier);
   }
 
-  /// setState for the Beta extension (part file).
+  /// setState for the view extension (part file).
   void _update(VoidCallback fn) => setState(fn);
 
   /// Saves the current Standardfelder; `true` once the write is confirmed.

@@ -33,6 +33,9 @@ import '../../../attendance/presentation/widgets/event/rd_form_widgets.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../widgets/reset_password_dialog.dart';
 
+part 'login_page_actions.dart';
+part 'login_page_form.dart';
+
 /// Login page
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
@@ -70,6 +73,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       c.addListener(_onFieldChanged);
     }
   }
+
+  void _update(VoidCallback fn) => setState(fn);
 
   void _onFieldChanged() {
     if (mounted) setState(() {});
@@ -114,23 +119,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     if (message != null) ToastHelper.showError(context, message);
   }
 
-  /// Ionic `forgotPassword()`: alert "Passwort zurücksetzen" with the login
-  /// e-mail prefilled, buttons Abbrechen / Zurücksetzen → db.resetPassword
-  /// (success/danger toast).
-  Future<void> _forgotPassword() async {
-    final email = await showResetPasswordDialog(
-      context,
-      email: _emailController.text.trim(),
-    );
-    if (email == null || !mounted) return;
-    final (ok, message) =
-        await ref.read(authFlowServiceProvider).resetPassword(email.trim());
-    if (!mounted) return;
-    ok
-        ? ToastHelper.showSuccess(context, message)
-        : ToastHelper.showError(context, message);
-  }
-
   late final TapGestureRecognizer _demoTap = TapGestureRecognizer()
     ..onTap = _startDemo;
   late final TapGestureRecognizer _legalTap = TapGestureRecognizer()
@@ -145,39 +133,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     _otpController.dispose();
     _cooldown.dispose();
     super.dispose();
-  }
-
-  /// Ionic `startDemo()`: log in with the demo credentials directly
-  /// (`db.login(environment.demoMail, environment.demoPassword)`), without
-  /// touching the form. The demo account is write-protected (DEMO_GUARD).
-  Future<void> _startDemo() async {
-    if (_isLoading) return;
-    setState(() => _isLoading = true);
-    try {
-      final user = await ref.read(authFlowServiceProvider).signInWithPassword(
-            AppConstants.demoMail,
-            AppConstants.demoPassword,
-          );
-      if (mounted) await _routeAfterAuth(user);
-    } on LoginFailure catch (failure) {
-      if (mounted) _showError(failure.message);
-    } catch (e) {
-      debugPrint('Demo login error: $e');
-      if (mounted) _showError(context.l10n.loginFlutterUnexpectedError);
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
-  }
-
-  /// AUTOFILL: after a successful password login, let iOS / Android / the
-  /// browser offer to save the typed credentials (password suggestions).
-  /// Not after the demo login: it does not use the form fields.
-  void _saveCredentialsForAutofill() {
-    try {
-      TextInput.finishAutofillContext();
-    } catch (e) {
-      debugPrint('finishAutofillContext failed: $e');
-    }
   }
 
   void _setMode(AuthMode mode) {
@@ -198,142 +153,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     }
   }
 
-  Future<void> _login() async {
-    if (!_formKey.currentState!.validate()) return;
-
-    setState(() => _isLoading = true);
-
-    try {
-      if (_teamsLinkMode) {
-        await _linkTeamsAccount();
-        return;
-      }
-      final user = await ref.read(authFlowServiceProvider).signInWithPassword(
-            _emailController.text.trim(),
-            _passwordController.text,
-          );
-      _saveCredentialsForAutofill();
-      if (mounted) await _routeAfterAuth(user);
-    } on LoginFailure catch (failure) {
-      if (!mounted) return;
-      if (_teamsLinkMode) {
-        // Ionic login() in linkMode: ssoLink catches the sign-in error and
-        // only shows a danger toast. No follow-up dialog, in particular no
-        // switch to the code login (it would not link the Microsoft account).
-        // Ionic AuthService.login: email_not_confirmed → "Bitte bestätige
-        // zuerst deine E-Mail-Adresse." (db-5e5596ce).
-        _showError(switch (failure.kind) {
-          LoginFailureKind.emailNotConfirmed => context.l10n.authConfirmEmailFirst,
-          LoginFailureKind.invalidCredentials => context.l10n.authInvalidCredentials,
-          _ => failure.message ?? context.l10n.authInvalidCredentials,
-        });
-        return;
-      }
-      _showError(failure.message);
-      switch (failure.kind) {
-        case LoginFailureKind.emailNotConfirmed:
-          await _promptResendConfirmation();
-        case LoginFailureKind.invalidCredentials:
-          await _promptSwitchToOtp();
-        case LoginFailureKind.userNotFound:
-          await _promptRegister();
-        case LoginFailureKind.other:
-          break;
-      }
-    } catch (e) {
-      debugPrint('Login error: $e');
-      if (!mounted) return;
-      _showError(context.l10n.loginFlutterUnexpectedError);
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    }
-  }
-
-  /// TEAMS: verify the Attendix credentials, then bind the Microsoft identity
-  /// so future Teams launches sign in silently (Ionic login() in linkMode).
-  /// LoginFailure from the password sign-in propagates to [_login], which in
-  /// link mode only shows the error toast.
-  Future<void> _linkTeamsAccount() async {
-    // The root messenger outlives this page (the auth redirect may already
-    // have left /login when linking finishes).
-    final toastContext = ScaffoldMessenger.maybeOf(context)?.context;
-    final l10n = context.l10n;
-    final result = await ref.read(teamsServiceProvider).ssoLink(() async {
-      await ref.read(authFlowServiceProvider).signInWithPassword(
-            _emailController.text.trim(),
-            _passwordController.text,
-          );
-      // Credentials are valid even if the Microsoft link fails afterwards.
-      _saveCredentialsForAutofill();
-    });
-    final message = result.ok
-        ? l10n.loginToastMsLinked
-        : (result.error ?? l10n.svcLinkFailed);
-    if (toastContext != null && toastContext.mounted) {
-      final beta = LegacySnackBar(
-        color: result.ok ? AppColors.success : AppColors.danger,
-        floating: true,
-        duration: const Duration(seconds: 4),
-      );
-      // Ionic login(): 'success' for 4000 ms; teams.service: 'danger'.
-      if (result.ok) {
-        ToastHelper.showSuccess(toastContext, message,
-            duration: const Duration(seconds: 4), beta: beta);
-      } else {
-        ToastHelper.showError(toastContext, message, beta: beta);
-      }
-    }
-    // Usually the auth redirect has already left /login at this point.
-    if (!result.ok || !mounted) return;
-    setState(() => _teamsLinkMode = false);
-    final user = ref.read(supabaseClientProvider).auth.currentUser;
-    if (user != null) await _routeAfterAuth(user);
-  }
-
-  /// Ionic requestCode(): sign-in only, never creates a new account.
-  Future<void> _requestCode() async {
-    final email = _emailController.text.trim();
-    if (!isValidEmail(email)) {
-      _showError(context.l10n.loginToastInvalidEmail);
-      return;
-    }
-    setState(() => _isLoading = true);
-    final result = await ref
-        .read(authFlowServiceProvider)
-        .sendEmailOtp(email, allowCreate: false);
-    if (!mounted) return;
-    setState(() => _isLoading = false);
-    if (result.success) {
-      setState(() => _otpSent = true);
-      _cooldown.start();
-      ToastHelper.showSuccess(context, result.message);
-    } else {
-      _showError(result.message);
-      if (result.noAccount) await _promptRegister();
-    }
-  }
-
-  Future<void> _verifyCode() async {
-    final code = _otpController.text.trim();
-    if (code.isEmpty || _isLoading) return;
-    setState(() => _isLoading = true);
-    final result = await ref
-        .read(authFlowServiceProvider)
-        .verifyEmailOtp(_emailController.text.trim(), code);
-    if (!mounted) return;
-    setState(() => _isLoading = false);
-    if (!result.success) {
-      _showError(result.message);
-      return;
-    }
-    final user = ref.read(supabaseClientProvider).auth.currentUser;
-    if (user != null) await _routeAfterAuth(user);
-  }
-
   /// ACCOUNT_SWITCH: saved account without a valid session → its e-mail
   /// goes into the form, the password field gets the focus.
   void _pickSavedEmail(String email) {
@@ -342,186 +161,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       _emailController.text = email;
       _passwordController.clear();
     });
-  }
-
-  /// Navigate after a successful sign-in (Ionic routeAfterAuth).
-  Future<void> _routeAfterAuth(User user) async {
-    // Check if user wants to skip tenant selection
-    final userPrefs = UserPreferences.fromUserMetadata(user.userMetadata);
-    // A real sign-in: the "Instanzauswahl" preference applies (Ionic
-    // routeAfterAuth → setTenant(…, showSelector)).
-    InstanceSelectionGate.afterSignIn = true;
-
-    if (!userPrefs.wantInstanceSelection) {
-      // Try to auto-navigate to the saved tenant: this device's instance
-      // first, then user_metadata (Ionic setTenant, same order as the
-      // background restore).
-      for (final id in await preferredTenantIds(userPrefs.currentTenantId)) {
-        if (await _tryAutoNavigateToTenant(id)) return;
-      }
-    }
-
-    // Default: show tenant selection. With "Instanzauswahl aktivieren" it
-    // asks with the Ionic radio alert (TenantSelectionPage), which also
-    // works when the router already replaced this page after the sign-in.
-    if (mounted) {
-      context.go('/tenants');
-    }
-  }
-
-  /// Ionic `register()`: RegisterModalComponent as a modal over the login
-  /// page. On `registered` show the toast, on `signedIn` route like a login.
-  Future<void> _openRegister() async {
-    final email = _emailController.text.trim();
-    final prefill = email.isNotEmpty;
-    final outcome = await showRegisterModal(
-      context,
-      email: prefill ? email : null,
-    );
-    if (!mounted || outcome == null) return;
-    if (outcome == RegisterOutcome.signedIn) {
-      final user = ref.read(supabaseClientProvider).auth.currentUser;
-      if (user != null) await _routeAfterAuth(user);
-    } else {
-      ToastHelper.showSuccess(context, context.l10n.loginToastRegistered);
-    }
-  }
-
-  /// Ionic promptResendConfirmation(): "E-Mail nicht bestätigt".
-  Future<void> _promptResendConfirmation() async {
-    final controller = TextEditingController(text: _emailController.text.trim());
-    final target = await showAppDialog<String>(
-      context: context,
-      builder: (ctx) => AppAlertDialog(
-        title: Text(ctx.l10n.loginNotConfirmedHeader),
-        // Ionic alert: message + `type: 'email'` input (login.page.ts).
-        content: AppAlertInputGroup(
-          betaCrossAxisAlignment: CrossAxisAlignment.start,
-          message: Text(ctx.l10n.loginNotConfirmedMessage),
-          children: [
-            const AppAlertBetaGap(AppDimensions.paddingM),
-            AppAlertInput(
-              controller: controller,
-              keyboardType: TextInputType.emailAddress,
-              placeholder: ctx.l10n.loginEmailPlaceholder,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(ctx.l10n.commonCancel),
-          ),
-          FilledButton(
-            onPressed: () {
-              final value = controller.text.trim();
-              if (value.isEmpty) {
-                ToastHelper.showWarning(ctx, ctx.l10n.loginToastEnterEmail);
-                return;
-              }
-              Navigator.pop(ctx, value);
-            },
-            child: Text(ctx.l10n.loginNotConfirmedResend),
-          ),
-        ],
-      ),
-    );
-    controller.dispose();
-    if (target == null || !mounted) return;
-    final (ok, message) =
-        await ref.read(authFlowServiceProvider).resendConfirmationEmail(target);
-    if (!mounted) return;
-    ok
-        ? ToastHelper.showSuccess(context, message)
-        : ToastHelper.showError(context, message);
-  }
-
-  /// Ionic promptRegister(): "Kein Konto gefunden".
-  Future<void> _promptRegister() async {
-    final register = await DialogHelper.showConfirmation(
-      context,
-      title: context.l10n.loginNoAccountHeader,
-      message: context.l10n.loginNoAccountMessage,
-      confirmText: context.l10n.loginRegister,
-    );
-    if (register && mounted) _openRegister();
-  }
-
-  /// Ionic promptSwitchToOtp(): wrong password → offer code login.
-  Future<void> _promptSwitchToOtp() async {
-    final switchMode = await DialogHelper.showConfirmation(
-      context,
-      title: context.l10n.loginFailedHeader,
-      message: context.l10n.loginFailedMessage,
-      confirmText: context.l10n.loginModeOtp,
-    );
-    if (switchMode && mounted) _setMode(AuthMode.otp);
-  }
-
-  /// Try to auto-navigate to the saved tenant
-  /// Returns true if navigation was successful, false otherwise
-  Future<bool> _tryAutoNavigateToTenant(int tenantId) async {
-    // IOS_SHELL: the router may replace this page as soon as the session or
-    // the tenant changes (e.g. demo login → /tenants), so never touch `ref`
-    // or `context` after an async gap: capture the container and router now.
-    final container = ProviderScope.containerOf(context, listen: false);
-    final router = GoRouter.of(context);
-    try {
-      // Load user's tenants to verify access
-      final tenants = await container.read(userTenantsProvider.future);
-      final savedTenant = tenants.where((t) => t.id == tenantId).firstOrNull;
-
-      if (savedTenant == null) {
-        // User no longer has access to this tenant
-        return false;
-      }
-
-      // Get user's role FIRST, before any state changes
-      final role = await _getTenantUserRole(container, tenantId);
-
-      // Page already replaced (e.g. by the tenant selection, which then
-      // auto-navigates itself): don't change any state from here.
-      if (!mounted) return false;
-
-      // Set tenant locally WITHOUT triggering auth sync
-      await container
-          .read(currentTenantProvider.notifier)
-          .setTenantLocal(savedTenant);
-
-      // Wait for currentTenantUserProvider to load so router doesn't redirect back
-      await container.read(currentTenantUserProvider.future);
-
-      // Get notifier BEFORE navigation (widget may be disposed after go())
-      final prefsNotifier =
-          container.read(userPreferencesNotifierProvider.notifier);
-
-      // Navigate FIRST – also when the router already disposed this page
-      // after the tenant change, so the user lands on the tenant's home.
-      router.go(homeRouteFor(role, tenantId,
-          container.read(supabaseAuthProvider).currentUser?.userMetadata));
-
-      // Auth sync AFTER navigation (fire and forget, notifier captured above)
-      prefsNotifier.updateCurrentTenantId(tenantId);
-
-      return true;
-    } catch (e) {
-      debugPrint('Auto-navigation failed: $e');
-      return false;
-    }
-  }
-
-  /// Get the user's role for a specific tenant
-  Future<Role> _getTenantUserRole(
-      ProviderContainer container, int tenantId) async {
-    final supabase = container.read(supabaseClientProvider);
-    final userId = supabase.auth.currentUser?.id;
-
-    if (userId == null) return Role.none;
-
-    final repo =
-        container.read(userRegistrationRepositoryForTenantProvider(tenantId));
-    return await repo.getTenantUserRole(userId, tenantId: tenantId) ??
-        Role.none;
   }
 
   /// Height of the password-mode form; the code mode keeps the card at this
@@ -630,7 +269,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                     child: AutofillGroup(
                                       onDisposeAction:
                                           AutofillContextAction.cancel,
-                                      child: _buildFormBeta(context),
+                                      child: _buildForm(context),
                                     ),
                                   ),
                                 ],
@@ -730,154 +369,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 ),
               ),
             ),
-        ],
-      ),
-    );
-  }
-
-  /// REDESIGN (E5): the same form (controllers, autofill hints, validators,
-  /// actions) with Beta building blocks: mode chips, fields in a grouped
-  /// card, one main button, links without capitals.
-  Widget _buildFormBeta(BuildContext context) {
-    final p = context.rd;
-    final l10n = context.l10n;
-    Widget link(String label, VoidCallback onTap) =>
-        RdTextLink(label: label, onTap: () => _isLoading ? null : onTap());
-    final emailField = RdFieldRow(
-      label: l10n.loginEmail,
-      child: TextFormField(
-        controller: _emailController,
-        decoration: rdInputDecoration(p, l10n.loginEmailPlaceholder),
-        keyboardType: TextInputType.emailAddress,
-        textInputAction: _mode == AuthMode.password ? TextInputAction.next : TextInputAction.go,
-        autocorrect: false,
-        readOnly: _mode == AuthMode.otp && _otpSent,
-        autofillHints: const [AutofillHints.email],
-        onFieldSubmitted: _mode == AuthMode.otp && !_otpSent ? (_) => _requestCode() : null,
-        validator: (value) {
-          if (value == null || value.trim().isEmpty) return l10n.loginToastEnterEmail;
-          if (!isValidEmail(value)) return l10n.loginToastInvalidEmail;
-          return null;
-        },
-      ),
-    );
-    final passwordField = RdFieldRow(
-      label: l10n.loginPassword,
-      child: Row(
-        children: [
-          Expanded(
-            child: TextFormField(
-              controller: _passwordController,
-              decoration: rdInputDecoration(p, ''),
-              obscureText: _obscurePassword,
-              textInputAction: TextInputAction.done,
-              autofillHints: const [AutofillHints.password],
-              onFieldSubmitted: (_) => _onSubmit(),
-              validator: (value) {
-                if (value == null || value.isEmpty) return l10n.loginFlutterEnterPassword;
-                return null;
-              },
-            ),
-          ),
-          IconButton(
-            tooltip: l10n.loginShowPassword,
-            visualDensity: VisualDensity.compact,
-            icon: Icon(
-              _obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
-              color: p.text2,
-            ),
-            onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
-          ),
-        ],
-      ),
-    );
-    return Form(
-      key: _formKey,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          if (_teamsLinkMode)
-            Text(l10n.loginLinkNote, style: RdType.meta(p, size: 14))
-          else
-            // Wrap: with large system text the chips go to a second line.
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                RdChoiceChip(
-                  label: l10n.loginModePassword,
-                  selected: _mode == AuthMode.password,
-                  onTap: _isLoading || _mode == AuthMode.password ? null : () => _setMode(AuthMode.password),
-                ),
-                RdChoiceChip(
-                  label: l10n.loginModeOtp,
-                  selected: _mode == AuthMode.otp,
-                  onTap: _isLoading || _mode == AuthMode.otp ? null : () => _setMode(AuthMode.otp),
-                ),
-              ],
-            ),
-          const SizedBox(height: 14),
-          DecoratedBox(
-            decoration: BoxDecoration(
-              color: p.bg,
-              borderRadius: BorderRadius.circular(p.cardRadius),
-            ),
-            child: Column(
-              children: [
-                emailField,
-                if (_mode == AuthMode.password) ...[
-                  Divider(height: 1, thickness: 1, color: p.line),
-                  passwordField,
-                ],
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          if (_mode == AuthMode.password) ...[
-            RdPrimaryButton(
-              label: _teamsLinkMode ? l10n.loginLinkAndSignIn : l10n.loginSignIn,
-              loading: _isLoading,
-              onPressed: _isLoading || !_canSubmit ? null : _login,
-            ),
-            const SizedBox(height: 6),
-            Wrap(
-              alignment: WrapAlignment.spaceBetween,
-              spacing: 8,
-              children: [
-                link(l10n.redesignLoginForgot, _forgotPassword),
-                link(l10n.loginRegister, _openRegister),
-              ],
-            ),
-          ] else if (!_otpSent) ...[
-            RdPrimaryButton(
-              label: l10n.loginSendCode,
-              loading: _isLoading,
-              onPressed: _isLoading || !_canSubmit ? null : _requestCode,
-            ),
-            const SizedBox(height: 6),
-            Align(alignment: Alignment.centerRight, child: link(l10n.loginRegister, _openRegister)),
-          ] else ...[
-            OtpCodeField(
-              controller: _otpController,
-              enabled: !_isLoading,
-              onCompleted: (_) => _verifyCode(),
-            ),
-            const SizedBox(height: 16),
-            RdPrimaryButton(
-              label: l10n.loginSignIn,
-              loading: _isLoading,
-              onPressed: _isLoading || !_canSubmit ? null : _verifyCode,
-            ),
-            const SizedBox(height: 6),
-            Center(
-              child: ResendCodeButton(
-                cooldown: _cooldown,
-                enabled: !_isLoading,
-                onResend: _requestCode,
-              ),
-            ),
-          ],
         ],
       ),
     );

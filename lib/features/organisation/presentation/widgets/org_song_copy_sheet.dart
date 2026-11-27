@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/providers/org_song_providers.dart';
 import '../../../../core/providers/song_providers.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/redesign/rd_palette.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/error_message.dart';
@@ -15,12 +15,16 @@ import '../../../../data/models/song/org_song.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../data/models/tenant/tenant.dart' show ExtraField;
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart';
-import '../../../../shared/widgets/layout/ionic_ios.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart' show AppActionSheetAction, showAppActionSheet;
+import '../../../../shared/widgets/redesign/rd_widgets.dart';
+import '../../../attendance/presentation/widgets/event/rd_form_widgets.dart' show RdFieldRow, rdInputDecoration;
+import '../../../settings/presentation/widgets/manage/rd_settings_sheets.dart' show RdListNote, RdSheetHead;
 import '../../../songs/presentation/utils/song_utils.dart';
 
-/// Opens the copy dialog of the organisation-wide Werk search (Ionic
-/// `org-songs.page` copy modal). [onCopied] gets the target library id.
+part 'org_song_copy_actions.dart';
+
+/// Opens the copy sheet for an organisation-wide Werk match.
+/// [onCopied] receives the target library id once the copy completes.
 Future<void> showOrgSongCopySheet(
   BuildContext context, {
   required OrgSongResult source,
@@ -28,46 +32,30 @@ Future<void> showOrgSongCopySheet(
   required List<OrgSongTenant> orgTenants,
   void Function(int libraryId)? onCopied,
 }) {
-  return showModalBottomSheet(
+  return showModalBottomSheet<void>(
     context: context,
     useRootNavigator: true,
     isScrollControlled: true,
     useSafeArea: true,
-    builder: (_) => OrgSongCopySheet(source: source, targets: targets, orgTenants: orgTenants, onCopied: onCopied),
+    showDragHandle: true,
+    backgroundColor: context.rd.bg,
+    builder: (sheetCtx) => SafeArea(
+      top: false,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(sheetCtx).height * 0.90),
+        child: OrgSongCopySheet(
+          source: source,
+          targets: targets,
+          orgTenants: orgTenants,
+          onCopied: onCopied,
+        ),
+      ),
+    ),
   );
 }
 
-class _FieldOption {
-  _FieldOption({
-    required this.key,
-    required this.label,
-    required this.value,
-    required this.checked,
-    required this.apply,
-    this.currentValue,
-  });
-
-  final String key;
-  final String label;
-  final String value;
-  bool checked;
-
-  /// Current value in the existing target Werk, shown when copying into it.
-  final String? currentValue;
-  final void Function(Map<String, dynamic> fields) apply;
-}
-
-class _FileOption {
-  _FileOption({required this.file, required this.checked, required this.instrumentId, required this.existsInTarget});
-
-  final OrgSongFile file;
-  bool checked;
-  int? instrumentId;
-  final bool existsInTarget;
-}
-
-enum _Mode { existing, created }
-
+/// Redesign modal sheet for copying a shared organisation Werk into a target
+/// library, either merging into an existing match or creating a new entry.
 class OrgSongCopySheet extends ConsumerStatefulWidget {
   const OrgSongCopySheet({
     super.key,
@@ -104,6 +92,8 @@ class _OrgSongCopySheetState extends ConsumerState<OrgSongCopySheet> {
 
   OrgSongResult get _song => widget.source;
 
+  void _update(VoidCallback fn) => setState(fn);
+
   @override
   void initState() {
     super.initState();
@@ -117,7 +107,8 @@ class _OrgSongCopySheetState extends ConsumerState<OrgSongCopySheet> {
     super.dispose();
   }
 
-  OrgSongCopyTarget? get _currentTarget => widget.targets.where((t) => t.libraryId == _targetLibraryId).firstOrNull;
+  OrgSongCopyTarget? get _currentTarget =>
+      widget.targets.where((t) => t.libraryId == _targetLibraryId).firstOrNull;
 
   int? get _numberValue => int.tryParse(_number.text.trim());
 
@@ -144,570 +135,406 @@ class _OrgSongCopySheetState extends ConsumerState<OrgSongCopySheet> {
       _currentTarget?.tenant.songAdditionalFields ??
       const [];
 
-  Future<void> _loadTarget() async {
-    final libraryId = _targetLibraryId;
-    setState(() => _loadingTarget = true);
-    final repo = ref.read(orgSongRepositoryWithTenantProvider);
-    try {
-      final results = await Future.wait([repo.getLibrarySongRows(libraryId), repo.getLibraryGroups(libraryId)]);
-      if (!mounted || libraryId != _targetLibraryId) return;
-      final rows = results[0] as List<Map<String, dynamic>>;
-      _targetSongs = rows.map(Song.fromJson).toList();
-      _targetRows = {
-        for (final r in rows)
-          if (r['id'] != null) (r['id'] as num).toInt(): r,
-      };
-      _targetGroups = results[1] as List<Group>;
-    } catch (e) {
-      if (!mounted || libraryId != _targetLibraryId) return;
-      _targetSongs = const [];
-      _targetRows = const {};
-      _targetGroups = const [];
-      ToastHelper.showError(context, context.l10n.orgSongsTargetLoadFailed(friendlyErrorMessage(e)));
-    }
-    if (!mounted) return;
-    setState(() {
-      _loadingTarget = false;
-      _duplicates = findSongsWithSameName(_song.name, _targetSongs);
-      _mode = _duplicates.isNotEmpty ? _Mode.existing : _Mode.created;
-      _existingSongId = _duplicates.firstOrNull?.id;
-      _prefix.text = _song.prefix ?? '';
-      var number = _song.number;
-      if (number != null && isSongNumberTaken(number, _prefix.text, _targetSongs)) {
-        number = nextFreeSongNumber(_prefix.text, _targetSongs);
-      }
-      _number.text = number?.toString() ?? '';
-      _buildOptions();
-    });
-  }
+  List<Group> get _availableTargetGroups =>
+      _targetGroups.where((g) => g.id != null && !reservedFileGroupIds.contains(g.id)).toList();
 
-  void _onModeChange(_Mode mode) {
-    setState(() {
-      _mode = mode;
-      if (_mode == _Mode.existing && _existingSongId == null) {
-        _existingSongId = _duplicates.firstOrNull?.id;
-      }
-      _buildOptions();
-    });
+  int? _validTargetGroupId(int? instrumentId, List<Group> groups) {
+    final valid = <int?>{null, 1, 2, for (final g in groups) g.id};
+    return valid.contains(instrumentId) ? instrumentId : null;
   }
 
   static bool _isEmpty(dynamic value) =>
       value == null || value == '' || (value is List && value.isEmpty) || (value is Map && value.isEmpty);
 
-  String _extraValueLabel(dynamic value) {
-    if (value == true) return context.l10n.commonYes;
-    if (value == false) return context.l10n.commonNo;
-    return value == null ? '' : value.toString();
-  }
-
-  String _difficultyLabel(int? difficulty) =>
-      difficulty == null || difficulty < 1 || difficulty > 3 ? '' : SongUtils.difficultyLabel(difficulty);
-
-  /// Ionic `buildOptions`: fields and files of the source Werk.
-  void _buildOptions() {
-    final song = _song;
-    final existing = _existingSong;
-    final existingRow = existing?.id == null ? null : _targetRows[existing!.id!];
-    final l10n = context.l10n;
-    final options = <_FieldOption>[];
-    void add(
-      String key,
-      String label,
-      String value,
-      dynamic current,
-      String? currentLabel,
-      void Function(Map<String, dynamic>) apply,
-    ) {
-      options.add(
-        _FieldOption(
-          key: key,
-          label: label,
-          value: value,
-          currentValue: existing != null && !_isEmpty(current) ? currentLabel : null,
-          checked: existing != null ? _isEmpty(current) : true,
-          apply: apply,
-        ),
-      );
-    }
-
-    final link = song.link;
-    if (link != null && link.isNotEmpty) {
-      add('link', l10n.songsLink, link, existing?.link, existing?.link, (f) => f['link'] = link);
-    }
-    final difficulty = song.difficulty;
-    if (difficulty != null && difficulty != 0) {
-      add(
-        'difficulty',
-        l10n.orgSongsFieldDifficulty,
-        _difficultyLabel(difficulty),
-        existing?.difficulty,
-        _difficultyLabel(existing?.difficulty),
-        (f) => f['difficulty'] = difficulty,
-      );
-    }
-    if (song.withChoir || song.withSolo) {
-      options.add(
-        _FieldOption(
-          key: 'choirSolo',
-          label: l10n.orgSongsFieldChoirSolo,
-          value: [if (song.withChoir) l10n.orgSongsWithChoir, if (song.withSolo) l10n.orgSongsWithSolo].join(', '),
-          checked: true,
-          apply: (f) {
-            if (song.withChoir) f['withChoir'] = true;
-            if (song.withSolo) f['withSolo'] = true;
-          },
-        ),
-      );
-    }
-    if (song.categoryNames.isNotEmpty) {
-      options.add(
-        _FieldOption(
-          key: 'categories',
-          label: l10n.orgSongsFieldCategories,
-          value: song.categoryNames.join(', '),
-          checked: existing != null ? (existing.categoryIds ?? const []).isEmpty : true,
-          // resolved in _copy() because categories may need to be created
-          apply: (_) {},
-        ),
-      );
-    }
-    for (final mapped in mapExtraFields(song.additionalFields, song.fieldDefs, _targetFieldDefs)) {
-      final current = existing?.additionalFields?[mapped.targetField.id];
-      add(
-        'extra:${mapped.targetField.id}',
-        mapped.targetField.name,
-        _extraValueLabel(mapped.value),
-        current,
-        _extraValueLabel(current),
-        (f) {
-          f['additional_fields'] = {
-            ...((f['additional_fields'] as Map<String, dynamic>?) ?? const {}),
-            mapped.targetField.id: mapped.value,
-          };
-        },
-      );
-    }
-    final beamer = song.beamerFile;
-    if (beamer != null) {
-      final current = existingRow?['beamer_file'];
-      add(
-        'beamer',
-        l10n.orgSongsFieldBeamer,
-        (beamer['name'] ?? '').toString(),
-        current,
-        current is Map ? (current['name'] ?? '').toString() : null,
-        (f) => f['beamer_file'] = beamer,
-      );
-    }
-    _fieldOptions = options;
-
-    final existingNames = {for (final f in existing?.files ?? const <SongFile>[]) f.fileName.toLowerCase()};
-    _fileOptions = [
-      for (final file in song.files)
-        () {
-          final exists = existingNames.contains(file.fileName.toLowerCase());
-          return _FileOption(
-            file: file,
-            existsInTarget: exists,
-            checked: !exists,
-            instrumentId: mapGroupByName(file.instrumentId, file.groupName, file.groupSynonyms, _targetGroups),
-          );
-        }(),
-    ];
-  }
-
-  String _sourceGroupLabel(OrgSongFile file) {
-    if (file.instrumentId == 1) return context.l10n.songsRecording;
-    if (file.instrumentId == 2) return context.l10n.songsLyrics;
-    return file.groupName ?? file.note ?? context.l10n.songsOther;
-  }
-
-  Future<void> _copy() async {
-    final target = _currentTarget;
-    if (target == null || !_canCopy) return;
-    if (DemoGuard.blocked()) return; // DEMO_GUARD
-    final l10n = context.l10n;
-    final repo = ref.read(orgSongRepositoryWithTenantProvider);
-
-    if (_mode == _Mode.existing) {
-      final overwrites = _fieldOptions.where((f) => f.checked && f.currentValue != null).toList();
-      if (overwrites.isNotEmpty) {
-        final ok = await DialogHelper.showConfirmation(
-          context,
-          title: l10n.orgSongsOverwriteHeader,
-          message: l10n.orgSongsOverwriteMessage(overwrites.map((f) => f.label).join(', ')),
-          confirmText: l10n.orgSongsOverwriteConfirm,
-        );
-        if (!ok || !mounted) return;
+  void _toggleAllFiles() {
+    _update(() {
+      final selectAll = _selectedFileCount < _fileOptions.length;
+      for (final f in _fileOptions) {
+        f.checked = selectAll;
       }
-    }
-
-    setState(() {
-      _copying = true;
-      _progress = l10n.songsCopying;
     });
-    final existing = _existingSong;
-    final mode = _mode;
-    try {
-      final fields = <String, dynamic>{};
-      for (final option in _fieldOptions.where((f) => f.checked)) {
-        option.apply(fields);
-      }
-      if (_fieldOptions.any((f) => f.key == 'categories' && f.checked)) {
-        final ids = await repo.ensureSongCategories(target.libraryId, _song.categoryNames);
-        fields['category_ids'] = {...?existing?.categoryIds, ...ids}.toList();
-      }
-      if (mode == _Mode.created) {
-        fields['number'] = _numberValue;
-        final prefix = _prefix.text.trim();
-        fields['prefix'] = prefix.isEmpty ? null : prefix;
-      }
-      await repo.copyOrgSong(
-        OrgSongCopyRequest(
-          source: _song,
-          targetLibraryId: target.libraryId,
-          existingSongId: mode == _Mode.existing ? _existingSongId : null,
-          fields: fields,
-          files: [
-            for (final f in _fileOptions)
-              if (f.checked) (file: f.file, instrumentId: f.instrumentId),
-          ],
-          mainGroupId: _targetGroups.where((g) => g.maingroup == true).firstOrNull?.id,
-        ),
-        onProgress: (current, total) {
-          if (mounted) setState(() => _progress = l10n.songsCopyingFile(current, total));
-        },
-      );
-      if (!mounted) return;
-      // The copy may land in the own (or synced) library: reload the Werke.
-      ref.invalidate(songsProvider);
-      widget.onCopied?.call(target.libraryId);
-      final tenantName = target.libraryName ?? target.tenant.shortName;
-      ToastHelper.showSuccess(
-        context,
-        mode == _Mode.existing
-            ? l10n.orgSongsMergedInto(_song.name, tenantName)
-            : l10n.orgSongsCopiedTo(_song.name, tenantName),
-      );
-      Navigator.pop(context);
-    } catch (e) {
-      if (mounted) ToastHelper.showError(context, l10n.songsCopyFailed(friendlyErrorMessage(e)));
-    } finally {
-      if (mounted) {
-        setState(() {
-          _copying = false;
-          _progress = null;
-        });
-      }
-    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final p = context.rd;
     final l10n = context.l10n;
-    final target = _currentTarget;
     return PopScope(
       canPop: !_copying,
       child: Column(
         children: [
-          IonSheetHeader(
-            title: l10n.songsCopySong,
-            start: [
-              TextButton(onPressed: _copying ? null : () => Navigator.pop(context), child: Text(l10n.commonCancel)),
-            ],
-            end: [
-              TextButton(
-                onPressed: _canCopy ? _copy : null,
-                child: Text(l10n.songsCopy, style: const TextStyle(fontWeight: FontWeight.w600)),
-              ),
-            ],
-          ),
-          if (_copying) const LinearProgressIndicator(minHeight: 2),
+          RdSheetHead(title: l10n.songsCopySong, cancel: !_copying),
+          if (_copying) LinearProgressIndicator(minHeight: 2, color: p.primary, backgroundColor: p.track),
           Expanded(
-            child: ColoredBox(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              child: ListView(
-                padding: const EdgeInsets.only(bottom: 24),
-                children: [
-                  IonInsetList(
-                    children: [
-                      IonItem(
-                        title: Text(orgSongLabel(_song.prefix, _song.number, _song.name)),
-                        subtitle: Text(l10n.orgSongsFromTenant(_song.tenantName)),
-                      ),
-                    ],
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+              children: [
+                _buildSourceCard(p, l10n),
+                const SizedBox(height: 16),
+                _buildTargetSection(l10n),
+                if (_loadingTarget)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 32),
+                    child: Center(child: CircularProgressIndicator(color: p.primary)),
+                  )
+                else
+                  ..._buildTargetDetails(context),
+                if (_progress != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Text(_progress!, textAlign: TextAlign.center, style: RdType.meta(p, size: 13)),
                   ),
-                  // Target
-                  IonListHeader(l10n.orgSongsTarget),
-                  IonInsetList(
-                    children: [
-                      _select<int>(
-                        context,
-                        label: l10n.personTargetInstance,
-                        value: _targetLibraryId,
-                        items: [
-                          for (final t in widget.targets)
-                            DropdownMenuItem(value: t.libraryId, child: Text(t.tenant.shortName)),
-                        ],
-                        onChanged:
-                            _copying
-                                ? null
-                                : (v) {
-                                  if (v == null || v == _targetLibraryId) return;
-                                  setState(() => _targetLibraryId = v);
-                                  _loadTarget();
-                                },
-                      ),
-                      if (target?.libraryName != null)
-                        IonItem(
-                          leading: Icon(AppIcons.sync, color: AppColors.mediumOf(context)),
-                          title: Text(
-                            l10n.orgSongsSyncedTarget(target!.tenant.shortName, target.libraryName!),
-                            style: TextStyle(fontSize: 14, color: AppColors.mediumOf(context)),
-                          ),
-                        ),
-                    ],
-                  ),
-                  if (_loadingTarget)
-                    const Padding(padding: EdgeInsets.all(16), child: Center(child: AppSpinner()))
-                  else
-                    ..._buildTargetDetails(context),
-                  if (_progress != null)
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
-                      child: Text(_progress!, style: TextStyle(fontSize: 13, color: AppColors.mediumOf(context))),
-                    ),
-                ],
-              ),
+              ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildSourceCard(RdPalette p, AppLocalizations l10n) {
+    return RdCard(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(orgSongLabel(_song.prefix, _song.number, _song.name), style: RdType.cardTitle(p)),
+          const SizedBox(height: 2),
+          Text(l10n.orgSongsFromTenant(_song.tenantName), style: RdType.meta(p, size: 13)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTargetSection(AppLocalizations l10n) {
+    final target = _currentTarget;
+    final canSwitch = !_copying && widget.targets.length > 1;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        RdGroupLabel(l10n.orgSongsTarget),
+        RdGroupedList(
+          children: [
+            RdListRow(
+              key: const Key('org-copy-target'),
+              title: l10n.personTargetInstance,
+              value: target?.tenant.shortName ?? '',
+              showChevron: canSwitch,
+              onTap: canSwitch ? _pickTarget : null,
+            ),
+            if (target?.libraryName != null)
+              RdListRow(
+                leading: const RdRowIcon(Icons.sync),
+                title: l10n.orgSongsSyncedTarget(target!.tenant.shortName, target.libraryName!),
+                showChevron: false,
+              ),
+          ],
+        ),
+      ],
     );
   }
 
   List<Widget> _buildTargetDetails(BuildContext context) {
+    final p = context.rd;
     final l10n = context.l10n;
     return [
-      // Duplicate handling
-      if (_duplicates.isNotEmpty)
-        IonInsetList(
-          children: [
-            Container(
-              color: AppColors.warning,
-              child: ListTile(
-                leading: Icon(AppIcons.warningAmberRounded, color: Colors.black),
-                title: Text(
-                  l10n.orgSongsDuplicateWarning(_duplicates.length),
-                  style: const TextStyle(color: Colors.black),
-                ),
-              ),
-            ),
-            ListTile(
-              leading: Icon(
-                _mode == _Mode.existing ? AppIcons.radioButtonChecked : AppIcons.radioButtonUnchecked,
-                color: _mode == _Mode.existing ? AppColors.primary : null,
-              ),
-              title: Text(l10n.orgSongsModeExisting),
-              onTap: _copying ? null : () => _onModeChange(_Mode.existing),
-            ),
-            if (_mode == _Mode.existing && _duplicates.length > 1)
-              _select<int>(
-                context,
-                label: l10n.orgSongsExistingSong,
-                value: _existingSongId,
-                items: [
-                  for (final d in _duplicates)
-                    if (d.id != null)
-                      DropdownMenuItem(value: d.id, child: Text(orgSongLabel(d.prefix, d.number, d.name))),
-                ],
-                onChanged:
-                    (v) => setState(() {
-                      _existingSongId = v;
-                      _buildOptions();
-                    }),
-              ),
-            ListTile(
-              leading: Icon(
-                _mode == _Mode.created ? AppIcons.radioButtonChecked : AppIcons.radioButtonUnchecked,
-                color: _mode == _Mode.created ? AppColors.primary : null,
-              ),
-              title: Text(l10n.orgSongsModeNew),
-              onTap: _copying ? null : () => _onModeChange(_Mode.created),
-            ),
-          ],
-        ),
-      // Number (new Werk)
+      if (_duplicates.isNotEmpty) ...[
+        const SizedBox(height: 16),
+        _buildDuplicateSection(p, l10n),
+      ],
       if (_mode == _Mode.created) ...[
-        IonListHeader(l10n.orgSongsNumber),
-        IonInsetList(
-          children: [
-            _inlineInput(context, controller: _prefix, label: l10n.orgSongsPrefix, maxLength: 5),
-            _inlineInput(
-              context,
-              controller: _number,
-              label: l10n.orgSongsNumber,
-              keyboardType: TextInputType.number,
-              style: _numberTaken ? const TextStyle(color: AppColors.danger) : null,
-            ),
-            if (_numberTaken)
-              IonItem(
-                leading: Icon(AppIcons.errorOutline, color: AppColors.danger),
-                title: Text(l10n.orgSongsNumberTaken, style: const TextStyle(color: AppColors.danger)),
-                subtitle: Text(l10n.orgSongsUseNextFree('${_prefix.text}$_nextFreeNumber')),
-                onTap: () => setState(() => _number.text = '$_nextFreeNumber'),
-              ),
-          ],
-        ),
+        const SizedBox(height: 16),
+        _buildNumberSection(p, l10n),
       ],
-      // Fields
       if (_fieldOptions.isNotEmpty) ...[
-        IonListHeader(l10n.orgSongsFields),
-        IonInsetList(
-          children: [
-            for (final option in _fieldOptions)
-              CheckboxListTile(
-                controlAffinity: ListTileControlAffinity.leading,
-                value: option.checked,
-                title: Text(option.label),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(option.value),
-                    if (option.currentValue != null)
-                      Text(
-                        l10n.orgSongsCurrentValue(option.currentValue!),
-                        style: const TextStyle(color: AppColors.warning),
-                      ),
-                  ],
-                ),
-                onChanged: _copying ? null : (v) => setState(() => option.checked = v ?? false),
-              ),
-          ],
-        ),
+        const SizedBox(height: 16),
+        RdGroupLabel(l10n.orgSongsFields),
+        RdGroupedList(children: [for (final option in _fieldOptions) _buildFieldRow(p, l10n, option)]),
       ],
-      // Files
       if (_fileOptions.isNotEmpty) ...[
-        IonListHeader(
-          l10n.orgSongsFiles(_selectedFileCount, _fileOptions.length),
-          trailing: [
-            TextButton(
-              onPressed:
-                  _copying
-                      ? null
-                      : () => setState(() {
-                        final all = _selectedFileCount < _fileOptions.length;
-                        for (final f in _fileOptions) {
-                          f.checked = all;
-                        }
-                      }),
-              child: Text(_selectedFileCount < _fileOptions.length ? l10n.orgSongsSelectAll : l10n.orgSongsSelectNone),
-            ),
-          ],
-        ),
-        IonInsetList(children: [for (final option in _fileOptions) _buildFileRow(context, option)]),
+        const SizedBox(height: 16),
+        _buildFilesHeader(p, l10n),
+        RdGroupedList(children: [for (final option in _fileOptions) _buildFileRow(p, l10n, option)]),
       ],
-      Padding(
-        padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
-        child: Text(l10n.orgSongsCopyHint, style: TextStyle(fontSize: 13, color: AppColors.mediumOf(context))),
-      ),
-      Padding(
-        padding: const EdgeInsets.all(16),
-        child: ElevatedButton(
-          onPressed: _canCopy ? _copy : null,
-          style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 48)),
-          child: Text(_mode == _Mode.existing ? l10n.orgSongsCopyIntoExisting : l10n.orgSongsCopyAsNew),
-        ),
+      RdListNote(l10n.orgSongsCopyHint),
+      const SizedBox(height: 12),
+      RdPrimaryButton(
+        key: const Key('org-copy-submit'),
+        label: _mode == _Mode.existing ? l10n.orgSongsCopyIntoExisting : l10n.orgSongsCopyAsNew,
+        loading: _copying,
+        onPressed: _canCopy ? _copy : null,
       ),
     ];
   }
 
-  Widget _select<T>(
-    BuildContext context, {
-    required String label,
-    required T? value,
-    required List<DropdownMenuItem<T>> items,
-    required ValueChanged<T?>? onChanged,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      child: AppDropdownFormField<T>(
-        interface: AppSelectInterface.actionSheet,
-        value: value,
-        decoration: InputDecoration(labelText: label),
-        isExpanded: true,
-        items: items,
-        onChanged: onChanged,
-      ),
-    );
-  }
-
-  Widget _inlineInput(
-    BuildContext context, {
-    required TextEditingController controller,
-    required String label,
-    int? maxLength,
-    TextInputType? keyboardType,
-    TextStyle? style,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      child: TextField(
-        controller: controller,
-        maxLength: maxLength,
-        keyboardType: keyboardType,
-        decoration: InputDecoration(labelText: label, counterText: ''),
-        style: style,
-        onChanged: (_) => setState(() {}),
-      ),
-    );
-  }
-
-  Widget _buildFileRow(BuildContext context, _FileOption option) {
-    final l10n = context.l10n;
-    final groups = _targetGroups.where((g) => g.id != null && !reservedFileGroupIds.contains(g.id)).toList();
-    final values = <int?>{null, 1, 2, for (final g in groups) g.id};
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-      child: Row(
-        children: [
-          Checkbox(
-            value: option.checked,
-            onChanged: _copying ? null : (v) => setState(() => option.checked = v ?? false),
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildDuplicateSection(RdPalette p, AppLocalizations l10n) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        DecoratedBox(
+          decoration: BoxDecoration(color: p.lateSoft, borderRadius: BorderRadius.circular(p.cardRadius)),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            child: Row(
               children: [
-                Text(option.file.fileName, style: const TextStyle(fontWeight: FontWeight.w500)),
-                Text(
-                  l10n.orgSongsSourceGroup(_sourceGroupLabel(option.file)),
-                  style: TextStyle(fontSize: 13, color: AppColors.mediumOf(context)),
+                Icon(Icons.warning_amber_rounded, color: p.late),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    l10n.orgSongsDuplicateWarning(_duplicates.length),
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: p.text),
+                  ),
                 ),
-                if (option.existsInTarget)
-                  Text(l10n.orgSongsFileExists, style: const TextStyle(fontSize: 13, color: AppColors.warning)),
               ],
             ),
           ),
-          const SizedBox(width: 8),
-          Flexible(
-            child: DropdownButtonHideUnderline(
-              child: AppDropdownButton<int?>(
-                interface: AppSelectInterface.actionSheet,
-                isExpanded: true,
-                value: values.contains(option.instrumentId) ? option.instrumentId : null,
-                hint: Text(l10n.orgSongsTargetGroup),
-                items: [
-                  DropdownMenuItem(value: null, child: Text(l10n.songsOther)),
-                  DropdownMenuItem(value: 1, child: Text(l10n.songsRecording)),
-                  DropdownMenuItem(value: 2, child: Text(l10n.songsLyrics)),
-                  for (final g in groups) DropdownMenuItem(value: g.id, child: Text(g.name)),
+        ),
+        const SizedBox(height: 10),
+        RdGroupedList(
+          children: [
+            RdListRow(
+              key: const Key('org-copy-mode-existing'),
+              leading: Icon(
+                _mode == _Mode.existing ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+                color: _mode == _Mode.existing ? p.primary : p.text2,
+              ),
+              title: l10n.orgSongsModeExisting,
+              selected: _mode == _Mode.existing,
+              showChevron: false,
+              onTap: _copying ? null : () => _onModeChange(_Mode.existing),
+            ),
+            if (_mode == _Mode.existing && _duplicates.length > 1)
+              RdListRow(
+                key: const Key('org-copy-existing-song'),
+                title: l10n.orgSongsExistingSong,
+                value: _existingSong != null
+                    ? orgSongLabel(_existingSong!.prefix, _existingSong!.number, _existingSong!.name)
+                    : '',
+                showChevron: !_copying,
+                onTap: _copying ? null : _pickExistingSong,
+              ),
+            RdListRow(
+              key: const Key('org-copy-mode-new'),
+              leading: Icon(
+                _mode == _Mode.created ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+                color: _mode == _Mode.created ? p.primary : p.text2,
+              ),
+              title: l10n.orgSongsModeNew,
+              selected: _mode == _Mode.created,
+              showChevron: false,
+              onTap: _copying ? null : () => _onModeChange(_Mode.created),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNumberSection(RdPalette p, AppLocalizations l10n) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        RdGroupLabel(l10n.orgSongsNumber),
+        RdGroupedList(
+          children: [
+            RdFieldRow(
+              label: l10n.orgSongsPrefix,
+              child: TextField(
+                key: const Key('org-copy-prefix'),
+                controller: _prefix,
+                enabled: !_copying,
+                maxLength: 5,
+                style: RdType.body(p),
+                decoration: rdInputDecoration(p, '').copyWith(counterText: ''),
+                onChanged: (_) => _update(() {}),
+              ),
+            ),
+            RdFieldRow(
+              label: l10n.orgSongsNumber,
+              child: TextField(
+                key: const Key('org-copy-number'),
+                controller: _number,
+                enabled: !_copying,
+                keyboardType: TextInputType.number,
+                style: RdType.body(p).copyWith(color: _numberTaken ? p.absent : p.text),
+                decoration: rdInputDecoration(p, ''),
+                onChanged: (_) => _update(() {}),
+              ),
+            ),
+            if (_numberTaken)
+              RdListRow(
+                key: const Key('org-copy-next-free'),
+                leading: RdRowIcon(Icons.error_outline, color: p.absent, background: p.absentSoft),
+                title: l10n.orgSongsNumberTaken,
+                titleColor: p.absent,
+                subtitle: l10n.orgSongsUseNextFree('${_prefix.text}$_nextFreeNumber'),
+                showChevron: false,
+                onTap: () => _update(() => _number.text = '$_nextFreeNumber'),
+              ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFieldRow(RdPalette p, AppLocalizations l10n, _FieldOption option) {
+    return InkWell(
+      onTap: _copying ? null : () => _update(() => option.checked = !option.checked),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Checkbox(
+              value: option.checked,
+              activeColor: p.primary,
+              onChanged: _copying ? null : (v) => _update(() => option.checked = v ?? false),
+            ),
+            const SizedBox(width: 4),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 10, right: 4),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(option.label, style: RdType.body(p).copyWith(fontWeight: FontWeight.w500)),
+                    const SizedBox(height: 2),
+                    Text(option.value, style: RdType.meta(p, size: 13)),
+                    if (option.currentValue != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2),
+                        child: Text(
+                          l10n.orgSongsCurrentValue(option.currentValue!),
+                          style: TextStyle(fontSize: 13, color: p.late),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFilesHeader(RdPalette p, AppLocalizations l10n) {
+    final linkLabel = _selectedFileCount < _fileOptions.length ? l10n.orgSongsSelectAll : l10n.orgSongsSelectNone;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(4, 4, 4, 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(
+            child: Semantics(
+              header: true,
+              child: Text(
+                l10n.orgSongsFiles(_selectedFileCount, _fileOptions.length).toUpperCase(),
+                style: RdType.eyebrow(p.text2),
+              ),
+            ),
+          ),
+          if (!_copying) ...[
+            const SizedBox(width: 8),
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 160),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerRight,
+                child: RdTextLink(label: linkLabel, onTap: _toggleAllFiles),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFileRow(RdPalette p, AppLocalizations l10n, _FileOption option) {
+    final groups = _availableTargetGroups;
+    final selectedGroupId = _validTargetGroupId(option.instrumentId, groups);
+    final groupLabel = _targetGroupLabel(selectedGroupId, l10n);
+    final canPickGroup = option.checked && !_copying;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(10, 8, 14, 10),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Checkbox(
+            value: option.checked,
+            activeColor: p.primary,
+            onChanged: _copying ? null : (v) => _update(() => option.checked = v ?? false),
+          ),
+          const SizedBox(width: 4),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(option.file.fileName, style: RdType.body(p).copyWith(fontWeight: FontWeight.w500)),
+                  const SizedBox(height: 2),
+                  Text(l10n.orgSongsSourceGroup(_sourceGroupLabel(option.file)), style: RdType.meta(p, size: 13)),
+                  if (option.existsInTarget)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 2),
+                      child: Text(l10n.orgSongsFileExists, style: TextStyle(fontSize: 13, color: p.late)),
+                    ),
+                  const SizedBox(height: 8),
+                  _FileGroupChip(
+                    label: '${l10n.orgSongsTargetGroup}: $groupLabel',
+                    enabled: canPickGroup,
+                    onTap: canPickGroup ? () => _pickFileGroup(option) : null,
+                  ),
                 ],
-                onChanged: !option.checked || _copying ? null : (v) => setState(() => option.instrumentId = v),
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _FileGroupChip extends StatelessWidget {
+  const _FileGroupChip({required this.label, required this.enabled, required this.onTap});
+
+  final String label;
+  final bool enabled;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    return Material(
+      color: p.track,
+      borderRadius: BorderRadius.circular(8),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Flexible(
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: enabled ? p.text : p.text2,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 4),
+              Icon(Icons.expand_more, size: 16, color: p.text2),
+            ],
+          ),
+        ),
       ),
     );
   }

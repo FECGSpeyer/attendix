@@ -7,7 +7,7 @@ import 'package:attendix/data/repositories/protocol_repository.dart';
 import 'package:attendix/data/repositories/task_repository.dart';
 import 'package:attendix/shared/widgets/redesign/rd_widgets.dart';
 import 'package:attendix/features/team_organization/presentation/pages/protocol_page.dart';
-import 'package:attendix/features/team_organization/presentation/widgets/protocol_beta_widgets.dart';
+import 'package:attendix/features/team_organization/presentation/widgets/protocol_widgets.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' show FlutterQuillLocalizations;

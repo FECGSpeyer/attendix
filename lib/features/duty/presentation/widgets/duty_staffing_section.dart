@@ -20,7 +20,7 @@ import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../shared/widgets/adaptive/app_action_sheet.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
 
-part 'duty_staffing_beta.dart';
+part 'duty_staffing_view.dart';
 
 /// ASTRA_DUTY_GROUPS: Ionic attendance.page.ts builds the Besetzung block from
 /// `this.players`, i.e. the person rows after the helper group filter of
@@ -79,7 +79,7 @@ class _DutyStaffingSectionState extends ConsumerState<DutyStaffingSection> {
     final available = dutyAvailable(players);
     final presentUnassigned = dutyPresentUnassigned(players);
     final unavailable = players.where(isCancelled).toList();
-    return _buildBeta(
+    return _buildView(
       players: players,
       occupants: occupants,
       available: available,

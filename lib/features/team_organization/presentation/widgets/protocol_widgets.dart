@@ -4,8 +4,8 @@ import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../../team_org_utils.dart' show outcomeLabels;
 
-/// Building blocks of the Beta protocol page (leadership view). All colours
-/// come from the active Farbwelt.
+/// Building blocks of the leadership protocol page. All colours come from the
+/// active Farbwelt.
 
 /// Tone of a result: the chip in the notes and the pill in the Ablaufplan
 /// share it, so the same result has the same colour in both places.

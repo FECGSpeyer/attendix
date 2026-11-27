@@ -79,7 +79,7 @@ void main() {
     });
 
     test('Ablaufplan editor share sheet offers PDF, image and public link', () {
-      final page = read('lib/features/planning/presentation/pages/planning_page_beta.dart');
+      final page = read('lib/features/planning/presentation/pages/planning_page.dart');
       expect(page, contains("Key('rd-plan-pdf')"));
       expect(page, contains("Key('rd-plan-image')"));
       expect(page, contains("Key('rd-plan-link')"));

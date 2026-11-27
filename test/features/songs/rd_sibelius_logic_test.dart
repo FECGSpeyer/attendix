@@ -1,9 +1,9 @@
-import 'dart:io';
-
 import 'package:attendix/data/models/song/song.dart';
 import 'package:attendix/features/songs/data/rd_work_files_logic.dart';
 import 'package:attendix/features/songs/data/sibelius/rd_sibelius_logic.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import '../../helpers/source_reader.dart';
 
 SongFile _file(String name, {String? storageName, String url = 'https://x/songs/1/2/a.pdf'}) =>
     SongFile(fileName: name, fileType: '', url: url, storageName: storageName);
@@ -124,7 +124,7 @@ void main() {
   });
 
   test('replacing a file keeps the tenant filter on every query', () {
-    final source = File('lib/core/services/song_file_service.dart').readAsStringSync();
+    final source = readDartLibrary('lib/core/services/song_file_service.dart');
     final start = source.indexOf('Future<SongFile?> _replaceFileContent(');
     final body = source.substring(start, source.indexOf('/// Rename a file', start));
     final queries = ".from('songs')".allMatches(body).length;

@@ -36,6 +36,7 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 part 'tenant_registration_account.dart';
 part 'tenant_registration_form.dart';
+part 'tenant_registration_submit.dart';
 
 /// Public tenant registration page
 class TenantRegistrationPage extends ConsumerStatefulWidget {
@@ -118,7 +119,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
   @override
   Widget build(BuildContext context) {
     final tenantAsync = ref.watch(tenantByRegisterIdProvider(widget.registerId));
-    return _buildBeta(tenantAsync);
+    return _buildView(tenantAsync);
   }
 
   /// Ionic `goHome()`: signed-in member of a tenant -> that tenant's home,
@@ -167,10 +168,9 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
     if (date != null && mounted) setState(() => child.birthDate = date);
   }
 
-  /// REDESIGN (E5): same photo and logo as the login, a Beta card with the
-  /// group on top that scrolls with the form; "Registrierung abschließen"
-  /// at the end of the card. Form, fields and flow are the old ones.
-  Widget _buildBeta(AsyncValue<Tenant?> tenantAsync) {
+  /// Card with the group on top that scrolls with the form; "Registrierung
+  /// abschließen" sits at the end of the card.
+  Widget _buildView(AsyncValue<Tenant?> tenantAsync) {
     final p = context.rd;
     final l10n = context.l10n;
     final tenant = tenantAsync.valueOrNull;
@@ -506,209 +506,6 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
       });
     } catch (e) {
       debugPrint('Prefill from profile failed: $e');
-    }
-  }
-
-  /// Ionic validate(): first error as toast.
-  String? _validate(Tenant tenant) {
-    if (_noGroupsAvailable) {
-      return context.l10n.tenantRegisterNoGroupsToast;
-    }
-    if (!_isLoggedIn) {
-      if (!_privacyAccepted) {
-        return context.l10n.tenantRegisterAcceptTermsToast;
-      }
-      if (!isValidEmail(_formData.email)) {
-        return context.l10n.loginToastInvalidEmail;
-      }
-      if (_formData.password.length < 6) {
-        return context.l10n.tenantRegisterPasswordTooShort;
-      }
-      if (_formData.password != _formData.confirmPassword) {
-        return context.l10n.tenantRegisterPasswordMismatch;
-      }
-    }
-    if (_formData.firstName.isEmpty || _formData.lastName.isEmpty) {
-      return context.l10n.tenantRegisterNameRequired;
-    }
-    final registrationFields = tenant.registrationFields ?? const [];
-    if (_forChildren == true) {
-      // "Mein Kind": names (and the birth date when asked) of every child;
-      // no picture of the parent.
-      for (final child in _formData.children) {
-        if (child.firstName.trim().isEmpty || child.lastName.trim().isEmpty) {
-          return context.l10n.parentRegisterChildNameRequired;
-        }
-        if (child.groupId == null) return context.l10n.tenantRegisterNoGroupsToast;
-        if (registrationFields.contains('birthDate') && child.birthDate == null) {
-          return context.l10n.parentRegisterChildBirthDateRequired;
-        }
-      }
-    } else {
-      if (registrationFields.contains('picture') && _profileImageBytes == null) {
-        return context.l10n.tenantRegisterPictureRequired;
-      }
-      if (registrationFields.contains('birthDate') && _formData.birthDate == null) {
-        return context.l10n.tenantRegisterBirthDateRequired;
-      }
-    }
-    if (registrationFields.contains('phone') &&
-        !isValidPhoneNumber(
-            (_formData.phone ?? '').replaceAll(RegExp(r'\s+'), ''))) {
-      return context.l10n.tenantRegisterPhoneRequired;
-    }
-
-    for (final field in orderedRegistrationFields(
-        registrationFields, tenant.additionalFields ?? const <ExtraField>[])) {
-      final value = _formData.additionalFields[field.id];
-      switch (field.type) {
-        case 'text':
-        case 'textarea':
-          if (value is! String || value.trim().isEmpty) {
-            return context.l10n.tenantRegisterFieldRequired(field.name);
-          }
-        case 'number':
-          // Ionic isNaN(Number(value)): an empty value (null) passes.
-          if (value != null && num.tryParse(value.toString()) == null) {
-            return context.l10n.tenantRegisterFieldNumber(field.name);
-          }
-        case 'date':
-          if (value == null || DateTime.tryParse(value.toString()) == null) {
-            return context.l10n.tenantRegisterFieldDate(field.name);
-          }
-        case 'boolean':
-          // Ionic: no boolean value (no default, toggle untouched) → toast.
-          if (value is! bool) {
-            return context.l10n.tenantRegisterFieldValue(field.name);
-          }
-          if (!value && field.name.toLowerCase().contains('einverständnis')) {
-            return context.l10n.tenantRegisterFieldAccept(field.name);
-          }
-        case 'bfecg_church':
-          if (value is! String) return context.l10n.tenantRegisterChurchRequired;
-          final custom =
-              _formData.additionalFields['_custom_church']?.toString() ?? '';
-          if (value.isEmpty && custom.trim().length < 5) {
-            return context.l10n.tenantRegisterChurchNameRequired;
-          }
-      }
-    }
-    return null;
-  }
-
-  Future<void> _submit(Tenant tenant) async {
-    _formKey.currentState!.save();
-    final error = _validate(tenant);
-    if (error != null) {
-      ToastHelper.showError(context, error);
-      return;
-    }
-
-    setState(() => _isLoading = true);
-
-    // Handle custom church creation (bfecg_church field)
-    final customChurchName = _formData.additionalFields.remove('_custom_church');
-    if (_formData.additionalFields['bfecg_church'] == '' &&
-        customChurchName != null &&
-        customChurchName.toString().isNotEmpty) {
-      final churchId = await ref
-          .read(churchNotifierProvider.notifier)
-          .createChurch(customChurchName.toString());
-      if (churchId != null) {
-        _formData.additionalFields['bfecg_church'] = churchId;
-      } else {
-        setState(() => _isLoading = false);
-        if (!mounted) return;
-        ToastHelper.showError(context, context.l10n.tenantRegisterFlutterCreateChurchFailed);
-        return;
-      }
-    }
-
-    // Attach profile image bytes if selected
-    _formData.profileImageBytes = _profileImageBytes;
-    _formData.profileImageMimeType = _profileImageMimeType;
-
-    final service = ref.read(registrationServiceProvider);
-    final result = _forChildren == true
-        ? await service.registerChildren(
-            tenant: tenant,
-            formData: _formData,
-            otpMode: _mode == AuthMode.otp,
-          )
-        : await service.register(
-            tenant: tenant,
-            formData: _formData,
-            otpMode: _mode == AuthMode.otp,
-          );
-
-    if (!mounted) return;
-    setState(() => _isLoading = false);
-
-    if (!result.success && result.memberBlocked) {
-      // Q3: say plainly why, nothing was saved.
-      await showAppDialog(
-        context: context,
-        builder: (context) => AppAlertDialog(
-          title: Text(context.l10n.parentRegisterMemberBlockedTitle),
-          content: Text(result.errorMessage ?? ''),
-          actions: [
-            FilledButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(context.l10n.commonOk),
-            ),
-          ],
-        ),
-      );
-      return;
-    }
-    if (!result.success) {
-      final message = result.errorMessage ?? context.l10n.commonUnknown;
-      ToastHelper.showError(
-        context,
-        message.startsWith(context.l10n.dbCreateAccountFailed)
-            ? message
-            : context.l10n.tenantRegisterFailed(message),
-      );
-      return;
-    }
-
-    await showAppDialog(
-      context: context,
-      builder: (context) => AppAlertDialog(
-        title: Text(context.l10n.tenantRegisterSuccessHeader),
-        content: Text(result.successMessage),
-        actions: [
-          FilledButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(context.l10n.commonOk),
-          ),
-        ],
-      ),
-    );
-    if (!mounted) return;
-
-    if (!result.isNewAccount && _isLoggedIn) {
-      // Existing account added to a new tenant — switch directly into it.
-      await _enterTenant(tenant, result.role);
-    } else {
-      context.go('/login');
-    }
-  }
-
-  /// Ionic routeAfterAuth(undefined, tenantId).
-  Future<void> _enterTenant(Tenant tenant, Role role) async {
-    try {
-      ref.invalidate(userTenantsProvider);
-      await ref.read(currentTenantProvider.notifier).setTenantLocal(tenant);
-      await ref.read(currentTenantUserProvider.future);
-      if (!mounted) return;
-      final prefsNotifier = ref.read(userPreferencesNotifierProvider.notifier);
-      context.go(homeRouteFor(role, tenant.id,
-          ref.read(supabaseAuthProvider).currentUser?.userMetadata));
-      prefsNotifier.updateCurrentTenantId(tenant.id!);
-    } catch (e) {
-      debugPrint('Enter tenant after registration failed: $e');
-      if (mounted) context.go('/tenants');
     }
   }
 }

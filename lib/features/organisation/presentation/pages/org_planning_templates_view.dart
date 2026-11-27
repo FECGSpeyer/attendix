@@ -1,9 +1,8 @@
 part of 'org_planning_templates_page.dart';
 
-/// REDESIGN (Termin-Werkzeuge T2): Planungsvorlagen as a Verwaltungsliste
-/// (Vorlagen and Standardfelder); a Vorlage opens the Beta Ablauf rows on
-/// its own page. Saving and data stay the classic page's.
-extension _OrgTemplatesBeta on _OrgPlanningTemplatesPageState {
+/// Planungsvorlagen as a Verwaltungsliste (Vorlagen and Standardfelder);
+/// opening a Vorlage edits its Ablauf rows on a dedicated page.
+extension _OrgTemplatesView on _OrgPlanningTemplatesPageState {
   Widget _rdBuild(BuildContext context) {
     final l10n = context.l10n;
     final org = ref.watch(currentOrganisationProvider).valueOrNull;
@@ -136,7 +135,7 @@ extension _OrgTemplatesBeta on _OrgPlanningTemplatesPageState {
   }
 }
 
-/// One Vorlage in the Beta look: name and start on top, the Ablauf rows,
+/// One Vorlage editor: name and start on top, the Ablauf rows,
 /// "+ Punkt hinzufügen"; rename and delete behind •••.
 class _RdTemplateEditor extends StatefulWidget {
   const _RdTemplateEditor({required this.host, required this.index});

@@ -24,7 +24,7 @@ import '../../../attendance/presentation/widgets/event/rd_form_widgets.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../../../today/presentation/widgets/rd_today_common.dart' show RdInfoCard;
 
-part 'auto_message_rule_beta.dart';
+part 'auto_message_rule_view.dart';
 
 enum _Tab { rule, history }
 
@@ -325,5 +325,5 @@ class _AutoMessageRulePageState extends ConsumerState<AutoMessageRulePage> {
   void _setTab(_Tab tab) => setState(() => _tab = tab);
 
   @override
-  Widget build(BuildContext context) => _buildBeta();
+  Widget build(BuildContext context) => _buildView();
 }
