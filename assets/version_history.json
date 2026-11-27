@@ -1,6 +1,15 @@
 {
   "versions": [
     {
+      "version": "0.161.0",
+      "date": "28.11.2026",
+      "changes": [
+        "✨ Organisation und Org-Pläne direkt in Heute, Termine und Einstellungen integriert.",
+        "✨ Live Activities reagieren zuverlässiger auf den App-Lebenszyklus und lassen sich klarer steuern.",
+        "✨ Einheitliches Erstellen-Menü bei Terminen als Bottom Sheet auf Mobilgeräten und Popover auf dem Desktop."
+      ]
+    },
+    {
       "version": "0.160.0",
       "date": "27.11.2026",
       "changes": [
