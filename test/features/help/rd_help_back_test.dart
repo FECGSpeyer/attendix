@@ -1,4 +1,4 @@
-import 'package:attendix/features/redesign/presentation/pages/rd_help_pages.dart';
+import 'package:attendix/features/help/presentation/pages/rd_help_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';

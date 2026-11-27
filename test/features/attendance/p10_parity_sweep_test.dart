@@ -1,7 +1,7 @@
 import 'package:attendix/core/providers/statistics_providers.dart';
 import 'package:attendix/core/utils/attendance_logic_utils.dart';
 import 'package:attendix/data/models/attendance/attendance.dart';
-import 'package:attendix/features/history/history_utils.dart';
+import 'package:attendix/features/songs/data/history_utils.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../factories/test_factories.dart';

@@ -8,7 +8,7 @@ String _read(String path) => readDartLibrary(path);
 /// P10_SONGS_ORG: final parity sweep (songs, team organisation, protocols).
 void main() {
   test('song category dialogs show the "name empty" toast', () {
-    final src = _read('lib/features/redesign/presentation/pages/rd_work_categories_page.dart');
+    final src = _read('lib/features/songs/presentation/pages/rd_work_categories_page.dart');
     expect(src, contains('songsCategoryNameEmpty'));
   });
 

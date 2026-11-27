@@ -10,7 +10,7 @@ import 'package:attendix/features/redesign/data/rd_manage_logic.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_branding_page.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_general_settings_page.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_org_settings_page.dart';
-import 'package:attendix/features/redesign/presentation/pages/rd_work_categories_page.dart';
+import 'package:attendix/features/songs/presentation/pages/rd_work_categories_page.dart';
 import 'package:attendix/core/providers/song_providers.dart';
 import 'package:attendix/data/models/song/song.dart';
 import 'package:attendix/core/providers/organisation_providers.dart';

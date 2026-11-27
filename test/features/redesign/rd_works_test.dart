@@ -22,17 +22,17 @@ import 'package:attendix/data/models/attendance/attendance.dart';
 import 'package:attendix/data/models/song/song.dart';
 import 'package:attendix/data/models/song/song_filter.dart';
 import 'package:attendix/data/repositories/song_repository.dart' show SongTenantSettings;
-import 'package:attendix/features/redesign/data/providers/rd_shared_library.dart';
+import 'package:attendix/features/songs/data/providers/rd_shared_library.dart';
 import 'package:attendix/core/redesign/rd_dates.dart';
 import 'package:attendix/core/redesign/rd_words.dart';
-import 'package:attendix/features/redesign/data/rd_works_logic.dart';
+import 'package:attendix/features/songs/data/rd_works_logic.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_folder_page.dart';
-import 'package:attendix/features/redesign/presentation/pages/rd_work_page.dart';
-import 'package:attendix/features/redesign/presentation/pages/rd_works_page.dart';
+import 'package:attendix/features/songs/presentation/pages/rd_work_page.dart';
+import 'package:attendix/features/songs/presentation/pages/rd_works_page.dart';
 import 'package:attendix/shared/widgets/redesign/rd_overview.dart';
 import 'package:attendix/shared/widgets/redesign/rd_widgets.dart';
-import 'package:attendix/features/redesign/presentation/widgets/works/rd_current_works.dart';
-import 'package:attendix/features/redesign/presentation/widgets/works/rd_works_filter_sheet.dart';
+import 'package:attendix/features/songs/presentation/widgets/works/rd_current_works.dart';
+import 'package:attendix/features/songs/presentation/widgets/works/rd_works_filter_sheet.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:attendix/features/songs/presentation/utils/song_utils.dart';
 import 'package:flutter/material.dart';
@@ -1361,8 +1361,8 @@ void main() {
   group('security (source)', () {
     test('no direct Supabase access in the new pages', () {
       for (final path in [
-        'lib/features/redesign/presentation/pages/rd_works_page.dart',
-        'lib/features/redesign/presentation/pages/rd_work_page.dart',
+        'lib/features/songs/presentation/pages/rd_works_page.dart',
+        'lib/features/songs/presentation/pages/rd_work_page.dart',
       ]) {
         final src = readDartLibrary(path);
         expect(src, isNot(contains('supabase')), reason: path);

@@ -17,15 +17,15 @@ import '../../../data/models/song/song.dart';
 import '../../../l10n/l10n.dart';
 import '../../../features/songs/presentation/utils/song_utils.dart';
 import '../../../features/people/data/providers/rd_members_providers.dart';
-import '../../../features/redesign/data/rd_collections_logic.dart';
+import '../../../features/songs/data/rd_collections_logic.dart';
 import '../../../features/people/data/rd_members_logic.dart' show RdMembersFilter;
 import '../../../core/redesign/rd_overview_logic.dart';
-import '../../../features/redesign/data/rd_works_logic.dart';
+import '../../../features/songs/data/rd_works_logic.dart';
 import '../../../features/redesign/presentation/pages/rd_folder_page.dart' show rdEventLabel;
 import 'rd_widgets.dart';
 import '../../../features/today/presentation/widgets/rd_today_common.dart' show RdInfoCard;
-import '../../../features/redesign/presentation/widgets/works/rd_collections_ui.dart';
-import '../../../features/redesign/presentation/widgets/works/rd_current_works.dart' show rdOpenCurrentWork;
+import '../../../features/songs/presentation/widgets/works/rd_collections_ui.dart';
+import '../../../features/songs/presentation/widgets/works/rd_current_works.dart' show rdOpenCurrentWork;
 
 /// REDESIGN: what the empty detail column of the split view shows while
 /// nothing is chosen on the left (Werke, Mitglieder): a short overview with

@@ -293,7 +293,7 @@ void main() {
     test('update action on login + me page (Ionic installUpdate)', () {
       expect(read('lib/features/auth/presentation/pages/login_page.dart'),
           contains('l10n.loginInstallUpdate'));
-      expect(read('lib/features/redesign/presentation/pages/rd_me_page.dart'),
+      expect(read('lib/features/profile/presentation/pages/rd_me_page.dart'),
           contains('l10n.settingsInstallUpdate'));
     });
 

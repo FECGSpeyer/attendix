@@ -104,7 +104,7 @@ void main() {
         'lib/core/providers/player_providers.dart': ['TrackingEvent.playerAdded', 'TrackingEvent.playerUpdated', 'TrackingEvent.playerRemoved'],
         'lib/core/providers/teacher_providers.dart': ['TrackingEvent.teacherAdded', 'TrackingEvent.teacherUpdated'],
         'lib/core/providers/group_providers.dart': ['TrackingEvent.instrumentAdded', 'TrackingEvent.instrumentUpdated', 'TrackingEvent.instrumentRemoved'],
-        'lib/features/redesign/presentation/pages/rd_notifications_page.dart': ['TrackingEvent.notificationSettingsChanged'],
+        'lib/features/profile/presentation/pages/rd_notifications_page.dart': ['TrackingEvent.notificationSettingsChanged'],
         'lib/features/settings/presentation/pages/files_page.dart': ['TrackingEvent.fileUploaded'],
       };
       expectations.forEach((path, events) {

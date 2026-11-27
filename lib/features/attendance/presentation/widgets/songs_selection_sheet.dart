@@ -12,7 +12,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../planning/presentation/widgets/rd_plan_widgets.dart';
-import '../../../redesign/data/rd_collections_logic.dart';
+import '../../../songs/data/rd_collections_logic.dart';
 import 'event/rd_form_widgets.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../../../today/presentation/widgets/rd_today_common.dart';

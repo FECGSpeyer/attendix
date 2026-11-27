@@ -8,7 +8,7 @@ import 'package:attendix/core/providers/tenant_providers.dart';
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/data/models/person/person.dart';
-import 'package:attendix/features/redesign/presentation/pages/rd_stats_page.dart';
+import 'package:attendix/features/statistics/presentation/pages/rd_stats_page.dart';
 import 'package:attendix/features/redesign/presentation/widgets/manage/rd_manage_entries.dart'
     show rdManagePendingProvider;
 import 'package:attendix/l10n/l10n.dart';
@@ -17,11 +17,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:attendix/core/router/redesign_routes.dart';
 import 'package:attendix/core/utils/tiptap_converter.dart';
 import 'package:attendix/data/models/attendance/attendance.dart';
-import 'package:attendix/features/redesign/data/providers/rd_stats_providers.dart';
+import 'package:attendix/features/statistics/data/providers/rd_stats_providers.dart';
 import 'package:attendix/features/redesign/data/rd_manage_logic.dart';
-import 'package:attendix/features/redesign/data/rd_stats_logic.dart';
+import 'package:attendix/features/statistics/data/rd_stats_logic.dart';
 import 'package:attendix/features/people/presentation/widgets/members/rd_member_bulk.dart' show rdApplyToAll;
-import 'package:attendix/features/redesign/presentation/pages/rd_message_compose_page.dart';
+import 'package:attendix/features/messages/presentation/pages/rd_message_compose_page.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../factories/test_factories.dart';

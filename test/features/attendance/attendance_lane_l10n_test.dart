@@ -2,7 +2,7 @@
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/features/attendance/presentation/attendance_status_labels.dart';
 import 'package:attendix/features/export/export_fields.dart';
-import 'package:attendix/features/history/history_utils.dart';
+import 'package:attendix/features/songs/data/history_utils.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter_test/flutter_test.dart';
 import '../../helpers/source_reader.dart';
@@ -41,8 +41,8 @@ void main() {
       'lib/features/attendance/presentation/pages/rd_events_page.dart',
       'lib/features/attendance/presentation/pages/rd_event_create_page.dart',
       'lib/features/attendance/presentation/pages/rd_event_page.dart',
-      'lib/features/redesign/presentation/pages/rd_work_history_page.dart',
-      'lib/features/redesign/presentation/pages/rd_stats_page.dart',
+      'lib/features/songs/presentation/pages/rd_work_history_page.dart',
+      'lib/features/statistics/presentation/pages/rd_stats_page.dart',
       'lib/features/redesign/presentation/pages/rd_export_page.dart',
     ];
     final literal = RegExp(r"(Text|tooltip:|title:|label:|showSuccess\(context,|showError\(context,|showWarning\(context,)\s*\(?'[^']*[äöüÄÖÜß][^']*'");

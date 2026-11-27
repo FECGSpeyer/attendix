@@ -17,7 +17,7 @@ import '../../../../songs/presentation/widgets/song_file_opener.dart';
 import '../../../data/providers/rd_event_details_providers.dart';
 import '../../../../../core/redesign/rd_dates.dart';
 import '../../../data/rd_event_details_logic.dart';
-import '../../../../redesign/data/rd_works_logic.dart' show rdFileKind;
+import '../../../../songs/data/rd_works_logic.dart' show rdFileKind;
 import '../../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../../../../today/presentation/widgets/rd_today_common.dart' show RdLinkButton;
 import 'rd_event_now.dart';

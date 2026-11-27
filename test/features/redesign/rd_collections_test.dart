@@ -1,5 +1,5 @@
 import 'package:attendix/data/models/song/song.dart';
-import 'package:attendix/features/redesign/data/rd_collections_logic.dart';
+import 'package:attendix/features/songs/data/rd_collections_logic.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../factories/test_factories.dart';

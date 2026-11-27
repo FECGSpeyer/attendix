@@ -8,7 +8,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../attendance/presentation/widgets/event/rd_form_widgets.dart' show RdFieldRow, rdInputDecoration;
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../../../../data/models/song/song.dart';
-import '../../../redesign/data/rd_collections_logic.dart';
+import '../../../songs/data/rd_collections_logic.dart';
 import 'plan_export_actions.dart';
 import 'plan_field_dialogs.dart';
 

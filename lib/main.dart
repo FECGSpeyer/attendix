@@ -48,7 +48,7 @@ import 'core/constants/app_constants.dart';
 import 'features/public_links/presentation/pages/open_file_page.dart' show PendingFileLink;
 import 'core/utils/global_toast.dart';
 import 'core/services/native/keyboard_focus_bridge.dart';
-import 'features/redesign/presentation/widgets/work/rd_sibelius_actions.dart';
+import 'features/songs/presentation/widgets/work/rd_sibelius_actions.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

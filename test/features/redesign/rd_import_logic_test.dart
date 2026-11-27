@@ -1,6 +1,6 @@
 import 'package:attendix/core/utils/instrument_matcher.dart';
 import 'package:attendix/data/models/song/song.dart';
-import 'package:attendix/features/redesign/data/import/rd_import_logic.dart';
+import 'package:attendix/features/songs/data/import/rd_import_logic.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 const _instruments = [

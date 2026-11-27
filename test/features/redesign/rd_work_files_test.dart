@@ -16,12 +16,12 @@ import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/data/models/song/song.dart';
 import 'package:attendix/data/models/instrument/instrument.dart';
-import 'package:attendix/features/redesign/data/import/rd_import_ai.dart';
+import 'package:attendix/features/songs/data/import/rd_import_ai.dart';
 import 'package:attendix/core/redesign/rd_words.dart';
-import 'package:attendix/features/redesign/data/rd_work_files_controller.dart';
-import 'package:attendix/features/redesign/data/rd_work_files_logic.dart';
-import 'package:attendix/features/redesign/presentation/pages/rd_work_page.dart';
-import 'package:attendix/features/redesign/presentation/widgets/work/rd_work_files.dart' show rdVisionBudget;
+import 'package:attendix/features/songs/data/rd_work_files_controller.dart';
+import 'package:attendix/features/songs/data/rd_work_files_logic.dart';
+import 'package:attendix/features/songs/presentation/pages/rd_work_page.dart';
+import 'package:attendix/features/songs/presentation/widgets/work/rd_work_files.dart' show rdVisionBudget;
 import 'package:attendix/l10n/l10n.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -856,9 +856,9 @@ void main() {
 
     test('no direct Supabase access in the workspace', () {
       for (final path in [
-        'lib/features/redesign/presentation/widgets/work/rd_work_files.dart',
-        'lib/features/redesign/data/rd_work_files_controller.dart',
-        'lib/features/redesign/data/rd_work_files_logic.dart',
+        'lib/features/songs/presentation/widgets/work/rd_work_files.dart',
+        'lib/features/songs/data/rd_work_files_controller.dart',
+        'lib/features/songs/data/rd_work_files_logic.dart',
       ]) {
         final src = readDartLibrary(path);
         expect(src, isNot(contains('supabase')), reason: path);

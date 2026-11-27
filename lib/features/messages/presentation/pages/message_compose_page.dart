@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../redesign/presentation/pages/rd_message_compose_page.dart';
+import 'rd_message_compose_page.dart';
 
 /// Opens the full-screen compose dialog. Returns the new message id when sent.
 /// [preset]: fixed recipients and prefilled text.

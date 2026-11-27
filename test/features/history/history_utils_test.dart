@@ -1,4 +1,4 @@
-import 'package:attendix/features/history/history_utils.dart';
+import 'package:attendix/features/songs/data/history_utils.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Map<String, dynamic> _rehearsal(String date, List<int> songIds,

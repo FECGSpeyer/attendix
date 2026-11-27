@@ -13,7 +13,7 @@ void main() {
   setUpAll(() {
     repo = readDartLibrary('lib/data/repositories/live_activity_repository.dart');
     service = readDartLibrary('lib/core/services/live_activity_service.dart');
-    page = readDartLibrary('lib/features/redesign/presentation/pages/rd_notifications_page.dart');
+    page = readDartLibrary('lib/features/profile/presentation/pages/rd_notifications_page.dart');
   });
 
   Iterable<String> queries(String source, String table) => RegExp(

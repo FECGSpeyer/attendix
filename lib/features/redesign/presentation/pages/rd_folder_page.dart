@@ -18,12 +18,12 @@ import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../songs/data/song_print_service.dart';
 import '../../../songs/presentation/utils/song_utils.dart';
-import '../../data/rd_collections_logic.dart';
-import '../../data/rd_works_logic.dart';
+import '../../../songs/data/rd_collections_logic.dart';
+import '../../../songs/data/rd_works_logic.dart';
 import '../../../../shared/widgets/redesign/rd_widgets.dart';
 import '../../../today/presentation/widgets/rd_today_common.dart' show RdInfoCard;
-import '../widgets/work/rd_work_file_actions.dart' show rdOpenWorkFile;
-import '../widgets/works/rd_collections_ui.dart';
+import '../../../songs/presentation/widgets/work/rd_work_file_actions.dart' show rdOpenWorkFile;
+import '../../../songs/presentation/widgets/works/rd_collections_ui.dart';
 
 /// REDESIGN: "Meine Noten" (canvas "Werke neu gedacht", board "Mappe"):
 /// the Noten of one part, for the coming Termine or all Werke, opened one

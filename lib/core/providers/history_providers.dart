@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../config/supabase_config.dart';
 import '../../data/models/history/history_entry.dart';
 import '../../data/models/song/song.dart';
-import '../../features/history/history_utils.dart';
+import '../../features/songs/data/history_utils.dart';
 import 'conductor_providers.dart';
 import 'song_providers.dart';
 import 'tenant_providers.dart';

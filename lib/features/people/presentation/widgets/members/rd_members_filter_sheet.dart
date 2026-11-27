@@ -16,7 +16,7 @@ import '../../../data/providers/rd_members_providers.dart';
 import '../../../data/rd_members_list_filter.dart';
 import '../../../../../core/redesign/rd_words.dart';
 import '../../../../../shared/widgets/redesign/rd_widgets.dart';
-import '../../../../redesign/presentation/widgets/stats/rd_stats_widgets.dart' show showRdStatsRangeSheet;
+import '../../../../statistics/presentation/widgets/rd_stats_widgets.dart' show showRdStatsRangeSheet;
 
 /// Label of a sort order of the Mitglieder tab.
 String rdMembersSortLabel(AppLocalizations l10n, RdMembersSort sort, String kind) => switch (sort) {

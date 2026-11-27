@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:attendix/data/models/song/song.dart';
-import 'package:attendix/features/redesign/data/rd_work_files_logic.dart';
-import 'package:attendix/features/redesign/data/sibelius/rd_sibelius_logic.dart';
+import 'package:attendix/features/songs/data/rd_work_files_logic.dart';
+import 'package:attendix/features/songs/data/sibelius/rd_sibelius_logic.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 SongFile _file(String name, {String? storageName, String url = 'https://x/songs/1/2/a.pdf'}) =>

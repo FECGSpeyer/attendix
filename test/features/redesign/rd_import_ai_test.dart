@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:attendix/core/services/part_vision_service.dart';
 import 'package:attendix/core/utils/choir_file_utils.dart';
 import 'package:attendix/core/utils/instrument_matcher.dart';
-import 'package:attendix/features/redesign/data/import/rd_import_ai.dart';
-import 'package:attendix/features/redesign/data/import/rd_import_logic.dart';
+import 'package:attendix/features/songs/data/import/rd_import_ai.dart';
+import 'package:attendix/features/songs/data/import/rd_import_logic.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show FunctionException;
 
