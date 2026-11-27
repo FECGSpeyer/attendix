@@ -1,6 +1,6 @@
 import 'package:attendix/core/theme/app_theme.dart';
 import 'package:attendix/features/auth/presentation/widgets/otp_widgets.dart';
-import 'package:attendix/shared/widgets/redesign/rd_widgets.dart';
+import 'package:attendix/shared/widgets/components/components.dart';
 import 'package:attendix/features/tenant_selection/presentation/pages/tenant_create_page.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';

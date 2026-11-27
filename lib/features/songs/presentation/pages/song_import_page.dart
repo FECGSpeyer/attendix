@@ -14,9 +14,9 @@ import '../../../../core/providers/demo_providers.dart'; // DEMO_GUARD
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
-import '../../../../core/router/redesign_routes.dart';
-import '../../../../core/theme/redesign/rd_theme.dart';
-import '../../../../shared/widgets/redesign/rd_widgets.dart';
+import '../../../../core/router/app_routes.dart';
+import '../../../../core/theme/design_theme.dart';
+import '../../../../shared/widgets/components/components.dart';
 
 enum _Step { file, mapping, preview }
 

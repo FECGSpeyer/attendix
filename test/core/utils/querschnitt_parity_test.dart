@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:attendix/core/services/holiday_service.dart';
 import 'package:attendix/data/models/shift/shift_plan.dart';
 import 'package:attendix/data/repositories/files_repository.dart';
-import 'package:attendix/features/organisation/presentation/pages/rd_org_person_fields_page.dart';
+import 'package:attendix/features/organisation/presentation/pages/org_person_fields_page.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

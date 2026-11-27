@@ -27,7 +27,7 @@ void main() {
         'rd_person_page.dart uses countsAsPresent instead of raw int check',
         () {
       final source = File(
-        'lib/features/people/presentation/pages/rd_person_page.dart',
+        'lib/features/people/presentation/pages/person_page.dart',
       ).readAsStringSync();
 
       expect(

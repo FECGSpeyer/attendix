@@ -88,7 +88,7 @@ void main() {
 
     test('person edit save uses all three shift fields', () {
       final page =
-          _read('lib/features/people/presentation/pages/rd_person_edit_page.dart');
+          _read('lib/features/people/presentation/pages/person_edit_page.dart');
       final idx = page.indexOf('if (shiftAssignmentChanged(');
       expect(idx, isNot(-1));
       final call = page.substring(idx, page.indexOf('updateShiftAssignmentsForPerson', idx));

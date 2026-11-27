@@ -1,0 +1,448 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../core/providers/debug_providers.dart';
+import '../../core/services/app_update_service.dart';
+import '../../core/services/update_hint.dart';
+import '../../core/providers/tenant_providers.dart';
+import '../../core/router/app_routes.dart';
+import '../../core/theme/app_palette.dart';
+import '../../core/theme/design_theme.dart';
+import '../../l10n/l10n.dart';
+import '../widgets/audio_player/audio_player_widget.dart';
+import '../widgets/debug/debug_role_fab.dart';
+import '../widgets/dialogs/native_app_ad.dart';
+import '../widgets/layout/root_back_button_scope.dart';
+import '../widgets/layout/route_leave_guard.dart';
+import '../../features/songs/data/import/import_controller.dart';
+import '../../features/songs/presentation/widgets/import/import_widgets.dart' show rdImportTimeLeftText;
+import '../../features/settings/presentation/widgets/manage/manage_entries.dart';
+import '../widgets/components/desktop.dart';
+import '../widgets/components/logo.dart';
+import 'destinations.dart';
+import 'app_sidebar.dart';
+
+/// Location of the page on top, also when it was pushed from another
+/// area (Verlauf › Termin, Werk › Termin, Heute › Termin): the sidebar,
+/// rail and tab bar then select the area of the page that is shown, while
+/// back still returns to where it was opened from.
+/// `GoRouterState.of(context)` in the shell only knows the base location.
+String rdShownLocation(BuildContext context) {
+  final config = GoRouter.of(context).routerDelegate.currentConfiguration;
+  final last = config.lastOrNull;
+  if (last is ImperativeRouteMatch) return last.matches.uri.path;
+  return GoRouterState.of(context).matchedLocation;
+}
+
+/// REDESIGN: adaptive shell of the new design (Phase 1 "Fundament").
+///
+/// * below 600 px: tab bar at the bottom (iPhone),
+/// * 600–839 px: navigation rail (iPad upright),
+/// * from 840 px: sidebar with the group at the top (iPad landscape, Mac).
+class RdShell extends ConsumerWidget {
+  const RdShell({super.key, required this.child});
+
+  final Widget child;
+
+  static const double railBreakpoint = 600;
+  static const double sidebarBreakpoint = rdSidebarBreakpoint;
+
+  static String labelOf(AppLocalizations l10n, RdTab tab) => switch (tab) {
+        RdTab.today => l10n.redesignTabToday,
+        RdTab.events => l10n.redesignTabEvents,
+        RdTab.members => l10n.redesignTabMembers,
+        RdTab.works => l10n.redesignTabWorks,
+        RdTab.me => l10n.redesignTabMe,
+      };
+
+  /// Leave guards of the open page run first (unsaved Ablaufplan etc.),
+  /// like in the old shell.
+  static Future<void> navigate(BuildContext context, WidgetRef ref, String route) async {
+    final guards = ref.read(routeLeaveGuardRegistryProvider);
+    if (guards.hasGuards && !await guards.canLeave()) return;
+    if (!context.mounted) return;
+    context.go(route);
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final role = ref.watch(effectiveRoleProvider);
+    final tenant = ref.watch(currentTenantProvider);
+    final destinations = rdDestinationsFor(
+      role,
+      showMembersList: tenant?.showMembersList ?? false,
+      tenantType: tenant?.type ?? '',
+    );
+    final location = rdShownLocation(context);
+    final selected = rdSelectedIndex(destinations, location);
+    // Waiting approvals on the Mitglieder tab, where they are handled (the
+    // "Freigaben" filter); leads only, live like the Mitglieder list (new
+    // sign-ups, approvals by other leads).
+    final pending = ref.watch(rdManagePendingProvider).length;
+    final badges = {RdTab.members: pending};
+    final width = MediaQuery.sizeOf(context).width;
+    final page = NativeAppAdGate(child: child);
+    final p = context.rd;
+
+    void onSelect(int index) =>
+        navigate(context, ref, destinations[index].route);
+
+    final Widget body;
+    Widget? bottomBar;
+    if (width >= sidebarBreakpoint) {
+      body = Row(
+        children: [
+          RdSidebar(
+            destinations: destinations,
+            selectedIndex: selected,
+            onSelected: onSelect,
+            onOpen: (route) => navigate(context, ref, route),
+            badges: badges,
+          ),
+          Expanded(child: _withPlayer(page)),
+        ],
+      );
+    } else if (width >= railBreakpoint) {
+      body = Row(
+        children: [
+          _RdRail(
+            destinations: destinations,
+            selectedIndex: selected,
+            onSelected: onSelect,
+            badges: badges,
+          ),
+          VerticalDivider(width: 1, thickness: 1, color: p.line),
+          Expanded(child: _withPlayer(page)),
+        ],
+      );
+    } else {
+      body = _withPlayer(page);
+      // Hidden while the keyboard is open, like the old tab bar.
+      if (MediaQuery.viewInsetsOf(context).bottom <= 0) {
+        bottomBar = _RdBottomBar(
+          destinations: destinations,
+          selectedIndex: selected,
+          onSelected: onSelect,
+          badges: badges,
+        );
+      }
+    }
+
+    return RootBackButtonScope(
+      child: Scaffold(
+        backgroundColor: p.bg,
+        body: body,
+        bottomNavigationBar: bottomBar,
+        floatingActionButton: kDebugMode ? const DebugRoleFab() : null,
+      ),
+    );
+  }
+
+  /// Page plus the mini audio player, a running Noten-Import and (on iOS)
+  /// the update notice above the bar.
+  Widget _withPlayer(Widget page) => Column(
+        children: [
+          Expanded(child: page),
+          const AudioPlayerWidget(largeClose: true),
+          const _RdImportBar(),
+          const _RdUpdateBar(),
+        ],
+      );
+}
+
+/// The Noten-Import going on in the background (the page was left), then
+/// its result until seen: tap opens the import page, × closes it. Not on
+/// the import page itself, which shows the same.
+class _RdImportBar extends ConsumerWidget {
+  const _RdImportBar();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final run = ref.watch(rdImportRunProvider);
+    if (run == null) return const SizedBox.shrink();
+    if (GoRouterState.of(context).matchedLocation == RedesignRoutes.worksImport) return const SizedBox.shrink();
+    final p = context.rd;
+    final l10n = context.l10n;
+    final value = run.total == 0 ? 0.0 : run.done / run.total;
+    final complete = run.failures.isEmpty && !run.aborted && !run.cancelled;
+    final left = run.finished ? null : rdImportTimeLeftText(l10n, run);
+    final text = !run.finished
+        ? [l10n.redesignImportBarRunning((value * 100).round()), if (left != null) left].join(' · ')
+        : complete
+        ? l10n.redesignImportBarDone(run.succeeded)
+        : l10n.redesignImportBarIncomplete;
+    void open() => RdShell.navigate(context, ref, RedesignRoutes.worksImport);
+    return SafeArea(
+      top: false,
+      bottom: false,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+        child: Material(
+          key: const Key('rd-import-bar'),
+          color: p.toastBg,
+          borderRadius: BorderRadius.circular(p.buttonRadius),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: open,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 14, right: 4),
+                  child: Row(
+                    children: [
+                      Icon(
+                        !run.finished
+                            ? Icons.cloud_upload_outlined
+                            : complete
+                            ? Icons.check_circle_outline
+                            : Icons.error_outline,
+                        size: 20,
+                        color: p.toastText,
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          text,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(fontSize: 14, color: p.toastText),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: open,
+                        style: TextButton.styleFrom(foregroundColor: p.toastAction, minimumSize: const Size(44, 44)),
+                        child: Text(l10n.redesignImportBarOpen, style: const TextStyle(fontWeight: FontWeight.w600)),
+                      ),
+                      if (run.finished)
+                        IconButton(
+                          tooltip: l10n.commonClose,
+                          icon: Icon(Icons.close, size: 18, color: p.toastText),
+                          onPressed: () => ref.read(rdImportProvider.notifier).resultSeen(),
+                        )
+                      else
+                        const SizedBox(width: 8),
+                    ],
+                  ),
+                ),
+                if (!run.finished)
+                  LinearProgressIndicator(
+                    value: value,
+                    minHeight: 3,
+                    color: p.toastAction,
+                    backgroundColor: p.toastText.withValues(alpha: 0.15),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Closed "Neue Version verfügbar" notice (until the next start).
+final _rdUpdateDismissedProvider = StateProvider<bool>((ref) => false);
+
+/// "Neue Version verfügbar" above the tab bar. Only on iOS: elsewhere
+/// main.dart shows it as a SnackBar, like with the old shell.
+class _RdUpdateBar extends ConsumerWidget {
+  const _RdUpdateBar();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final show = Theme.of(context).platform == TargetPlatform.iOS &&
+        showUpdateHint(ref.watch(appUpdateAvailableProvider)) &&
+        !ref.watch(_rdUpdateDismissedProvider);
+    if (!show) return const SizedBox.shrink();
+    final p = context.rd;
+    final l10n = context.l10n;
+    return SafeArea(
+      top: false,
+      bottom: false,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+        child: Material(
+          color: p.toastBg,
+          borderRadius: BorderRadius.circular(p.buttonRadius),
+          child: Padding(
+            padding: const EdgeInsets.only(left: 14, right: 4),
+            child: Row(
+              children: [
+                Icon(Icons.cloud_download_outlined, size: 20, color: p.toastText),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    l10n.coreFlutterNewVersionAvailable,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 14, color: p.toastText),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => ref.read(appUpdateServiceProvider).applyUpdate(),
+                  style: TextButton.styleFrom(
+                    foregroundColor: p.toastAction,
+                    minimumSize: const Size(44, 44),
+                  ),
+                  child: Text(
+                    l10n.coreFlutterUpdate,
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                ),
+                IconButton(
+                  tooltip: l10n.commonClose,
+                  icon: Icon(Icons.close, size: 18, color: p.toastText),
+                  onPressed: () =>
+                      ref.read(_rdUpdateDismissedProvider.notifier).state = true,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _RdBottomBar extends StatelessWidget {
+  const _RdBottomBar({
+    required this.destinations,
+    required this.selectedIndex,
+    required this.onSelected,
+    this.badges = const {},
+  });
+
+  final List<RdDestination> destinations;
+  final int selectedIndex;
+  final ValueChanged<int> onSelected;
+
+  /// Count shown on a tab (waiting approvals on Mitglieder).
+  final Map<RdTab, int> badges;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: p.surface,
+        border: Border(top: BorderSide(color: p.line)),
+      ),
+      // Large text would wrap the labels ("Mitgliede r"); iOS tab bars
+      // grow their labels only a little, too.
+      child: MediaQuery.withClampedTextScaling(
+        maxScaleFactor: 1.15,
+        child: NavigationBarTheme(
+          data: _barTheme(p),
+          child: NavigationBar(
+            selectedIndex: selectedIndex,
+            onDestinationSelected: onSelected,
+            destinations: [
+              for (final d in destinations)
+                NavigationDestination(
+                  icon: _RdTabIcon(d.icon, badge: badges[d.tab] ?? 0),
+                  selectedIcon: _RdTabIcon(d.selectedIcon, badge: badges[d.tab] ?? 0),
+                  label: RdShell.labelOf(l10n, d.tab),
+                  tooltip: '',
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  static NavigationBarThemeData _barTheme(RdPalette p) => NavigationBarThemeData(
+        backgroundColor: p.surface,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        height: 62,
+        indicatorColor: p.soft,
+        indicatorShape: const StadiumBorder(),
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+        iconTheme: WidgetStateProperty.resolveWith((states) => IconThemeData(
+              size: 22,
+              color: states.contains(WidgetState.selected) ? p.softText : p.text2,
+            )),
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          final on = states.contains(WidgetState.selected);
+          return TextStyle(
+            fontSize: 11,
+            fontWeight: on ? FontWeight.w700 : FontWeight.w500,
+            color: on ? p.softText : p.text2,
+          );
+        }),
+      );
+}
+
+class _RdRail extends StatelessWidget {
+  const _RdRail({
+    required this.destinations,
+    required this.selectedIndex,
+    required this.onSelected,
+    this.badges = const {},
+  });
+
+  final List<RdDestination> destinations;
+  final int selectedIndex;
+  final ValueChanged<int> onSelected;
+  final Map<RdTab, int> badges;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    return NavigationRail(
+      backgroundColor: p.surface,
+      selectedIndex: selectedIndex,
+      onDestinationSelected: onSelected,
+      labelType: NavigationRailLabelType.all,
+      indicatorColor: p.soft,
+      indicatorShape: const StadiumBorder(),
+      selectedIconTheme: IconThemeData(color: p.softText, size: 22),
+      unselectedIconTheme: IconThemeData(color: p.text2, size: 22),
+      selectedLabelTextStyle: TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.w700,
+        color: p.softText,
+      ),
+      unselectedLabelTextStyle: TextStyle(fontSize: 12, color: p.text2),
+      groupAlignment: -0.85,
+      leading: const Padding(
+        padding: EdgeInsets.only(top: 8, bottom: 4),
+        child: RdLogo(size: 36, semanticLabel: 'Attendix'),
+      ),
+      destinations: [
+        for (final d in destinations)
+          NavigationRailDestination(
+            icon: _RdTabIcon(d.icon, badge: badges[d.tab] ?? 0),
+            selectedIcon: _RdTabIcon(d.selectedIcon, badge: badges[d.tab] ?? 0),
+            label: Text(RdShell.labelOf(l10n, d.tab)),
+          ),
+      ],
+    );
+  }
+}
+
+/// A tab icon with a count (waiting approvals on Mitglieder).
+class _RdTabIcon extends StatelessWidget {
+  const _RdTabIcon(this.icon, {this.badge = 0});
+
+  final IconData icon;
+  final int badge;
+
+  @override
+  Widget build(BuildContext context) {
+    if (badge <= 0) return Icon(icon);
+    final p = context.rd;
+    return Badge(
+      label: Text('$badge', semanticsLabel: context.l10n.rdAdminPendingBadge(badge)),
+      backgroundColor: p.absent,
+      textColor: p.onStatus,
+      child: Icon(icon),
+    );
+  }
+}

@@ -7,7 +7,7 @@ import '../../../core/providers/group_providers.dart';
 import '../../../core/providers/organisation_providers.dart';
 import '../../../core/providers/player_providers.dart';
 import '../../../core/providers/tenant_providers.dart';
-import '../../../core/router/redesign_routes.dart';
+import '../../../core/router/app_routes.dart';
 import '../../../core/services/tracking/tracking_event.dart';
 import '../../../core/services/tracking/tracking_service.dart';
 import '../../../core/utils/dialog_helper.dart';

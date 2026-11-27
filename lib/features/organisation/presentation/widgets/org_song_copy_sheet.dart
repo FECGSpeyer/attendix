@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/providers/org_song_providers.dart';
 import '../../../../core/providers/song_providers.dart';
-import '../../../../core/theme/redesign/rd_palette.dart';
-import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../core/theme/app_palette.dart';
+import '../../../../core/theme/design_theme.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/error_message.dart';
@@ -16,9 +16,9 @@ import '../../../../data/models/song/song.dart';
 import '../../../../data/models/tenant/tenant.dart' show ExtraField;
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart' show AppActionSheetAction, showAppActionSheet;
-import '../../../../shared/widgets/redesign/rd_widgets.dart';
-import '../../../attendance/presentation/widgets/event/rd_form_widgets.dart' show RdFieldRow, rdInputDecoration;
-import '../../../settings/presentation/widgets/manage/rd_settings_sheets.dart' show RdListNote, RdSheetHead;
+import '../../../../shared/widgets/components/components.dart';
+import '../../../attendance/presentation/widgets/event/form_widgets.dart' show RdFieldRow, rdInputDecoration;
+import '../../../settings/presentation/widgets/manage/settings_sheets.dart' show RdListNote, RdSheetHead;
 import '../../../songs/presentation/utils/song_utils.dart';
 
 part 'org_song_copy_actions.dart';

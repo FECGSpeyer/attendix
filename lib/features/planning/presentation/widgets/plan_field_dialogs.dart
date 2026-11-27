@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../data/models/plan/plan.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
-import 'rd_plan_widgets.dart';
+import 'plan_widgets.dart';
 
 /// Values entered in a plan field dialog.
 class PlanFieldInput {

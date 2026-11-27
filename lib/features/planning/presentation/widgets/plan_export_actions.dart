@@ -18,7 +18,7 @@ import '../../../../data/models/attendance/attendance.dart' show AttendanceType;
 import '../../../../data/models/plan/plan.dart' show PlanAttendance;
 import '../../../../core/utils/toast_helper.dart';
 import 'plan_field_dialogs.dart';
-import 'rd_plan_widgets.dart';
+import 'plan_widgets.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 

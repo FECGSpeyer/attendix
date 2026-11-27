@@ -96,7 +96,7 @@ void main() {
     });
 
     test('person history delete uses the alert and toast texts', () {
-      final src = _read('lib/features/people/presentation/pages/rd_person_history_page.dart');
+      final src = _read('lib/features/people/presentation/pages/person_history_page.dart');
       expect(src, contains('l10n.personRemoveEntry'));
       expect(src, contains('l10n.personEntryRemoved'));
     });

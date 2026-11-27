@@ -27,13 +27,13 @@ import '../../../../core/utils/file_mime.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/adaptive/ion_loading.dart';
-import '../../../../core/router/redesign_routes.dart';
+import '../../../../core/router/app_routes.dart';
 import '../../../../core/router/route_access.dart' show canOpenSongsTab;
 import '../../../../core/providers/debug_providers.dart' show effectiveRoleProvider;
-import '../../../../core/theme/redesign/rd_theme.dart';
-import '../widgets/manage/rd_settings_sheets.dart';
-import '../../../../shared/widgets/redesign/rd_widgets.dart';
-import '../../../today/presentation/widgets/rd_today_common.dart' show RdInfoCard;
+import '../../../../core/theme/design_theme.dart';
+import '../widgets/manage/settings_sheets.dart';
+import '../../../../shared/widgets/components/components.dart';
+import '../../../today/presentation/widgets/today_common.dart' show RdInfoCard;
 
 part 'files_page_view.dart';
 part 'files_page_actions.dart';

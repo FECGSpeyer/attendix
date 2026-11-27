@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/redesign/rd_theme.dart';
-import '../../../../shared/widgets/redesign/rd_widgets.dart';
+import '../../../../core/theme/design_theme.dart';
+import '../../../../shared/widgets/components/components.dart';
 import '../../team_org_utils.dart' show outcomeLabels;
 
 /// Building blocks of the leadership protocol page. All colours come from the

@@ -21,13 +21,13 @@ import '../../../../data/models/person/person.dart';
 import '../../../../data/models/plan/plan.dart' show RegisterPlanSettings;
 import '../../../../l10n/l10n.dart';
 import 'plan_export_actions.dart';
-import 'rd_register_setup_sheet.dart';
+import 'register_setup_sheet.dart';
 import '../../../../core/services/error_reporter.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../core/services/native/native_file_service.dart';
 import '../../../../core/services/pdf_fonts.dart';
-import '../../../../core/theme/redesign/rd_theme.dart';
-import '../../../../shared/widgets/redesign/rd_widgets.dart';
+import '../../../../core/theme/design_theme.dart';
+import '../../../../shared/widgets/components/components.dart';
 
 /// Opens the Registerprobenplan modal (Ionic `isPlanModalOpen`, a sheet with
 /// breakpoints `[0, 1]`, i.e. full height).

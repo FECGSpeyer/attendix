@@ -15,7 +15,7 @@ import '../../l10n/l10n.dart';
 import '../config/supabase_config.dart';
 import '../constants/enums.dart';
 import '../router/app_router.dart';
-import '../router/redesign_routes.dart';
+import '../router/app_routes.dart';
 import '../services/live_activity_service.dart'
     show endLiveActivitiesBeforeSignOut, liveActivityServiceProvider;
 import '../services/native/ionic_session_takeover.dart'

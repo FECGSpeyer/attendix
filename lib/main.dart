@@ -14,7 +14,7 @@ import 'core/config/app_env.dart';
 import 'core/config/supabase_config.dart';
 import 'core/providers/account_switch_providers.dart';
 import 'core/providers/locale_provider.dart';
-import 'core/providers/redesign_providers.dart';
+import 'core/providers/appearance_providers.dart';
 import 'core/router/app_router.dart';
 import 'core/router/legacy_url.dart';
 import 'core/services/app_update_service.dart';
@@ -31,7 +31,7 @@ import 'core/services/live_activity_service.dart';
 import 'core/services/native/ionic_offline_queue_takeover.dart';
 import 'core/services/native/ionic_session_takeover.dart';
 import 'core/services/native/shorebird_patch_service.dart';
-import 'core/theme/redesign/rd_theme.dart';
+import 'core/theme/design_theme.dart';
 import 'core/utils/toast_helper.dart';
 import 'features/auth/data/auth_link_listener.dart';
 import 'core/services/teams/teams_service.dart';
@@ -48,7 +48,7 @@ import 'core/constants/app_constants.dart';
 import 'features/public_links/presentation/pages/open_file_page.dart' show PendingFileLink;
 import 'core/utils/global_toast.dart';
 import 'core/services/native/keyboard_focus_bridge.dart';
-import 'features/songs/presentation/widgets/work/rd_sibelius_actions.dart';
+import 'features/songs/presentation/widgets/work/sibelius_actions.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

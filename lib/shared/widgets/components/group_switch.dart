@@ -1,0 +1,351 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../core/constants/enums.dart';
+import '../../../core/providers/debug_providers.dart';
+import '../../../core/providers/organisation_providers.dart';
+import '../../../core/providers/tenant_providers.dart';
+import '../../../core/providers/user_preferences_provider.dart';
+import '../../../core/router/app_routes.dart';
+import '../../../core/theme/design_theme.dart';
+import '../../../core/utils/toast_helper.dart';
+import '../../../data/models/tenant/tenant.dart';
+import '../../../l10n/l10n.dart';
+import '../layout/route_leave_guard.dart';
+import '../../../features/organisation/presentation/widgets/org_info_sheet.dart' show showRdOrgInfoSheet;
+import '../../../features/profile/presentation/widgets/profile_helpers.dart' show profileRoleName;
+import '../../../features/today/presentation/widgets/join/join_sheet.dart';
+import 'components.dart';
+
+/// REDESIGN: group chip at the top of "Heute" ("SO Stadtorchester ⌄").
+/// Opens the "Meine Gruppen" sheet (to switch the group) when the user has more than one group.
+class RdGroupChip extends ConsumerWidget {
+  const RdGroupChip({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final p = context.rd;
+    final tenant = ref.watch(currentTenantProvider);
+    final name = tenant?.longName.isNotEmpty == true ? tenant!.longName : (tenant?.shortName ?? '');
+    final logo = tenant?.shortName.isNotEmpty == true ? tenant!.shortName : name;
+    return Semantics(
+      button: true,
+      label: context.l10n.redesignGroupsSwitchHint(name),
+      excludeSemantics: true,
+      child: Material(
+        color: p.surface,
+        shape: const StadiumBorder(),
+        child: InkWell(
+          customBorder: const StadiumBorder(),
+          onTap: () => showRdGroupSwitchSheet(context),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 40),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(8, 8, 12, 8),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  RdInitials(rdInitialsOf(logo), size: 24, square: true, filled: true),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: Text(
+                      name,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: p.text),
+                    ),
+                  ),
+                  const SizedBox(width: 2),
+                  Icon(Icons.keyboard_arrow_down, size: 18, color: p.text),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// "Meine Gruppen" sheet (canvas E4, switch the group): all groups of the user with their
+/// role; tapping one switches to it and opens its "Heute".
+Future<void> showRdGroupSwitchSheet(BuildContext context) {
+  return showModalBottomSheet<void>(
+    context: context,
+    useRootNavigator: true,
+    useSafeArea: true,
+    isScrollControlled: true,
+    showDragHandle: true,
+    backgroundColor: context.rd.bg,
+    builder: (_) => RdSheetCap(child: const _RdGroupSwitchSheet()),
+  );
+}
+
+class _RdGroupSwitchSheet extends ConsumerStatefulWidget {
+  const _RdGroupSwitchSheet();
+
+  @override
+  ConsumerState<_RdGroupSwitchSheet> createState() => _RdGroupSwitchSheetState();
+}
+
+class _RdGroupSwitchSheetState extends ConsumerState<_RdGroupSwitchSheet> {
+  int? _switchingTo;
+
+  /// Same steps as the old tenant switcher ([switchTenant]), but the new
+  /// design always lands on "Heute".
+  ///
+  /// While it runs the sheet stays open (no back gesture, no buttons); if
+  /// it was dragged closed anyway (also while it still animates out), the
+  /// switch still finishes without popping the route below. The sheet's
+  /// route and the providers' container are bound before the first await.
+  Future<void> _switch(Tenant tenant) async {
+    if (_switchingTo != null) return;
+    final current = ref.read(currentTenantProvider);
+    final navigator = Navigator.of(context);
+    final sheet = ModalRoute.of(context);
+    final router = GoRouter.of(context);
+    if (tenant.id == null || current?.id == tenant.id) {
+      navigator.pop();
+      return;
+    }
+    setState(() => _switchingTo = tenant.id);
+    final container = ProviderScope.containerOf(context, listen: false);
+    // Like a tab switch (SOL_FIX25): a page with unsaved input or a running
+    // save is asked first and can keep the current group.
+    final guards = container.read(routeLeaveGuardRegistryProvider);
+    if (guards.hasGuards && !await guards.canLeave()) {
+      if (mounted) setState(() => _switchingTo = null);
+      return;
+    }
+    final prefs = container.read(userPreferencesNotifierProvider.notifier);
+    try {
+      await container.read(currentTenantProvider.notifier).setTenantLocal(tenant);
+      // Wait for the role of the new group so the router does not send the
+      // user back.
+      await container.read(currentTenantUserProvider.future);
+      if (sheet != null && sheet.isCurrent) navigator.pop();
+      router.go(RedesignRoutes.today);
+      prefs.updateCurrentTenantId(tenant.id!);
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _switchingTo = null);
+      ToastHelper.showError(context, context.l10n.redesignGroupsSwitchFailed);
+    }
+  }
+
+  /// "Verwalten": like a tab switch, a page with unsaved input or a
+  /// running save is asked first.
+  Future<void> _manage() async {
+    final navigator = Navigator.of(context);
+    final sheet = ModalRoute.of(context);
+    final router = GoRouter.of(context);
+    final guards = ref.read(routeLeaveGuardRegistryProvider);
+    // With a group the list stays in the tab "Ich" (tab bar stays). Read
+    // before the await: the sheet may be gone afterwards.
+    final target = ref.read(currentTenantProvider) == null ? '/tenants' : RedesignRoutes.myGroups;
+    if (guards.hasGuards && !await guards.canLeave()) return;
+    if (sheet != null && sheet.isCurrent) navigator.pop();
+    router.go(target);
+  }
+
+  /// "Einer Gruppe beitreten": the join sheet replaces this one.
+  /// "Einer Gruppe beitreten": joining switches the group afterwards, so a
+  /// page with unsaved input or a running save is asked first, like
+  /// [_create].
+  Future<void> _join() async {
+    final rootContext = Navigator.of(context, rootNavigator: true).context;
+    final navigator = Navigator.of(context);
+    final sheet = ModalRoute.of(context);
+    final guards = ref.read(routeLeaveGuardRegistryProvider);
+    if (guards.hasGuards && !await guards.canLeave()) return;
+    if (sheet != null && sheet.isCurrent) navigator.pop();
+    if (rootContext.mounted) showRdJoinSheet(rootContext);
+  }
+
+  /// "Organisation verwalten" directly from the group switcher (leads only).
+  Future<void> _openOrganisation() async {
+    final navigator = Navigator.of(context);
+    final sheet = ModalRoute.of(context);
+    final router = GoRouter.of(context);
+    final guards = ref.read(routeLeaveGuardRegistryProvider);
+    if (guards.hasGuards && !await guards.canLeave()) return;
+    if (sheet != null && sheet.isCurrent) navigator.pop();
+    router.push('/settings/org-settings');
+  }
+
+  /// "Neue Gruppe gründen": like "Gruppen verwalten", a page with unsaved
+  /// input or a running save is asked first.
+  Future<void> _create() async {
+    final navigator = Navigator.of(context);
+    final sheet = ModalRoute.of(context);
+    final router = GoRouter.of(context);
+    final guards = ref.read(routeLeaveGuardRegistryProvider);
+    if (guards.hasGuards && !await guards.canLeave()) return;
+    if (sheet != null && sheet.isCurrent) navigator.pop();
+    router.push('/tenants/new');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final tenants = ref.watch(userTenantsProvider);
+    final current = ref.watch(currentTenantProvider);
+    final org = ref.watch(currentOrganisationProvider).valueOrNull;
+    final linkedIds = {
+      if (current?.id != null) current!.id!,
+      for (final t in ref.watch(linkedTenantsProvider).valueOrNull ?? const <Tenant>[])
+        if (t.id != null) t.id!,
+    };
+    final role = ref.watch(effectiveRoleProvider);
+    final isOrgLead = role.isAdmin || role.isResponsible;
+
+    Widget tenantRow(Tenant t) => RdListRow(
+          leading: RdInitials(
+            rdInitialsOf(t.shortName.isNotEmpty ? t.shortName : t.longName),
+            size: 40,
+            square: true,
+          ),
+          title: t.longName.isNotEmpty ? t.longName : t.shortName,
+          subtitle: profileRoleName(Role.fromValue(t.role ?? 99)),
+          selected: t.id == current?.id,
+          showChevron: false,
+          trailing: _switchingTo == t.id
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : t.id == current?.id
+              ? Icon(Icons.check_circle, color: p.primary)
+              : null,
+          onTap: _switchingTo == null ? () => _switch(t) : null,
+        );
+
+    return PopScope(
+      canPop: _switchingTo == null,
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Semantics(header: true, child: Text(l10n.redesignMeGroups, style: RdType.section(p))),
+                  ),
+                  TextButton(
+                    onPressed: _switchingTo == null ? () => Navigator.of(context).pop() : null,
+                    style: TextButton.styleFrom(foregroundColor: p.link),
+                    child: Text(
+                      l10n.redesignCommonDone,
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              // List and actions scroll together, so nothing overflows in
+              // a short (landscape) sheet.
+              Flexible(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      tenants.when(
+                        loading:
+                            () => const Padding(
+                              padding: EdgeInsets.all(24),
+                              child: Center(child: CircularProgressIndicator()),
+                            ),
+                        error:
+                            (_, __) => Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Text(l10n.redesignGroupsLoadFailed, style: RdType.meta(p)),
+                            ),
+                        data: (list) {
+                          if (org == null) {
+                            return RdGroupedList(children: [for (final t in list) tenantRow(t)]);
+                          }
+                          final inOrg = [for (final t in list) if (t.id != null && linkedIds.contains(t.id)) t];
+                          final outside = [for (final t in list) if (t.id == null || !linkedIds.contains(t.id)) t];
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Row(
+                                children: [
+                                  RdOrgPill(
+                                    org.name,
+                                    compact: true,
+                                    showInfo: true,
+                                    tooltip: l10n.rdOrgInfoButtonTooltip,
+                                    onTap: () => showRdOrgInfoSheet(context, showManageButton: false),
+                                  ),
+                                  const Spacer(),
+                                  if (isOrgLead)
+                                    RdTextLink(
+                                      key: const Key('rd-group-switch-org'),
+                                      label: l10n.rdOrgGroupsManageOrg,
+                                      onTap: _switchingTo == null ? _openOrganisation : () {},
+                                    ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              RdGroupedList(children: [for (final t in inOrg) tenantRow(t)]),
+                              if (outside.isNotEmpty) ...[
+                                const SizedBox(height: 14),
+                                RdGroupLabel(l10n.rdOrgGroupsOtherSection),
+                                RdGroupedList(children: [for (final t in outside) tenantRow(t)]),
+                              ],
+                            ],
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      // REDESIGN (E1): join and found right here, not only via the
+                      // group list.
+                      RdGroupedList(
+                        children: [
+                          RdListRow(
+                            leading: RdRowIcon(Icons.group_add_outlined, color: p.primary, background: p.soft),
+                            title: l10n.redesignTenantsJoin,
+                            titleColor: p.link,
+                            showChevron: false,
+                            onTap: _switchingTo == null ? _join : null,
+                          ),
+                          RdListRow(
+                            leading: RdRowIcon(Icons.add_business_outlined, color: p.primary, background: p.soft),
+                            title: l10n.redesignTenantsCreate,
+                            titleColor: p.link,
+                            showChevron: false,
+                            onTap: _switchingTo == null ? _create : null,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: RdOutlineButton(
+                              label: l10n.rdTextGroupsManageShort,
+                              icon: Icons.apps,
+                              onPressed: _switchingTo != null ? null : _manage,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

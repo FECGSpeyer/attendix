@@ -1,0 +1,290 @@
+
+import 'package:attendix/core/config/supabase_config.dart';
+import 'package:attendix/core/constants/enums.dart';
+import 'package:attendix/core/providers/church_providers.dart';
+import 'package:attendix/core/providers/debug_providers.dart';
+import 'package:attendix/core/providers/group_providers.dart';
+import 'package:attendix/core/providers/parent_providers.dart';
+import 'package:attendix/core/providers/person_detail_providers.dart'
+    show
+        personAttendanceStatsProvider,
+        personHistoryProvider,
+        personProvider,
+        upcomingAttendancesProvider;
+import 'package:attendix/core/providers/shift_providers.dart';
+import 'package:attendix/core/providers/teacher_providers.dart';
+import 'package:attendix/core/providers/tenant_providers.dart';
+import 'package:attendix/core/router/app_routes.dart';
+import 'package:attendix/core/theme/app_palette.dart';
+import 'package:attendix/core/theme/design_theme.dart';
+import 'package:attendix/data/models/tenant/tenant.dart';
+import 'package:attendix/features/people/presentation/widgets/ion/ion_widgets.dart';
+import 'package:attendix/features/people/presentation/pages/person_history_page.dart';
+import 'package:attendix/l10n/l10n.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../factories/test_factories.dart';
+import '../../mocks/supabase_mocks.dart';
+import '../../helpers/source_reader.dart';
+
+class _TenantNotifier extends CurrentTenantNotifier {
+  _TenantNotifier(super.ref);
+
+  @override
+  Future<void> setTenant(Tenant? tenant) async {}
+}
+
+final _person = TestFactories.createPerson(id: 1, firstName: 'Anna', lastName: 'Beispiel')
+    .copyWith(email: 'anna@example.org', phone: '0176 1234567');
+
+final _auth = () {
+  final auth = MockGoTrueClient();
+  when(() => auth.currentUser).thenReturn(null);
+  when(() => auth.onAuthStateChange).thenAnswer((_) => const Stream.empty());
+  return auth;
+}();
+
+ThemeData _beta() => buildRdTheme(RdFarbwelt.petrol, Brightness.light).copyWith(platform: TargetPlatform.iOS);
+
+Future<void> _pump(
+  WidgetTester tester,
+  ThemeData theme,
+  Widget home, {
+  List<Map<String, dynamic>> history = const [],
+}) async {
+  await tester.pumpWidget(ProviderScope(
+    overrides: [
+      currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),
+      supabaseAuthProvider.overrideWithValue(_auth),
+      currentUserProvider.overrideWith((ref) => Stream.value(null)),
+      currentAuthUserIdProvider.overrideWithValue(null),
+      groupsProvider.overrideWith((ref) async => const []),
+      groupsMapProvider.overrideWith((ref) async => const {}),
+      churchesProvider.overrideWith((ref) async => const []),
+      teachersProvider.overrideWith((ref) async => const []),
+      parentsProvider.overrideWith((ref) async => const []),
+      shiftsProvider.overrideWith((ref) async => const []),
+      currentRoleProvider.overrideWithValue(Role.admin),
+      effectiveRoleProvider.overrideWithValue(Role.admin),
+      personProvider(1).overrideWith((ref) async => _person),
+      personAttendanceStatsProvider(1).overrideWith(
+          (ref) async => {'total': 0, 'attended': 0, 'percentage': 0, 'lateCount': 0, 'lateCountExcused': 0}),
+      personHistoryProvider(1).overrideWith((ref) async => history),
+      upcomingAttendancesProvider(1).overrideWith((ref) async => [
+            {'date': '2026-11-03', 'meetingName': 'Probe', 'status': 1, 'notes': null},
+          ]),
+    ],
+    child: MaterialApp(
+      theme: theme,
+      locale: const Locale('de'),
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: home,
+    ),
+  ));
+  await tester.pump(const Duration(seconds: 1));
+  await tester.pump(const Duration(seconds: 1));
+}
+
+void main() {
+  setUp(() => SharedPreferences.setMockInitialValues({}));
+
+  group('Verlauf', () {
+    testWidgets('shows the coming Termine and the history', (tester) async {
+      await _pump(tester, _beta(), const RdPersonHistoryPage(personId: 1));
+      expect(find.text('Verlauf'), findsOneWidget);
+      expect(find.text('Anna Beispiel'), findsOneWidget);
+      expect(find.textContaining('Probe'), findsOneWidget);
+      expect(find.text('Historie'), findsNothing);
+      expect(find.byType(IonAccordion), findsNothing);
+      expect(find.text('KOMMENDE TERMINE'), findsOneWidget);
+      expect(find.text('Zugesagt'), findsOneWidget);
+      expect(find.text('Noch keine vergangenen Termine.'), findsOneWidget);
+    });
+
+    testWidgets('history: status pills, ⋯ deletes changes of the person', (tester) async {
+      await _pump(
+        tester,
+        _beta(),
+        const RdPersonHistoryPage(personId: 1),
+        history: [
+          {
+            'date': '2026-10-28',
+            'attendanceId': 7,
+            'meetingName': 'Konzert',
+            'text': 'X',
+            'type': PlayerHistoryType.attendance.value,
+            'notes': null,
+            'status': 1,
+          },
+          {
+            'date': '2026-10-21',
+            'attendanceId': 6,
+            'meetingName': 'Probe alt',
+            'text': 'E',
+            'type': PlayerHistoryType.attendance.value,
+            'notes': 'Krank',
+            'status': 2,
+          },
+          {'date': '2026-10-01T10:00:00Z', 'title': '', 'text': 'Urlaub', 'type': 1, 'notes': null},
+        ],
+      );
+      expect(find.text('VERLAUF'), findsOneWidget);
+      expect(find.text('Konzert'), findsOneWidget);
+      expect(find.text('Anwesend'), findsOneWidget);
+      expect(find.text('Entschuldigt'), findsOneWidget);
+      expect(find.textContaining('Krank'), findsOneWidget);
+      expect(find.byTooltip('Weitere Aktionen'), findsOneWidget);
+      await tester.tap(find.byTooltip('Weitere Aktionen'));
+      await tester.pump(const Duration(seconds: 1));
+      expect(find.text('Eintrag löschen'), findsOneWidget);
+    });
+
+    test('route of the new design', () {
+      expect(RedesignRoutes.personHistory(5), '/mitglieder/5/verlauf');
+      expect(RedesignRoutes.isRedesignRoute('/mitglieder/5/verlauf'), isTrue);
+      final router = readDartLibrary('lib/core/router/app_router.dart');
+      expect(router, contains("name: 'redesignPersonHistory'"));
+      final page = readDartLibrary('lib/features/people/presentation/pages/person_page.dart');
+      expect(page, contains('RedesignRoutes.personHistory(personId)'));
+    });
+  });
+
+  group('IonAccordion', () {
+    testWidgets('section heading, content in a card, toggles', (tester) async {
+      var toggled = 0;
+      await _pump(
+        tester,
+        _beta(),
+        Scaffold(
+          body: IonAccordion(
+            title: 'Allgemein',
+            expanded: true,
+            onToggle: () => toggled++,
+            child: const Text('Inhalt'),
+          ),
+        ),
+      );
+      final card = find.ancestor(of: find.text('Inhalt'), matching: find.byType(Container)).first;
+      final deco = tester.widget<Container>(card).decoration as BoxDecoration?;
+      expect(deco?.borderRadius, isNotNull);
+      await tester.tap(find.text('Allgemein'));
+      expect(toggled, 1);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pump();
+      expect(toggled, 2);
+      await tester.sendKeyEvent(LogicalKeyboardKey.space);
+      await tester.pump();
+      expect(toggled, 3);
+    });
+
+    testWidgets('screen reader gets a button with title and expanded state', (tester) async {
+      final handle = tester.ensureSemantics();
+      Future<void> pumpWith(bool expanded) => _pump(
+            tester,
+            _beta(),
+            Scaffold(
+              body: IonAccordion(title: 'Account', expanded: expanded, onToggle: () {}, child: const Text('Inhalt')),
+            ),
+          );
+      await pumpWith(false);
+      expect(
+        tester.getSemantics(find.text('Account')),
+        matchesSemantics(
+          label: 'Account',
+          isButton: true,
+          hasExpandedState: true,
+          isExpanded: false,
+          hasTapAction: true,
+          isFocusable: true,
+          hasFocusAction: true,
+        ),
+      );
+      await pumpWith(true);
+      expect(
+        tester.getSemantics(find.text('Account')),
+        matchesSemantics(
+          label: 'Account',
+          isButton: true,
+          hasExpandedState: true,
+          isExpanded: true,
+          hasTapAction: true,
+          isFocusable: true,
+          hasFocusAction: true,
+        ),
+      );
+      handle.dispose();
+    });
+
+    testWidgets('Verlauf: a missing person shows "gibt es nicht mehr" without retry', (tester) async {
+      await tester.pumpWidget(ProviderScope(
+        overrides: [
+          currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),
+          supabaseAuthProvider.overrideWithValue(_auth),
+          currentRoleProvider.overrideWithValue(Role.admin),
+          personProvider(2).overrideWith((ref) async => null),
+        ],
+        child: MaterialApp(
+          theme: _beta(),
+          locale: const Locale('de'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: const RdPersonHistoryPage(personId: 2),
+        ),
+      ));
+      await tester.pump(const Duration(seconds: 1));
+      expect(find.text('Diese Person gibt es hier nicht mehr.'), findsOneWidget);
+      expect(find.text('Erneut versuchen'), findsNothing);
+    });
+
+    testWidgets('Verlauf: a load error shows it; Erneut versuchen and pull-to-refresh reload the person',
+        (tester) async {
+      var calls = 0;
+      await tester.pumpWidget(ProviderScope(
+        overrides: [
+          currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),
+          supabaseAuthProvider.overrideWithValue(_auth),
+          currentRoleProvider.overrideWithValue(Role.admin),
+          personProvider(3).overrideWith((ref) async {
+            calls++;
+            if (calls == 1) throw Exception('Netzwerk weg');
+            return _person;
+          }),
+          personAttendanceStatsProvider(3).overrideWith(
+              (ref) async => {'total': 0, 'attended': 0, 'percentage': 0, 'lateCount': 0, 'lateCountExcused': 0}),
+          personHistoryProvider(3).overrideWith((ref) async => const []),
+          upcomingAttendancesProvider(3).overrideWith((ref) async => const []),
+        ],
+        child: MaterialApp(
+          theme: _beta(),
+          locale: const Locale('de'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: const RdPersonHistoryPage(personId: 3),
+        ),
+      ));
+      await tester.pump(const Duration(seconds: 1));
+      final l10n = await AppLocalizations.delegate.load(const Locale('de'));
+      expect(find.text(l10n.redesignTodayLoadFailed), findsOneWidget);
+
+      await tester.tap(find.text('Erneut versuchen'));
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+      expect(calls, 2);
+      expect(find.text('Anna Beispiel'), findsOneWidget);
+      expect(find.text('VERLAUF'), findsOneWidget);
+
+      await tester.fling(find.text('Verlauf'), const Offset(0, 400), 1000);
+      await tester.pumpAndSettle();
+      expect(calls, 3);
+    });
+  });
+}

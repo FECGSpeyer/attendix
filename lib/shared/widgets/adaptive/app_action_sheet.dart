@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/theme/redesign/rd_palette.dart';
-import '../../../core/theme/redesign/rd_theme.dart';
+import '../../../core/theme/app_palette.dart';
+import '../../../core/theme/design_theme.dart';
 import '../../../l10n/l10n.dart';
 
 /// One button of [showAppActionSheet].

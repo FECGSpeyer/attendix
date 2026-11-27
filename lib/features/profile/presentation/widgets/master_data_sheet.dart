@@ -8,10 +8,10 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../../core/providers/church_providers.dart';
 import '../../../../core/providers/profile_providers.dart';
-import '../../../../core/theme/redesign/rd_theme.dart';
-import '../../../attendance/presentation/widgets/event/rd_form_widgets.dart';
-import '../../../people/presentation/widgets/members/rd_person_form.dart' show RdPersonAvatar;
-import '../../../../shared/widgets/redesign/rd_widgets.dart';
+import '../../../../core/theme/design_theme.dart';
+import '../../../attendance/presentation/widgets/event/form_widgets.dart';
+import '../../../people/presentation/widgets/members/person_form.dart' show RdPersonAvatar;
+import '../../../../shared/widgets/components/components.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/church/church.dart';

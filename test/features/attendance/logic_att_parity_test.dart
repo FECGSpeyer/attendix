@@ -108,10 +108,10 @@ void main() {
   });
 
   group('source parity', () {
-    final create = readDartLibrary('lib/features/attendance/presentation/pages/rd_event_create_page.dart') +
+    final create = readDartLibrary('lib/features/attendance/presentation/pages/event_create_page.dart') +
         readDartLibrary('lib/features/attendance/presentation/attendance_create_writes.dart');
-    final detail = readDartLibrary('lib/features/attendance/presentation/pages/rd_event_page.dart') +
-        readDartLibrary('lib/features/attendance/presentation/pages/rd_event_edit_page.dart') +
+    final detail = readDartLibrary('lib/features/attendance/presentation/pages/event_page.dart') +
+        readDartLibrary('lib/features/attendance/presentation/pages/event_edit_page.dart') +
         readDartLibrary('lib/features/attendance/presentation/widgets/attendance_date_change.dart');
     final realtime = readDartLibrary('lib/core/providers/realtime_providers.dart');
     final repo = readDartLibrary('lib/data/repositories/attendance_repository.dart');

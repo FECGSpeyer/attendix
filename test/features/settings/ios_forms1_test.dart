@@ -1,5 +1,5 @@
-import 'package:attendix/core/theme/redesign/rd_palette.dart';
-import 'package:attendix/core/theme/redesign/rd_theme.dart';
+import 'package:attendix/core/theme/app_palette.dart';
+import 'package:attendix/core/theme/design_theme.dart';
 import 'package:attendix/features/profile/presentation/widgets/account_dialogs.dart';
 import 'package:attendix/features/profile/presentation/widgets/profile_helpers.dart';
 import 'package:attendix/features/settings/presentation/widgets/calendar_subscription_dialog.dart';

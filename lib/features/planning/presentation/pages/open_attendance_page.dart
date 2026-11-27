@@ -8,7 +8,7 @@ import '../../../../core/providers/message_providers.dart';
 import '../../../../core/providers/signout_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/go_replace.dart';
-import '../../../../core/router/redesign_routes.dart';
+import '../../../../core/router/app_routes.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../core/services/error_reporter.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';

@@ -253,7 +253,7 @@ void main() {
     String read(String p) => readDartLibrary(p);
 
     test('app shell wraps the tabs in RootBackButtonScope', () {
-      expect(read('lib/shared/shell/rd_shell.dart'),
+      expect(read('lib/shared/shell/app_shell.dart'),
           contains('RootBackButtonScope('));
     });
 
@@ -293,7 +293,7 @@ void main() {
     test('update action on login + me page (Ionic installUpdate)', () {
       expect(read('lib/features/auth/presentation/pages/login_page.dart'),
           contains('l10n.loginInstallUpdate'));
-      expect(read('lib/features/profile/presentation/pages/rd_me_page.dart'),
+      expect(read('lib/features/profile/presentation/pages/me_page.dart'),
           contains('l10n.settingsInstallUpdate'));
     });
 

@@ -8,8 +8,8 @@ import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/auto_message_providers.dart';
 import '../../../../core/providers/debug_providers.dart' show effectiveRoleProvider;
 import '../../../../core/providers/message_providers.dart';
-import '../../../../core/router/redesign_routes.dart';
-import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../core/router/app_routes.dart';
+import '../../../../core/theme/design_theme.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/quill_utils.dart';
@@ -22,9 +22,9 @@ import '../message_format.dart';
 import '../widgets/message_termin_section.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../core/services/native/native_file_service.dart';
-import '../../../attendance/presentation/widgets/event/rd_event_head.dart' show rdEventMeta;
-import '../../../../shared/widgets/redesign/rd_widgets.dart';
-import '../../../today/presentation/widgets/rd_today_common.dart' show RdInfoCard;
+import '../../../attendance/presentation/widgets/event/event_head.dart' show rdEventMeta;
+import '../../../../shared/widgets/components/components.dart';
+import '../../../today/presentation/widgets/today_common.dart' show RdInfoCard;
 
 enum _Filter { all, read, open, problems }
 

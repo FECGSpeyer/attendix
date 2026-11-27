@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/theme/redesign/rd_theme.dart';
+import '../../../core/theme/design_theme.dart';
 import '../../../core/utils/haptic_helper.dart';
 
 /// Segmented control wrapper matching [SegmentedButton]'s API for single selection.

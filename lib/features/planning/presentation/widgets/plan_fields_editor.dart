@@ -7,9 +7,9 @@ import '../../../../data/models/plan/plan.dart';
 import 'plan_field_dialogs.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
-import '../../../../core/theme/redesign/rd_theme.dart';
-import '../../../../shared/widgets/redesign/rd_widgets.dart';
-import 'rd_plan_widgets.dart';
+import '../../../../core/theme/design_theme.dart';
+import '../../../../shared/widgets/components/components.dart';
+import 'plan_widgets.dart';
 
 part 'plan_fields_editor_view.dart';
 

@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/providers/team_org_providers.dart';
-import '../../../../core/theme/redesign/rd_theme.dart';
-import '../../../../shared/widgets/redesign/rd_widgets.dart';
+import '../../../../core/theme/design_theme.dart';
+import '../../../../shared/widgets/components/components.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/team_org/team_org.dart';

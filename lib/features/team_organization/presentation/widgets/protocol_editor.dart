@@ -7,8 +7,8 @@ import 'package:flutter_quill/flutter_quill.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/redesign/rd_palette.dart';
-import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../core/theme/app_palette.dart';
+import '../../../../core/theme/design_theme.dart';
 import '../../../../data/models/team_org/team_org.dart';
 import '../../../../l10n/l10n.dart';
 import '../../team_org_utils.dart' show priorityLabels, taskStatusLabels, topicStatusLabels;

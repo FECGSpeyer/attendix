@@ -20,7 +20,7 @@ import '../providers/self_service_providers.dart';
 import '../providers/tenant_providers.dart';
 import '../providers/user_preferences_provider.dart';
 import '../router/app_router.dart';
-import '../router/redesign_routes.dart';
+import '../router/app_routes.dart';
 import '../utils/live_plan.dart';
 import '../utils/plan_utils.dart';
 import 'error_reporter.dart';

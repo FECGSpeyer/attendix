@@ -38,12 +38,12 @@ void main() {
 
   test('lane pages contain no hard-coded German UI literals', () {
     const files = [
-      'lib/features/attendance/presentation/pages/rd_events_page.dart',
-      'lib/features/attendance/presentation/pages/rd_event_create_page.dart',
-      'lib/features/attendance/presentation/pages/rd_event_page.dart',
-      'lib/features/songs/presentation/pages/rd_work_history_page.dart',
-      'lib/features/statistics/presentation/pages/rd_stats_page.dart',
-      'lib/features/export/presentation/pages/rd_export_page.dart',
+      'lib/features/attendance/presentation/pages/events_page.dart',
+      'lib/features/attendance/presentation/pages/event_create_page.dart',
+      'lib/features/attendance/presentation/pages/event_page.dart',
+      'lib/features/songs/presentation/pages/work_history_page.dart',
+      'lib/features/statistics/presentation/pages/stats_page.dart',
+      'lib/features/export/presentation/pages/export_page.dart',
     ];
     final literal = RegExp(r"(Text|tooltip:|title:|label:|showSuccess\(context,|showError\(context,|showWarning\(context,)\s*\(?'[^']*[äöüÄÖÜß][^']*'");
     for (final path in files) {

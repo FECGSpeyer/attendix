@@ -12,7 +12,7 @@ import 'package:attendix/core/utils/plan_utils.dart';
 import 'package:attendix/data/models/plan/plan.dart';
 import 'package:attendix/data/repositories/plan_repository.dart';
 import 'package:attendix/features/planning/presentation/pages/planning_page.dart';
-import 'package:attendix/shared/widgets/redesign/rd_widgets.dart';
+import 'package:attendix/shared/widgets/components/components.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

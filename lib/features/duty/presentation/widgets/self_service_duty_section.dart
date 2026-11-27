@@ -5,16 +5,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/duty_providers.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../core/theme/design_theme.dart';
 import '../../../../core/utils/duty_utils.dart';
 import '../../../../core/utils/event_list_utils.dart';
 import '../pages/unavailability_page.dart';
 import 'duty_actions.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/ion_button_label.dart';
-import '../../../planning/presentation/widgets/rd_plan_widgets.dart';
-import '../../../../shared/widgets/redesign/rd_widgets.dart';
-import '../../../today/presentation/widgets/rd_today_common.dart';
+import '../../../planning/presentation/widgets/plan_widgets.dart';
+import '../../../../shared/widgets/components/components.dart';
+import '../../../today/presentation/widgets/today_common.dart';
 
 /// Dienstplan part of "Meine Termine" (self service): "Bitte bestätigen",
 /// and – when the tenant uses the Dienstplan view – "Nächster Dienst",

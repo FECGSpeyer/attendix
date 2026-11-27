@@ -2,15 +2,15 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../core/theme/design_theme.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/app_dialog.dart';
-import '../../../attendance/presentation/widgets/event/rd_form_widgets.dart'
+import '../../../attendance/presentation/widgets/event/form_widgets.dart'
     show RdFieldRow, RdFormBody, rdInputDecoration;
-import '../../../settings/presentation/widgets/manage/rd_settings_sheets.dart'
+import '../../../settings/presentation/widgets/manage/settings_sheets.dart'
     show RdSheetHead, showRdSettingsSheet, showRdTextSheet;
-import '../../../../shared/widgets/redesign/rd_widgets.dart';
+import '../../../../shared/widgets/components/components.dart';
 import '../../data/catalog_selection.dart';
 import '../../data/instrument_catalog.dart';
 import '../../data/instrument_presets.dart';

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/redesign/rd_theme.dart';
-import '../../../attendance/presentation/widgets/event/rd_form_widgets.dart';
-import '../../../../shared/widgets/redesign/rd_widgets.dart';
+import '../../../../core/theme/design_theme.dart';
+import '../../../attendance/presentation/widgets/event/form_widgets.dart';
+import '../../../../shared/widgets/components/components.dart';
 
 import '../../../../l10n/l10n.dart';
 

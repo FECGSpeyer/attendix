@@ -16,9 +16,9 @@ import 'duty_actions.dart';
 import 'duty_assign_sheet.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../core/theme/design_theme.dart';
 import '../../../../shared/widgets/adaptive/app_action_sheet.dart';
-import '../../../../shared/widgets/redesign/rd_widgets.dart';
+import '../../../../shared/widgets/components/components.dart';
 
 part 'duty_staffing_view.dart';
 

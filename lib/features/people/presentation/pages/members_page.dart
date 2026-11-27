@@ -1,0 +1,623 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
+
+import '../../../../core/providers/attendance_providers.dart';
+import '../../../../core/providers/attendance_rate_filter_providers.dart';
+import '../../../../core/providers/attendance_type_providers.dart';
+import '../../../../core/providers/church_providers.dart';
+import '../../../../core/providers/debug_providers.dart';
+import '../../../../core/providers/group_providers.dart';
+import '../../../../core/providers/player_absence_providers.dart';
+import '../../../../core/providers/player_providers.dart';
+import '../../../../core/providers/profile_providers.dart';
+import '../../../../core/providers/organisation_providers.dart';
+import '../../../../core/providers/realtime_providers.dart';
+import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/router/app_routes.dart';
+import '../../../../core/theme/app_palette.dart';
+import '../../../../core/theme/design_theme.dart';
+import '../../../../core/utils/handover_request.dart';
+import '../../../../core/utils/parent_registration.dart';
+import '../../../../data/models/church/church.dart';
+import '../../../../data/models/instrument/instrument.dart';
+import '../../../../data/models/person/person.dart';
+import '../../../../data/models/player_absence/player_absence.dart';
+import '../../../../data/models/tenant/tenant.dart';
+import '../../../../data/repositories/shared_person_fields.dart' show mergeSharedPersonFieldValues;
+import '../../../../l10n/l10n.dart';
+import '../../data/providers/critical_providers.dart';
+import '../../data/providers/members_view_providers.dart';
+import '../../data/critical_logic.dart';
+import '../../data/members_list_filter.dart';
+import '../../data/members_logic.dart';
+import '../../data/providers/members_providers.dart' show membersEinteilungOptionsProvider;
+import '../../people_list_utils.dart' show withExtraFieldDefaults;
+import '../../rate_filter_labels.dart' show rateFilterChip;
+import '../../../../shared/widgets/adaptive/app_action_sheet.dart';
+import '../../../../core/logic/words.dart';
+import '../widgets/members/invite_sheet.dart';
+import '../widgets/members/member_bulk.dart';
+import '../widgets/members/members_filter_sheet.dart';
+import '../../../../shared/widgets/components/split_view.dart';
+import '../../../../shared/widgets/components/components.dart';
+import '../../../today/presentation/widgets/today_common.dart' show RdInfoCard;
+import '../../../settings/presentation/widgets/manage/manage_entries.dart'
+    show rdManageIcon, rdManageRecentProvider, rdManageTitle, rdMissingAccountsProvider, rdOpenManageEntry;
+import '../../../settings/data/manage_logic.dart' show RdManageEntry;
+import '../../../settings/data/account_provisioning_actions.dart' show createMissingAccounts;
+import '../../../../core/utils/helper_member.dart';
+
+part 'members_page_helpers.dart';
+part 'members_page_rows.dart';
+
+/// REDESIGN: tab "Mitglieder" (canvas "Menschen"). Dirigent and Beobachter:
+/// Aktiv / Pausiert / Wartet (also by swiping the list), search, registers
+/// with Ø attendance, birthdays and absences in the rows. Spieler, Helfer
+/// and Stimmführer (old `/members`) get the same page read-only: search,
+/// "Einteilung" (Nord / Süd …) instead of Aktiv / Pausiert, names and the
+/// Stimmführung tag only, no numbers and no person pages.
+class RdMembersPage extends ConsumerStatefulWidget {
+  const RdMembersPage({super.key});
+
+  @override
+  ConsumerState<RdMembersPage> createState() => _RdMembersPageState();
+}
+
+class _RdMembersPageState extends ConsumerState<RdMembersPage> with RdMemberBulkActions {
+  void _update(VoidCallback fn) => setState(fn);
+
+  String _query = '';
+
+  /// Read-only list: selected "Einteilung" ('' = all).
+  String _einteilung = '';
+
+  /// Thumb of Aktiv / Pausiert / Wartet while swiping the list.
+  /// Notifier so only the segmented control rebuilds while swiping, not
+  /// the whole page with every row.
+  final _swipePos = ValueNotifier<double?>(null);
+  final _search = TextEditingController();
+
+  /// Count of the open "Sortieren & Filtern" sheet, renewed every build.
+  final _countFor = ValueNotifier<RdMembersCount?>(null);
+
+  @override
+  void initState() {
+    super.initState();
+    // DB_REVIEW_REST (F3) like the old list: admins/responsibles lift
+    // expired pauses (paused_until reached) when opening the list.
+    WidgetsBinding.instance.addPostFrameCallback((_) => _checkAndUnpause());
+    // A group switch or leaving "Auswählen" empties the selection.
+    ref.listenManual(currentTenantIdProvider, (previous, next) {
+      if (previous != next && mounted) setState(bulkSelected.clear);
+    });
+    ref.listenManual(rdMembersSelectingProvider, (previous, next) {
+      if (!next && mounted) setState(bulkSelected.clear);
+    });
+  }
+
+  void _setSelecting(bool value) => ref.read(rdMembersSelectingProvider.notifier).state = value;
+
+  void _toggle(int id) =>
+      setState(() => bulkSelected.contains(id) ? bulkSelected.remove(id) : bulkSelected.add(id));
+
+  /// Selects every person of [people], or none when all are selected.
+  void _toggleAll(List<Person> people) {
+    final ids = people.map((p) => p.id).whereType<int>().toSet();
+    setState(() => bulkSelected.containsAll(ids) ? bulkSelected.removeAll(ids) : bulkSelected.addAll(ids));
+  }
+
+  Future<void> _checkAndUnpause() async {
+    if (!mounted) return;
+    final role = ref.read(effectiveRoleProvider);
+    if (!role.canSeePeopleTab || !(role.isAdmin || role.isResponsible)) return;
+    final repo = ref.read(playerRepositoryWithTenantProvider);
+    if (!repo.hasTenantId) return;
+    try {
+      await repo.checkAndUnpausePlayers();
+      await repo.archiveExpiredHelpers();
+    } catch (_) {
+      return;
+    }
+    if (mounted) ref.invalidate(realtimePlayersProvider);
+  }
+
+  @override
+  void dispose() {
+    _search.dispose();
+    _swipePos.dispose();
+    _countFor.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final role = ref.watch(effectiveRoleProvider);
+    if (!role.canSeePeopleTab) return _readOnly(context);
+    final p = context.rd;
+    final l10n = context.l10n;
+    final inSplit = RdSplitScope.of(context) != null;
+    final canApprove = role.isAdmin || role.isResponsible;
+    final peopleAsync = ref.watch(realtimePlayersProvider);
+    final rawPeople = peopleAsync.valueOrNull ?? const <Person>[];
+    final rawPending = canApprove
+        ? ref.watch(realtimePendingPlayersProvider).valueOrNull ?? const <Person>[]
+        : const <Person>[];
+    // "Anwesenheit zählen": season (default) or a chosen period / Terminart.
+    final rateFilter = ref.watch(attendanceRateFilterProvider);
+    final rateChip = rateFilter.isDefault
+        ? null
+        : rateFilterChip(l10n, rateFilter, ref.watch(attendanceTypesProvider).valueOrNull ?? const []);
+    final percentages = ref.watch(listAttendancePercentagesProvider).valueOrNull ?? const <int, int>{};
+    // The latest past Termin that counts for the rate: who joined after it
+    // reads "neu" instead of a red 0 %.
+    final lastCounted = rateFilter.isDefault ? ref.watch(_lastCountedTerminProvider) : null;
+    final groups = ref.watch(groupsProvider).valueOrNull ?? const [];
+    final absences = ref.watch(playerAbsencesProvider).valueOrNull ?? const <PlayerAbsence>[];
+    final missing = canApprove ? ref.watch(rdMissingAccountsProvider) : const <Person>[];
+
+    // "Sortieren & Filtern" (old list: filter, sort; plus groups).
+    final listFilter = ref.watch(rdMembersListFilterProvider);
+    // "Gliedern nach": only a choice when the groups have categories.
+    final hasCategories = rdHasGroupCategories(groups);
+    final byCategory = ref.watch(rdMembersByCategoryProvider);
+    final tenant = ref.watch(currentTenantProvider);
+    final vos = tenant?.shortName == 'VoS';
+    final general = tenant?.type == 'general';
+    final fields = ref.watch(personListExtraFieldsProvider).where(rdMembersFilterableField).toList();
+    final hasChurch = fields.any((f) => f.type == 'bfecg_church');
+    final churches = hasChurch ? ref.watch(churchesProvider).valueOrNull ?? const [] : const <Church>[];
+    final linkedTenants = ref.watch(allLinkedTenantsProvider).valueOrNull ?? const [];
+    // "Auch Mitglied in": while loading nobody, on an error a hint (the
+    // chip must never stand over an unfiltered list).
+    final otherAsync = listFilter.otherTenantId == null
+        ? null
+        : ref.watch(rdOtherInstanceUserIdsProvider(listFilter.otherTenantId!));
+    final otherIds = otherAsync == null ? null : otherAsync.valueOrNull ?? const <String>{};
+    // Extra field filters see the old list's values: shared organisation
+    // values, then the field defaults (Ionic getModifiedPlayersForList).
+    // Always prepared when the group has such fields, so the count of the
+    // sheet matches the list from the first chip on.
+    List<Person> prepared(List<Person> list) {
+      if (fields.isEmpty) return list;
+      final shared = ref.watch(sharedPersonFieldValuesProvider).valueOrNull ?? const {};
+      return withExtraFieldDefaults(
+        mergeSharedPersonFieldValues(list, shared),
+        fields,
+        churchIds: [for (final c in churches) if (c.id != null) c.id!],
+      );
+    }
+
+    final allPeople = prepared(rawPeople);
+    final allPending = prepared(rawPending);
+    List<Person> apply(List<Person> list, RdMembersListFilter f, Set<String>? ids) =>
+        rdFilterMembers(list, f, otherInstanceUserIds: ids, fieldDefs: fields);
+    final people = apply(allPeople, listFilter, otherIds);
+    // Wartet is never narrowed by the list filter: the count on the tab and
+    // the row "N neue Anmeldungen" always lead to everyone who waits.
+    final pending = allPending;
+
+    final active = people.where((x) => !x.paused).toList();
+    final paused = people.where((x) => x.paused).toList();
+    // "Auswählen" (leads only): several members at once; Wartet has no
+    // members yet, so it is left out meanwhile.
+    final selecting = canApprove && ref.watch(rdMembersSelectingProvider);
+    final withPending = rawPending.isNotEmpty && !selecting;
+    final tab = ref.watch(rdMembersTabProvider);
+    final filter = tab == RdMembersFilter.pending && !withPending ? RdMembersFilter.active : tab;
+    void setTab(RdMembersFilter f) => ref.read(rdMembersTabProvider.notifier).state = f;
+    final filters = [
+      RdMembersFilter.active,
+      RdMembersFilter.paused,
+      if (withPending) RdMembersFilter.pending,
+    ];
+    // UX D3: "Fehlen oft · N" narrows Aktiv to the critical members.
+    final critical = rdCriticalMembers(active);
+    // An empty filter stays on (shows nobody) instead of silently showing all.
+    final criticalOnly = filter == RdMembersFilter.active && ref.watch(rdMembersCriticalOnlyProvider);
+    final shown = switch (filter) {
+      RdMembersFilter.active => criticalOnly ? critical : active,
+      RdMembersFilter.paused => paused,
+      RdMembersFilter.pending => pending,
+    };
+
+    // Register of every person, so the search finds "Streicher" in every
+    // sort order and in the count of the sheet.
+    final registerOf = <int?, String>{
+      for (final s in rdMemberSections(
+        [...allPeople, ...allPending],
+        groups: groups,
+        percentages: const {},
+        noGroupLabel: l10n.rdWordsNoGroup(ref.watch(rdGroupKindProvider)),
+      ))
+        for (final x in s.people) x.id: s.title,
+    };
+    bool matches(Person x) => rdPersonMatches(x, _query, register: registerOf[x.id]);
+
+    // Another sort than by group: one list without register headers.
+    final sections = listFilter.sort == RdMembersSort.group
+        ? rdMemberSections(
+            shown,
+            groups: groups,
+            percentages: percentages,
+            noGroupLabel: l10n.rdWordsNoGroup(ref.watch(rdGroupKindProvider)),
+            byCategory: byCategory,
+          )
+        : [
+            if (shown.isNotEmpty)
+              RdMemberSection(
+                title: '',
+                people: rdSortMembers(shown, listFilter.sort, percentages: percentages),
+                isRegister: true,
+              ),
+          ];
+    final filterCount = listFilter.count + (criticalOnly ? 1 : 0);
+    final filtering = filterCount > 0;
+    void resetFilters() {
+      ref.read(rdMembersListFilterProvider.notifier).state = listFilter.clearFilters();
+      ref.read(rdMembersCriticalOnlyProvider.notifier).state = false;
+    }
+
+    // Groups to filter by: those with someone in the (unfiltered) lists.
+    final usedGroups = {for (final x in [...allPeople, ...allPending]) x.instrument};
+    int countFor(RdMembersListFilter f, bool critical, Set<String> ids) {
+      final base = switch (filter) {
+        RdMembersFilter.active => allPeople.where((x) => !x.paused),
+        RdMembersFilter.paused => allPeople.where((x) => x.paused),
+        RdMembersFilter.pending => allPending,
+      };
+      var list = filter == RdMembersFilter.pending ? base.toList() : apply(base.toList(), f, ids);
+      if (critical && filter == RdMembersFilter.active) list = rdCriticalMembers(list);
+      return list.where(matches).length;
+    }
+
+    // The open sheet counts with the data of the latest build (Org values
+    // or persons arriving later), not with the lists of the moment it opened.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _countFor.value = countFor;
+    });
+    void openFilter() {
+      _countFor.value = countFor;
+      showRdMembersFilterSheet(
+          context,
+          countFor: _countFor,
+          groups: [for (final g in groups) if (usedGroups.contains(g.id)) g],
+          fields: fields,
+          churches: churches,
+          linkedTenants: linkedTenants,
+          vos: vos,
+          general: general,
+          withCritical: filter == RdMembersFilter.active,
+          withCategories: hasCategories,
+        );
+    }
+
+    final filtered = [
+      for (final s in sections)
+        if (s.people.any(matches))
+          RdMemberSection(
+            title: s.title,
+            people: s.people.where(matches).toList(),
+            average: s.average,
+            isRegister: s.isRegister,
+          ),
+    ];
+
+    final children = <Widget>[
+      Row(
+        children: [
+          Expanded(
+            child: Semantics(
+              header: true,
+              child: Text(l10n.redesignTabMembers, style: RdType.largeTitle(p)),
+            ),
+          ),
+          if (selecting)
+            RdTextLink(
+              key: const Key('rd-members-select-done'),
+              label: l10n.redesignCommonDone,
+              onTap: () => _setSelecting(false),
+            ),
+          // What leads do with the members, from the Verwaltung (canvas
+          // "Mitglieder-Tab: •••"): Auswertung, several at once, Register …
+          if (canApprove && !selecting)
+            RdCircleButton(
+              key: const Key('rd-members-more'),
+              icon: Icons.more_horiz,
+              label: l10n.redesignWorksMore,
+              onPressed: _more,
+            ),
+          if (inSplit && (role.canEdit || canApprove) && !selecting) ...[
+            const SizedBox(width: 8),
+            Builder(
+              builder: (button) => RdCircleButton(
+                key: const Key('rd-members-add'),
+                icon: Icons.add,
+                label: l10n.redesignMembersAdd,
+                primary: true,
+                onPressed: () => _add(button, canCreate: role.canEdit, canInvite: canApprove),
+              ),
+            ),
+          ],
+        ],
+      ),
+      if (selecting) ...[
+        const SizedBox(height: 4),
+        Text(l10n.redesignBulkHint, style: RdType.meta(p)),
+      ],
+      const SizedBox(height: 12),
+      _searchField(context),
+      const SizedBox(height: 12),
+      ValueListenableBuilder<double?>(
+        valueListenable: _swipePos,
+        builder: (context, pos, _) => RdSegmented<RdMembersFilter>(
+          values: filters,
+          selected: filter,
+          position: pos,
+          labelOf: (f) => switch (f) {
+            RdMembersFilter.active => l10n.redesignMembersActive(active.length),
+            RdMembersFilter.paused => l10n.redesignMembersPaused(paused.length),
+            RdMembersFilter.pending => l10n.redesignMembersPending(pending.length),
+          },
+          onChanged: setTab,
+        ),
+      ),
+      const SizedBox(height: 6),
+      // No filter on Wartet (see above).
+      if (filter != RdMembersFilter.pending)
+        Row(
+        children: [
+          Expanded(
+            // Clipped to its own space: on a narrow phone the chips slide
+            // under "Filter" instead of over it.
+            child: RdChipScroller(
+                children: [
+                  if (rateChip != null) ...[
+                    RdRemovableChip(
+                      key: const Key('rd-members-rate-chip'),
+                      label: rateChip,
+                      semanticLabel: l10n.redesignMembersFilterRemove(rateChip),
+                      onRemove: () => ref.read(attendanceRateFilterProvider.notifier).state = const AttendanceRateFilter(),
+                    ),
+                    const SizedBox(width: 8),
+                  ],
+                  for (final chip in _activeChips(
+                    context,
+                    listFilter: listFilter,
+                    byGroup: hasCategories && !byCategory,
+                    criticalOnly: criticalOnly,
+                    groups: groups,
+                    fields: fields,
+                    churches: churches,
+                    linkedTenants: linkedTenants,
+                  )) ...[chip, const SizedBox(width: 8)],
+                  // UX D3: quick "Fehlen oft · N" while nothing is filtered.
+                  if (!filtering && filter == RdMembersFilter.active && critical.isNotEmpty)
+                    RdChoiceChip(
+                      label: l10n.redesignMembersCritical(critical.length),
+                      selected: false,
+                      onTap: () => ref.read(rdMembersCriticalOnlyProvider.notifier).state = true,
+                    ),
+                ],
+            ),
+          ),
+          RdFilterLink(
+            key: const Key('rd-members-filter'),
+            label: filtering ? '${l10n.redesignWorksFilter} · $filterCount' : l10n.redesignWorksFilter,
+            onTap: openFilter,
+          ),
+        ],
+      ),
+      const SizedBox(height: 10),
+      // Members with an e-mail but no account (from the Verwaltung: "Zugänge
+      // anlegen"), only on the plain list.
+      if (missing.isNotEmpty &&
+          filter == RdMembersFilter.active &&
+          !filtering &&
+          _query.trim().isEmpty &&
+          !selecting) ...[
+        RdInfoCard(
+          icon: Icons.person_add_alt_outlined,
+          text: l10n.rdAdminMissingBanner(missing.length),
+          action: RdOutlineButton(
+            label: rdManageTitle(l10n, RdManageEntry.missingAccounts),
+            onPressed: () => createMissingAccounts(context, ref, missing),
+          ),
+        ),
+        const SizedBox(height: 12),
+      ],
+    ];
+
+    final body = <Widget>[
+      // The red count on the tab: say what it means where the list opens
+      // (Aktiv), same row as on "Heute"; it opens "Wartet".
+      if (filter != RdMembersFilter.pending && withPending) ...[
+        RdGroupedList(children: [
+          RdListRow(
+            key: const Key('rd-members-pending-row'),
+            leading: RdRowIcon(Icons.person_add_alt_1_outlined, color: p.primary, background: p.soft),
+            title: l10n.redesignTodayPending(rawPending.length),
+            subtitle: l10n.redesignTodayPendingHint,
+            trailing: RdCountBadge(rawPending.length),
+            onTap: () => setTab(RdMembersFilter.pending),
+          ),
+        ]),
+        const SizedBox(height: 18),
+      ],
+    ];
+    if (peopleAsync.isLoading && people.isEmpty) {
+      body.add(RdInfoCard(text: l10n.redesignTodayLoading, loading: true));
+    } else if (peopleAsync.hasError && people.isEmpty) {
+      body.add(RdInfoCard(
+        text: l10n.redesignTodayLoadFailed,
+        icon: Icons.cloud_off_outlined,
+        action: RdOutlineButton(
+          label: l10n.redesignCommonRetry,
+          onPressed: () => ref.invalidate(realtimePlayersProvider),
+        ),
+      ));
+    } else if (otherAsync != null && otherAsync.hasError && !otherAsync.hasValue) {
+      body.add(RdInfoCard(
+        text: l10n.redesignTodayLoadFailed,
+        icon: Icons.cloud_off_outlined,
+        action: RdOutlineButton(
+          label: l10n.redesignCommonRetry,
+          onPressed: () => ref.invalidate(rdOtherInstanceUserIdsProvider(listFilter.otherTenantId!)),
+        ),
+      ));
+    } else if (otherAsync != null && !otherAsync.hasValue) {
+      body.add(RdInfoCard(text: l10n.redesignTodayLoading, loading: true));
+    } else if (filtered.isEmpty && rawPeople.isEmpty && _query.trim().isEmpty && canApprove) {
+      // UX D1: a new group starts with the invitation.
+      body.add(RdInfoCard(
+        icon: Icons.people_outline,
+        text: l10n.redesignInviteEmptyMembers,
+      ));
+    } else if (filtered.isEmpty) {
+      body.add(RdInfoCard(
+        icon: Icons.people_outline,
+        text: filtering
+            ? l10n.redesignMembersFilterNoMatch
+            : _query.trim().isNotEmpty
+                ? l10n.redesignMembersNoMatch
+                : switch (filter) {
+                    RdMembersFilter.active => l10n.redesignMembersEmpty,
+                    RdMembersFilter.paused => l10n.redesignMembersEmptyPaused,
+                    RdMembersFilter.pending => l10n.redesignMembersEmptyPending,
+                  },
+        action: filtering
+            ? RdOutlineButton(label: l10n.redesignWorksResetFilter, onPressed: resetFilters)
+            : null,
+      ));
+    } else {
+      if (filter == RdMembersFilter.pending) {
+        body.add(Padding(
+          padding: const EdgeInsets.fromLTRB(4, 0, 4, 12),
+          child: Text(l10n.redesignMembersPendingHint, style: RdType.meta(p, size: 13)),
+        ));
+      }
+      // Why each one is a Problemfall, while only those are shown.
+      final critical = criticalOnly ? rdCriticalContextOf(ref) : null;
+      for (final s in filtered) {
+        if (s.title.isNotEmpty || selecting) {
+          body.add(_SectionHeader(
+            section: s,
+            onSelectAll: selecting ? () => _toggleAll(s.people) : null,
+          ));
+        }
+        body.add(RdGroupedList(children: [
+          for (final person in s.people)
+            _MemberRow(
+              person: person,
+              showGroup: s.isRegister,
+              sortHint: _sortHint(person, listFilter.sort),
+              percent: filter == RdMembersFilter.pending || person.id == null ? null : percentages[person.id],
+              lastCounted: lastCounted,
+              seasonRate: rateFilter.isDefault,
+              absence: person.id == null ? null : rdCurrentAbsence(absences, person.id!),
+              reason: switch (critical?.reasonOf(person)) {
+                final r? => rdCriticalHitText(r.rule, r.result, l10n),
+                null => null,
+              },
+              selected: !selecting && person.id != null && RdSplitScope.of(context)?.selectedId == person.id,
+              checked: selecting ? bulkSelected.contains(person.id) : null,
+              onTap: person.id == null
+                  ? null
+                  : selecting
+                      ? () => _toggle(person.id!)
+                      : () => filter == RdMembersFilter.pending
+                          ? context.push(RedesignRoutes.membersReview(person.id!))
+                          : RdSplitScope.open(context, RedesignRoutes.person(person.id!)),
+            ),
+        ]));
+        body.add(const SizedBox(height: 18));
+      }
+    }
+
+    children.add(RdSwipeSwitch<RdMembersFilter>(
+      values: filters,
+      selected: filter,
+      onChanged: setTab,
+      onDrag: (pos) => _swipePos.value = pos,
+      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: body),
+    ));
+
+    // The selection (kept across Aktiv / Pausiert and the search). The
+    // stored rows, not the list's prepared ones: those carry organisation
+    // values and defaults that must not be written into the player row.
+    final selection = selecting
+        ? rawPeople.where((x) => x.id != null && bulkSelected.contains(x.id)).toList()
+        : const <Person>[];
+
+    final showFab = (role.canEdit || canApprove) && !inSplit && !selecting;
+    final page = RdPage(
+      onRefresh: () async {
+        ref.invalidate(realtimePlayersProvider);
+        ref.invalidate(playerAttendancePercentagesProvider);
+        ref.invalidate(listAttendancePercentagesProvider);
+        ref.invalidate(playerAbsencesProvider);
+        if (canApprove) ref.invalidate(realtimePendingPlayersProvider);
+      },
+      // Room for the action bar of "Auswählen".
+      // Room for the "+" button, so it does not cover the last row.
+      padding: selecting
+          ? const EdgeInsets.fromLTRB(20, 12, 20, 160)
+          : EdgeInsets.fromLTRB(20, 12, 20, showFab ? 96 : 32),
+      // One "+" per screen: anlegen and einladen (UX D1) both sit behind
+      // it, on the phone as the button below, on desktop in the header.
+      // While selecting, the action bar is the only action at the bottom.
+      floatingActionButton: showFab
+          ? Builder(
+              builder: (button) => FloatingActionButton(
+                key: const Key('rd-members-fab'),
+                tooltip: l10n.redesignMembersAdd,
+                backgroundColor: p.primary,
+                foregroundColor: p.onPrimary,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                onPressed: () => _add(button, canCreate: role.canEdit, canInvite: canApprove),
+                child: const Icon(Icons.add, size: 28),
+              ),
+            )
+          : null,
+      children: children,
+    );
+    // Always the same Stack, so the list keeps its scroll position when the
+    // bar comes and goes.
+    return Stack(
+      children: [
+        page,
+        if (selection.isNotEmpty)
+          Positioned(
+            left: 12,
+            right: 12,
+            bottom: 12 + MediaQuery.of(context).padding.bottom,
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 560),
+                child: RdBulkActionBar(
+                  key: const Key('rd-members-bulk-bar'),
+                  label: l10n.redesignBulkSelected(selection.length),
+                  busy: bulkBusy,
+                  actions: [
+                    (Icons.swap_horiz, l10n.rdWordsGroup(ref.watch(rdGroupKindProvider)), () => bulkMoveToGroup(selection), false),
+                    if (selection.any((x) => !x.paused))
+                      (Icons.pause_circle_outline, l10n.redesignBulkActionPause, () => bulkPause(selection), false),
+                    (Icons.edit_note, l10n.redesignBulkActionField, () => bulkSetField(selection), false),
+                    (Icons.archive_outlined, l10n.redesignBulkActionArchive, () => bulkArchive(selection), true),
+                  ],
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+/// The "einteilung" value of [person] ("Nord"), null when unset or "-".
+String? rdEinteilungOf(Person person) {
+  final value = person.additionalFields?['einteilung']?.toString().trim();
+  if (value == null || value.isEmpty || value == '-') return null;
+  return value;
+}

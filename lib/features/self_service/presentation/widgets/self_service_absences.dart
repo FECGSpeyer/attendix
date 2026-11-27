@@ -17,7 +17,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../people/presentation/widgets/planned_absences.dart';
-import '../../../people/presentation/widgets/members/rd_pause_sheets.dart';
+import '../../../people/presentation/widgets/members/pause_sheets.dart';
 
 /// Self-service planned absences and self pause actions.
 

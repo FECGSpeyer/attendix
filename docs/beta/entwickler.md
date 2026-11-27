@@ -33,7 +33,7 @@ Rollen. Beim Speichern gilt: Was die App speichert (z. B. über
 
 ## Einstellungen zur Darstellung
 
-`lib/core/providers/redesign_providers.dart`
+`lib/core/providers/appearance_providers.dart`
 
 - Farbwelt, Hell/Dunkel und App-Icon liegen nur auf dem Gerät
   (SharedPreferences), nie in der Datenbank.
@@ -67,7 +67,7 @@ Seiten und Bausteine des aktuellen Designs tragen weiterhin die Vorsilbe `rd_`
 
 ## Routen und Weiterleitungen
 
-`lib/core/router/redesign_routes.dart`, eingehängt in
+`lib/core/router/app_routes.dart`, eingehängt in
 `lib/core/router/app_router.dart`.
 
 - Die Hauptpfade sind deutsch: `/heute`, `/termine`, `/mitglieder`, `/werke`,
@@ -125,7 +125,7 @@ Rechte kommen aus den vorhandenen Abfragen in
 Dazu kommen die Schalter der Gruppe aus
 `lib/core/providers/role_permission_providers.dart` (zum Beispiel, ob Helfer
 Termine anlegen dürfen). Welche Einträge die Verwaltung zeigt, entscheidet
-`rdManageVisible()` in `lib/features/settings/data/rd_manage_logic.dart`.
+`rdManageVisible()` in `lib/features/settings/data/manage_logic.dart`.
 
 Die Rechte in der App sind Komfort. Die Datenbank setzt sie mit ihren eigenen
 Regeln durch, und jede Abfrage filtert nach `tenantId` (siehe `CLAUDE.md`).
@@ -137,13 +137,13 @@ Regeln durch, und jede Abfrage filtert nach `tenantId` (siehe `CLAUDE.md`).
   Dunkel. Farben werden nie fest in eine Seite geschrieben.
 - **Schrift:** `RdType` hat die Textstufen (`largeTitle`, `title`,
   `cardTitle`, `section`, `body`, `meta`, `eyebrow`).
-- **Widgets:** `lib/shared/widgets/redesign/rd_widgets.dart` (mit `primitives/`) enthält die Bausteine,
+- **Widgets:** `lib/shared/widgets/components/components.dart` (mit `primitives/`) enthält die Bausteine,
   aus denen jede Seite besteht: `RdPage`, `RdCard`, `RdGroupedList`,
   `RdListRow`, `RdSwitchRow`, `RdGroupLabel`, `RdSectionHeader`,
   `RdPrimaryButton`, `RdOutlineButton`, `RdPill`, `RdSegmented`,
   `RdChoiceChip`, `RdChipScroller`, `RdBackLink`, `RdHintBox` und weitere.
 - **Seitenvorlagen:** Listen der Verwaltung nutzen
-  `lib/features/settings/presentation/widgets/manage/rd_manage_list.dart` (Rücklink zur Verwaltung, großer Titel,
+  `lib/features/settings/presentation/widgets/manage/manage_list.dart` (Rücklink zur Verwaltung, großer Titel,
   ein Satz Erklärung, gruppierte Liste, Plus, •••). Die Vorlage zeigt nur. Laden,
   Speichern und Rechte bleiben bei der Seite.
 - **Theme & Tokens:** `context.rd` liefert die `RdPalette`, `buildRdTheme(...)`
@@ -187,7 +187,7 @@ Leitlinien für neue Seiten:
   `features/<domäne>/data/rd_*_logic.dart` (zum Beispiel
   `settings/data/rd_manage_logic.dart`, `attendance/data/rd_event_logic.dart`,
   `people/data/rd_critical_logic.dart`) bzw. bereichsübergreifend in
-  `lib/core/redesign/`. Diese Dateien haben keine Widgets und lassen sich direkt testen.
+  `lib/core/logic/`. Diese Dateien haben keine Widgets und lassen sich direkt testen.
 - Bereichs-Provider liegen in `features/<domäne>/data/providers/`. Sie
   bauen auf den Repositories mit Tenant auf
   (`…RepositoryWithTenantProvider`), nicht auf eigenen Abfragen.

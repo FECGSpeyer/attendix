@@ -1,4 +1,4 @@
-import 'package:attendix/core/router/redesign_routes.dart';
+import 'package:attendix/core/router/app_routes.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// Notifications, pushes and "open attendance" links lead to the standard

@@ -17,12 +17,12 @@ import '../../../../data/models/auto_message/auto_message.dart';
 import '../../../../l10n/l10n.dart';
 import '../widgets/message_editor_toolbar.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
-import '../../../../core/theme/redesign/rd_theme.dart';
-import '../../../../core/redesign/rd_words.dart';
-import '../../../attendance/presentation/widgets/event/rd_event_head.dart' show rdEventMeta;
-import '../../../attendance/presentation/widgets/event/rd_form_widgets.dart';
-import '../../../../shared/widgets/redesign/rd_widgets.dart';
-import '../../../today/presentation/widgets/rd_today_common.dart' show RdInfoCard;
+import '../../../../core/theme/design_theme.dart';
+import '../../../../core/logic/words.dart';
+import '../../../attendance/presentation/widgets/event/event_head.dart' show rdEventMeta;
+import '../../../attendance/presentation/widgets/event/form_widgets.dart';
+import '../../../../shared/widgets/components/components.dart';
+import '../../../today/presentation/widgets/today_common.dart' show RdInfoCard;
 
 part 'auto_message_rule_view.dart';
 

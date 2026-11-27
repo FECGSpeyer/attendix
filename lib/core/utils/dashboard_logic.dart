@@ -5,7 +5,7 @@ import '../../data/models/church/church.dart';
 import '../../data/models/dashboard/dashboard_event.dart';
 import '../../data/models/dashboard/dashboard_models.dart';
 import '../constants/enums.dart';
-import '../router/redesign_routes.dart';
+import '../router/app_routes.dart';
 import 'attendance_percentage_utils.dart';
 import 'dashboard_utils.dart';
 import '../../data/models/plan/plan.dart' show isPlanPublished;

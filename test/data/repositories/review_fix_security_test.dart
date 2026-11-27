@@ -45,7 +45,7 @@ void main() {
   group('M2 person detail sync ignores group changes (Ionic parity)', () {
     test('oldInstrument equals the new group', () {
       final source =
-          read('lib/features/people/presentation/pages/rd_person_edit_page.dart');
+          read('lib/features/people/presentation/pages/person_edit_page.dart');
       final call = body(source, 'syncPlayerWithUpcomingAttendances(', 400);
       expect(call, contains('oldInstrument: (_person ?? person).instrument'));
       expect(call, isNot(contains('oldInstrument: before.instrument')));
@@ -129,12 +129,12 @@ void main() {
   group('Attendance detail', () {
     late String source;
     setUpAll(() => source = read(
-        'lib/features/attendance/presentation/pages/rd_event_page.dart'));
+        'lib/features/attendance/presentation/pages/event_page.dart'));
 
     // LOGIC_ATT: rows are synced one by one (Ionic add/update/remove
     // history entry) – no bulk delete, and no early return in between.
     test('song history sync never stops half-way', () {
-      final sections = read('lib/features/attendance/presentation/widgets/event/rd_event_sections.dart');
+      final sections = read('lib/features/attendance/presentation/widgets/event/event_sections.dart');
       final shared = read('lib/features/attendance/presentation/attendance_song_history.dart');
       expect(sections, contains('syncAttendanceSongHistory('));
       final sync = body(shared, 'Future<void> syncAttendanceSongHistory(', 2400);
@@ -155,7 +155,7 @@ void main() {
   group('Attendance create', () {
     test('typeInfo defaults to empty string (Ionic) and pop is blocked while saving', () {
       final source = read(
-          'lib/features/attendance/presentation/pages/rd_event_create_page.dart');
+          'lib/features/attendance/presentation/pages/event_create_page.dart');
       final writes = read(
           'lib/features/attendance/presentation/attendance_create_writes.dart');
       expect(writes, contains("'typeInfo': input.typeInfo ?? '',"));

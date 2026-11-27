@@ -8,25 +8,25 @@ void main() {
   String read(String path) => readDartLibrary(path);
 
   test('members list watches persisted list filter provider', () {
-    final src = read('lib/features/people/presentation/pages/rd_members_page.dart');
+    final src = read('lib/features/people/presentation/pages/members_page.dart');
     expect(src, contains('rdMembersListFilterProvider'));
   });
 
   test('teachers: only admins open the edit page, add sheet without main group', () {
-    final listSrc = read('lib/features/teachers/presentation/pages/rd_teachers_page.dart');
-    final sheetSrc = read('lib/features/teachers/presentation/widgets/rd_teacher_create_sheet.dart');
+    final listSrc = read('lib/features/teachers/presentation/pages/teachers_page.dart');
+    final sheetSrc = read('lib/features/teachers/presentation/widgets/teacher_create_sheet.dart');
     expect(listSrc, contains('onTap: isAdmin'));
     expect(sheetSrc, contains('.where((g) => g.maingroup != true'));
   });
 
   test('person create asks before discarding input (Ionic dismiss)', () {
-    final src = read('lib/features/people/presentation/pages/rd_person_create_page.dart');
+    final src = read('lib/features/people/presentation/pages/person_create_page.dart');
     expect(src, contains('_confirmDiscard()'));
     expect(src, contains('context.l10n.personDiscardChanges'));
   });
 
   test('person actions section has header and closes after a transfer', () {
-    final src = read('lib/features/people/presentation/pages/rd_person_edit_page.dart');
+    final src = read('lib/features/people/presentation/pages/person_edit_page.dart');
     expect(src, contains('RdGroupLabel(l10n.personActions)'));
     expect(src, contains('if (!copy) {'));
     expect(src, contains('context.go(RedesignRoutes.members);'));
@@ -34,7 +34,7 @@ void main() {
 
   test('late warning card uses the Ionic texts', () {
     final src = read(
-        'lib/features/people/presentation/pages/rd_person_edit_page.dart');
+        'lib/features/people/presentation/pages/person_edit_page.dart');
     expect(src, contains('personLateWarningTitle'));
     expect(src, contains('personLateExcusedExtra'));
     expect(src, contains('personResetTalked'));

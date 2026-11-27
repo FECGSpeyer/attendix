@@ -13,13 +13,17 @@
 
 ```
 lib/
-├── core/           # Shared: config, constants, providers, redesign, router, services, theme, utils
+├── core/           # Shared: config, constants, logic, providers, router, services, theme, utils
 ├── data/           # Models (Freezed) + Repositories (Supabase)
 ├── features/       # Feature-First-Module (today, attendance, people, songs, settings, planning, …)
 │   └── <feature>/  #   data/ (Logik & Provider) + presentation/ (pages/, widgets/)
 ├── l10n/           # Übersetzungen (fragments/ + generated/)
-└── shared/         # App-Shell (shell/) + wiederverwendbare Widgets (widgets/redesign/, widgets/adaptive/, …)
+└── shared/         # App-Shell (shell/) + Design-System-Bausteine (widgets/components/, widgets/adaptive/, widgets/layout/, …)
 ```
+
+Namens- & Clean-Code-Konventionen:
+- Sprechende Dateinamen ohne historische `rd_`- oder `*_beta*`-Präfixe; große Seiten/Services werden über `part`-Dateien (`*_actions.dart`, `*_cards.dart`, `*_form.dart`, …) in kohärente Einzelmodule zerlegt.
+- `test/helpers/source_reader.dart` (`readDartLibrary`) löst `part`-Direktiven bei Source-Scanner-Tests automatisch mit auf.
 
 Top-Level-Ordner außerhalb von `lib/`:
 - `test/`, `patrol_test/` – Unit-, Widget-, Security- und E2E-Tests (`test/helpers/source_reader.dart` folgt `part`-Dateien automatisch)
@@ -56,11 +60,10 @@ final attendanceNotifierProvider = NotifierProvider<AttendanceNotifier, AsyncVal
 final playerRepositoryWithTenantProvider = Provider<PlayerRepository>((ref) {...});
 ```
 
-### 3. Freezed - Nach Model-Änderungen
+### 3. Freezed / Codegen
 
-```bash
-dart run build_runner build --delete-conflicting-outputs
-```
+Die generierten `*.freezed.dart`- und `*.g.dart`-Dateien sind eingecheckt.
+**Wichtig:** Unter Flutter `3.47.9` (`analyzer 7.6.0`) **niemals** `dart run build_runner build --delete-conflicting-outputs` ausführen – der Lauf löscht die generierten Dateien und hängt anschließend. Generierte Model-Pfade und `@freezed`/`@JsonSerializable`-Signaturen ohne kompatibles SDK/Toolchain nicht anfassen.
 
 ### 4. UI-Labels auf Deutsch
 
@@ -83,9 +86,6 @@ Native APIs (Haptics etc.) immer in try-catch wrappen.
 ## Befehle
 
 ```bash
-# Freezed/JSON generieren
-dart run build_runner build --delete-conflicting-outputs
-
 # Code analysieren (wie in CI: 0 Errors, 0 Warnings, 0 Infos)
 dart analyze lib/ test/ tool/ scripts/ patrol_test/ --fatal-infos --fatal-warnings
 

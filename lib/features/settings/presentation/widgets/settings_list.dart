@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../core/theme/design_theme.dart';
 import '../../../../shared/widgets/display/ion_badge_text.dart';
 
 /// Horizontal page padding around inset settings lists.

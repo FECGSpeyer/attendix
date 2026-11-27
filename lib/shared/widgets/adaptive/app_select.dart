@@ -2,8 +2,8 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import '../../../core/theme/redesign/rd_palette.dart';
-import '../../../core/theme/redesign/rd_theme.dart';
+import '../../../core/theme/app_palette.dart';
+import '../../../core/theme/design_theme.dart';
 import 'app_action_sheet.dart';
 
 /// Select presentation style (`ion-select` interface compatibility).

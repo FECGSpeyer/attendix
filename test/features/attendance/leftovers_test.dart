@@ -181,7 +181,7 @@ void main() {
     });
 
     test('event page reloads when it becomes visible again', () {
-      final page = readDartLibrary('lib/features/attendance/presentation/pages/rd_event_page.dart');
+      final page = readDartLibrary('lib/features/attendance/presentation/pages/event_page.dart');
       expect(page, contains('AppLifecycleListener(onShow: _reload)'));
       expect(page, contains('_lifecycle?.dispose()'));
       final start = page.indexOf('void _reload()');

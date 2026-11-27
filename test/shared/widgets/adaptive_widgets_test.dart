@@ -1,5 +1,5 @@
-import 'package:attendix/core/theme/redesign/rd_palette.dart';
-import 'package:attendix/core/theme/redesign/rd_theme.dart';
+import 'package:attendix/core/theme/app_palette.dart';
+import 'package:attendix/core/theme/design_theme.dart';
 import 'package:attendix/shared/widgets/adaptive/adaptive.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';

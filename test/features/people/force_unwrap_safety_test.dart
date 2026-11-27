@@ -8,7 +8,7 @@ import '../../helpers/source_reader.dart';
 void main() {
   group('RT-001/002/003: No force-unwrap on tenant fields', () {
     test('rd_members_page.dart has no tenant.id! force-unwrap', () {
-      final source = readDartLibrary('lib/features/people/presentation/pages/rd_members_page.dart');
+      final source = readDartLibrary('lib/features/people/presentation/pages/members_page.dart');
 
       expect(
         source.contains('tenant.id!'),
@@ -20,7 +20,7 @@ void main() {
     });
 
     test('rd_person_page.dart has no tenant.id! force-unwrap', () {
-      final source = readDartLibrary('lib/features/people/presentation/pages/rd_person_page.dart');
+      final source = readDartLibrary('lib/features/people/presentation/pages/person_page.dart');
 
       expect(
         source.contains('tenant.id!'),
@@ -33,7 +33,7 @@ void main() {
 
     test('rd_person_edit_page.dart has no tenant!.criticalRules! force-unwrap',
         () {
-      final source = readDartLibrary('lib/features/people/presentation/pages/rd_person_edit_page.dart');
+      final source = readDartLibrary('lib/features/people/presentation/pages/person_edit_page.dart');
 
       expect(
         source.contains('tenant!.criticalRules!'),

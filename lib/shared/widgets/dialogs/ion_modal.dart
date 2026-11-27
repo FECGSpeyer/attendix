@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/theme/redesign/rd_theme.dart';
+import '../../../core/theme/design_theme.dart';
 import '../adaptive/app_dialog.dart' show showAppDialog;
 
 /// Breakpoint at which a modal is shown as a centred card (600 × 500/600)

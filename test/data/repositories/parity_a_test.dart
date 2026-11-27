@@ -19,7 +19,7 @@ String _method(String src, String signature) {
 void main() {
   group('D1 no cross-tenant propagation', () {
     test('person detail no longer propagates identity fields', () {
-      final page = _read('lib/features/people/presentation/pages/rd_person_edit_page.dart');
+      final page = _read('lib/features/people/presentation/pages/person_edit_page.dart');
       final repo = _read('lib/data/repositories/cross_tenant_person_repository.dart');
       expect(page, isNot(contains('propagateSharedFields')));
       expect(page, isNot(contains('_propagateSharedIdentityFields')));

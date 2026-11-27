@@ -1,0 +1,948 @@
+import 'dart:async';
+
+import 'package:attendix/core/constants/enums.dart';
+import 'package:attendix/core/providers/attendance_type_providers.dart';
+import 'package:attendix/core/providers/debug_providers.dart';
+import 'package:attendix/core/providers/group_providers.dart';
+import 'package:attendix/core/providers/message_providers.dart';
+import 'package:attendix/core/providers/player_absence_providers.dart';
+import 'package:attendix/core/providers/realtime_providers.dart';
+import 'package:attendix/core/providers/appearance_providers.dart';
+import 'package:attendix/core/providers/role_permission_providers.dart';
+import 'package:attendix/core/providers/self_service_providers.dart';
+import 'package:attendix/core/providers/signout_providers.dart';
+import 'package:attendix/core/providers/team_org_providers.dart';
+import 'package:attendix/core/providers/tenant_providers.dart';
+import 'package:attendix/core/theme/app_palette.dart';
+import 'package:attendix/core/theme/design_theme.dart';
+import 'package:attendix/data/models/attendance/attendance.dart';
+import 'package:attendix/features/attendance/data/providers/events_providers.dart';
+import 'package:attendix/features/today/data/providers/today_providers.dart';
+import 'package:attendix/features/attendance/presentation/pages/events_page.dart';
+import 'package:attendix/shared/shell/app_shell.dart';
+import 'package:attendix/features/attendance/presentation/widgets/event/event_create_menu.dart';
+import 'package:attendix/shared/widgets/components/split_view.dart';
+import 'package:attendix/shared/widgets/components/components.dart';
+import 'package:attendix/l10n/l10n.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+import 'package:intl/date_symbol_data_local.dart';
+
+import '../../factories/test_factories.dart';
+
+class _TenantNotifier extends CurrentTenantNotifier {
+  _TenantNotifier(super.ref, {String type = 'orchestra'}) {
+    state = TestFactories.createTenant(
+      id: 7,
+      shortName: 'SO',
+      longName: 'Stadtorchester',
+      showMembersList: true,
+      type: type,
+    );
+  }
+
+  void switchTenant({required int id, String type = 'orchestra'}) {
+    state = TestFactories.createTenant(
+      id: id,
+      shortName: 'T$id',
+      longName: 'Tenant $id',
+      showMembersList: true,
+      type: type,
+    );
+  }
+}
+
+String _day(int offset, {DateTime? from}) {
+  final d = (from ?? DateTime.now()).add(Duration(days: offset));
+  return '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+}
+
+CrossTenantPersonAttendance _own(
+  String id,
+  int dayOffset,
+  AttendanceStatus status,
+) => CrossTenantPersonAttendance(
+  id: id,
+  attendanceId: int.parse(id),
+  status: status,
+  date: _day(dayOffset),
+  typeInfo: 'Probe $id',
+  startTime: '23:30',
+  endTime: '23:50',
+  place: 'Probenraum',
+  tenantId: 7,
+  tenantName: 'SO',
+  tenantColor: 'primary',
+);
+
+Widget _app(
+  Role role, {
+  bool canCreate = true,
+  bool split = false,
+  bool shell = true,
+  String tenantType = 'orchestra',
+  Widget? page,
+  double textScale = 1,
+  List<AttendanceType> types = const [],
+  int? pending,
+  List<CrossTenantPersonAttendance> extraUpcoming = const [],
+  Future<SignoutData> Function(Ref ref)? signout,
+}) {
+  final router = GoRouter(
+    initialLocation: '/termine',
+    routes: [
+      ShellRoute(
+        builder:
+            (context, state, child) => shell ? RdShell(child: child) : child,
+        routes: [
+          GoRoute(
+            path: '/termine',
+            builder:
+                (_, __) =>
+                    page ??
+                    (split
+                        ? const RdSplitScope(
+                          isDetail: false,
+                          child: RdEventsPage(),
+                        )
+                        : const RdEventsPage()),
+            routes: [
+              GoRoute(
+                path: 'neu',
+                builder:
+                    (_, state) => Scaffold(
+                      body: Column(
+                        children: [
+                          const Text('page new event'),
+                          if (state.extra != null)
+                            Text('selected date ${state.extra}'),
+                        ],
+                      ),
+                    ),
+              ),
+              GoRoute(
+                path: 'meine/:paId',
+                builder:
+                    (_, state) => Scaffold(
+                      body: Text('page own ${state.pathParameters['paId']}'),
+                    ),
+              ),
+              GoRoute(
+                path: ':id',
+                builder:
+                    (_, state) => Scaffold(
+                      body: Text('page termin ${state.pathParameters['id']}'),
+                    ),
+              ),
+            ],
+          ),
+          for (final path in [
+            '/heute',
+            '/people',
+            '/mitglieder',
+            '/members',
+            '/songs-tab',
+            '/werke',
+            '/ich',
+          ])
+            GoRoute(
+              path: path,
+              builder: (_, __) => Scaffold(body: Text('page $path')),
+            ),
+          GoRoute(
+            path: '/settings/team-organization/meeting/:id',
+            builder:
+                (_, state) => Scaffold(
+                  body: Text('page meeting ${state.pathParameters['id']}'),
+                ),
+          ),
+        ],
+      ),
+    ],
+  );
+  return ProviderScope(
+    overrides: [
+      initialRedesignSettingsProvider.overrideWithValue(
+        const RedesignSettings(world: RdFarbwelt.petrol),
+      ),
+      effectiveRoleProvider.overrideWithValue(role),
+      isApplicantProvider.overrideWithValue(false),
+      canCreateAttendanceProvider.overrideWithValue(canCreate),
+      canSelfReportAbsenceProvider.overrideWithValue(true),
+      canSelfPauseProvider.overrideWithValue(false),
+      currentTenantProvider.overrideWith(
+        (ref) => _TenantNotifier(ref, type: tenantType),
+      ),
+      userTenantsProvider.overrideWith((ref) async => const []),
+      unreadNotificationCountProvider.overrideWith((ref) async => 0),
+      userNotificationsRealtimeProvider.overrideWith((ref) {}),
+      canAccessFilesProvider.overrideWithValue(false),
+      currentSelfServicePlayerProvider.overrideWith(
+        (ref) async =>
+            TestFactories.createPerson(id: 3, firstName: 'Lea', tenantId: 7),
+      ),
+      signoutDataProvider.overrideWith(
+        signout ??
+            (ref) async => SignoutData(
+              current: _own('11', 0, AttendanceStatus.neutral),
+              upcoming: [
+                _own('12', 2, AttendanceStatus.present),
+                _own('13', 40, AttendanceStatus.excused),
+                ...extraUpcoming,
+              ],
+              past: [_own('10', -2, AttendanceStatus.present)],
+              percentage: 92,
+            ),
+      ),
+      attendanceTypesProvider.overrideWith((ref) async => types),
+      protocolTypesProvider.overrideWith((ref) async => const []),
+      typeCirclePersonsProvider.overrideWith((ref) async => const {}),
+      groupsMapProvider.overrideWith((ref) async => const {}),
+      if (pending != null)
+        pendingAttendanceIdProvider.overrideWith((ref) => pending),
+      realtimeAttendanceListProvider.overrideWith(
+        (ref) async => [
+          TestFactories.createAttendance(
+            id: 21,
+            date: _day(0),
+            typeId: 'p',
+            typeInfo: 'Gesamtprobe',
+            startTime: '23:30',
+            endTime: '23:50',
+          ),
+          TestFactories.createAttendance(
+            id: 22,
+            date: _day(2),
+            typeId: 'k',
+            typeInfo: 'Konzert',
+          ),
+          TestFactories.createAttendance(
+            id: 24,
+            date: _day(45),
+            typeId: 'p',
+            typeInfo: 'Herbstprobe',
+          ),
+          TestFactories.createAttendance(
+            id: 23,
+            date: _day(-3),
+            typeInfo: 'Vorbei',
+            percentage: 80,
+          ),
+        ],
+      ),
+      rdUpcomingCountsProvider.overrideWith(
+        (ref) async => const {
+          21: RdStatusCounts(
+            present: 24,
+            excused: 3,
+            lateAnnounced: 2,
+            open: 5,
+          ),
+        },
+      ),
+    ],
+    child: Consumer(
+      builder: (context, ref, _) {
+        final s = ref.watch(redesignSettingsProvider);
+        return MaterialApp.router(
+          locale: const Locale('de'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          theme: buildRdTheme(s.world, Brightness.light),
+          routerConfig: router,
+          builder:
+              (context, child) => MediaQuery(
+                data: MediaQuery.of(
+                  context,
+                ).copyWith(textScaler: TextScaler.linear(textScale)),
+                child: child!,
+              ),
+        );
+      },
+    ),
+  );
+}
+
+/// Bounded pumps: loading spinners never settle.
+Future<void> _settle(WidgetTester tester) async {
+  for (var i = 0; i < 10; i++) {
+    await tester.pump(const Duration(milliseconds: 100));
+  }
+}
+
+Finder _semantics(String label) => find.byWidgetPredicate(
+  (w) => w is Semantics && w.properties.label == label,
+);
+
+void _size(WidgetTester tester, Size size) {
+  tester.view.physicalSize = size;
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.reset);
+}
+
+/// REDESIGN: tab "Termine" (canvas D2, S2).
+/// The answers of a Termin are numbers with their word beside them; the whole
+/// row is announced as one label ("24 zugesagt · 3 entschuldigt").
+Finder _answers(Pattern label) => find.byWidgetPredicate(
+  (w) =>
+      w is Semantics && label.allMatches(w.properties.label ?? '').isNotEmpty,
+);
+
+void main() {
+  setUpAll(() async {
+    await initializeDateFormatting('de_DE');
+    await initializeDateFormatting('de');
+  });
+
+  testWidgets(
+    'leader plus opens modal bottom sheet on phone before creating an event',
+    (tester) async {
+      _size(tester, const Size(393, 852));
+      await tester.pumpWidget(_app(Role.admin, shell: false));
+      await _settle(tester);
+
+      await tester.tap(find.byKey(const Key('rd-events-add')));
+      await _settle(tester);
+
+      expect(find.byType(BottomSheet), findsOneWidget);
+      expect(find.text('Neuer Termin'), findsOneWidget);
+      expect(find.text('Orchestertermin'), findsOneWidget);
+      expect(find.text('Termin mit Anwesenheit'), findsOneWidget);
+      expect(find.text('Besprechung'), findsOneWidget);
+      expect(find.text('Tagesordnung und Protokoll'), findsOneWidget);
+      expect(find.text('Abbrechen'), findsOneWidget);
+      expect(find.text('page new event'), findsNothing);
+
+      await tester.tap(find.text('Orchestertermin'));
+      await _settle(tester);
+      expect(find.text('page new event'), findsOneWidget);
+      expect(find.byType(BottomSheet), findsNothing);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets('helper with create permission goes straight to the event form', (
+    tester,
+  ) async {
+    _size(tester, const Size(393, 852));
+    await tester.pumpWidget(_app(Role.helper, shell: false));
+    await _settle(tester);
+
+    await tester.tap(find.byTooltip('Neuer Termin'));
+    await _settle(tester);
+
+    expect(find.text('page new event'), findsOneWidget);
+    expect(find.byType(BottomSheet), findsNothing);
+    expect(find.text('Besprechung'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets(
+    'desktop header opens anchored popup menu >= 840px and opens meeting sheet',
+    (tester) async {
+      _size(tester, const Size(1280, 900));
+      await tester.pumpWidget(
+        _app(
+          Role.responsible,
+          split: true,
+          shell: false,
+          tenantType: 'general',
+        ),
+      );
+      await _settle(tester);
+
+      expect(find.byType(FloatingActionButton), findsNothing);
+      final addButton = find.byKey(const Key('rd-events-add'));
+      final buttonRect = tester.getRect(addButton);
+      await tester.tap(addButton);
+      await _settle(tester);
+
+      expect(find.byType(BottomSheet), findsNothing);
+      expect(find.text('Abbrechen'), findsNothing);
+      expect(find.text('Termin'), findsOneWidget);
+      expect(find.text('Orchestertermin'), findsNothing);
+      expect(
+        tester.getRect(find.text('Termin')).top,
+        greaterThanOrEqualTo(buttonRect.bottom),
+      );
+      await tester.tap(find.text('Besprechung'));
+      await _settle(tester);
+
+      expect(find.text('Neue Besprechung'), findsOneWidget);
+      expect(find.byKey(const ValueKey('rd-new-meeting-day')), findsOneWidget);
+      expect(find.text('page new event'), findsNothing);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets('create sheet closes with cancel, outside tap and Escape', (
+    tester,
+  ) async {
+    _size(tester, const Size(393, 852));
+    await tester.pumpWidget(_app(Role.admin, shell: false));
+    await _settle(tester);
+
+    await tester.tap(find.byKey(const Key('rd-events-add')));
+    await _settle(tester);
+    await tester.tap(find.text('Abbrechen'));
+    await _settle(tester);
+    expect(find.byType(BottomSheet), findsNothing);
+    expect(find.text('Orchestertermin'), findsNothing);
+
+    await tester.tap(find.byKey(const Key('rd-events-add')));
+    await _settle(tester);
+    await tester.tapAt(const Offset(20, 20));
+    await _settle(tester);
+    expect(find.byType(BottomSheet), findsNothing);
+    expect(
+      find.text('Gesamtprobe'),
+      findsOneWidget,
+      reason: 'outside tap only closes the sheet',
+    );
+
+    await tester.tap(find.byKey(const Key('rd-events-add')));
+    await _settle(tester);
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await _settle(tester);
+    expect(find.byType(BottomSheet), findsNothing);
+    expect(find.byTooltip('Neuer Termin'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets(
+    'tenant switch while create sheet is open prevents stale navigation',
+    (tester) async {
+      _size(tester, const Size(393, 852));
+      await tester.pumpWidget(_app(Role.admin, shell: false));
+      await _settle(tester);
+
+      await tester.tap(find.byKey(const Key('rd-events-add')));
+      await _settle(tester);
+      expect(find.text('Orchestertermin'), findsOneWidget);
+
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(RdEventCreateMenu)),
+      );
+      (container.read(currentTenantProvider.notifier) as _TenantNotifier)
+          .switchTenant(id: 99);
+      await tester.pump();
+
+      await tester.tap(find.text('Orchestertermin'));
+      await _settle(tester);
+      expect(find.text('page new event'), findsNothing);
+      expect(find.byType(BottomSheet), findsNothing);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
+    'event choice forwards a picked date to the normal creation route',
+    (tester) async {
+      _size(tester, const Size(393, 852));
+      await tester.pumpWidget(
+        _app(
+          Role.admin,
+          shell: false,
+          page: Scaffold(
+            floatingActionButton: RdEventCreateMenu(
+              initialDate: DateTime(2027, 6, 1),
+            ),
+          ),
+        ),
+      );
+      await _settle(tester);
+
+      await tester.tap(find.byTooltip('Neuer Termin'));
+      await _settle(tester);
+      await tester.tap(find.text('Orchestertermin'));
+      await _settle(tester);
+
+      expect(
+        find.text('selected date 2027-06-01 00:00:00.000'),
+        findsOneWidget,
+      );
+    },
+  );
+
+  testWidgets(
+    'meeting choice keeps the picked day and opens the returned meeting',
+    (tester) async {
+      _size(tester, const Size(393, 852));
+      await tester.pumpWidget(
+        _app(
+          Role.admin,
+          shell: false,
+          page: Scaffold(
+            floatingActionButton: RdEventCreateMenu(
+              initialDate: DateTime(2027, 6, 1),
+            ),
+          ),
+        ),
+      );
+      await _settle(tester);
+
+      await tester.tap(find.byTooltip('Neuer Termin'));
+      await _settle(tester);
+      await tester.tap(find.text('Besprechung'));
+      await _settle(tester);
+
+      final dayRow = find.byKey(const ValueKey('rd-new-meeting-day'));
+      expect(tester.widget<RdListRow>(dayRow).value, 'Di, 01.06.');
+      Navigator.of(tester.element(dayRow)).pop(42);
+      await _settle(tester);
+      expect(find.text('page meeting 42'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets('create choices fit a narrow phone with large text', (
+    tester,
+  ) async {
+    _size(tester, const Size(320, 640));
+    await tester.pumpWidget(
+      _app(
+        Role.admin,
+        shell: false,
+        textScale: 2,
+        page: const Scaffold(floatingActionButton: RdEventCreateMenu()),
+      ),
+    );
+    await _settle(tester);
+
+    await tester.tap(find.byTooltip('Neuer Termin'));
+    await _settle(tester);
+
+    for (final title in ['Orchestertermin', 'Besprechung']) {
+      final rect = tester.getRect(find.text(title));
+      expect(rect.left, greaterThanOrEqualTo(0));
+      expect(rect.right, lessThanOrEqualTo(320));
+      expect(rect.top, greaterThanOrEqualTo(0));
+      expect(rect.bottom, lessThanOrEqualTo(640));
+    }
+    expect(tester.takeException(), isNull);
+  });
+
+  group('rdUpcoming / rdPast', () {
+    final now = DateTime(2026, 10, 29, 12);
+    final list = [
+      TestFactories.createAttendance(id: 1, date: _day(3, from: now)),
+      TestFactories.createAttendance(id: 2, date: _day(-1, from: now), percentage: 90),
+      TestFactories.createAttendance(id: 3, date: _day(0, from: now), startTime: '18:00'),
+      TestFactories.createAttendance(id: 4, date: _day(-10, from: now), percentage: 70),
+      TestFactories.createAttendance(id: 5, date: _day(-20, from: now)),
+    ];
+
+    test('upcoming: not ended, soonest first', () {
+      expect(rdUpcoming(list, now: now).map((a) => a.id), [3, 1]);
+    });
+
+    test('past: ended, newest first', () {
+      expect(rdPast(list, now: now).map((a) => a.id), [2, 4, 5]);
+    });
+
+    test('all-day type without own duration_days: still upcoming on day 2 (#353)', () {
+      final camp = [TestFactories.createAttendance(id: 9, date: _day(-1, from: now), typeId: 'camp')];
+      final types = [
+        TestFactories.createAttendanceType(id: 'camp', name: 'Freizeit')
+            .copyWith(allDay: true, durationDays: 3),
+      ];
+      expect(rdUpcoming(camp, now: now, types: types).map((a) => a.id), [9]);
+      expect(rdPast(camp, now: now, types: types), isEmpty);
+      // Without types as before: ended after the first day.
+      expect(rdUpcoming(camp, now: now), isEmpty);
+    });
+
+    test('a Termin without own time sorts by the time of its type', () {
+      final types = [TestFactories.createAttendanceType(id: 'probe', name: 'Probe').copyWith(startTime: '19:30')];
+      final day = [
+        TestFactories.createAttendance(id: 1, date: _day(1, from: now), typeId: 'probe'), // 19:30 of the type
+        TestFactories.createAttendance(id: 2, date: _day(1, from: now), startTime: '18:00'),
+        TestFactories.createAttendance(id: 3, date: _day(1, from: now), typeId: 'probe', startTime: '17:00'),
+      ];
+      // An own time wins over the type's.
+      expect(rdUpcoming(day, now: now, types: types).map((a) => a.id), [3, 2, 1]);
+    });
+
+    test('average only over Termine with a percentage', () {
+      expect(rdAveragePercentage(rdPast(list, now: now)), 80);
+      expect(rdAveragePercentage(const []), isNull);
+    });
+  });
+
+  group('rdGroupEvents', () {
+    final now = DateTime(2026, 10, 29, 12);
+
+    test('upcoming: this calendar week, next week, then one section per month', () {
+      // Thursday 29.10.: the week ends on Sunday 1.11. (+3), the next one on 8.11. (+10).
+      final dates = [
+        _day(0, from: now),
+        _day(3, from: now),
+        _day(4, from: now),
+        _day(10, from: now),
+        _day(11, from: now),
+        _day(40, from: now),
+      ];
+      final sections = rdGroupEvents(dates, (d) => d, now: now);
+      expect(sections.map((s) => s.thisWeek), [true, false, false, false]);
+      expect(sections.map((s) => s.nextWeek), [false, true, false, false]);
+      expect(sections.first.items, dates.take(2));
+      expect(sections[1].items, [dates[2], dates[3]]);
+      expect(sections[2].month, DateTime(2026, 11));
+      expect(sections[2].items, [dates[4]]);
+      expect(sections[3].month, DateTime(2026, 12));
+    });
+
+    test('a running multi-day Termin that started earlier stays in this week', () {
+      final sections = rdGroupEvents([_day(-1, from: now)], (d) => d, now: now);
+      expect(sections.single.thisWeek, isTrue);
+    });
+
+    test('past: the last 7 days, then months', () {
+      final dates = [_day(-1, from: now), _day(-7, from: now), _day(-8, from: now)];
+      final sections = rdGroupEvents(dates, (d) => d, past: true, now: now);
+      expect(sections.map((s) => s.thisWeek), [true, false]);
+      expect(sections.first.items, dates.take(2));
+      expect(sections.last.month, DateTime(2026, 10));
+    });
+
+    test('Termine without a date are left out', () {
+      expect(rdGroupEvents<String?>([null, ''], (d) => d, now: now), isEmpty);
+    });
+  });
+
+  testWidgets('Dirigent: upcoming Termine with answers, past with Ø, new Termin', (tester) async {
+    _size(tester, const Size(393, 852));
+    await tester.pumpWidget(_app(Role.admin));
+    await _settle(tester);
+
+    expect(find.text('Kommend'), findsOneWidget);
+    expect(find.text('Vergangen · Ø 80 %'), findsOneWidget);
+    expect(find.text('DIESE WOCHE'), findsOneWidget);
+    expect(find.text('Gesamtprobe'), findsOneWidget);
+    expect(find.text('Konzert'), findsOneWidget);
+    expect(find.text('Herbstprobe'), findsOneWidget);
+    expect(find.text('Vorbei'), findsNothing);
+    expect(_answers(RegExp('^24 zugesagt')), findsOneWidget);
+    expect(find.byTooltip('Neuer Termin'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+
+    await tester.tap(find.text('Vergangen · Ø 80 %'));
+    await _settle(tester);
+    expect(find.text('Vorbei'), findsOneWidget);
+    expect(find.text('80 % anwesend'), findsOneWidget);
+    expect(find.text('Gesamtprobe'), findsNothing);
+    expect(find.text('LETZTE 7 TAGE'), findsOneWidget);
+
+    await tester.tap(find.text('Vorbei'));
+    await _settle(tester);
+    expect(find.text('page termin 23'), findsOneWidget);
+  });
+
+  testWidgets('Dirigent: swiping the list switches Kommend and Vergangen', (tester) async {
+    _size(tester, const Size(393, 852));
+    await tester.pumpWidget(_app(Role.admin));
+    await _settle(tester);
+
+    // While dragging, the thumb of the segments follows the finger.
+    final gesture = await tester.startGesture(tester.getCenter(find.text('Konzert')));
+    for (var i = 0; i < 8; i++) {
+      await gesture.moveBy(const Offset(-20, 0));
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    final thumb = tester.widget<AnimatedPositioned>(
+      find.descendant(
+        of: find.byType(RdSegmented<RdEventsSegment>),
+        matching: find.byType(AnimatedPositioned),
+      ),
+    );
+    expect(thumb.left, greaterThan(0));
+    await gesture.up();
+    await _settle(tester);
+    expect(find.text('Vorbei'), findsOneWidget);
+    expect(find.text('Gesamtprobe'), findsNothing);
+
+    // Past the last segment it bounces back.
+    await tester.timedDrag(find.text('Vorbei'), const Offset(-200, 0), const Duration(milliseconds: 600));
+    await _settle(tester);
+    expect(find.text('Vorbei'), findsOneWidget);
+
+    // From the left screen edge it is the system back gesture.
+    final y = tester.getCenter(find.text('Vorbei')).dy;
+    await tester.timedDragFrom(Offset(8, y), const Offset(200, 0), const Duration(milliseconds: 600));
+    await _settle(tester);
+    expect(find.text('Vorbei'), findsOneWidget);
+
+    // A short slow drag snaps back.
+    await tester.timedDrag(find.text('Vorbei'), const Offset(50, 0), const Duration(milliseconds: 600));
+    await _settle(tester);
+    expect(find.text('Vorbei'), findsOneWidget);
+
+    await tester.timedDrag(find.text('Vorbei'), const Offset(200, 0), const Duration(milliseconds: 600));
+    await _settle(tester);
+    expect(find.text('Gesamtprobe'), findsOneWidget);
+    expect(find.text('Vorbei'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Dirigent: type chips and search filter the list', (tester) async {
+    _size(tester, const Size(393, 852));
+    await tester.pumpWidget(_app(
+      Role.admin,
+      types: [
+        TestFactories.createAttendanceType(id: 'p', name: 'Probe'),
+        TestFactories.createAttendanceType(id: 'k', name: 'Konzert'),
+      ],
+    ));
+    await _settle(tester);
+
+    await tester.tap(find.widgetWithText(RdChoiceChip, 'Probe'));
+    await _settle(tester);
+    expect(find.text('Gesamtprobe'), findsOneWidget);
+    expect(find.text('Herbstprobe'), findsOneWidget);
+    expect(find.text('Konzert'), findsOneWidget, reason: 'only the chip is left');
+
+    await tester.tap(find.byIcon(Icons.search));
+    await _settle(tester);
+    await tester.enterText(find.byType(TextField), 'herbst');
+    await _settle(tester);
+    expect(find.text('Gesamtprobe'), findsNothing);
+    expect(find.text('Herbstprobe'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Beobachter: no new Termin, cards do not open the Termin', (tester) async {
+    _size(tester, const Size(393, 852));
+    await tester.pumpWidget(_app(Role.viewer, canCreate: false));
+    await _settle(tester);
+
+    expect(find.byTooltip('Neuer Termin'), findsNothing);
+    await tester.tap(find.text('Gesamtprobe'));
+    await _settle(tester);
+    expect(find.text('page termin 21'), findsNothing);
+  });
+
+  testWidgets('Spieler: a notification for a Termin opens its own Termin page', (tester) async {
+    _size(tester, const Size(393, 852));
+    await tester.pumpWidget(_app(Role.player, pending: 12));
+    await _settle(tester);
+    expect(find.text('page own 12'), findsOneWidget);
+  });
+
+  testWidgets('Spieler: a notification for a duty without assignment opens "Offene Dienste"', (tester) async {
+    _size(tester, const Size(393, 852));
+    final duty = CrossTenantPersonAttendance(
+      id: '14',
+      attendanceId: 14,
+      status: AttendanceStatus.neutral,
+      date: _day(5),
+      typeInfo: 'Dienst 14',
+      tenantId: 7,
+      tenantName: 'SO',
+      tenantColor: 'primary',
+      attendanceType: TestFactories.createAttendanceType(id: 'd', name: 'Dienst').copyWith(dutyMode: true),
+    );
+    await tester.pumpWidget(_app(Role.player, pending: 14, extraUpcoming: [duty]));
+    await _settle(tester);
+    expect(find.text('Offene Dienste'), findsOneWidget, reason: 'taken over via duty_take only');
+    expect(find.text('Bin dabei'), findsOneWidget, reason: 'no answer sheet, only the list row of Probe 11');
+    expect(find.text('page own 14'), findsNothing);
+  });
+
+  testWidgets('Spieler: a notification waits until the Termine of the new tenant are loaded', (tester) async {
+    _size(tester, const Size(393, 852));
+    final generation = StateProvider<int>((ref) => 0);
+    final reload = Completer<SignoutData>();
+    await tester.pumpWidget(_app(
+      Role.player,
+      signout: (ref) => ref.watch(generation) == 0
+          ? Future.value(SignoutData(current: _own('11', 0, AttendanceStatus.neutral)))
+          : reload.future,
+    ));
+    await _settle(tester);
+    final container = ProviderScope.containerOf(tester.element(find.byType(RdEventsPage)));
+
+    // A push switched the tenant: the Termine reload, the old ones still show.
+    container.read(generation.notifier).state = 1;
+    container.read(pendingAttendanceIdProvider.notifier).state = 15;
+    await tester.pump();
+    await tester.pump();
+    expect(find.text('Dieser Termin wurde nicht gefunden.'), findsNothing);
+    expect(container.read(pendingAttendanceIdProvider), 15, reason: 'kept while loading');
+
+    reload.complete(SignoutData(current: _own('15', 1, AttendanceStatus.neutral)));
+    await _settle(tester);
+    expect(find.text('page own 15'), findsOneWidget);
+    expect(container.read(pendingAttendanceIdProvider), isNull);
+  });
+
+  testWidgets('Spieler: a failed reload keeps the notification until retry', (tester) async {
+    _size(tester, const Size(393, 852));
+    final generation = StateProvider<int>((ref) => 0);
+    var failed = false;
+    await tester.pumpWidget(_app(
+      Role.player,
+      signout: (ref) async {
+        if (ref.watch(generation) == 0) return SignoutData(current: _own('11', 0, AttendanceStatus.neutral));
+        if (!failed) {
+          failed = true;
+          throw Exception('offline');
+        }
+        return SignoutData(current: _own('15', 1, AttendanceStatus.neutral));
+      },
+    ));
+    await _settle(tester);
+    final container = ProviderScope.containerOf(tester.element(find.byType(RdEventsPage)));
+
+    container.read(generation.notifier).state = 1;
+    container.read(pendingAttendanceIdProvider.notifier).state = 15;
+    await _settle(tester);
+    expect(find.text('Dieser Termin wurde nicht gefunden.'), findsNothing);
+    expect(container.read(pendingAttendanceIdProvider), 15, reason: 'kept after the error');
+    expect(find.text('Erneut versuchen'), findsOneWidget);
+
+    await tester.tap(find.text('Erneut versuchen'));
+    await _settle(tester);
+    expect(find.text('page own 15'), findsOneWidget);
+    expect(container.read(pendingAttendanceIdProvider), isNull);
+  });
+
+  testWidgets('Spieler: a notification for an unknown Termin says so once', (tester) async {
+    _size(tester, const Size(393, 852));
+    await tester.pumpWidget(_app(Role.player, pending: 99));
+    await _settle(tester);
+    expect(find.text('Dieser Termin wurde nicht gefunden.'), findsOneWidget);
+    expect(find.text('Probe 11'), findsOneWidget, reason: 'the list stays');
+    final container = ProviderScope.containerOf(tester.element(find.byType(RdEventsPage)));
+    expect(container.read(pendingAttendanceIdProvider), isNull, reason: 'consumed once');
+  });
+
+  testWidgets('Helfer: own answer as "Du" chip in the leader list, opens a sheet (UX H1/H2)', (tester) async {
+    _size(tester, const Size(393, 852));
+    await tester.pumpWidget(_app(
+      Role.helper,
+      signout: (ref) async => SignoutData(
+        current: _own('21', 0, AttendanceStatus.neutral),
+        upcoming: [_own('22', 2, AttendanceStatus.present)],
+      ),
+    ));
+    await _settle(tester);
+
+    // Leader list with answers, plus one chip per own Termin.
+    expect(_answers(RegExp('^24 zugesagt')), findsOneWidget);
+    expect(find.text('Du'), findsNWidgets(2));
+    expect(_semantics('Deine Antwort: Zugesagt'), findsOneWidget);
+    expect(_semantics('Deine Antwort: Offen'), findsOneWidget);
+    // Helfer are members: they can report an absence here too.
+    expect(find.text('Abwesend …'), findsOneWidget);
+
+    await tester.tap(_semantics('Deine Antwort: Offen'));
+    await _settle(tester);
+    expect(find.text('DEINE ZUSAGE'), findsOneWidget);
+    expect(find.text('Bist du dabei?'), findsOneWidget);
+    expect(find.text('page termin 21'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Helfer: the "Du" chip works with a screen reader, the sheet scrolls on a small screen', (tester) async {
+    _size(tester, const Size(568, 320)); // phone in landscape
+    final semantics = tester.ensureSemantics();
+    var loads = 0;
+    await tester.pumpWidget(_app(
+      Role.helper,
+      signout: (ref) async {
+        loads++;
+        return SignoutData(current: _own('21', 0, AttendanceStatus.neutral));
+      },
+    ));
+    await _settle(tester);
+    expect(
+      tester.getSemantics(_semantics('Deine Antwort: Offen')),
+      matchesSemantics(label: 'Deine Antwort: Offen', isButton: true, hasTapAction: true),
+    );
+
+    // A recording or realtime change reloads the own answers.
+    final before = loads;
+    final container = ProviderScope.containerOf(tester.element(find.byType(RdEventsPage)));
+    container.read(attendanceRefetchCounter.notifier).state++;
+    await _settle(tester);
+    expect(loads, greaterThan(before));
+
+    // Opened through the screen reader action, with the keyboard up.
+    await tester.ensureVisible(_semantics('Deine Antwort: Offen'));
+    await tester.pump();
+    tester.view.viewInsets = const FakeViewPadding(bottom: 120);
+    tester.semantics.tap(find.semantics.byLabel('Deine Antwort: Offen'));
+    await _settle(tester);
+    expect(find.text('Bist du dabei?'), findsOneWidget);
+    // The last control of the sheet scrolls into reach.
+    final more = find.text('Mehr zum Termin');
+    await tester.scrollUntilVisible(
+      more,
+      40,
+      scrollable: find.descendant(of: find.byType(BottomSheet), matching: find.byType(Scrollable)).first,
+    );
+    expect(tester.getRect(more).bottom, lessThanOrEqualTo(320 - 120));
+    expect(tester.takeException(), isNull);
+    semantics.dispose();
+  });
+
+  testWidgets('Dirigent without own Termine sees no "Du" chips', (tester) async {
+    _size(tester, const Size(393, 852));
+    await tester.pumpWidget(_app(Role.admin));
+    await _settle(tester);
+    expect(find.text('Du'), findsNothing);
+  });
+
+  testWidgets('Spieler: answer open Termine right in the list', (tester) async {
+    _size(tester, const Size(393, 852));
+    await tester.pumpWidget(_app(Role.player));
+    await _settle(tester);
+
+    expect(find.text('Vergangen · 92 % da'), findsOneWidget);
+    expect(find.text('Abwesend …'), findsOneWidget);
+    expect(find.text('1 Termin wartet auf deine Antwort'), findsOneWidget);
+    expect(find.text('Probe 11'), findsOneWidget);
+    expect(find.text('Bin dabei'), findsOneWidget);
+    expect(find.text('Kann nicht'), findsOneWidget);
+    expect(find.text('Probe 12'), findsOneWidget);
+    expect(find.text('Zugesagt'), findsOneWidget);
+    expect(find.text('Probe 13'), findsOneWidget);
+    expect(find.byTooltip('Neuer Termin'), findsNothing);
+
+    await tester.tap(find.text('1 Termin wartet auf deine Antwort'));
+    await _settle(tester);
+    expect(find.text('Probe 11'), findsOneWidget);
+    expect(find.text('Probe 12'), findsNothing);
+    expect(find.text('Wieder alle Termine zeigen'), findsOneWidget);
+
+    await tester.tap(find.text('Kann nicht'));
+    await _settle(tester);
+    expect(find.text('Ich kann nicht'), findsOneWidget);
+    expect(find.text('Anderer Grund'), findsOneWidget);
+    expect(find.text('Deinen Grund sieht nur die Leitung.'), findsOneWidget);
+    await tester.tapAt(const Offset(10, 10)); // close the sheet
+    await _settle(tester);
+
+    await tester.tap(find.text('Vergangen · 92 % da'));
+    await _settle(tester);
+    expect(find.text('Probe 10'), findsOneWidget);
+    expect(find.text('Probe 11'), findsNothing);
+    expect(tester.takeException(), isNull);
+
+    await tester.tap(find.text('Probe 10'));
+    await _settle(tester);
+    expect(find.text('page own 10'), findsOneWidget);
+  });
+
+  testWidgets('Spieler and Dirigent fit on a 320 px phone', (tester) async {
+    _size(tester, const Size(320, 640));
+    for (final role in [Role.player, Role.admin]) {
+      await tester.pumpWidget(_app(role));
+      await _settle(tester);
+      expect(tester.takeException(), isNull, reason: role.name);
+    }
+  });
+}

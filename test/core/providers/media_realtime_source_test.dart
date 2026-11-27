@@ -6,9 +6,9 @@ import '../../helpers/source_reader.dart';
 void main() {
   final realtime = readDartLibrary('lib/core/providers/realtime_providers.dart');
   final members =
-      readDartLibrary('lib/features/people/presentation/pages/rd_members_page.dart');
+      readDartLibrary('lib/features/people/presentation/pages/members_page.dart');
   final pending =
-      readDartLibrary('lib/features/people/presentation/pages/rd_pending_page.dart');
+      readDartLibrary('lib/features/people/presentation/pages/pending_page.dart');
 
   group('Multi-Tenant Security: realtime providers', () {
     test('every postgres channel filters by tenantId', () {
@@ -41,9 +41,9 @@ void main() {
   test('haptics on destructive confirmations and attendance recording', () {
     final dialog = readDartLibrary('lib/core/utils/dialog_helper.dart');
     final event =
-        readDartLibrary('lib/features/attendance/presentation/pages/rd_event_page.dart');
+        readDartLibrary('lib/features/attendance/presentation/pages/event_page.dart');
     final eventEdit =
-        readDartLibrary('lib/features/attendance/presentation/pages/rd_event_edit_page.dart');
+        readDartLibrary('lib/features/attendance/presentation/pages/event_edit_page.dart');
     expect(dialog, contains('if (isDestructive) HapticHelper.medium();'));
     expect(event, contains('HapticHelper.light();'));
     expect(eventEdit, contains('HapticHelper.medium();'));

@@ -98,13 +98,13 @@ void main() {
       final expectations = {
         'lib/core/router/app_router.dart': ['TrackingEvent.login'],
         'lib/core/providers/signout_providers.dart': ['TrackingEvent.attendanceCheckIn', 'TrackingEvent.attendanceCheckOut'],
-        'lib/features/today/presentation/widgets/rd_parent_today.dart': ['TrackingEvent.parentSignIn', 'TrackingEvent.parentSignOut'],
+        'lib/features/today/presentation/widgets/parent_today.dart': ['TrackingEvent.parentSignIn', 'TrackingEvent.parentSignOut'],
         'lib/features/songs/presentation/pages/song_detail_page.dart': ['TrackingEvent.songShared'],
         'lib/features/export/presentation/export_logic.dart': ['TrackingEvent.reportExported'],
         'lib/core/providers/player_providers.dart': ['TrackingEvent.playerAdded', 'TrackingEvent.playerUpdated', 'TrackingEvent.playerRemoved'],
         'lib/core/providers/teacher_providers.dart': ['TrackingEvent.teacherAdded', 'TrackingEvent.teacherUpdated'],
         'lib/core/providers/group_providers.dart': ['TrackingEvent.instrumentAdded', 'TrackingEvent.instrumentUpdated', 'TrackingEvent.instrumentRemoved'],
-        'lib/features/profile/presentation/pages/rd_notifications_page.dart': ['TrackingEvent.notificationSettingsChanged'],
+        'lib/features/profile/presentation/pages/notifications_page.dart': ['TrackingEvent.notificationSettingsChanged'],
         'lib/features/settings/presentation/pages/files_page.dart': ['TrackingEvent.fileUploaded'],
       };
       expectations.forEach((path, events) {

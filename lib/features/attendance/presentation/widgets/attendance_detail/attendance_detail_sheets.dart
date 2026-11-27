@@ -3,13 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../../core/config/supabase_config.dart';
-import '../../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../../core/theme/design_theme.dart';
 import '../../../../../data/models/person/person.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../core/utils/error_message.dart';
 import '../../../../../shared/widgets/adaptive/adaptive.dart';
-import '../../../../planning/presentation/widgets/rd_plan_widgets.dart';
-import '../../../../../shared/widgets/redesign/rd_widgets.dart';
+import '../../../../planning/presentation/widgets/plan_widgets.dart';
+import '../../../../../shared/widgets/components/components.dart';
 
 /// Result of [showPersonNoteSheet]: `null` = cancelled, `''` = delete note,
 /// anything else = the new note.

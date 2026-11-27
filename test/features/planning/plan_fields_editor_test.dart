@@ -1,5 +1,5 @@
-import 'package:attendix/core/theme/redesign/rd_palette.dart';
-import 'package:attendix/core/theme/redesign/rd_theme.dart';
+import 'package:attendix/core/theme/app_palette.dart';
+import 'package:attendix/core/theme/design_theme.dart';
 import 'package:attendix/core/utils/plan_utils.dart';
 import 'package:attendix/data/models/plan/plan.dart';
 import 'package:attendix/features/planning/presentation/widgets/plan_fields_editor.dart';

@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/providers/auto_message_providers.dart';
-import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../core/theme/design_theme.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/auto_message/auto_message.dart';
 import '../../../../data/repositories/base_repository.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../attendance/presentation/widgets/event/rd_form_widgets.dart';
-import '../../../../shared/widgets/redesign/rd_widgets.dart';
-import '../../../today/presentation/widgets/rd_today_common.dart';
+import '../../../attendance/presentation/widgets/event/form_widgets.dart';
+import '../../../../shared/widgets/components/components.dart';
+import '../../../today/presentation/widgets/today_common.dart';
 import '../auto_message_texts.dart';
 
 /// Opens the answer dialog for a Termin message. Returns the new state

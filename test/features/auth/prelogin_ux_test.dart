@@ -3,8 +3,8 @@ import 'dart:async';
 
 import 'package:attendix/core/providers/legal_providers.dart';
 import 'package:attendix/core/services/teams/teams_service.dart';
-import 'package:attendix/core/theme/redesign/rd_palette.dart';
-import 'package:attendix/core/theme/redesign/rd_theme.dart';
+import 'package:attendix/core/theme/app_palette.dart';
+import 'package:attendix/core/theme/design_theme.dart';
 import 'package:attendix/features/auth/presentation/pages/login_page.dart';
 import 'package:attendix/features/auth/presentation/pages/register_page.dart';
 import 'package:attendix/features/legal/presentation/widgets/legal_content_view.dart';

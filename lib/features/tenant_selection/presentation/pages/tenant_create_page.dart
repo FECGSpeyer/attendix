@@ -18,11 +18,11 @@ import '../../../../core/utils/error_message.dart';
 import '../../../../data/repositories/base_repository.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 
-import '../../../../core/router/redesign_routes.dart';
-import '../../../../core/theme/redesign/rd_theme.dart';
-import '../../../attendance/presentation/widgets/event/rd_form_widgets.dart';
-import '../../../../shared/widgets/redesign/rd_widgets.dart';
-import '../../../settings/presentation/widgets/manage/rd_settings_sheets.dart'
+import '../../../../core/router/app_routes.dart';
+import '../../../../core/theme/design_theme.dart';
+import '../../../attendance/presentation/widgets/event/form_widgets.dart';
+import '../../../../shared/widgets/components/components.dart';
+import '../../../settings/presentation/widgets/manage/settings_sheets.dart'
     show showRdTextSheet;
 import '../../../instruments/data/catalog_import.dart';
 import '../../../instruments/data/catalog_selection.dart';

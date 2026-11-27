@@ -7,12 +7,12 @@ import 'package:attendix/core/providers/parent_providers.dart';
 import 'package:attendix/core/providers/shift_providers.dart';
 import 'package:attendix/core/providers/teacher_providers.dart';
 import 'package:attendix/core/providers/tenant_providers.dart';
-import 'package:attendix/core/theme/redesign/rd_palette.dart';
-import 'package:attendix/core/theme/redesign/rd_theme.dart';
+import 'package:attendix/core/theme/app_palette.dart';
+import 'package:attendix/core/theme/design_theme.dart';
 import 'package:attendix/data/models/tenant/tenant.dart';
 import 'package:attendix/features/people/presentation/widgets/person_image_picker.dart';
-import 'package:attendix/features/people/presentation/pages/rd_person_create_page.dart';
-import 'package:attendix/features/people/presentation/widgets/members/rd_person_form.dart';
+import 'package:attendix/features/people/presentation/pages/person_create_page.dart';
+import 'package:attendix/features/people/presentation/widgets/members/person_form.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -131,7 +131,7 @@ void main() {
 
     test('create page passes the picked bytes, header shares the upload', () {
       final page = _read(
-          'lib/features/people/presentation/pages/rd_person_create_page.dart');
+          'lib/features/people/presentation/pages/person_create_page.dart');
       expect(page, contains('imageBytes: _pickedImage'));
       expect(page, contains('pickPersonImage(context, ref)'));
       final header = _read(

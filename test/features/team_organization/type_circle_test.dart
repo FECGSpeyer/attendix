@@ -1,5 +1,5 @@
 import 'package:attendix/core/utils/type_circle.dart';
-import 'package:attendix/features/attendance/data/rd_create_logic.dart';
+import 'package:attendix/features/attendance/data/create_logic.dart';
 import 'package:attendix/features/team_organization/presentation/widgets/quick_create_attendance.dart';
 import 'package:flutter_test/flutter_test.dart';
 

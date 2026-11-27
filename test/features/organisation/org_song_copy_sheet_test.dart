@@ -1,6 +1,6 @@
 import 'package:attendix/core/providers/org_song_providers.dart';
-import 'package:attendix/core/theme/redesign/rd_palette.dart';
-import 'package:attendix/core/theme/redesign/rd_theme.dart';
+import 'package:attendix/core/theme/app_palette.dart';
+import 'package:attendix/core/theme/design_theme.dart';
 import 'package:attendix/data/models/instrument/instrument.dart';
 import 'package:attendix/data/models/song/org_song.dart';
 import 'package:attendix/data/models/song/song.dart';

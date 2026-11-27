@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:attendix/core/providers/tenant_providers.dart';
-import 'package:attendix/core/router/redesign_routes.dart';
+import 'package:attendix/core/router/app_routes.dart';
 import 'package:attendix/data/models/tenant/tenant.dart';
-import 'package:attendix/shared/widgets/redesign/rd_widgets.dart';
+import 'package:attendix/shared/widgets/components/components.dart';
 import 'package:attendix/features/tenant_selection/presentation/pages/tenant_create_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:attendix/core/services/native/native_platform.dart';
 import 'package:attendix/core/theme/app_theme.dart';
-import 'package:attendix/core/theme/redesign/rd_palette.dart';
-import 'package:attendix/core/theme/redesign/rd_theme.dart';
+import 'package:attendix/core/theme/app_palette.dart';
+import 'package:attendix/core/theme/design_theme.dart';
 import 'package:attendix/shared/widgets/layout/ionic_ios.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

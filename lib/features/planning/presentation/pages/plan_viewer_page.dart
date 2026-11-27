@@ -9,8 +9,8 @@ import '../../../../data/models/plan/plan.dart';
 import '../widgets/plan_export_actions.dart';
 import '../widgets/plan_view_list.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../core/theme/redesign/rd_theme.dart';
-import '../../../../shared/widgets/redesign/rd_widgets.dart';
+import '../../../../core/theme/design_theme.dart';
+import '../../../../shared/widgets/components/components.dart';
 import '../../../../shared/widgets/common/escape_to_close.dart';
 
 /// Read-only Ablaufplan with chips for several plans, live mode and export

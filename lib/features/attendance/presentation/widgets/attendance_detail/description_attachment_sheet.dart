@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../core/providers/attendance_detail_providers.dart';
 import '../../../../../core/providers/attendance_providers.dart';
-import '../../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../../core/theme/design_theme.dart';
 import '../../../../../core/utils/quill_utils.dart';
 import '../../../../../core/utils/toast_helper.dart';
 import '../../../../../data/models/attendance/attendance.dart';
@@ -14,7 +14,7 @@ import '../../../../../l10n/l10n.dart';
 import '../../../../../core/utils/error_message.dart';
 import '../../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../../core/services/native/native_file_service.dart';
-import '../../../../../shared/widgets/redesign/rd_widgets.dart';
+import '../../../../../shared/widgets/components/components.dart';
 
 /// "Beschreibung & Anhang" editor of a Termin (Ionic descriptionModal):
 /// rich text description (stored as HTML like the Ionic quill editor) and

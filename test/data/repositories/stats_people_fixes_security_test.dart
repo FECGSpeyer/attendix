@@ -123,7 +123,7 @@ void main() {
     });
 
     test('history uses the songId DB column', () {
-      final source = read('lib/features/songs/presentation/pages/rd_work_history_page.dart');
+      final source = read('lib/features/songs/presentation/pages/work_history_page.dart');
       expect(source, contains("'songId': songId"));
       expect(source, isNot(contains("'song_id': songId")));
     });

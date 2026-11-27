@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../core/theme/design_theme.dart';
 import '../../../../shared/widgets/adaptive/ion_datetime_button.dart';
 
 /// Building blocks for inset grouped forms of the auth / registration /

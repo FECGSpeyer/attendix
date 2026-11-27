@@ -5,7 +5,7 @@ import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/services.dart';
 
 import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/redesign/rd_theme.dart';
+import '../../../core/theme/design_theme.dart';
 import '../../../l10n/l10n.dart';
 import '../adaptive/adaptive.dart';
 import 'ionic_ios.dart'

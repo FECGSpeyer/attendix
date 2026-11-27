@@ -5,8 +5,8 @@ import '../../../../core/providers/song_providers.dart';
 import '../../../../core/utils/plan_utils.dart';
 import '../../../../data/models/plan/plan.dart';
 import '../../../../data/models/song/song.dart';
-import 'rd_plan_widgets.dart';
-import '../../../songs/data/rd_collections_logic.dart';
+import 'plan_widgets.dart';
+import '../../../songs/data/collections_logic.dart';
 
 /// The Werke planned for [att] ([own]: the Termin of the open Ablauf).
 typedef PlanEventWorks = ({PlanAttendance att, bool own, List<PlanEventWork> works});

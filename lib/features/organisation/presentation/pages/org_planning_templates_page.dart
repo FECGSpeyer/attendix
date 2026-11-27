@@ -14,10 +14,10 @@ import '../../../planning/presentation/widgets/plan_field_dialogs.dart';
 import '../../../planning/presentation/widgets/plan_fields_editor.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
-import '../../../../core/theme/redesign/rd_theme.dart';
-import '../../../planning/presentation/widgets/rd_plan_widgets.dart';
-import '../../../settings/presentation/widgets/manage/rd_manage_list.dart';
-import '../../../../shared/widgets/redesign/rd_widgets.dart';
+import '../../../../core/theme/design_theme.dart';
+import '../../../planning/presentation/widgets/plan_widgets.dart';
+import '../../../settings/presentation/widgets/manage/manage_list.dart';
+import '../../../../shared/widgets/components/components.dart';
 
 part 'org_planning_templates_view.dart';
 

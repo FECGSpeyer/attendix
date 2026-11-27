@@ -95,10 +95,10 @@ flutter test
 
 ### Projektstruktur
 
-- `lib/core/` – Konfiguration, Provider, Router, Services, Theme & gemeinsame Redesign-Helfer (`core/redesign/`)
+- `lib/core/` – Konfiguration, Domänen-Logik (`core/logic/`), Provider, Router, Services, Theme & Utils
 - `lib/data/` – Freezed-Models und Mandanten-Repositories (`data/repositories/`)
 - `lib/features/` – Feature-First-Domänen (`today`, `attendance`, `people`, `songs`, `settings`, `planning`, `team_organization`, `assistant`, `profile`, `statistics`, …)
-- `lib/shared/` – App-Shell (`shared/shell/`) und Design-System-Bausteine (`shared/widgets/redesign/`, `shared/widgets/adaptive/`)
+- `lib/shared/` – App-Shell (`shared/shell/`) und Design-System-Bausteine (`shared/widgets/components/`, `shared/widgets/adaptive/`, `shared/widgets/layout/`)
 - `test/`, `patrol_test/` – Unit-, Widget-, Security- und E2E-Tests
 - `supabase/`, `functions/`, `deploy/` – Edge Functions, SQL, Cloudflare Function und VPS-Setup
 - `tool/`, `scripts/` – Entwickler-, Release- und Store-/Xcode-Cloud-Skripte

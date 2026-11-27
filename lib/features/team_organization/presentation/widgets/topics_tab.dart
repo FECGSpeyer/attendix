@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../core/router/redesign_routes.dart';
+import '../../../../core/router/app_routes.dart';
 import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/providers/plan_providers.dart';
 import '../../../../core/theme/app_colors.dart';

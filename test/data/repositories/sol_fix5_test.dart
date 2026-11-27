@@ -5,7 +5,7 @@ import '../../helpers/source_reader.dart';
 void main() {
   group('Multi-Tenant Security: Sol round 5', () {
     test('person detail role sync uses the tenant captured before saving', () {
-      final src = readDartLibrary('lib/features/people/presentation/pages/rd_person_edit_page.dart');
+      final src = readDartLibrary('lib/features/people/presentation/pages/person_edit_page.dart');
       final start = src.indexOf('Future<void> _syncRoles(');
       expect(start, isNot(-1));
       final end = src.indexOf('await _loadUserRole(after);', start);

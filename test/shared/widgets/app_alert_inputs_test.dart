@@ -1,6 +1,6 @@
 import 'package:attendix/core/theme/app_theme.dart';
-import 'package:attendix/core/theme/redesign/rd_palette.dart';
-import 'package:attendix/core/theme/redesign/rd_theme.dart';
+import 'package:attendix/core/theme/app_palette.dart';
+import 'package:attendix/core/theme/design_theme.dart';
 import 'package:attendix/l10n/generated/app_localizations.dart';
 import 'package:attendix/shared/widgets/adaptive/adaptive.dart';
 import 'package:flutter/material.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 
-import '../../../core/theme/redesign/rd_theme.dart';
+import '../../../core/theme/design_theme.dart';
 import '../../../l10n/l10n.dart';
 
 /// Groups header actions in an [AppBar].

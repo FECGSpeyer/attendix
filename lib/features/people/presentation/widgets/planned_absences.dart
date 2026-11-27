@@ -10,7 +10,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/player_absence/player_absence.dart';
-import '../../../attendance/presentation/widgets/event/rd_absence_sheet.dart' show showRdAbsenceInputSheet;
+import '../../../attendance/presentation/widgets/event/absence_sheet.dart' show showRdAbsenceInputSheet;
 import '../../../../l10n/l10n.dart';
 import 'ion/ion_widgets.dart';
 

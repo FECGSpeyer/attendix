@@ -16,12 +16,12 @@ import '../widgets/shift_preview_sheet.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
-import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../core/theme/design_theme.dart';
 import '../../../planning/presentation/widgets/plan_field_dialogs.dart' show PlanSheetAction;
-import '../../../planning/presentation/widgets/rd_plan_widgets.dart';
-import '../../../attendance/presentation/widgets/event/rd_form_widgets.dart' show RdFieldRow, rdInputDecoration;
-import '../../../../shared/widgets/redesign/rd_widgets.dart';
-import '../../../today/presentation/widgets/rd_today_common.dart' show RdInfoCard;
+import '../../../planning/presentation/widgets/plan_widgets.dart';
+import '../../../attendance/presentation/widgets/event/form_widgets.dart' show RdFieldRow, rdInputDecoration;
+import '../../../../shared/widgets/components/components.dart';
+import '../../../today/presentation/widgets/today_common.dart' show RdInfoCard;
 
 part 'shift_detail_view.dart';
 

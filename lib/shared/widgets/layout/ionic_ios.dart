@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
 
-import '../../../core/theme/redesign/rd_theme.dart';
+import '../../../core/theme/design_theme.dart';
 import '../adaptive/app_toolbar.dart'
     show kIonModalToolbarHeight, kIonTitleFontSize;
 

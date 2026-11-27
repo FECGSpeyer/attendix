@@ -96,17 +96,17 @@ void main() {
     });
 
     test('event, export and bulk edit use organisation fields (I2/I3)', () {
-      final event = read('lib/features/attendance/presentation/pages/rd_event_page.dart');
+      final event = read('lib/features/attendance/presentation/pages/event_page.dart');
       expect(event, contains('hydrateSharedPersonFieldValues('));
       final export = read('lib/features/export/presentation/export_logic.dart');
       expect(export, contains('hydrateSharedPersonFieldValues('));
-      final bulk = read('lib/features/people/presentation/widgets/members/rd_member_bulk.dart');
+      final bulk = read('lib/features/people/presentation/widgets/members/member_bulk.dart');
       expect(bulk, contains('updateSharedFieldValues('));
     });
   });
 
   test('general settings writes no withExcuses / critical_rules enabled (D6)', () {
-    final src = read('lib/features/settings/presentation/pages/rd_general_settings_page.dart');
+    final src = read('lib/features/settings/presentation/pages/general_settings_page.dart');
     expect(src, isNot(contains("'withExcuses'")));
     final repo = read('lib/data/repositories/tenant_settings_repository.dart');
     expect(repo, isNot(contains("'withExcuses'")));

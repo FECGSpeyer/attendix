@@ -1,7 +1,7 @@
 import 'package:attendix/core/providers/player_providers.dart';
 import 'package:attendix/core/theme/app_theme.dart';
-import 'package:attendix/core/theme/redesign/rd_theme.dart';
-import 'package:attendix/core/theme/redesign/rd_palette.dart';
+import 'package:attendix/core/theme/design_theme.dart';
+import 'package:attendix/core/theme/app_palette.dart';
 import 'package:attendix/features/team_organization/presentation/widgets/task_form_sheet.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';

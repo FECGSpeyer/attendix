@@ -36,10 +36,10 @@ import '../../../../core/utils/error_message.dart';
 import '../../../../core/services/error_reporter.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 
-import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../core/theme/design_theme.dart';
 import '../../../../data/models/organisation/organisation.dart' show Organisation;
-import '../../../../shared/widgets/redesign/rd_widgets.dart';
-import '../widgets/rd_plan_widgets.dart';
+import '../../../../shared/widgets/components/components.dart';
+import '../widgets/plan_widgets.dart';
 
 export '../../data/public_planning_templates.dart';
 

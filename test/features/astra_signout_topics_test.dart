@@ -117,7 +117,7 @@ void main() {
     });
 
     test('event edit reuses the shared date change', () {
-      final src = readDartLibrary('lib/features/attendance/presentation/pages/rd_event_edit_page.dart');
+      final src = readDartLibrary('lib/features/attendance/presentation/pages/event_edit_page.dart');
       expect(src, contains('promptAttendanceDateChange('));
       expect(src, isNot(contains('int calendarDayDifference(')));
     });

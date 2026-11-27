@@ -51,7 +51,7 @@ void main() {
       final providers = readDartLibrary('lib/features/people/data/providers/parents_providers.dart');
       expect(providers, contains("extraPlans: parseExtraPlans(attendance?['extra_plans'])"));
       expect(providers, contains('extraPlans: first.extraPlans'));
-      final card = readDartLibrary('lib/features/attendance/presentation/widgets/event/rd_parent_event_card.dart');
+      final card = readDartLibrary('lib/features/attendance/presentation/widgets/event/parent_event_card.dart');
       expect(card, contains('extraPlans: group.extraPlans'));
       expect(card, contains('durationDays: group.durationDays'));
     });
@@ -93,7 +93,7 @@ void main() {
     });
 
     test('parent today widget uses signInAll and checks result before toast', () {
-      final page = readDartLibrary('lib/features/today/presentation/widgets/rd_parent_today.dart');
+      final page = readDartLibrary('lib/features/today/presentation/widgets/parent_today.dart');
       expect(page, contains('.signInAll(entries)'));
       expect(page, isNot(contains('notifier.signIn(')));
     });

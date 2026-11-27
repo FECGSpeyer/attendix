@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../../../core/theme/redesign/rd_palette.dart';
-import '../../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../../core/theme/app_palette.dart';
+import '../../../../../core/theme/design_theme.dart';
 
 /// Expandable section heading with a chevron whose open content sits in a card.
 class IonAccordion extends StatelessWidget {

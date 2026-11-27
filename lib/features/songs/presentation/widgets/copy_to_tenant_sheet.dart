@@ -11,9 +11,9 @@ import '../../../../data/models/tenant/tenant.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../core/theme/redesign/rd_theme.dart';
-import '../../../settings/presentation/widgets/manage/rd_settings_sheets.dart';
-import '../../../../shared/widgets/redesign/rd_widgets.dart';
+import '../../../../core/theme/design_theme.dart';
+import '../../../settings/presentation/widgets/manage/settings_sheets.dart';
+import '../../../../shared/widgets/components/components.dart';
 
 /// `instrument_ids` of a copied song (Ionic copySongToTenant): the mapped
 /// target instrument ids of the copied files, without null and the reserved

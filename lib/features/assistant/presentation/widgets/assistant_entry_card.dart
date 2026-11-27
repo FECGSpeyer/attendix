@@ -4,8 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/providers/assistant_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
-import '../../../../core/router/redesign_routes.dart';
-import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../core/router/app_routes.dart';
+import '../../../../core/theme/design_theme.dart';
 import '../../../../l10n/l10n.dart';
 
 /// Route of the chat assistant.

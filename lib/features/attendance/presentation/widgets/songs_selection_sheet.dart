@@ -5,17 +5,17 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../../../core/providers/conductor_providers.dart';
 import '../../../../core/providers/song_providers.dart';
-import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../core/theme/design_theme.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
-import '../../../planning/presentation/widgets/rd_plan_widgets.dart';
-import '../../../songs/data/rd_collections_logic.dart';
-import 'event/rd_form_widgets.dart';
-import '../../../../shared/widgets/redesign/rd_widgets.dart';
-import '../../../today/presentation/widgets/rd_today_common.dart';
+import '../../../planning/presentation/widgets/plan_widgets.dart';
+import '../../../songs/data/collections_logic.dart';
+import 'event/form_widgets.dart';
+import '../../../../shared/widgets/components/components.dart';
+import '../../../today/presentation/widgets/today_common.dart';
 
 part 'songs_selection_sheet.freezed.dart';
 part 'songs_selection_sheet.g.dart';

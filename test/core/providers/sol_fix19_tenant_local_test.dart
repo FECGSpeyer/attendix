@@ -143,7 +143,7 @@ void main() {
     for (final path in [
       'lib/core/providers/role_permission_providers.dart',
       'lib/features/settings/data/extra_fields_helpers.dart',
-      'lib/features/settings/presentation/pages/rd_general_settings_page.dart',
+      'lib/features/settings/presentation/pages/general_settings_page.dart',
     ]) {
       expect(File(path).readAsStringSync(), contains('updateTenantLocalIfCurrent('),
           reason: path);

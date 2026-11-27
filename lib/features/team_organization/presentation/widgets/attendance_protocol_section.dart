@@ -11,8 +11,8 @@ import '../../../../l10n/l10n.dart';
 import '../../team_org_utils.dart';
 import 'agenda_picker_sheet.dart';
 import '../../../../core/services/error_reporter.dart';
-import '../../../../core/theme/redesign/rd_theme.dart';
-import '../../../../shared/widgets/redesign/rd_widgets.dart';
+import '../../../../core/theme/design_theme.dart';
+import '../../../../shared/widgets/components/components.dart';
 
 /// Status line of the protocol card (Ionic attendance.page "Protokoll"):
 /// "Noch nicht begonnen" / "Freigegeben am …[ · geändert am …]" /

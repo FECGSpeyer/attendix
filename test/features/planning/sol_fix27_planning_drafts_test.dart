@@ -23,7 +23,7 @@ import 'package:attendix/data/models/plan/plan.dart';
 import 'package:attendix/data/repositories/plan_repository.dart';
 import 'package:attendix/features/planning/data/planning_write_sync.dart';
 import 'package:attendix/features/planning/presentation/pages/planning_page.dart';
-import 'package:attendix/shared/shell/rd_shell.dart';
+import 'package:attendix/shared/shell/app_shell.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

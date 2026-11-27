@@ -158,7 +158,7 @@ void main() {
   group('tenants', () {
     test('general settings writes showMembersList (camelCase)', () {
       final src = _read(
-          'lib/features/settings/presentation/pages/rd_general_settings_page.dart');
+          'lib/features/settings/presentation/pages/general_settings_page.dart');
       expect(src, isNot(contains("'show_members_list'")));
       expect(src, contains("'showMembersList': v"));
     });
@@ -283,7 +283,7 @@ void main() {
           const AttendanceType(id: 't', name: 'P'), DateTime(2024));
       expect(row.containsKey('created_by'), isFalse);
       for (final path in const [
-        'lib/features/attendance/presentation/pages/rd_event_create_page.dart',
+        'lib/features/attendance/presentation/pages/event_create_page.dart',
         'lib/features/attendance/presentation/attendance_create_writes.dart',
       ]) {
         expect(readDartLibrary(path), isNot(contains("'created_by':")));
