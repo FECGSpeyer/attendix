@@ -14831,10 +14831,6 @@
   "@rdOrgThisGroup": {
     "description": "rdOrg.thisGroup"
   },
-  "rdOrgTodayAllPlans": "Alle Org-Pläne",
-  "@rdOrgTodayAllPlans": {
-    "description": "rdOrg.todayAllPlans"
-  },
   "rdOrgTodayEyebrow": "Heute in der Organisation",
   "@rdOrgTodayEyebrow": {
     "description": "rdOrg.todayEyebrow"

@@ -12067,9 +12067,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdOrgThisGroup => 'Diese Gruppe';
 
   @override
-  String get rdOrgTodayAllPlans => 'Alle Org-Pläne';
-
-  @override
   String get rdOrgTodayEyebrow => 'Heute in der Organisation';
 
   @override

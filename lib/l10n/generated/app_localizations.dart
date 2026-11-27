@@ -19231,12 +19231,6 @@ abstract class AppLocalizations {
   /// **'Diese Gruppe'**
   String get rdOrgThisGroup;
 
-  /// rdOrg.todayAllPlans
-  ///
-  /// In de, this message translates to:
-  /// **'Alle Org-Pläne'**
-  String get rdOrgTodayAllPlans;
-
   /// rdOrg.todayEyebrow
   ///
   /// In de, this message translates to:

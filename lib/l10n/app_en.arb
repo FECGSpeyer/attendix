@@ -3182,7 +3182,6 @@
   "rdOrgStep2Title": "{kind, select, orchestra{Instruments} choir{Voices} other{Subgroups}} in the target",
   "rdOrgTakeOver": "Take over",
   "rdOrgThisGroup": "This group",
-  "rdOrgTodayAllPlans": "All org plans",
   "rdOrgTodayEyebrow": "Today in the organisation",
   "rdOrgTodayLiveEyebrow": "Live now · ORG plan",
   "rdOrgTransfer": "Hand over ({count})",

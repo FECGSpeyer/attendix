@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/providers/plan_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
-import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/event_list_utils.dart';
 import '../../../../core/utils/plan_utils.dart';
@@ -162,15 +161,6 @@ class RdTodayOrgPlansCard extends ConsumerWidget {
                 orgName: org.name,
               ),
             ],
-            const SizedBox(height: 8),
-            Align(
-              alignment: AlignmentDirectional.centerStart,
-              child: RdTextLink(
-                key: const Key('rd-today-all-org-plans'),
-                label: l10n.rdOrgTodayAllPlans,
-                onTap: () => context.go('${RedesignRoutes.events}?tab=org'),
-              ),
-            ),
           ],
         ),
       ),
