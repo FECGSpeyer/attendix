@@ -1,7 +1,7 @@
 part of 'app_router.dart';
 
-/// Classic and shared feature routes inside the main [ShellRoute].
-List<RouteBase> _classicShellRoutes(Ref ref) => [
+/// Shared feature routes inside the main [ShellRoute].
+List<RouteBase> _featureShellRoutes(Ref ref) => [
   // Members (for players/helpers when showMembersList is enabled)
   GoRoute(
     path: '/members',

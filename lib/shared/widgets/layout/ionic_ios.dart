@@ -403,33 +403,64 @@ class IonSheetHeader extends StatelessWidget {
               ),
             ],
           );
+    final hasAnyAction = start.isNotEmpty || end.isNotEmpty;
+    Widget buildSlot(
+      List<Widget> actions,
+      Alignment alignment,
+      double maxWidth,
+    ) {
+      if (actions.isEmpty) {
+        return hasAnyAction
+            ? const SizedBox(width: 48)
+            : const SizedBox.shrink();
+      }
+      return ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: maxWidth),
+        child: Align(
+          alignment: alignment,
+          widthFactor: 1,
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: alignment,
+            child: Row(mainAxisSize: MainAxisSize.min, children: actions),
+          ),
+        ),
+      );
+    }
+
     final header = Container(
-      height: kIonModalToolbarHeight,
+      constraints: const BoxConstraints(minHeight: kIonModalToolbarHeight),
+      padding: const EdgeInsets.symmetric(horizontal: 4),
       decoration: BoxDecoration(
         color: rd.bg,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: _PrimaryIconButtons(
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 96),
-              child: titleWidget,
+        child: TextButtonTheme(
+          data: TextButtonThemeData(
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              minimumSize: const Size(44, 44),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
-            Positioned(
-              left: 4,
-              top: 0,
-              bottom: 0,
-              child: Row(mainAxisSize: MainAxisSize.min, children: start),
-            ),
-            Positioned(
-              right: 4,
-              top: 0,
-              bottom: 0,
-              child: Row(mainAxisSize: MainAxisSize.min, children: end),
-            ),
-          ],
+          ),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final maxSlot = constraints.maxWidth * 0.30;
+              return Row(
+                children: [
+                  buildSlot(start, Alignment.centerLeft, maxSlot),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: titleWidget,
+                    ),
+                  ),
+                  buildSlot(end, Alignment.centerRight, maxSlot),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );

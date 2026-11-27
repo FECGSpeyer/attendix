@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../helpers/source_reader.dart';
+
 /// BL-003: Tests that all "attended" status checks use the centralized
 /// countsAsPresent getter instead of manual inline comparisons.
 void main() {
@@ -62,9 +64,9 @@ void main() {
     test(
         'export_service.dart uses countsAsPresent instead of inline enum check',
         () {
-      final source = File(
+      final source = readDartLibrary(
         'lib/core/services/export_service.dart',
-      ).readAsStringSync();
+      );
 
       // Should not have inline "s == AttendanceStatus.present || .late || .lateExcused"
       final inlinePattern = RegExp(

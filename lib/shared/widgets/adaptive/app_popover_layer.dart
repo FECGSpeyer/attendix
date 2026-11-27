@@ -5,7 +5,6 @@ part of 'app_popover_menu.dart';
 class _PopoverRoute<T> extends PopupRoute<T> {
   _PopoverRoute({
     required this.ios,
-    required this.beta,
     required this.lines,
     required this.arrow,
     required this.maxHeight,
@@ -20,9 +19,6 @@ class _PopoverRoute<T> extends PopupRoute<T> {
   });
 
   final bool ios;
-
-  /// The Beta design: no dimmed page behind its menu card.
-  final bool beta;
 
   /// Default item lines of the entries (see [showAppPopoverMenu]).
   final bool lines;

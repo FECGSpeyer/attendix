@@ -15,6 +15,9 @@ import '../utils/file_mime.dart';
 import '../../data/models/song/song.dart';
 import 'error_reporter.dart';
 
+part 'song_file_sibelius.dart';
+part 'song_file_upload.dart';
+
 /// PARITY_B (D14): Ionic `filesJson` mapping of a `songs.files[]` entry —
 /// storageName, fileName, fileType, url, instrumentId (null if missing) and
 /// note (omitted when undefined). No `created_at`.
@@ -38,30 +41,81 @@ class SongNotFoundException implements Exception {
   String toString() => l10nWithoutContext.coreFlutterSongNotFound;
 }
 
-/// Service for managing song file uploads to Supabase Storage
-class SongFileService {
+/// Shared state, locking, and storage helpers for [SongFileService] mixins.
+abstract class _SongFileServiceCore {
+  _SongFileServiceCore(this._supabase, this._tenantId);
+
   final SupabaseClient _supabase;
   final int? _tenantId;
 
-  SongFileService(this._supabase, this._tenantId);
+  static const String _bucketName = 'songs';
+  static final Map<String, Future<void>> _songLocks = {};
 
   /// Tenant whose songs this service writes (the song source tenant).
   int? get tenantId => _tenantId;
 
-  static const String _bucketName = 'songs';
-
-  /// Pick a file (PDF, PNG, JPG)
-  Future<PlatformFile?> pickFile() async {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['pdf', 'png', 'jpg', 'jpeg'],
-      withData: kIsWeb, // For web, we need bytes
-    );
-
-    if (result == null || result.files.isEmpty) return null;
-    // BL-013: Use firstOrNull for explicit null-safety
-    return result.files.firstOrNull;
+  static Future<T> _locked<T>(
+    int? tenantId,
+    int songId,
+    Future<T> Function() task,
+  ) {
+    final key = '$tenantId/$songId';
+    final before = _songLocks[key] ?? Future<void>.value();
+    final result = before.then((_) => task());
+    late final Future<void> tail;
+    tail = result.then<void>((_) {}, onError: (_) {}).whenComplete(() {
+      if (identical(_songLocks[key], tail)) _songLocks.remove(key);
+    });
+    _songLocks[key] = tail;
+    return result;
   }
+
+  /// A fresh storage name that no file of the song uses yet. Old files without
+  /// storageName are stored under their fileName, so those count as taken too.
+  /// Only the existing Drive importer needs [legacyNumericName].
+  Future<String> _freeFileId(
+    int tenantId,
+    int songId,
+    String fileName, {
+    bool legacyNumericName = false,
+  }) async {
+    final song = await _supabase
+        .from('songs')
+        .select('files')
+        .eq('id', songId)
+        .eq('tenantId', tenantId)
+        .maybeSingle();
+    final taken = <Object?>{
+      for (final f in (song?['files'] as List?) ?? const [])
+        if (f is Map) ...[f['storageName'], f['fileName']],
+    };
+    return legacyNumericName
+        ? SongFileService.freeStorageName(fileName, taken)
+        : SongFileService.freshStorageName(fileName, taken);
+  }
+
+  static bool _sameFile(dynamic f, String url, String? storageName) {
+    if (f is! Map) return false;
+    if (url.isNotEmpty && f['url'] == url) return true;
+    return storageName != null &&
+        storageName.isNotEmpty &&
+        f['storageName'] == storageName;
+  }
+
+  /// Storage content type for an upload: the MIME type, or
+  /// `application/octet-stream` when unknown.
+  String _getContentType(String extensionOrMime) {
+    if (extensionOrMime.contains('/')) return extensionOrMime;
+    return songFileMimeType(extensionOrMime) ?? 'application/octet-stream';
+  }
+}
+
+/// Service for managing song file uploads to Supabase Storage.
+class SongFileService extends _SongFileServiceCore
+    with _SongFileUploadMixin, _SongFileSibeliusMixin {
+  SongFileService(super.supabase, super.tenantId);
+
+  static final _random = Random();
 
   /// Generate a safe filename (`name_<suffix>.ext`).
   @visibleForTesting
@@ -82,13 +136,15 @@ class SongFileService {
     return '${name}_$suffix$ext';
   }
 
-  static final _random = Random();
-
   /// A storage name for [fileName] not in [taken]: first a random number
   /// 100–999 (as Ionic), then every other one of them, then longer numbers.
   /// The numeric contract of `werke-import`; the upload must reject existing
   /// objects because removed names may still be awaiting cleanup.
-  static String freeStorageName(String fileName, Set<Object?> taken, [Random? random]) {
+  static String freeStorageName(
+    String fileName,
+    Set<Object?> taken, [
+    Random? random,
+  ]) {
     final first = 100 + (random ?? _random).nextInt(900);
     for (var i = 0; i < 900; i++) {
       final id = encodeFilename(fileName, 100 + (first - 100 + i) % 900);
@@ -110,321 +166,13 @@ class SongFileService {
     }
   }
 
-  /// A fresh storage name that no file of the song uses yet. Old files without
-  /// storageName are stored under their fileName, so those count as taken too.
-  /// Only the existing Drive importer needs [legacyNumericName].
-  Future<String> _freeFileId(int tenantId, int songId, String fileName, {bool legacyNumericName = false}) async {
-    final song = await _supabase
-        .from('songs')
-        .select('files')
-        .eq('id', songId)
-        .eq('tenantId', tenantId)
-        .maybeSingle();
-    final taken = <Object?>{
-      for (final f in (song?['files'] as List?) ?? const [])
-        if (f is Map) ...[f['storageName'], f['fileName']],
-    };
-    return legacyNumericName ? freeStorageName(fileName, taken) : freshStorageName(fileName, taken);
-  }
-
-  /// Writes of one song's `files` list read it, change it and write it back,
-  /// so two at once would drop a change. They wait for each other here,
-  /// across every service instance and page (old song page, upload sheets,
-  /// the redesign workspace).
-  static final Map<String, Future<void>> _songLocks = {};
-
-  static Future<T> _locked<T>(int? tenantId, int songId, Future<T> Function() task) {
-    final key = '$tenantId/$songId';
-    final before = _songLocks[key] ?? Future<void>.value();
-    final result = before.then((_) => task());
-    late final Future<void> tail;
-    tail = result.then<void>((_) {}, onError: (_) {}).whenComplete(() {
-      if (identical(_songLocks[key], tail)) _songLocks.remove(key);
-    });
-    _songLocks[key] = tail;
-    return result;
-  }
-
   @visibleForTesting
-  static Future<T> lockedForTest<T>(int? tenantId, int songId, Future<T> Function() task) =>
-      _locked(tenantId, songId, task);
-
-  /// Upload a file to Supabase Storage and add it to the song.
-  /// Returns the public URL of the uploaded file. The song's
-  /// `instrument_ids` are derived from its files (Ionic); [keepBesetzung]
-  /// keeps the groups it had besides them (import of a whole folder).
-  Future<String> uploadFile({
-    required int songId,
-    required PlatformFile file,
-    int? instrumentId,
-    String? note,
-    int? mainGroupId,
-    bool keepBesetzung = false,
-  }) =>
-      _locked(_tenantId, songId, () => _uploadFile(
-            songId: songId,
-            file: file,
-            instrumentId: instrumentId,
-            note: note,
-            mainGroupId: mainGroupId,
-            keepBesetzung: keepBesetzung,
-          ));
-
-  /// Like [uploadFile], but the content is stored by [store] (the
-  /// `werke-import` function copies it straight from Google Drive): it gets
-  /// the tenant, a storage name no file of the song uses and the content type
-  /// and returns the storage path it wrote. The entry is then added to the
-  /// song as by [uploadFile]. The importer requires a numeric name and [store]
-  /// must reject overwriting an existing object.
-  Future<String> uploadFileVia({
-    required int songId,
-    required String fileName,
-    required Future<String> Function(int tenantId, String storageName, String contentType) store,
-    int? instrumentId,
-    String? note,
-    int? mainGroupId,
-    bool keepBesetzung = false,
-  }) =>
-      _locked(_tenantId, songId, () async {
-        DemoGuard.checkCurrent('uploadSongFile'); // DEMO_GUARD
-        final tenantId = _tenantId;
-        if (tenantId == null) {
-          throw Exception(l10nWithoutContext.coreFlutterNoTenantSelected);
-        }
-        final extension = PlatformFile(name: fileName, size: 0).extension ?? '';
-        final fileId = await _freeFileId(tenantId, songId, fileName, legacyNumericName: true);
-        final storagePath = 'songs/$tenantId/$songId/$fileId';
-        final stored = await store(tenantId, fileId, _getContentType(extension));
-        if (stored != storagePath) throw StateError('stored at $stored, not $storagePath');
-        return _addToSong(
-          tenantId: tenantId,
-          songId: songId,
-          storagePath: storagePath,
-          fileId: fileId,
-          fileName: fileName,
-          extension: extension,
-          instrumentId: instrumentId,
-          note: note,
-          mainGroupId: mainGroupId,
-          keepBesetzung: keepBesetzung,
-        );
-      });
-
-  /// Delete a file from storage and song's files array.
-  Future<void> deleteFile({
-    required int songId,
-    required String url,
-    String? storageName,
-    String? fileName,
-    int? mainGroupId,
-  }) =>
-      _locked(_tenantId, songId, () => _deleteFile(
-            songId: songId,
-            url: url,
-            storageName: storageName,
-            fileName: fileName,
-            mainGroupId: mainGroupId,
-          ));
-
-  /// Delete all files from a song
-  Future<void> deleteAllFiles({required int songId}) =>
-      _locked(_tenantId, songId, () => _deleteAllFiles(songId: songId));
-
-  /// Update file category (instrumentId and note)
-  Future<void> updateFileCategory({
-    required int songId,
-    required String url,
-    String? storageName,
-    int? instrumentId,
-    String? note,
-    int? mainGroupId,
-  }) =>
-      _locked(_tenantId, songId, () => _updateFileCategory(
-            songId: songId,
-            url: url,
-            storageName: storageName,
-            instrumentId: instrumentId,
-            note: note,
-            mainGroupId: mainGroupId,
-          ));
-
-  /// Rename a file (display name only, see [_renameFile]).
-  Future<void> renameFile({
-    required int songId,
-    required String url,
-    required String storageName,
-    required String fileName,
-  }) =>
-      _locked(_tenantId, songId, () => _renameFile(
-            songId: songId,
-            url: url,
-            storageName: storageName,
-            fileName: fileName,
-          ));
-
-  /// Replace the content of a file (REDESIGN: a score saved in Sibelius).
-  /// See [_replaceFileContent].
-  Future<SongFile?> replaceFileContent({
-    required int songId,
-    required String url,
-    String? storageName,
-    Set<String> earlierNames = const {},
-    String? newStorageName,
-    required Uint8List bytes,
-  }) =>
-      _locked(_tenantId, songId, () => _replaceFileContent(
-            songId: songId,
-            url: url,
-            storageName: storageName,
-            earlierNames: earlierNames,
-            newStorageName: newStorageName,
-            bytes: bytes,
-          ));
-
-  /// Upload file from bytes (for copying between tenants)
-  Future<String> uploadFileBytes({
-    required int songId,
-    required int tenantId,
-    required String fileName,
-    required String fileType,
-    required Uint8List bytes,
-    int? instrumentId,
-    String? note,
-  }) =>
-      _locked(tenantId, songId, () => _uploadFileBytes(
-            songId: songId,
-            tenantId: tenantId,
-            fileName: fileName,
-            fileType: fileType,
-            bytes: bytes,
-            instrumentId: instrumentId,
-            note: note,
-          ));
-
-  /// Upload a file to Supabase Storage
-  /// Returns the public URL of the uploaded file
-  Future<String> _uploadFile({
-    required int songId,
-    required PlatformFile file,
-    int? instrumentId,
-    String? note,
-    int? mainGroupId,
-    bool keepBesetzung = false,
-  }) async {
-    DemoGuard.checkCurrent('uploadSongFile'); // DEMO_GUARD
-    if (_tenantId == null) {
-      throw Exception(l10nWithoutContext.coreFlutterNoTenantSelected);
-    }
-
-    // Generate unique storage path
-    final fileId = await _freeFileId(_tenantId, songId, file.name);
-    final storagePath = 'songs/$_tenantId/$songId/$fileId';
-
-    // Get file bytes (dropped files, web and desktop apps, already carry them)
-    Uint8List fileBytes;
-    if (file.bytes != null) {
-      fileBytes = file.bytes!;
-    } else if (kIsWeb) {
-      throw Exception(l10nWithoutContext.coreFlutterFileBytesUnavailable);
-    } else {
-      if (file.path == null) {
-        throw Exception(l10nWithoutContext.coreFlutterFilePathUnavailable);
-      }
-      fileBytes = await File(file.path!).readAsBytes();
-    }
-
-    // Upload to storage
-    await _supabase.storage.from(_bucketName).uploadBinary(
-          storagePath,
-          fileBytes,
-          fileOptions: FileOptions(
-            contentType: _getContentType(file.extension ?? ''),
-            upsert: false,
-          ),
-        );
-
-    return _addToSong(
-      tenantId: _tenantId,
-      songId: songId,
-      storagePath: storagePath,
-      fileId: fileId,
-      fileName: file.name,
-      extension: file.extension ?? '',
-      instrumentId: instrumentId,
-      note: note,
-      mainGroupId: mainGroupId,
-      keepBesetzung: keepBesetzung,
-    );
-  }
-
-  /// Adds the file stored at [storagePath] to the song's files (removes it
-  /// again when the song is gone). Returns its public URL.
-  Future<String> _addToSong({
-    required int tenantId,
-    required int songId,
-    required String storagePath,
-    required String fileId,
-    required String fileName,
-    required String extension,
-    int? instrumentId,
-    String? note,
-    int? mainGroupId,
-    bool keepBesetzung = false,
-  }) async {
-    // Get public URL
-    final url = _supabase.storage.from(_bucketName).getPublicUrl(storagePath);
-
-    // RT-009: Use maybeSingle() to handle deleted songs gracefully
-    final songResponse = await _supabase
-        .from('songs')
-        .select(keepBesetzung ? 'files, instrument_ids' : 'files')
-        .eq('id', songId)
-        .eq('tenantId', tenantId)
-        .maybeSingle();
-
-    if (songResponse == null) {
-      // Cleanup: remove uploaded file
-      try {
-        await _supabase.storage.from(_bucketName).remove([storagePath]);
-      } catch (e, st) {
-        ErrorReporter.report(e, st, where: 'song_file_service');
-      }
-      throw Exception(l10nWithoutContext.coreFlutterSongNotFound);
-    }
-
-    // Build new files array
-    final existingFiles = (songResponse['files'] as List?) ?? [];
-    // Like Ionic: fileType is the browser MIME type (`file.type`), which
-    // is empty for types the browser does not know.
-    final newFile = {
-      'storageName': fileId,
-      'fileName': fileName,
-      'fileType': songFileMimeType(extension) ?? '',
-      'url': url,
-      'instrumentId': instrumentId,
-      if (note != null) 'note': note,
-    };
-
-    // PARITY_B (D14): Ionic rewrites every file entry with exactly these keys
-    final updatedFiles = [...existingFiles, newFile].map(songFileJson).toList();
-
-    // Update song with new files array and derived instrument_ids (Ionic)
-    var instrumentIds = instrumentIdsFromFiles(updatedFiles, mainGroupId: mainGroupId);
-    if (keepBesetzung) {
-      // Read and written under the song's lock, with the files.
-      final before = [
-        for (final id in (songResponse['instrument_ids'] as List?) ?? const [])
-          if (id is num) id.toInt(),
-      ];
-      instrumentIds = [...before, ...instrumentIds.where((id) => !before.contains(id))];
-    }
-    await _supabase.from('songs').update({
-      'files': updatedFiles,
-      'instrument_ids': instrumentIds,
-    }).eq('id', songId).eq('tenantId', tenantId);
-
-    return url;
-  }
+  static Future<T> lockedForTest<T>(
+    int? tenantId,
+    int songId,
+    Future<T> Function() task,
+  ) =>
+      _SongFileServiceCore._locked(tenantId, songId, task);
 
   /// Ionic: instrument_ids = distinct file instrumentIds except null,
   /// 1 (Aufnahme) and the main group ([excludeLyrics] also drops 2).
@@ -445,456 +193,20 @@ class SongFileService {
     return ids.toList();
   }
 
-  static bool _sameFile(dynamic f, String url, String? storageName) {
-    if (f is! Map) return false;
-    if (url.isNotEmpty && f['url'] == url) return true;
-    return storageName != null &&
-        storageName.isNotEmpty &&
-        f['storageName'] == storageName;
-  }
-
-  static String? _storageObjectName(dynamic file) {
-    if (file is! Map) return null;
-    final storageName = file['storageName'];
-    if (storageName is String && storageName.isNotEmpty) return storageName;
-    final fileName = file['fileName'];
-    return fileName is String && fileName.isNotEmpty ? fileName : null;
-  }
-
-  /// Only after the reference update is confirmed. A failed cleanup leaves
-  /// an unused object, never a visible entry whose content was removed.
-  /// Do not remove objects still used by another entry of the current list.
-  Future<void> _cleanupDeletedFiles(
-    int tenantId,
-    int songId,
-    List<dynamic> removed,
-    List<dynamic> remaining,
-  ) async {
-    final used = remaining.map(_storageObjectName).toSet();
-    final objects = removed.map(_storageObjectName).whereType<String>().toSet()
-      ..removeAll(used);
-    for (final object in objects) {
-      try {
-        await _supabase.storage.from(_bucketName).remove(['songs/$tenantId/$songId/$object']);
-      } catch (e, st) {
-        ErrorReporter.report(e, st, where: 'SongFileService.deleteFileCleanup');
-      }
-    }
-  }
-
-  /// Delete a file from storage and song's files array.
-  /// Files are identified by URL (old files have no storageName).
-  Future<void> _deleteFile({
-    required int songId,
-    required String url,
-    String? storageName,
-    String? fileName,
-    int? mainGroupId,
-  }) async {
-    DemoGuard.checkCurrent('deleteSongFile'); // DEMO_GUARD
-    if (_tenantId == null) {
-      throw Exception(l10nWithoutContext.coreFlutterNoTenantSelected);
-    }
-
-    // RT-009: Use maybeSingle() - song may have been deleted
-    final songResponse = await _supabase
-        .from('songs')
-        .select('files')
-        .eq('id', songId)
-        .eq('tenantId', _tenantId)
-        .maybeSingle();
-
-    // Song doesn't exist - file is effectively deleted
-    if (songResponse == null) {
-      return;
-    }
-
-    final existingFiles = (songResponse['files'] as List?) ?? [];
-    final removedFiles = existingFiles.where((f) => _sameFile(f, url, storageName)).toList();
-    // An idempotent retry must not blindly delete a caller-named object:
-    // after a lost PATCH answer it may be unused, or have been reused.
-    if (removedFiles.isEmpty) return;
-
-    // Remove the file from the array
-    final updatedFiles = existingFiles
-        .where((f) => !_sameFile(f, url, storageName))
-        .toList();
-
-    // Confirm the reference write before deleting any content. A failed
-    // request may have committed, so an unconfirmed answer keeps storage.
-    final updated = await _supabase.from('songs').update({
-      'files': updatedFiles,
-      'instrument_ids': instrumentIdsFromFiles(updatedFiles, mainGroupId: mainGroupId),
-    }).eq('id', songId).eq('tenantId', _tenantId).select('id');
-    if (updated.isEmpty) throw const SongNotFoundException();
-
-    await _cleanupDeletedFiles(_tenantId, songId, removedFiles, updatedFiles);
-  }
-
-  /// Delete all files from a song
-  Future<void> _deleteAllFiles({required int songId}) async {
-    DemoGuard.checkCurrent('deleteSongFile'); // DEMO_GUARD
-    if (_tenantId == null) {
-      throw Exception(l10nWithoutContext.coreFlutterNoTenantSelected);
-    }
-
-    // RT-009: Use maybeSingle() - song may have been deleted
-    final songResponse = await _supabase
-        .from('songs')
-        .select('files')
-        .eq('id', songId)
-        .eq('tenantId', _tenantId)
-        .maybeSingle();
-
-    // Song doesn't exist - nothing to do
-    if (songResponse == null) {
-      return;
-    }
-
-    final existingFiles = (songResponse['files'] as List?) ?? [];
-    if (existingFiles.isEmpty) return;
-
-    // The same order as single-file deletion: a database failure keeps
-    // all content available; a later cleanup failure leaves only orphans.
-    final updated = await _supabase.from('songs').update({
-      'files': [],
-    }).eq('id', songId).eq('tenantId', _tenantId).select('id');
-    if (updated.isEmpty) throw const SongNotFoundException();
-
-    await _cleanupDeletedFiles(_tenantId, songId, existingFiles, const []);
-  }
-
-  /// Update file category (instrumentId and note)
-  Future<void> _updateFileCategory({
-    required int songId,
-    required String url,
-    String? storageName,
-    int? instrumentId,
-    String? note,
-    int? mainGroupId,
-  }) async {
-    DemoGuard.checkCurrent('updateSongFile'); // DEMO_GUARD
-    if (_tenantId == null) {
-      throw Exception(l10nWithoutContext.coreFlutterNoTenantSelected);
-    }
-
-    // RT-009: Use maybeSingle() - song may have been deleted
-    final songResponse = await _supabase
-        .from('songs')
-        .select('files')
-        .eq('id', songId)
-        .eq('tenantId', _tenantId)
-        .maybeSingle();
-
-    if (songResponse == null) {
-      throw Exception(l10nWithoutContext.coreFlutterSongNotFound);
-    }
-
-    final existingFiles = List<Map<String, dynamic>>.from(
-      (songResponse['files'] as List?) ?? [],
-    );
-
-    // Update the matching file
-    for (var i = 0; i < existingFiles.length; i++) {
-      if (_sameFile(existingFiles[i], url, storageName)) {
-        existingFiles[i] = {
-          ...existingFiles[i],
-          'instrumentId': instrumentId,
-          'note': note,
-        };
-        break;
-      }
-    }
-
-    // Update song (Ionic saveFileChange also refreshes instrument_ids)
-    await _supabase.from('songs').update({
-      'files': existingFiles,
-      'instrument_ids': instrumentIdsFromFiles(
-        existingFiles,
-        mainGroupId: mainGroupId,
-        excludeLyrics: true,
-      ),
-    }).eq('id', songId).eq('tenantId', _tenantId);
-  }
-
-  /// The new content gets a storage name no file of the song uses (a new
-  /// URL, so no cached copy of the old content is shown); the entry keeps its
-  /// place, name, part and note; the old object is removed afterwards.
-  /// Returns the new entry, or null when the song has no such file any more
-  /// (it was replaced or deleted meanwhile, nothing is written then).
-  ///
-  /// A try whose answer got lost (connection gone) may have gone through:
-  /// [earlierNames] are the storage names such tries used, so the file is
-  /// found under them too; [newStorageName] is the name for this try (a
-  /// free one is taken when it is in use).
-  Future<SongFile?> _replaceFileContent({
-    required int songId,
-    required String url,
-    String? storageName,
-    Set<String> earlierNames = const {},
-    String? newStorageName,
-    required Uint8List bytes,
-  }) async {
-    DemoGuard.checkCurrent('uploadSongFile'); // DEMO_GUARD
-    final tenantId = _tenantId;
-    if (tenantId == null) {
-      throw Exception(l10nWithoutContext.coreFlutterNoTenantSelected);
-    }
-
-    final songResponse = await _supabase
-        .from('songs')
-        .select('files')
-        .eq('id', songId)
-        .eq('tenantId', tenantId)
-        .maybeSingle();
-    if (songResponse == null) throw const SongNotFoundException();
-
-    final files = [
-      for (final f in (songResponse['files'] as List?) ?? const []) songFileJson(f),
-    ];
-    final index = files.indexWhere(
-      (f) => _sameFile(f, url, storageName) || earlierNames.contains(f['storageName']),
-    );
-    if (index < 0) return null;
-    final old = files[index];
-    final fileName = (old['fileName'] as String?) ?? '';
-    final oldObject = ((old['storageName'] as String?)?.isNotEmpty ?? false)
-        ? old['storageName'] as String
-        : fileName;
-
-    final taken = <Object?>{
-      for (final f in files) ...[f['storageName'], f['fileName']],
-    };
-    // Type of the stored object: the display name may have been renamed
-    // without its extension ("Ablauf v1.2").
-    final typedName = withStoredExtension(fileName, oldObject);
-    final fileId = newStorageName != null && newStorageName.isNotEmpty && !taken.contains(newStorageName)
-        ? newStorageName
-        : freshStorageName(typedName, taken);
-    final storagePath = 'songs/$tenantId/$songId/$fileId';
-    final dot = typedName.lastIndexOf('.');
-    final extension = dot > 0 ? typedName.substring(dot + 1).toLowerCase() : '';
-
-    await _supabase.storage.from(_bucketName).uploadBinary(
-          storagePath,
-          bytes,
-          fileOptions: FileOptions(
-            contentType: _getContentType(extension),
-            upsert: false,
-          ),
-        );
-
-    final newUrl = _supabase.storage.from(_bucketName).getPublicUrl(storagePath);
-    files[index] = {...old, 'storageName': fileId, 'url': newUrl};
-    try {
-      // Same parts as before, so instrument_ids stay as they are.
-      await _supabase.from('songs').update({
-        'files': files,
-      }).eq('id', songId).eq('tenantId', tenantId);
-    } catch (_) {
-      // The answer may have got lost although the list was written: the new
-      // object is removed only when no entry points to it (when that cannot
-      // be checked, e.g. offline, it stays; an unused object is harmless).
-      try {
-        final check = await _supabase
-            .from('songs')
-            .select('files')
-            .eq('id', songId)
-            .eq('tenantId', tenantId)
-            .maybeSingle();
-        final used = ((check?['files'] as List?) ?? const []).any((f) => f is Map && f['storageName'] == fileId);
-        if (!used) await _supabase.storage.from(_bucketName).remove([storagePath]);
-      } catch (e) {
-        debugPrint('[SongFileService] new object kept: $e');
-      }
-      rethrow;
-    }
-
-    if (oldObject.isNotEmpty) {
-      try {
-        await _supabase.storage.from(_bucketName).remove(['songs/$tenantId/$songId/$oldObject']);
-      } catch (e) {
-        // The entry already points to the new content; a leftover object
-        // is harmless.
-      }
-    }
-    return SongFile(
-      storageName: fileId,
-      fileName: fileName,
-      fileType: (old['fileType'] as String?) ?? '',
-      url: newUrl,
-      instrumentId: (old['instrumentId'] as num?)?.toInt(),
-      note: old['note'] as String?,
-    );
-  }
-
   /// [fileName] ending in the extension of the stored object [storedName]
   /// (unchanged when it already does or the object has none).
   static String withStoredExtension(String fileName, String storedName) {
     final dot = storedName.lastIndexOf('.');
     if (dot <= 0 || dot == storedName.length - 1) return fileName;
     final ext = storedName.substring(dot);
-    return fileName.toLowerCase().endsWith(ext.toLowerCase()) ? fileName : '$fileName$ext';
+    return fileName.toLowerCase().endsWith(ext.toLowerCase())
+        ? fileName
+        : '$fileName$ext';
   }
-
-  /// Rename a file: only its display name (`fileName`) changes; the storage
-  /// object keeps its `storageName`. Files without a storageName (very old
-  /// uploads) are stored under their fileName, so they are not renamed.
-  Future<void> _renameFile({
-    required int songId,
-    required String url,
-    required String storageName,
-    required String fileName,
-  }) async {
-    DemoGuard.checkCurrent('updateSongFile'); // DEMO_GUARD
-    if (_tenantId == null) {
-      throw Exception(l10nWithoutContext.coreFlutterNoTenantSelected);
-    }
-    if (storageName.isEmpty || fileName.trim().isEmpty) return;
-
-    // RT-009: Use maybeSingle() - song may have been deleted
-    final songResponse = await _supabase
-        .from('songs')
-        .select('files')
-        .eq('id', songId)
-        .eq('tenantId', _tenantId)
-        .maybeSingle();
-
-    if (songResponse == null) {
-      throw Exception(l10nWithoutContext.coreFlutterSongNotFound);
-    }
-
-    final existingFiles = List<Map<String, dynamic>>.from(
-      (songResponse['files'] as List?) ?? [],
-    );
-    for (var i = 0; i < existingFiles.length; i++) {
-      if (_sameFile(existingFiles[i], url, storageName)) {
-        existingFiles[i] = {...existingFiles[i], 'fileName': fileName.trim()};
-        break;
-      }
-    }
-
-    await _supabase.from('songs').update({
-      'files': existingFiles,
-    }).eq('id', songId).eq('tenantId', _tenantId);
-  }
-
-  /// Pick multiple files
-  Future<List<PlatformFile>?> pickMultipleFiles() async {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.any,
-      allowMultiple: true,
-      withData: kIsWeb,
-    );
-
-    if (result == null || result.files.isEmpty) return null;
-    return result.files;
-  }
-
-  /// Download a file's bytes (for saving locally)
-  Future<Uint8List?> downloadFileBytes(String url) async {
-    try {
-      // Extract storage path from URL
-      // URL format: https://api.attendix.de/storage/v1/object/public/songs/... (or legacy *.supabase.co)
-      final uri = Uri.parse(url);
-      final pathSegments = uri.pathSegments;
-
-      // Find 'songs' in path and get everything after
-      final songsIndex = pathSegments.indexOf('songs');
-      if (songsIndex == -1 || songsIndex >= pathSegments.length - 1) {
-        return null;
-      }
-
-      final storagePath = pathSegments.sublist(songsIndex).join('/');
-      return await _supabase.storage.from(_bucketName).download(
-        storagePath.replaceFirst('songs/', ''),
-      );
-    } catch (e, stack) {
-      debugPrint('Error downloading file: $e\n$stack');
-      return null;
-    }
-  }
-
-  /// Upload file from bytes (for copying between tenants)
-  Future<String> _uploadFileBytes({
-    required int songId,
-    required int tenantId,
-    required String fileName,
-    required String fileType,
-    required Uint8List bytes,
-    int? instrumentId,
-    String? note,
-  }) async {
-    DemoGuard.checkCurrent('uploadSongFile'); // DEMO_GUARD
-    // Generate unique storage path
-    final fileId = await _freeFileId(tenantId, songId, fileName);
-    final storagePath = 'songs/$tenantId/$songId/$fileId';
-
-    // Upload to storage
-    await _supabase.storage.from(_bucketName).uploadBinary(
-          storagePath,
-          bytes,
-          fileOptions: FileOptions(
-            contentType: _getContentType(fileType),
-            upsert: false,
-          ),
-        );
-
-    // Get public URL
-    final url = _supabase.storage.from(_bucketName).getPublicUrl(storagePath);
-
-    // RT-009: Use maybeSingle() - song may have been deleted
-    final songResponse = await _supabase
-        .from('songs')
-        .select('files')
-        .eq('id', songId)
-        .eq('tenantId', tenantId)
-        .maybeSingle();
-
-    if (songResponse == null) {
-      // Cleanup: remove uploaded file
-      try {
-        await _supabase.storage.from(_bucketName).remove([storagePath]);
-      } catch (e, st) {
-        ErrorReporter.report(e, st, where: 'song_file_service');
-      }
-      throw Exception(l10nWithoutContext.coreFlutterSongNotFound);
-    }
-
-    // Build new files array
-    final existingFiles = (songResponse['files'] as List?) ?? [];
-    final newFile = {
-      'storageName': fileId,
-      'fileName': fileName,
-      // Ionic uploadSongFileToTenant: keep the source file's type as is.
-      'fileType': fileType,
-      'url': url,
-      'instrumentId': instrumentId,
-      if (note != null) 'note': note,
-    };
-
-    // PARITY_B (D14): Ionic rewrites every file entry with exactly these keys
-    final updatedFiles = [...existingFiles, newFile].map(songFileJson).toList();
-
-    // Update song with new files array
-    await _supabase.from('songs').update({
-      'files': updatedFiles,
-    }).eq('id', songId).eq('tenantId', tenantId);
-
-    return url;
-  }
-
-  /// Storage content type for an upload: the MIME type, or
-  /// `application/octet-stream` when unknown.
-  String _getContentType(String extensionOrMime) {
-    if (extensionOrMime.contains('/')) return extensionOrMime;
-    return songFileMimeType(extensionOrMime) ?? 'application/octet-stream';
-  }
-
 }
 
-/// Provider for SongFileService
-/// Uses the effective song tenant (Werk-Synchronisierung: song source tenant)
+/// Provider for SongFileService.
+/// Uses the effective song tenant (Werk-Synchronisierung: song source tenant).
 final songFileServiceProvider = Provider<SongFileService>((ref) {
   final supabase = ref.watch(supabaseClientProvider);
   final tenant = ref.watch(currentTenantProvider);

@@ -76,7 +76,7 @@ void main() {
 
   group('No client-side signUp for other people', () {
     for (final path in [
-      'lib/data/services/auth_service.dart',
+      'lib/core/services/auth/auth_service.dart',
       'lib/features/songs/presentation/pages/rd_import_page.dart',
       'lib/features/profile/presentation/pages/rd_me_page.dart',
       'lib/features/people/presentation/pages/rd_person_edit_page.dart',

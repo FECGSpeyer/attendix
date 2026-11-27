@@ -1,5 +1,7 @@
 import '../../l10n/l10n.dart';
 
+part 'instrument_matcher_rules.dart';
+
 /// How sure [InstrumentMatcher.detect] is about a part.
 enum MatchConfidence {
   /// Name, synonym or a clear term of the group (incl. matching part number).
@@ -15,9 +17,15 @@ enum MatchConfidence {
 
 /// Result of [InstrumentMatcher.detect].
 class PartMatch {
-  const PartMatch({required this.instrumentId, required this.confidence, this.term, this.byVision = false});
+  const PartMatch({
+    required this.instrumentId,
+    required this.confidence,
+    this.term,
+    this.byVision = false,
+  });
 
-  static const PartMatch none = PartMatch(instrumentId: null, confidence: MatchConfidence.none);
+  static const PartMatch none =
+      PartMatch(instrumentId: null, confidence: MatchConfidence.none);
 
   final int? instrumentId;
   final MatchConfidence confidence;
@@ -28,6 +36,19 @@ class PartMatch {
 
   /// Read on the first page by the `part-detect` function, not the name.
   final bool byVision;
+}
+
+/// Simple info class for instrument matching.
+class InstrumentInfo {
+  final int id;
+  final String name;
+  final String? synonyms;
+
+  const InstrumentInfo({
+    required this.id,
+    required this.name,
+    this.synonyms,
+  });
 }
 
 /// Utility class for matching filenames to instruments / parts.
@@ -167,24 +188,6 @@ class InstrumentMatcher {
     'partitur': ['dir', 'cond'],
   };
 
-  /// Terms that also mean something else: a match on them is only "unsure".
-  static const Set<String> _ambiguousTerms = {
-    'bass', 'kl', 'bariton', 'baritone', 'cor', 'as', 'bs', 'ts', 'bar', 'dr', 'alto', 'кл', 'тр',
-    // Voice or instrument / an English word / "accompaniment".
-    'баритон', 'baritono', 'royal', 'acc',
-  };
-
-  /// Words that only describe the tuning ("Klarinette in B", "Horn in F").
-  static const Set<String> _tuningWords = {
-    'in', 'b', 'bb', 'es', 'eb', 'f', 'c', 'd', 'a', 'g', 'e', 'as', 'des', 'ges',
-    'sib', 'mib', 'fa', 'do', 'flat', 'sharp', 'dur', 'moll',
-  };
-
-  /// Words after a number that make it a movement / Werk number.
-  static const Set<String> _movementWords = {
-    'satz', 'saetze', 'movement', 'mvt', 'mov', 'mvmt', 'teil', 'akt', 'act', 'szene', 'scene',
-  };
-
   /// Roman numeral patterns
   static const Map<String, int> romanNumerals = {
     'i': 1,
@@ -196,101 +199,38 @@ class InstrumentMatcher {
 
   /// Audio file extensions that indicate recordings
   static const List<String> audioExtensions = [
-    'mp3', 'wav', 'ogg', 'm4a', 'aac', 'flac', 'wma'
+    'mp3', 'wav', 'ogg', 'm4a', 'aac', 'flac', 'wma',
   ];
 
   /// Keywords that indicate lyrics/text (whole words)
   static const List<String> lyricsKeywords = [
     'text', 'texte', 'lyrics', 'liedtext', 'songtext', 'words', 'parole',
-    'текст', 'слова'
+    'текст', 'слова',
   ];
 
   /// Keywords that indicate recordings (whole words, not for PDFs)
   static const List<String> recordingKeywords = [
     'aufnahme', 'recording', 'audio', 'track', 'запись',
-    'registrazione', 'enregistrement'
+    'registrazione', 'enregistrement',
   ];
 
-  /// Try to match a filename to an instrument
-  /// Returns the instrument ID if found, null otherwise
+  /// Try to match a filename to an instrument.
+  /// Returns the instrument ID if found, null otherwise.
   static int? matchInstrument(String filename, List<InstrumentInfo> instruments) =>
       detect(filename, instruments).instrumentId;
 
   /// Scores every group against [filename] and returns the best one with
   /// how sure the match is.
-  static PartMatch detect(String filename, List<InstrumentInfo> instruments) {
-    final extension = _getExtension(filename).toLowerCase();
-    if (audioExtensions.contains(extension)) {
-      return const PartMatch(instrumentId: recordingId, confidence: MatchConfidence.sure);
-    }
-
-    final words = _words(_stripExtension(filename));
-    final tokens = words.tokens;
-    if (tokens.isEmpty) return PartMatch.none;
-
-    if (extension != 'pdf') {
-      final hit = _firstKeyword(tokens, recordingKeywords);
-      if (hit != null) {
-        return PartMatch(instrumentId: recordingId, confidence: MatchConfidence.sure, term: hit);
-      }
-    }
-    final lyrics = _firstKeyword(tokens, lyricsKeywords);
-    if (lyrics != null) {
-      return PartMatch(instrumentId: lyricsId, confidence: MatchConfidence.sure, term: lyrics);
-    }
-
-    final familySpans = _familySpans(tokens);
-    final hits = [
-      for (final instrument in instruments)
-        if (_scoreInstrument(words, instrument, familySpans) case final hit?)
-          (hit: hit, instrument: instrument, at: _spanOf(tokens, hit.term)),
-    ];
-    // "Sopran" right before or after an instrument names its kind ("Soprano
-    // Cornet", "Sopran Saxophon"), not the group of the singers (a group
-    // "Sopran Saxophon" is no such group).
-    bool singers(InstrumentInfo i) {
-      final families = _termsOf(i).families;
-      return families.contains('sopran') && families.every(_voiceFamilies.contains);
-    }
-
-    bool kindOfInstrument(({int start, int end})? at) =>
-        at != null &&
-        hits.any((o) => !o.hit.weak && !singers(o.instrument) && o.at != null && _adjacent(words, at, o.at!));
-    _Hit? best;
-    _Hit? second;
-    for (final (:hit, :instrument, :at) in hits) {
-      if (singers(instrument) && kindOfInstrument(at)) continue;
-      if (best == null || hit.score > best.score) {
-        second = best;
-        best = hit;
-      } else if (second == null || hit.score > second.score) {
-        second = hit;
-      }
-    }
-    if (best == null) return PartMatch.none;
-
-    final tie = second != null && second.score == best.score;
-    // "Cor." only loses its ambiguity; other reasons to ask stay.
-    final weak = best.weak && !(best.onlyAmbiguous && best.term == 'cor' && _corIsHorn(filename, instruments));
-    final confidence = weak || tie ? MatchConfidence.unsure : MatchConfidence.sure;
-    return PartMatch(instrumentId: best.id, confidence: confidence, term: best.term);
-  }
-
-  /// "Cor." (Corno) is a horn, unless the tenant also has cornets or an
-  /// English horn ("Solo Cor." in a brass band) or the name names another
-  /// instrument ("Cor anglais").
-  static bool _corIsHorn(String filename, List<InstrumentInfo> instruments) {
-    const others = {'kornett', 'englischhorn'};
-    if (instruments.any((i) => _termsOf(i).families.any(others.contains))) return false;
-    final named = knownGroups(filename);
-    return named.isEmpty || (named.length == 1 && named.single == 'Horn');
-  }
+  static PartMatch detect(String filename, List<InstrumentInfo> instruments) =>
+      _detectPart(filename, instruments);
 
   /// Whether [name] says nothing but the part [term] with numbers and
   /// tuning ("1. Violine", "Horn in F"), not "12 Le viole" (a Werk).
   static bool namesOnlyPart(String name, String term) {
     final own = tokenize(term).toSet();
-    return tokenize(name).every((w) => own.contains(w) || _tokenNumber(w) != null || _tuningWords.contains(w));
+    return tokenize(name).every(
+      (w) => own.contains(w) || _tokenNumber(w) != null || _tuningWords.contains(w),
+    );
   }
 
   /// Lower-case words of [text]: umlauts folded (ö → oe), split at every
@@ -298,520 +238,18 @@ class InstrumentMatcher {
   /// The list is shared (cached): read it, never change it.
   static List<String> tokenize(String text) => _words(text).tokens;
 
-  static final RegExp _letterDigit = RegExp(r'(\p{L})(\d)', unicode: true);
-  static final RegExp _hyphenAbbreviation = RegExp(r'(?<![\p{L}])(v|c)-(ni|le|c|b)(?![\p{L}])', unicode: true);
-  static final RegExp _digitLetter = RegExp(r'(\d)(\p{L})', unicode: true);
-  static final RegExp _wordPattern = RegExp(r'[\p{L}\p{N}]+', unicode: true);
-  static final RegExp _hardGap = RegExp(r'[-–_/()\[\]+&,;]');
-  static final RegExp _sectionGap = RegExp(r'\s-|-\s|[–—/(),;\[\]]');
-
-  /// [_words] of texts seen before: an import of thousands of files asks
-  /// for the same group names and terms again for every file.
-  static final Map<String, _Words> _wordsCache = {};
-
-  /// [tokenize] plus whether a hard separator (" - ", "_", "/", "(") stands
-  /// before each word: "Sinfonie 2 - Violine" → the 2 is not the part's.
-  static _Words _words(String text) {
-    final cached = _wordsCache[text];
-    if (cached != null) return cached;
-    final folded = _fold(text.toLowerCase())
-        // Russian-style string abbreviations: "V-ni", "V-le", "V-c", "C-b".
-        .replaceAllMapped(_hyphenAbbreviation, (m) => '${m[1]}${m[2]}')
-        .replaceAllMapped(_letterDigit, (m) => '${m[1]} ${m[2]}')
-        .replaceAllMapped(_digitLetter, (m) => '${m[1]} ${m[2]}');
-    final tokens = <String>[];
-    final hard = <bool>[];
-    final section = <bool>[];
-    var last = 0;
-    for (final m in _wordPattern.allMatches(folded)) {
-      final gap = folded.substring(last, m.start);
-      tokens.add(m[0]!);
-      hard.add(tokens.length == 1 || _hardGap.hasMatch(gap));
-      // A new part of the name: " - ", "–", "(", "/", ",".
-      section.add(_sectionGap.hasMatch(gap));
-      last = m.end;
-    }
-    if (_wordsCache.length > 20000) _wordsCache.clear();
-    return _wordsCache[text] = (
-      tokens: List.unmodifiable(tokens),
-      hardBefore: List.unmodifiable(hard),
-      sectionBefore: List.unmodifiable(section),
-    );
-  }
-
-  static String _fold(String s) => s
-      // macOS / Drive names spell ö as o + U+0308 (decomposed).
-      .replaceAll('a\u0308', 'ae')
-      .replaceAll('o\u0308', 'oe')
-      .replaceAll('u\u0308', 'ue')
-      .replaceAll('ä', 'ae')
-      .replaceAll('ö', 'oe')
-      .replaceAll('ü', 'ue')
-      .replaceAll('ß', 'ss');
-
-  static String? _firstKeyword(List<String> tokens, List<String> keywords) {
-    for (final k in keywords) {
-      if (_find(tokens, tokenize(k)) != null) return k;
-    }
-    return null;
-  }
-
-  /// Score of [instrument] for [tokens], or null if it does not match.
-  static _Hit? _scoreInstrument(
-    _Words words,
-    InstrumentInfo instrument,
-    List<({int start, int end, String family})> familySpans,
-  ) =>
-      _scoreTerms(words, instrument.id, _termsOf(instrument), familySpans);
-
-  /// Score of the group [id] with [terms] for [words], or null.
-  static _Hit? _scoreTerms(
-    _Words words,
-    int id,
-    _InstrumentTerms terms,
-    List<({int start, int end, String family})> familySpans,
-  ) {
-    final tokens = words.tokens;
-    final groupNumber = terms.groupNumber;
-    final families = terms.families;
-    final lastSection = words.sectionBefore.lastIndexOf(true);
-
-    _Hit? best;
-    for (final c in terms.candidates) {
-      if (c.term.isEmpty) continue;
-      final m = _find(tokens, c.term) ?? (c.base >= 60 ? _findCompound(tokens, c.term) : null);
-      if (m == null) continue;
-      // More words matched = more specific ("English Horn" before "Horn").
-      var score = c.base + c.term.join(' ').length + 50 * (m.end - m.start - 1);
-      // The part is named after the work ("Le viole - Vl II"): a word in the
-      // last part of the name beats one in the title before it.
-      if (lastSection > 0 && m.start >= lastSection) score += 40;
-      var weak = c.weak || m.compound;
-      // Unsure for another reason than an ambiguous term ("Cor" for Horn 1
-      // without a number stays unsure).
-      var otherWeak = m.compound;
-      if (m.compound) score -= 50;
-      // The words are part of a longer name of another instrument
-      // ("English Horn" for the group Horn): only unsure.
-      if (!c.synonym &&
-          familySpans.any((f) =>
-              !families.contains(f.family) &&
-              f.start <= m.start &&
-              f.end >= m.end &&
-              f.end - f.start > m.end - m.start)) {
-        weak = true;
-        otherWeak = true;
-        score -= 50;
-      }
-
-      if (!c.explicitNumber && groupNumber != null) {
-        final n = _numberNear(words, m.start, m.end);
-        if (n == null) {
-          // "Violine.pdf" with groups Violine 1 / Violine 2; a synonym the
-          // group was given by hand ("zweite") stands for this group.
-          if (!c.synonym) {
-            weak = true;
-            otherWeak = true;
-          }
-        } else if (n != groupNumber) {
-          continue;
-        } else {
-          score += 10;
-        }
-      }
-      if (best == null || score > best.score || (score == best.score && best.weak && !weak)) {
-        best = _Hit(id, score, weak, tokens.sublist(m.start, m.end).join(' '), onlyAmbiguous: weak && !otherWeak);
-      }
-    }
-    return best;
-  }
-
-  /// [_InstrumentTerms] of groups seen before, by name and synonyms.
-  static final Map<String, _InstrumentTerms> _termsCache = {};
-
-  /// Everything [_scoreInstrument] looks for in a file name for
-  /// [instrument]; the same for every file, so it is made once.
-  static _InstrumentTerms _termsOf(InstrumentInfo instrument) {
-    final key = '${instrument.name}\u0000${instrument.synonyms ?? ''}';
-    final cached = _termsCache[key];
-    if (cached != null) return cached;
-    final nameTokens = tokenize(instrument.name);
-    final groupNumber = _numberIn(nameTokens);
-    final baseName = nameTokens.where((t) => _tokenNumber(t) == null && !_tuningWords.contains(t)).toList();
-
-    final candidates = <_Candidate>[];
-    void add(String raw, int base, {bool synonym = false}) => _addCandidate(candidates, raw, base, synonym: synonym);
-
-    if (baseName.isNotEmpty) add(baseName.join(' '), 100);
-    for (final s in (instrument.synonyms ?? '').split(',')) {
-      // Given by hand, so above the group name ("violine" learned for
-      // Violine 2 beats the bare name of Violine 1).
-      if (s.trim().isNotEmpty) add(s.trim(), 110, synonym: true);
-    }
-    final families = _familiesOf(baseName).toSet();
-    for (final family in families) {
-      _addFamilyTerms(candidates, family, own: 60);
-    }
-    // Becken, Triangel, Pauke … are played by the percussion group when
-    // they have no group of their own (scored below a group of their own).
-    if (families.contains('schlagzeug')) {
-      for (final part in _percussionParts) {
-        _addFamilyTerms(candidates, part, own: 30, terms: 30, short: 20);
-      }
-    }
-    if (_termsCache.length > 2000) _termsCache.clear();
-    return _termsCache[key] = (groupNumber: groupNumber, families: families, candidates: candidates);
-  }
-
-  static void _addCandidate(List<_Candidate> candidates, String raw, int base, {bool synonym = false}) {
-    final term = tokenize(raw);
-    if (term.isEmpty) return;
-    final hasNumber = term.any((t) => _tokenNumber(t) != null);
-    candidates.add((
-      term: synonym ? term : term.where((t) => _tokenNumber(t) == null).toList(),
-      base: base,
-      // A synonym was given to this group on purpose: never ambiguous.
-      weak: !synonym && term.length == 1 && _ambiguousTerms.contains(term.single),
-      explicitNumber: synonym && hasNumber,
-      synonym: synonym,
-    ));
-  }
-
-  /// The terms of [family]: its translations, abbreviations and the family
-  /// name itself (scored [own]: "1. Geige" → violine).
-  static void _addFamilyTerms(List<_Candidate> candidates, String family, {required int own, int terms = 60, int short = 40}) {
-    for (final t in translations[family] ?? const <String>[]) {
-      _addCandidate(candidates, t, terms);
-    }
-    for (final a in abbreviations[family] ?? const <String>[]) {
-      _addCandidate(candidates, a, short);
-    }
-    _addCandidate(candidates, family, own);
-  }
-
-  /// Instruments a percussion group plays when they have no group.
-  static const List<String> _percussionParts = [
-    'kleine trommel', 'große trommel', 'becken', 'triangel', 'pauke', 'röhrenglocken', 'glockenspiel',
-  ];
-
-  /// Families that are no group of their own (a type of file) and the choir
-  /// voices, which only choirs get as new groups.
-  static const Set<String> _noGroupFamilies = {'partitur', 'stimmen'};
-  static const Set<String> _voiceFamilies = {'sopran', 'alt', 'tenor', 'bass'};
-
-  /// Outside a choir a soprano is a voice of its own too (Leon, 07.11.2026:
-  /// a new group per voice). Only the full words: "Sop." is also the soprano
-  /// cornet, and "Alt", "Tenor", "Bass" mostly mean instruments there.
-  static const List<String> _sopranoWords = ['sopran', 'soprano', 'сопрано'];
-  static final _InstrumentTerms _sopranoOutsideChoir = () {
-    final sopran = _familyGroups.firstWhere((g) => g.family == 'sopran').terms;
-    return (
-      groupNumber: null,
-      families: sopran.families,
-      candidates: [
-        for (final c in sopran.candidates)
-          if (_sopranoWords.contains(c.term.join(' '))) c,
-      ],
-    );
-  }();
-
-  /// Every family as a group that does not exist yet, named in German
-  /// ("altsaxophon" → Altsaxophon).
-  static final List<({String family, String name, _InstrumentTerms terms})> _familyGroups = [
-    for (final family in translations.keys)
-      if (!_noGroupFamilies.contains(family))
-        (
-          family: family,
-          name: family.split(' ').map((w) => w.split('-').map((p) => p.isEmpty ? p : p[0].toUpperCase() + p.substring(1)).join('-')).join(' '),
-          terms: (groupNumber: null, families: {family}, candidates: _familyCandidates(family)),
-        ),
-  ];
-
-  static List<_Candidate> _familyCandidates(String family) {
-    final list = <_Candidate>[];
-    _addFamilyTerms(list, family, own: 100);
-    return list;
-  }
-
   /// A known instrument in [filename] for which no group exists yet, as the
   /// name of the group to create ("Alto Saxophone 2.pdf" → Altsaxophon).
   /// Only a sure match counts; "Violine 2" keeps its number (first and
   /// second violins are groups of their own). Null when none is clear.
-  static String? knownGroup(String filename, {bool isChoir = false}) {
-    final words = _words(_stripExtension(filename));
-    if (words.tokens.isEmpty) return null;
-    _Hit? best;
-    _Hit? second;
-    for (final (:hit, start: _, end: _) in _knownHits(words, isChoir: isChoir)) {
-      if (best == null || hit.score > best.score) {
-        second = best;
-        best = hit;
-      } else if (second == null || hit.score > second.score) {
-        second = hit;
-      }
-    }
-    // Two instruments named for sure ("Oboe - Englischhorn", "Sopran Alt"):
-    // no single new group.
-    if (best == null || best.weak || (second != null && (!second.weak || second.score == best.score))) return null;
-    final group = _familyGroups[best.id];
-    if (group.family == 'violine') {
-      final at = _find(words.tokens, tokenize(best.term));
-      final n = at == null ? null : _numberNear(words, at.start, at.end);
-      if (n != null && n <= 2) return '${group.name} $n';
-    }
-    return group.name;
-  }
+  static String? knownGroup(String filename, {bool isChoir = false}) =>
+      _knownGroup(filename, isChoir: isChoir);
 
   /// The instruments (dictionary groups) [name] names for sure, in the
   /// order they appear: two or more for a part like "Posaune und Tuba",
   /// which is never one group.
-  static List<String> knownGroups(String name, {bool isChoir = false}) {
-    final words = _words(_stripExtension(name));
-    if (words.tokens.isEmpty) return const [];
-    final found = [
-      for (final h in _knownHits(words, isChoir: isChoir))
-        if (!h.hit.weak) h,
-    ]..sort((a, b) => a.start.compareTo(b.start));
-    return [for (final f in found) _familyGroups[f.hit.id].name];
-  }
-
-  /// The dictionary groups named in [words]. A word read as two
-  /// instruments counts for the better one only ("Viole" is the violas,
-  /// not "Viol." + plural).
-  static List<({_Hit hit, int start, int end})> _knownHits(_Words words, {required bool isChoir}) {
-    final familySpans = _familySpans(words.tokens);
-    final hits = <({_Hit hit, int start, int end})>[];
-    for (var i = 0; i < _familyGroups.length; i++) {
-      final g = _familyGroups[i];
-      final soprano = !isChoir && g.family == 'sopran';
-      if (!soprano && (isChoir ? g.family == 'gesang' : _voiceFamilies.contains(g.family))) continue;
-      final hit = _scoreTerms(words, i, soprano ? _sopranoOutsideChoir : g.terms, familySpans);
-      if (hit == null) continue;
-      final at = _find(words.tokens, tokenize(hit.term));
-      hits.add((hit: hit, start: at?.start ?? 0, end: at?.end ?? 0));
-    }
-    final kept = [
-      for (final h in hits)
-        if (!hits.any((o) => o.hit.score > h.hit.score && o.start <= h.start && o.end >= h.end && o.end > o.start)) h,
-    ];
-    // One group once.
-    final once = [
-      for (final h in kept)
-        if (!kept.any((o) => o.hit.id == h.hit.id && (o.hit.score > h.hit.score || (o.hit.score == h.hit.score && o.start < h.start)))) h,
-    ];
-    // Outside a choir "Sopran" right before or after an instrument names its
-    // kind ("Sopran Saxophon", "Soprano Cornet"), not a sung voice.
-    if (isChoir) return once;
-    bool isSoprano(({_Hit hit, int start, int end}) h) => _familyGroups[h.hit.id].family == 'sopran';
-    return [
-      for (final h in once)
-        if (!isSoprano(h) ||
-            !once.any((o) => !isSoprano(o) && !o.hit.weak && _adjacent(words, (start: h.start, end: h.end), (start: o.start, end: o.end))))
-          h,
-    ];
-  }
-
-  /// Where [term] stands in [tokens].
-  static ({int start, int end})? _spanOf(List<String> tokens, String term) {
-    final at = _find(tokens, tokenize(term));
-    return at == null ? null : (start: at.start, end: at.end);
-  }
-
-  /// Whether the words at [a] and [b] stand right next to each other with
-  /// no separator between ("Soprano Cornet", not "Die Geige - Sopran").
-  static bool _adjacent(_Words words, ({int start, int end}) a, ({int start, int end}) b) {
-    final (first, second) = a.start <= b.start ? (a, b) : (b, a);
-    return first.end > first.start && second.start == first.end && second.start < words.tokens.length && !words.hardBefore[second.start] && !words.sectionBefore[second.start];
-  }
-
-  /// Families a group with [nameTokens] belongs to.
-  static Iterable<String> _familiesOf(List<String> nameTokens) sync* {
-    if (nameTokens.isEmpty) return;
-    final name = nameTokens.join(' ');
-    for (final key in translations.keys) {
-      final k = tokenize(key).join(' ');
-      if (k.isEmpty) continue;
-      if (_find(nameTokens, tokenize(key)) != null ||
-          (k.length >= 4 && !k.contains(' ') && nameTokens.any((t) => t.endsWith(k) && t != k && !_isOwnFamily(t))) ||
-          name == k ||
-          _termFamily[name] == key) {
-        yield key;
-      }
-    }
-  }
-
-  /// A group named with a term of one family only ("Schlagwerk", "Bratsche",
-  /// "Piano") belongs to that family.
-  static final Map<String, String> _termFamily = () {
-    final families = <String, Set<String>>{};
-    for (final e in translations.entries) {
-      // "Dirigent" is a group, not a score.
-      if (_noGroupFamilies.contains(e.key)) continue;
-      for (final t in e.value) {
-        final term = tokenize(t).join(' ');
-        if (term.isEmpty || _ambiguousTerms.contains(term)) continue;
-        families.putIfAbsent(term, () => {}).add(e.key);
-      }
-    }
-    return {
-      for (final e in families.entries)
-        if (e.value.length == 1) e.key: e.value.single,
-    };
-  }();
-
-  /// The family keys as words ("kleine trommel").
-  static final Set<String> _familyKeys = {for (final key in translations.keys) tokenize(key).join(' ')};
-
-  /// A word that is itself a family ("bassklarinette") does not also belong
-  /// to the shorter family it ends with ("klarinette").
-  static bool _isOwnFamily(String token) => _familyKeys.contains(token);
-
-  /// Start/end of [term] as whole words in [tokens]; a plural ending
-  /// ("Violinen", "Pauken") counts as the word.
-  static ({int start, int end, bool compound})? _find(List<String> tokens, List<String> term) {
-    for (var i = 0; i + term.length <= tokens.length; i++) {
-      var ok = true;
-      for (var j = 0; j < term.length; j++) {
-        final t = tokens[i + j];
-        final w = term[j];
-        if (t == w) continue;
-        if (j == term.length - 1 && w.length >= 4 && t.startsWith(w) && const {'n', 'en', 'e', 's', 'i'}.contains(t.substring(w.length))) {
-          continue;
-        }
-        ok = false;
-        break;
-      }
-      if (ok) return (start: i, end: i + term.length, compound: false);
-    }
-    return null;
-  }
-
-  /// A compound word ending with the one-word [term] ("Altsaxophon" for
-  /// saxophon): only an unsure match.
-  static ({int start, int end, bool compound})? _findCompound(List<String> tokens, List<String> term) {
-    if (term.length != 1 || term.single.length < 4) return null;
-    for (var i = 0; i < tokens.length; i++) {
-      if (tokens[i].length > term.single.length && tokens[i].endsWith(term.single)) {
-        return (start: i, end: i + 1, compound: true);
-      }
-    }
-    return null;
-  }
-
-  static int? _tokenNumber(String t) {
-    final n = int.tryParse(t);
-    if (n != null) return n >= 1 && n <= 9 ? n : null;
-    return romanNumerals[t];
-  }
-
-  /// Part number right after the matched words (skipping tuning words and
-  /// ordinal endings: "Klarinette in B 2", "Vl II", "Horn 2nd") or right
-  /// before them ("2. Violine").
-  /// A number before the words only counts when it starts its part of the
-  /// name ("2. Violine", "Ave Verum - 2. Violine", not "Sinfonie 2 Violine").
-  /// A number after the words counts only within their part of the name
-  /// and not when it numbers a movement / the Werk ("Violine – 2. Satz",
-  /// "Violine 2 Satz", "Violine Nr 2").
-  static int? _numberNear(_Words words, int start, int end) {
-    final tokens = words.tokens;
-    for (var i = end, skipped = 0; i < tokens.length && skipped <= 3; i++) {
-      if (words.sectionBefore[i]) break;
-      final n = _tokenNumber(tokens[i]);
-      if (n != null) {
-        final next = i + 1 < tokens.length ? tokens[i + 1] : null;
-        if (next != null && _movementWords.contains(next)) return null;
-        return n;
-      }
-      if (!_tuningWords.contains(tokens[i])) break;
-      skipped++;
-    }
-    int? before(int i) {
-      if (i < 0) return null;
-      final n = int.tryParse(tokens[i]);
-      if (n == null || n < 1 || n > 9 || !words.hardBefore[i]) return null;
-      return n;
-    }
-    if (start > 0 && !words.hardBefore[start]) {
-      final n = before(start - 1);
-      if (n != null) return n;
-      if (start > 1 && const {'st', 'nd', 'rd', 'th'}.contains(tokens[start - 1])) return before(start - 2);
-    }
-    return null;
-  }
-
-  /// Where the name of an instrument family (or one of its terms) stands
-  /// in [tokens].
-  static List<({int start, int end, String family})> _familySpans(List<String> tokens) => [
-        for (final t in _familyTerms)
-          if (_find(tokens, t.term) case final m?) (start: m.start, end: m.end, family: t.family),
-      ];
-
-  /// 2 when [text] names an instrument, 1 when only by a word that also
-  /// means something else ("Alt", "Bass"), else 0.
-  static int _instrumentRank(String text) {
-    final cached = _rankCache[text];
-    if (cached != null) return cached;
-    if (_rankCache.length > 20000) _rankCache.clear();
-    return _rankCache[text] = _rankOf(tokenize(text));
-  }
-
-  static final Map<String, int> _rankCache = {};
-  static final RegExp _romanPattern = RegExp(r'^[ivx]+$');
-
-  static int _rankOf(List<String> tokens) {
-    if (tokens.isEmpty) return 0;
-    var rank = 0;
-    bool ambiguous(List<String> term) => term.length == 1 && (_ambiguousTerms.contains(term.single) || term.single == 'alt');
-    for (final f in _familyTerms) {
-      final t = f.term;
-      if (_find(tokens, t) == null && !(t.length == 1 && t.single.length >= 5 && _findCompound(tokens, t) != null)) continue;
-      if (!ambiguous(t)) return 2;
-      rank = 1;
-    }
-    // Abbreviations that are also a roman numeral ("VI") may be a number.
-    for (final t in _abbreviationTerms) {
-      if (_find(tokens, t) == null) continue;
-      if (!ambiguous(t) && !(t.length == 1 && _romanPattern.hasMatch(t.single))) return 2;
-      rank = 1;
-    }
-    return rank;
-  }
-
-  static final List<List<String>> _abbreviationTerms = [
-    for (final list in abbreviations.values)
-      for (final a in list)
-        if (tokenize(a).isNotEmpty) tokenize(a),
-  ];
-
-  /// Every family name and term as words.
-  static final List<({String family, List<String> term})> _familyTerms = [
-    for (final e in translations.entries)
-      for (final term in [e.key, ...e.value])
-        if (tokenize(term).isNotEmpty) (family: e.key, term: tokenize(term)),
-  ];
-
-  static int? _numberIn(List<String> tokens) {
-    for (final t in tokens) {
-      final n = _tokenNumber(t);
-      if (n != null) return n;
-    }
-    return null;
-  }
-
-  /// Get file extension
-  static String _getExtension(String filename) {
-    final parts = filename.split('.');
-    return parts.length > 1 ? parts.last : '';
-  }
-
-  /// [filename] without its ending (".pdf"); a dot inside a name ("Posaune
-  /// u. Tuba", "Vl. 2") is no ending.
-  static String _stripExtension(String filename) {
-    final ending = _ending.firstMatch(filename);
-    return ending != null && ending.start > 0 ? filename.substring(0, ending.start) : filename;
-  }
-
-  static final _ending = RegExp(r'\.[A-Za-z0-9]{1,5}$');
+  static List<String> knownGroups(String name, {bool isChoir = false}) =>
+      _knownGroups(name, isChoir: isChoir);
 
   /// The part of [filename] that names the part, to remember it as a
   /// synonym of a group: the Werk name, leading numbers and the extension
@@ -824,30 +262,63 @@ class InstrumentMatcher {
     return _partTermCache[key] = _partTerm(filename, workName: workName);
   }
 
+  /// Extract number from filename (e.g., "Violine 1" -> 1, "Violine II" -> 2)
+  static int? extractNumber(String filename) {
+    final normalized = filename.toLowerCase();
+    for (final entry in romanNumerals.entries) {
+      final pattern = RegExp(r'(^|[^a-z])' + entry.key + r'([^a-z]|$)');
+      if (pattern.hasMatch(normalized)) return entry.value;
+    }
+    final numberMatch = RegExp(r'(\d+)').firstMatch(filename);
+    return numberMatch != null ? int.tryParse(numberMatch.group(1)!) : null;
+  }
+
+  /// Get a descriptive label for a file based on its instrumentId and note
+  static String getFileLabel({
+    required int? instrumentId,
+    required String? note,
+    required List<InstrumentInfo> instruments,
+  }) {
+    if (note != null && note.isNotEmpty) return note;
+    if (instrumentId == recordingId) return l10nWithoutContext.songsRecording;
+    if (instrumentId == lyricsId) return l10nWithoutContext.songsLyrics;
+    if (instrumentId != null) {
+      final instrument =
+          instruments.where((i) => i.id == instrumentId).firstOrNull;
+      if (instrument != null) return instrument.name;
+    }
+    return l10nWithoutContext.songsOther;
+  }
+
   static final Map<String, String?> _partTermCache = {};
 
   static String? _partTerm(String filename, {String? workName}) {
     var stem = _stripExtension(filename).replaceAll(RegExp(r'_+'), ' ');
-    // The Werk name with any separators between its words ("Ave_Verum").
     final title = (workName ?? '')
         .split(RegExp(r'[^\p{L}\p{N}]+', unicode: true))
         .where((w) => w.isNotEmpty)
         .map(RegExp.escape)
         .toList();
     if (title.isNotEmpty) {
-      // Whole words only ("Air" is not taken out of "Clairon").
       stem = stem.replaceAll(
-        RegExp('(?<![\\p{L}\\p{N}])${title.join(r'[\s_\-.,]+')}(?![\\p{L}\\p{N}])', caseSensitive: false, unicode: true),
+        RegExp(
+          '(?<![\\p{L}\\p{N}])${title.join(r'[\s_\-.,]+')}(?![\\p{L}\\p{N}])',
+          caseSensitive: false,
+          unicode: true,
+        ),
         ' ',
       );
     }
-    String trim(String text) =>
-        text.replaceAll(RegExp(r'^[\s\-–.,()]+|[\s\-–.,()]+$'), '').replaceAll(RegExp(r'\s+'), ' ').trim();
+    String trim(String text) => text
+        .replaceAll(RegExp(r'^[\s\-–.,()]+|[\s\-–.,()]+$'), '')
+        .replaceAll(RegExp(r'\s+'), ' ')
+        .trim();
     stem = trim(stem.replaceFirst(RegExp(r'^\s*\d+[\s.\-]+'), ''));
-    // "SoS - bearbeitet - Oboe": the last part of the name that names an
-    // instrument is the part; what stands before it is not. A part keeps
-    // its leading number ("SoS - 2. Kl").
-    final sections = stem.split(RegExp(r'\s+[-–—]\s+|\s*[–—]\s*')).map(trim).where((x) => x.isNotEmpty).toList();
+    final sections = stem
+        .split(RegExp(r'\s+[-–—]\s+|\s*[–—]\s*'))
+        .map(trim)
+        .where((x) => x.isNotEmpty)
+        .toList();
     if (sections.length > 1) {
       var bestRank = 0;
       String? chosen;
@@ -869,85 +340,41 @@ class InstrumentMatcher {
     return stem;
   }
 
-  /// Extract number from filename (e.g., "Violine 1" -> 1, "Violine II" -> 2)
-  static int? extractNumber(String filename) {
-    final normalized = filename.toLowerCase();
+  static final Map<String, int> _rankCache = {};
+  static final RegExp _romanPattern = RegExp(r'^[ivx]+$');
 
-    // Try Roman numerals first
-    for (final entry in romanNumerals.entries) {
-      final pattern = RegExp(r'(^|[^a-z])' + entry.key + r'([^a-z]|$)');
-      if (pattern.hasMatch(normalized)) {
-        return entry.value;
-      }
-    }
-
-    // Try Arabic numerals
-    final numberMatch = RegExp(r'(\d+)').firstMatch(filename);
-    if (numberMatch != null) {
-      return int.tryParse(numberMatch.group(1)!);
-    }
-
-    return null;
+  static int _instrumentRank(String text) {
+    final cached = _rankCache[text];
+    if (cached != null) return cached;
+    if (_rankCache.length > 20000) _rankCache.clear();
+    return _rankCache[text] = _rankOf(tokenize(text));
   }
 
-  /// Get a descriptive label for a file based on its instrumentId and note
-  static String getFileLabel({
-    required int? instrumentId,
-    required String? note,
-    required List<InstrumentInfo> instruments,
-  }) {
-    // First check note
-    if (note != null && note.isNotEmpty) {
-      return note;
-    }
-
-    // Check special IDs
-    if (instrumentId == recordingId) {
-      return l10nWithoutContext.songsRecording;
-    }
-    if (instrumentId == lyricsId) {
-      return l10nWithoutContext.songsLyrics;
-    }
-
-    // Find instrument name
-    if (instrumentId != null) {
-      final instrument = instruments.where((i) => i.id == instrumentId).firstOrNull;
-      if (instrument != null) {
-        return instrument.name;
+  static int _rankOf(List<String> tokens) {
+    if (tokens.isEmpty) return 0;
+    var rank = 0;
+    bool ambiguous(List<String> term) =>
+        term.length == 1 &&
+        (_ambiguousTerms.contains(term.single) || term.single == 'alt');
+    for (final f in _familyTerms) {
+      final t = f.term;
+      if (_find(tokens, t) == null &&
+          !(t.length == 1 &&
+              t.single.length >= 5 &&
+              _findCompound(tokens, t) != null)) {
+        continue;
       }
+      if (!ambiguous(t)) return 2;
+      rank = 1;
     }
-
-    return l10nWithoutContext.songsOther;
+    for (final t in _abbreviationTerms) {
+      if (_find(tokens, t) == null) continue;
+      if (!ambiguous(t) &&
+          !(t.length == 1 && _romanPattern.hasMatch(t.single))) {
+        return 2;
+      }
+      rank = 1;
+    }
+    return rank;
   }
-}
-
-typedef _Words = ({List<String> tokens, List<bool> hardBefore, List<bool> sectionBefore});
-
-typedef _Candidate = ({List<String> term, int base, bool weak, bool explicitNumber, bool synonym});
-
-typedef _InstrumentTerms = ({int? groupNumber, Set<String> families, List<_Candidate> candidates});
-
-class _Hit {
-  _Hit(this.id, this.score, this.weak, this.term, {this.onlyAmbiguous = false});
-
-  final int id;
-  final int score;
-  final bool weak;
-  final String term;
-
-  /// Unsure only because [term] also means something else.
-  final bool onlyAmbiguous;
-}
-
-/// Simple info class for instrument matching
-class InstrumentInfo {
-  final int id;
-  final String name;
-  final String? synonyms;
-
-  const InstrumentInfo({
-    required this.id,
-    required this.name,
-    this.synonyms,
-  });
 }

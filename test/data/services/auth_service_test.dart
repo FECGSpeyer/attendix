@@ -10,7 +10,7 @@ void main() {
   late String source;
 
   setUpAll(() {
-    source = File('lib/data/services/auth_service.dart').readAsStringSync();
+    source = File('lib/core/services/auth/auth_service.dart').readAsStringSync();
   });
 
   test('uses tenantUsers (camelCase) table name', () {

@@ -64,7 +64,6 @@ Future<T?> showAppPopoverMenu<T>({
   return navigator.push<T>(
     _PopoverRoute<T>(
       ios: false,
-      beta: true,
       lines: lines,
       arrow: false,
       maxHeight: maxHeight,
@@ -143,7 +142,6 @@ Future<T?> showAppPopover<T>({
   return navigator.push<T>(
     _ContentPopoverRoute<T>(
       ios: false,
-      beta: true,
       anchor: anchor == null
           ? _anchorOf(context, overlay)
           : Rect.fromPoints(
@@ -166,7 +164,6 @@ Future<T?> showAppPopover<T>({
 class _ContentPopoverRoute<T> extends PopupRoute<T> {
   _ContentPopoverRoute({
     required this.ios,
-    required this.beta,
     required this.anchor,
     required this.coverAnchor,
     required this.width,
@@ -177,9 +174,6 @@ class _ContentPopoverRoute<T> extends PopupRoute<T> {
   });
 
   final bool ios;
-
-  /// The Beta design: no dimmed page behind its menu card.
-  final bool beta;
   final Rect anchor;
   final bool coverAnchor;
   final double width;
@@ -192,8 +186,7 @@ class _ContentPopoverRoute<T> extends PopupRoute<T> {
 
   // Same backdrop as [_PopoverRoute].
   @override
-  Color? get barrierColor =>
-      ios || beta ? Colors.transparent : Colors.black.withValues(alpha: 0.32);
+  Color? get barrierColor => Colors.transparent;
 
   @override
   bool get barrierDismissible => true;

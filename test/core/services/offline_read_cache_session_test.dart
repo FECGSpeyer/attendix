@@ -10,6 +10,8 @@ import 'package:attendix/data/models/attendance/attendance.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../helpers/source_reader.dart';
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -119,8 +121,7 @@ void main() {
   });
 
   test('songs and list caches capture the session before loading (source)', () {
-    final songs =
-        File('lib/data/repositories/song_repository.dart').readAsStringSync();
+    final songs = readDartLibrary('lib/data/repositories/song_repository.dart');
     final getSongs =
         songs.substring(songs.indexOf('Future<List<Song>> getSongs()'));
     expect(getSongs.indexOf('OfflineReadCacheGuard.capture'),

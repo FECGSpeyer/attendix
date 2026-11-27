@@ -63,7 +63,7 @@ class RedesignRoutes {
   static const String worksImport = '$works/import';
 
   /// Werke › + › "Werkliste importieren" (Excel/CSV) as a page of the tab
-  /// (was the classic full-screen modal); leads only like [worksImport].
+  /// (previously a full-screen modal); leads only like [worksImport].
   static const String workListImport = '$works/werkliste';
 
   /// "Werk bearbeiten" of the new design (replaces the old song page).
@@ -245,7 +245,7 @@ class RedesignRoutes {
     return uri.replace(path: target).toString();
   }
 
-  /// Translates all removed classic routes (and legacy start pages) to their
+  /// Translates all removed legacy routes (and start pages) to their
   /// destinations while preserving query and fragment parameters. Returns `null`
   /// for routes that are still active directly.
   static String? legacyTarget(String location) {

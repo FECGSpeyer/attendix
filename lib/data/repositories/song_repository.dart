@@ -21,6 +21,9 @@ import '../models/song/song_additional_field.dart';
 import 'base_repository.dart';
 import '../../l10n/l10n.dart';
 
+part 'song_repository_categories.dart';
+part 'song_repository_files.dart';
+
 /// Provider for SongRepository
 final songRepositoryProvider = Provider<SongRepository>((ref) {
   return SongRepository(ref);
@@ -69,15 +72,10 @@ class SongTenantSettings {
   final String? songSharingId;
 }
 
-/// Repository for song operations.
-///
-/// Werk-Synchronisierung (Ionic `add_song_source_tenant_id.sql`): a tenant can
-/// use the song library of another tenant (`tenants.song_source_tenant_id`).
-/// All queries on `songs` and `song_categories` therefore filter by
-/// [songTenantId] (= source tenant, or the current tenant when not synced),
-/// while `history` stays per tenant and filters by [currentTenantId].
-class SongRepository extends BaseRepository with TenantAwareRepository {
-  SongRepository(super.ref);
+/// Core state and song CRUD / offline-cache operations shared by mixins.
+abstract class _SongRepositoryCore extends BaseRepository
+    with TenantAwareRepository {
+  _SongRepositoryCore(super.ref);
 
   static const int _pageSize = 1000;
   static const String _bucket = 'songs';
@@ -96,15 +94,6 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
   bool get isSyncedLibrary =>
       _songSourceTenantId != null && _songSourceTenantId != currentTenantId;
 
-  // ==========================================================================
-  // Songs
-  // ==========================================================================
-
-  /// Ionic song.service `offline_songs_v1_<tenantId>` storage key.
-  /// SOL_FIX7: additionally bound to the signed-in user (cleared on sign-out).
-  static String offlineSongsCacheKey(String userId, int tenantId) =>
-      'offline_songs_v1_${userId}_$tenantId';
-
   /// Signed-in auth user, null when signed out (or no auth client in tests).
   String? _signedInUserId() {
     try {
@@ -117,7 +106,9 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
   /// Cache key of the signed-in user, null (no cache) when signed out.
   String? _offlineSongsKey(int tenantId) {
     final userId = _signedInUserId();
-    return userId == null ? null : offlineSongsCacheKey(userId, tenantId);
+    return userId == null
+        ? null
+        : SongRepository.offlineSongsCacheKey(userId, tenantId);
   }
 
   /// Get all songs of the (effective) song tenant.
@@ -320,13 +311,7 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
           .eq('tenantId', songTenantId)
           .maybeSingle();
 
-      final files = (existing?['files'] as List?) ?? const [];
-      final paths = files
-          .whereType<Map>()
-          .map((f) => (f['storageName'] ?? f['fileName'])?.toString())
-          .whereType<String>()
-          .map((name) => 'songs/$songTenantId/$id/$name')
-          .toList();
+      final paths = _songStoragePaths(existing?['files'] as List?, songTenantId, id);
       if (paths.isNotEmpty) {
         try {
           await supabase.storage.from(_bucket).remove(paths);
@@ -434,7 +419,10 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
   Future<String?> getSongSourceName() async {
     if (!isSyncedLibrary) return null;
     try {
-      final name = (await _libraryTenants()).where((t) => t.id == songTenantId).firstOrNull?.name;
+      final name = (await _libraryTenants())
+          .where((t) => t.id == songTenantId)
+          .firstOrNull
+          ?.name;
       return name == null || name.isEmpty ? null : name;
     } catch (e, stack) {
       handleError(e, stack, 'getSongSourceName');
@@ -451,539 +439,34 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
         .or('id.eq.$sourceId,song_source_tenant_id.eq.$sourceId');
 
     return (response as List)
-        .map((t) => (id: (t['id'] as num?)?.toInt(), name: t['shortName']?.toString() ?? ''))
+        .map((t) => (
+              id: (t['id'] as num?)?.toInt(),
+              name: t['shortName']?.toString() ?? '',
+            ))
         .toList();
   }
+}
 
-  // ==========================================================================
-  // Song Categories
-  // ==========================================================================
+/// Repository for song operations.
+///
+/// Werk-Synchronisierung (Ionic `add_song_source_tenant_id.sql`): a tenant can
+/// use the song library of another tenant (`tenants.song_source_tenant_id`).
+/// All queries on `songs` and `song_categories` therefore filter by
+/// [songTenantId] (= source tenant, or the current tenant when not synced),
+/// while `history` stays per tenant and filters by [currentTenantId].
+class SongRepository extends _SongRepositoryCore
+    with _SongCategoriesMixin, _SongFilesAndHistoryMixin {
+  SongRepository(super.ref);
 
-  /// Get song categories of the effective song tenant
-  Future<List<SongCategory>> getSongCategories() async {
-    try {
-      final response = await supabase
-          .from('song_categories')
-          .select('*')
-          .eq('tenant_id', songTenantId)
-          .order('index', ascending: true);
-
-      return (response as List)
-          .map((e) => SongCategory.fromJson(e as Map<String, dynamic>))
-          .toList();
-    } catch (e, stack) {
-      handleError(e, stack, 'getSongCategories');
-      rethrow;
-    }
-  }
-
-  /// Create a new song category
-  Future<SongCategory> addSongCategory({
-    required String name,
-    required int index,
-  }) async {
-    ensureNotDemo('addSongCategory'); // DEMO_GUARD
-    try {
-      final response = await supabase
-          .from('song_categories')
-          .insert({
-            'tenant_id': songTenantId,
-            'name': name,
-            'index': index,
-          })
-          .select()
-          .single();
-
-      return SongCategory.fromJson(response);
-    } catch (e, stack) {
-      handleError(e, stack, 'addSongCategory');
-      rethrow;
-    }
-  }
-
-  /// Update a song category
-  Future<void> updateSongCategory(String id, Map<String, dynamic> updates) async {
-    ensureNotDemo('updateSongCategory'); // DEMO_GUARD
-    try {
-      await supabase
-          .from('song_categories')
-          .update(updates)
-          .eq('id', id)
-          .eq('tenant_id', songTenantId);
-    } catch (e, stack) {
-      handleError(e, stack, 'updateSongCategory');
-      rethrow;
-    }
-  }
-
-  /// Delete a song category (Ionic removeSongCategory: delete only).
-  /// PARITY_B (D8): the remaining categories are NOT renumbered.
-  Future<void> deleteSongCategory(String id) async {
-    ensureNotDemo('deleteSongCategory'); // DEMO_GUARD
-    try {
-      await supabase
-          .from('song_categories')
-          .delete()
-          .eq('id', id)
-          .eq('tenant_id', songTenantId);
-    } catch (e, stack) {
-      handleError(e, stack, 'deleteSongCategory');
-      rethrow;
-    }
-  }
-
-  // ==========================================================================
-  // History (per tenant - NOT the song source tenant)
-  // ==========================================================================
-
-  /// All visible history entries of the current tenant, newest first
-  /// (Ionic `HistoryService.getHistory`). Includes planned future entries.
-  Future<List<SongHistory>> getHistory() async {
-    try {
-      final response = await supabase
-          .from('history')
-          .select('*, attendance:attendance_id(date), person:person_id(firstName, lastName)')
-          .eq('tenantId', currentTenantId)
-          .eq('visible', true)
-          .order('date', ascending: false);
-
-      return (response as List)
-          .map((e) => _historyFromRow(e as Map<String, dynamic>))
-          .toList();
-    } catch (e, stack) {
-      handleError(e, stack, 'getHistory');
-      rethrow;
-    }
-  }
-
-  /// Werkhistorie of a single song (Ionic `getHistoryBySongId`).
-  Future<List<SongHistory>> getHistoryBySongId(int songId) async {
-    try {
-      final response = await supabase
-          .from('history')
-          .select(
-            '*, attendance:attendance_id(date, type_id, typeInfo, att_type:type_id(name, hide_name)), person:person_id(firstName, lastName)',
-          )
-          .eq('tenantId', currentTenantId)
-          .eq('songId', songId)
-          .eq('visible', true)
-          .order('date', ascending: false);
-
-      return (response as List)
-          .map((e) => _historyFromRow(e as Map<String, dynamic>))
-          .toList();
-    } catch (e, stack) {
-      handleError(e, stack, 'getHistoryBySongId');
-      rethrow;
-    }
-  }
-
-  /// Get song history entries (optionally for one song)
-  Future<List<SongHistory>> getSongHistory({int? songId, int? limit}) async {
-    try {
-      var baseQuery = supabase
-          .from('history')
-          .select('*, song:songId(*), person:person_id(firstName, lastName)')
-          .eq('tenantId', currentTenantId);
-
-      if (songId != null) {
-        baseQuery = baseQuery.eq('songId', songId);
-      }
-
-      var query = baseQuery.order('date', ascending: false);
-
-      if (limit != null) {
-        query = query.limit(limit);
-      }
-
-      final response = await query;
-
-      return (response as List)
-          .map((e) => _historyFromRow(e as Map<String, dynamic>))
-          .toList();
-    } catch (e, stack) {
-      handleError(e, stack, 'getSongHistory');
-      rethrow;
-    }
-  }
-
-  /// Add a song history entry
-  /// BL-014: Validates that songId belongs to the song library before insert
-  Future<SongHistory> addSongHistory({
-    required int songId,
-    required String date,
-    String? conductorName,
-    int? attendanceId,
-  }) async {
-    ensureNotDemo('addSongHistory'); // DEMO_GUARD
-    try {
-      final songValidation = await supabase
-          .from('songs')
-          .select('id')
-          .eq('id', songId)
-          .eq('tenantId', songTenantId)
-          .maybeSingle();
-
-      if (songValidation == null) {
-        throw RepositoryException(
-          message: l10nWithoutContext.coreFlutterRepoSongNotFoundOrDenied,
-          operation: 'addSongHistory',
-        );
-      }
-
-      final response = await supabase
-          .from('history')
-          .insert({
-            'tenantId': currentTenantId,
-            'songId': songId,
-            'date': date,
-            'otherConductor': conductorName,
-            'attendance_id': attendanceId,
-            'visible': true,
-          })
-          .select()
-          .single();
-
-      return _historyFromRow(response);
-    } catch (e, stack) {
-      handleError(e, stack, 'addSongHistory');
-      rethrow;
-    }
-  }
-
-  /// Ionic 4.17.26 `HistoryService.getHistoryForAttendances`: Werke of
-  /// several Termine for the members' views (song id, Termin, conductor
-  /// name). Queried in chunks of 150 ids so long Termin lists stay below the
-  /// URL length limit; always restricted to the current tenant.
-  Future<List<SongHistory>> getHistoryForAttendances(List<int> attendanceIds) async {
-    final ids = attendanceIds.where((id) => id != 0).toSet().toList();
-    if (ids.isEmpty) return const [];
-    try {
-      final result = <SongHistory>[];
-      final tenantId = currentTenantId;
-      for (var i = 0; i < ids.length; i += 150) {
-        final chunk = ids.sublist(i, i + 150 > ids.length ? ids.length : i + 150);
-        // Paged as well: one chunk can hold more rows than PostgREST
-        // returns at once (max-rows 1000).
-        final rows = await fetchAllPages<dynamic>((from, to) async => await supabase
-            .from('history')
-            .select('id, songId, attendance_id, otherConductor, person:person_id(firstName, lastName)')
-            .eq('tenantId', tenantId)
-            .inFilter('attendance_id', chunk)
-            .order('id', ascending: true)
-            .range(from, to) as List);
-        for (final row in rows) {
-          final map = row as Map<String, dynamic>;
-          final person = map['person'];
-          result.add(SongHistory(
-            id: (map['id'] as num?)?.toInt(),
-            songId: (map['songId'] as num?)?.toInt(),
-            attendanceId: (map['attendance_id'] as num?)?.toInt(),
-            otherConductor: map['otherConductor'] as String?,
-            conductorName: person is Map
-                ? '${person['firstName'] ?? ''} ${person['lastName'] ?? ''}'.trim()
-                : (map['otherConductor'] as String? ?? ''),
-          ));
-        }
-      }
-      return result;
-    } catch (e, stack) {
-      handleError(e, stack, 'getHistoryForAttendances');
-      rethrow;
-    }
-  }
-
-  // ==========================================================================
-  // Sammlungen (song_collections, supabase/sql/song_collections.sql)
-  // ==========================================================================
+  /// Ionic song.service `offline_songs_v1_<tenantId>` storage key.
+  /// SOL_FIX7: additionally bound to the signed-in user (cleared on sign-out).
+  static String offlineSongsCacheKey(String userId, int tenantId) =>
+      'offline_songs_v1_${userId}_$tenantId';
 
   /// Whether [e] says the database has no Sammlungen yet (the migration
   /// `song_collections.sql` has not run: table or column unknown).
   static bool isMissingCollectionsSchema(Object e) =>
       e is PostgrestException &&
-      const {'42P01', 'PGRST205', '42703', 'PGRST204', 'PGRST200'}.contains(e.code);
-
-  /// Sammlungen of the effective song tenant in their order; null when the
-  /// database has none yet (then the app works without Sammlungen).
-  Future<List<SongCollection>?> getSongCollections() async {
-    try {
-      final response = await supabase
-          .from('song_collections')
-          .select('*')
-          .eq('tenant_id', songTenantId)
-          .order('index', ascending: true)
-          .order('id', ascending: true);
-
-      return (response as List)
-          .map((e) => SongCollection.fromJson(e as Map<String, dynamic>))
-          .toList();
-    } catch (e, stack) {
-      if (isMissingCollectionsSchema(e)) return null;
-      handleError(e, stack, 'getSongCollections');
-      rethrow;
-    }
-  }
-
-  /// Creates a Sammlung in the effective song tenant.
-  Future<SongCollection> addSongCollection(SongCollection collection) async {
-    ensureNotDemo('addSongCollection'); // DEMO_GUARD
-    try {
-      final response = await supabase
-          .from('song_collections')
-          .insert({
-            'tenant_id': songTenantId,
-            'name': collection.name,
-            'prefix': collection.prefix,
-            'visibility': collection.visibility,
-            'group_ids': collection.groupIds,
-            'plannable': collection.plannable,
-            'public_link': collection.publicLink,
-            'index': collection.index,
-          })
-          .select()
-          .single();
-      return SongCollection.fromJson(response);
-    } catch (e, stack) {
-      handleError(e, stack, 'addSongCollection');
-      rethrow;
-    }
-  }
-
-  /// Changes columns of a Sammlung (name, prefix, visibility, group_ids,
-  /// plannable, public_link, index).
-  Future<void> updateSongCollection(int id, Map<String, dynamic> updates) async {
-    ensureNotDemo('updateSongCollection'); // DEMO_GUARD
-    try {
-      await supabase
-          .from('song_collections')
-          .update(updates)
-          .eq('id', id)
-          .eq('tenant_id', songTenantId);
-    } catch (e, stack) {
-      handleError(e, stack, 'updateSongCollection');
-      rethrow;
-    }
-  }
-
-  /// Changes the prefix of Sammlung [id] and of its Werke that still carry
-  /// the old one, in one transaction (function `rename_song_collection_prefix`
-  /// in song_collections.sql, checks the tenant). Throws a
-  /// [RepositoryException] with code 23505 when a number would be taken
-  /// twice; then nothing changed.
-  Future<void> renameSongCollectionPrefix(int id, String prefix) async {
-    ensureNotDemo('renameSongCollectionPrefix'); // DEMO_GUARD
-    try {
-      await supabase.rpc('rename_song_collection_prefix', params: {
-        'p_collection_id': id,
-        'p_tenant_id': songTenantId,
-        'p_prefix': prefix,
-      });
-    } catch (e, stack) {
-      handleError(e, stack, 'renameSongCollectionPrefix');
-      rethrow;
-    }
-  }
-
-  /// Ids of the Werke in Sammlung [collectionId], from the server only (no
-  /// offline copy): a failed load throws. For deleting a Sammlung.
-  Future<List<int>> getSongIdsInCollection(int collectionId) async {
-    final tenantId = songTenantId;
-    try {
-      final ids = <int>[];
-      for (var from = 0;; from += _pageSize) {
-        final rows = await supabase
-            .from('songs')
-            .select('id')
-            .eq('tenantId', tenantId)
-            .eq('collection_id', collectionId)
-            .order('id', ascending: true)
-            .range(from, from + _pageSize - 1) as List;
-        ids.addAll(rows.map((r) => (r as Map<String, dynamic>)['id'] as int));
-        if (rows.length < _pageSize) break;
-      }
-      return ids;
-    } catch (e, stack) {
-      handleError(e, stack, 'getSongIdsInCollection');
-      rethrow;
-    }
-  }
-
-  /// Deletes a Sammlung; its Werke fall back to "Repertoire" (on delete
-  /// set null).
-  Future<void> deleteSongCollection(int id) async {
-    ensureNotDemo('deleteSongCollection'); // DEMO_GUARD
-    try {
-      await supabase
-          .from('song_collections')
-          .delete()
-          .eq('id', id)
-          .eq('tenant_id', songTenantId);
-    } catch (e, stack) {
-      handleError(e, stack, 'deleteSongCollection');
-      rethrow;
-    }
-  }
-
-  /// Puts Werk [id] into Sammlung [collectionId] (null = Repertoire),
-  /// with a new [prefix] and [number] when given.
-  Future<void> moveSongToCollection(
-    int id,
-    int? collectionId, {
-    String? prefix,
-    int? number,
-  }) async {
-    ensureNotDemo('moveSongToCollection'); // DEMO_GUARD
-    try {
-      await supabase
-          .from('songs')
-          .update({
-            'collection_id': collectionId,
-            if (prefix != null) 'prefix': prefix,
-            if (number != null) 'number': number,
-          })
-          .eq('id', id)
-          .eq('tenantId', songTenantId);
-    } catch (e, stack) {
-      handleError(e, stack, 'moveSongToCollection');
-      rethrow;
-    }
-  }
-
-  // ==========================================================================
-  // Current Songs (all upcoming events)
-  // ==========================================================================
-
-  /// Songs of all upcoming events, grouped by date / attendance type.
-  Future<List<CurrentSongsGroup>> getCurrentSongs() async {
-    try {
-      return await loadCurrentSongsForTenant(supabase, currentTenantId);
-    } catch (e, stack) {
-      handleError(e, stack, 'getCurrentSongs');
-      rethrow;
-    }
-  }
-}
-
-// ============================================================================
-// Shared helpers (also used by the public song share page)
-// ============================================================================
-
-/// Sort song files by instrumentId like Ionic `getSong`.
-Song sortSongFiles(Song song) {
-  final files = [...?song.files]
-    ..sort((a, b) => (a.instrumentId ?? 0).compareTo(b.instrumentId ?? 0));
-  return song.copyWith(files: files);
-}
-
-SongHistory _historyFromRow(Map<String, dynamic> row) {
-  var history = SongHistory.fromJson(row);
-  final person = row['person'];
-  final attendance = row['attendance'];
-  String? conductorName;
-  if (person is Map) {
-    conductorName = '${person['firstName'] ?? ''} ${person['lastName'] ?? ''}'.trim();
-  } else if ((row['otherConductor'] as String?)?.isNotEmpty == true) {
-    conductorName = row['otherConductor'] as String;
-  }
-  String? typeTitle;
-  String? attendanceDate;
-  if (attendance is Map) {
-    attendanceDate = attendance['date'] as String?;
-    final typeInfo = attendance['typeInfo'] as String?;
-    final attType = attendance['att_type'];
-    if (typeInfo != null && typeInfo.isNotEmpty) {
-      typeTitle = typeInfo;
-    } else if (attType is Map && attType['name'] != null) {
-      typeTitle = attType['name'] as String;
-    }
-  }
-  final songRaw = row['song'];
-  history = history.copyWith(
-    conductorName: conductorName,
-    typeTitle: typeTitle,
-    attendanceDate: attendanceDate,
-    song: songRaw is Map ? Song.fromJson(Map<String, dynamic>.from(songRaw)) : null,
-  );
-  return history;
-}
-
-/// Ionic `DbService.getCurrentSongs`: history entries after today, grouped by
-/// `DD.MM.YYYY` (+ ` | <typeInfo or visible type name>`), dates ascending.
-///
-/// Explicit [tenantId] so the public share page can use it, too. The history
-/// query is always restricted to that tenant.
-Future<List<CurrentSongsGroup>> loadCurrentSongsForTenant(
-  SupabaseClient supabase,
-  int tenantId,
-) async {
-  final now = DateTime.now();
-  final startOfDay = DateTime(now.year, now.month, now.day).toUtc();
-
-  final response = await supabase
-      .from('history')
-      .select('''
-        id, date, otherConductor, person_id, songId, attendance_id, visible,
-        person:person_id(firstName, lastName),
-        song:songId(*),
-        att:attendance_id(id, date, type_id, typeInfo)
-      ''')
-      .eq('tenantId', tenantId)
-      .gt('date', startOfDay.toIso8601String());
-
-  final typesResponse = await supabase
-      .from('attendance_types')
-      .select('id, name, hide_name')
-      .eq('tenant_id', tenantId);
-  final types = <String, Map<String, dynamic>>{
-    for (final t in typesResponse as List)
-      t['id'].toString(): Map<String, dynamic>.from(t as Map),
-  };
-
-  final fmt = DateFormat(dateFmt());
-  final grouped = <String, List<(int, SongHistory)>>{};
-  final keyDates = <String, DateTime>{};
-
-  for (final raw in response as List) {
-    final row = Map<String, dynamic>.from(raw as Map);
-    final att = row['att'] is Map ? Map<String, dynamic>.from(row['att'] as Map) : null;
-    final dateStr = (att?['date'] ?? row['date'])?.toString();
-    final parsed = dateStr != null ? DateTime.tryParse(dateStr)?.toLocal() : null;
-    if (parsed == null) continue;
-    final dateKey = fmt.format(parsed);
-
-    var groupKey = dateKey;
-    if (att != null) {
-      final type = types[att['type_id']?.toString()];
-      final typeInfo = (att['typeInfo'] as String?)?.isNotEmpty == true
-          ? att['typeInfo'] as String
-          : (type != null && type['hide_name'] != true ? type['name'] as String? : null);
-      if (typeInfo != null && typeInfo.isNotEmpty) {
-        groupKey = '$dateKey | $typeInfo';
-      }
-    }
-
-    final base = _historyFromRow(row);
-    final history = base.copyWith(
-      attendanceDate: att?['date'] as String?,
-      conductorName: base.conductorName ?? '',
-    );
-    final attId = (att?['id'] as num?)?.toInt() ?? 0;
-    grouped.putIfAbsent(groupKey, () => []).add((attId, history));
-    keyDates[groupKey] = DateTime(parsed.year, parsed.month, parsed.day);
-  }
-
-  int maxId(String key) =>
-      grouped[key]!.fold<int>(0, (m, e) => e.$1 > m ? e.$1 : m);
-
-  final keys = grouped.keys.toList()
-    ..sort((a, b) {
-      final diff = keyDates[a]!.compareTo(keyDates[b]!);
-      if (diff != 0) return diff;
-      return maxId(a).compareTo(maxId(b));
-    });
-
-  return keys.map((key) {
-    final entries = [...grouped[key]!]..sort((a, b) => b.$1.compareTo(a.$1));
-    return (date: key, history: entries.map((e) => e.$2).toList());
-  }).toList();
+      const {'42P01', 'PGRST205', '42703', 'PGRST204', 'PGRST200'}
+          .contains(e.code);
 }

@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../helpers/source_reader.dart';
+
 /// Security tests for the Ablaufplan repositories (ORG_PLANS).
 ///
 /// - PlanRepository: instance data, every query scoped by the current tenant
@@ -217,7 +219,7 @@ void main() {
       expect(adHoc, contains(".eq('id', key)"));
       expect(adHoc, contains(".eq('edit_key', editKey)"));
 
-      final page = File('lib/features/planning/presentation/pages/shared_plan_page.dart').readAsStringSync();
+      final page = readDartLibrary('lib/features/planning/presentation/pages/shared_plan_page.dart');
       expect(page, isNot(contains('shareEditKey')));
       expect(page, isNot(contains('plan.editKey')));
       expect(page, contains('verifySharedAttendanceEditKey('));
