@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.158.1",
+      "date": "27.11.2026",
+      "changes": [
+        "🐛 Terminerstellung: missverständlichen Vorlagenblock unter Weitere Optionen entfernt"
+      ]
+    },
+    {
       "version": "0.158.0",
       "date": "26.11.2026",
       "changes": [
