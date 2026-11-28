@@ -7,11 +7,13 @@ import '../../../core/logic/dates.dart';
 
 /// REDESIGN: pure logic of "Termin anlegen" (canvas "TerminAnlegen").
 
-/// How the further dates of a new Termin are chosen.
-enum RdRepeat { once, weekly, biweekly, custom }
+/// Rhythm of the further dates of a new Termin. Single days are taken out
+/// or added on top of it (see [rdChosenDates]).
+enum RdRepeat { once, weekly, biweekly }
 
-/// Abmeldeschluss options, relative to the start of each Termin.
-enum RdDeadline { none, hours24, days2, week }
+/// Abmeldeschluss options, relative to the start of each Termin. [custom]
+/// is a picked date: its distance to the first Termin applies to each.
+enum RdDeadline { none, hours24, days2, week, custom }
 
 /// Most dates one "Anlegen" creates (guards against an endless series).
 const rdMaxCreateDates = 60;
@@ -42,6 +44,39 @@ List<DateTime> rdRepeatDates(DateTime start, DateTime until, {int everyWeeks = 1
   return result;
 }
 
+/// Days of [repeat] from [start] until [until], holidays left out when
+/// [skipHolidays].
+List<DateTime> rdRhythmDates(
+  DateTime start,
+  RdRepeat repeat,
+  DateTime until, {
+  bool skipHolidays = false,
+  HolidayData holidays = const HolidayData(),
+}) {
+  if (repeat == RdRepeat.once) return [rdDay(start)];
+  final all = rdRepeatDates(start, until, everyWeeks: repeat == RdRepeat.biweekly ? 2 : 1);
+  return skipHolidays ? all.where((d) => rdHolidayOn(holidays, d) == null).toList() : all;
+}
+
+/// Days a Termin is created on: [rhythm] without the [removed] days, plus
+/// the [added] ones, sorted, at most [rdMaxCreateDates].
+List<DateTime> rdChosenDates(List<DateTime> rhythm, Set<DateTime> removed, Set<DateTime> added) {
+  final days = <DateTime>{
+    for (final d in rhythm)
+      if (!removed.contains(rdDay(d))) rdDay(d),
+    for (final d in added) rdDay(d),
+  }.toList()..sort();
+  return days.length > rdMaxCreateDates ? days.sublist(0, rdMaxCreateDates) : days;
+}
+
+/// Own changes that turn [rhythm] into [chosen]: rhythm days not chosen
+/// and chosen days outside the rhythm.
+({Set<DateTime> removed, Set<DateTime> added}) rdDateChanges(List<DateTime> rhythm, Iterable<DateTime> chosen) {
+  final base = {for (final d in rhythm) rdDay(d)};
+  final picked = {for (final d in chosen) rdDay(d)};
+  return (removed: base.difference(picked), added: picked.difference(base));
+}
+
 /// Name of the public or school holiday on [day], or null.
 String? rdHolidayOn(HolidayData data, DateTime day) {
   final d = rdDay(day);
@@ -61,8 +96,15 @@ DateTime rdStartOf(DateTime day, String? startTime) {
 
 /// Abmeldeschluss of a Termin on [day]; null for [RdDeadline.none] and for
 /// a deadline that would already be over at [now] (no deadline then,
-/// instead of one that blocks every signout right away).
-DateTime? rdDeadlineFor(RdDeadline option, DateTime day, String? startTime, {DateTime? now}) {
+/// instead of one that blocks every signout right away). [customMinutes]:
+/// minutes before the start for [RdDeadline.custom].
+DateTime? rdDeadlineFor(
+  RdDeadline option,
+  DateTime day,
+  String? startTime, {
+  DateTime? now,
+  int? customMinutes,
+}) {
   final start = rdStartOf(day, startTime);
   final DateTime deadline;
   switch (option) {
@@ -74,16 +116,26 @@ DateTime? rdDeadlineFor(RdDeadline option, DateTime day, String? startTime, {Dat
       deadline = DateTime(start.year, start.month, start.day - 2, start.hour, start.minute);
     case RdDeadline.week:
       deadline = DateTime(start.year, start.month, start.day - 7, start.hour, start.minute);
+    case RdDeadline.custom:
+      if (customMinutes == null || customMinutes <= 0) return null;
+      // Wall-clock arithmetic keeps the time across DST changes.
+      deadline = DateTime(start.year, start.month, start.day, start.hour, start.minute - customMinutes);
   }
   return deadline.isBefore(now ?? DateTime.now()) ? null : deadline;
 }
 
 /// First of [dates] whose [option] deadline is already over at [now]
 /// (null if none): creating would silently drop "Antwort bis" for it.
-DateTime? rdDeadlinePassedOn(RdDeadline option, List<DateTime> dates, String? startTime, {DateTime? now}) {
+DateTime? rdDeadlinePassedOn(
+  RdDeadline option,
+  List<DateTime> dates,
+  String? startTime, {
+  DateTime? now,
+  int? customMinutes,
+}) {
   if (option == RdDeadline.none) return null;
   for (final day in dates) {
-    if (rdDeadlineFor(option, day, startTime, now: now) == null) return day;
+    if (rdDeadlineFor(option, day, startTime, now: now, customMinutes: customMinutes) == null) return day;
   }
   return null;
 }

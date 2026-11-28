@@ -84,12 +84,19 @@ die Leitung kann.
      [H-10](helfer.md#h-10-einen-neuen-termin-anlegen).
   2. Tippe unter „Wann?“ auf „Wiederholen“ und wähle „Jede Woche“ oder
      „Alle 2 Wochen“. Lege unter „Bis“ das Ende der Serie fest.
-  3. Prüfe die Anzahl der Termine und gegebenenfalls die Hinweise zu Ferien
-     und Feiertagen.
-  4. Tippe auf „… Termine anlegen“. Die Schaltfläche nennt die Anzahl.
+  3. Die Tage der Serie stehen darunter. Tippe einen Tag an, um ihn
+     auszulassen, ein zweiter Tipp holt ihn zurück. Weitere Tage nimmst du
+     über „Tage im Kalender wählen“ dazu. Der Kalender zeigt dieselbe Auswahl,
+     ausgelassene Tage sind umrandet. Mit „Übernehmen“ oder dem X kommst du
+     zurück zu „Weitere Daten“.
+  4. Tippe auf „Fertig“ und prüfe die Anzahl der Termine und gegebenenfalls
+     die Hinweise zu Ferien und Feiertagen.
+  5. Tippe auf „… Termine anlegen“. Die Schaltfläche nennt die Anzahl.
 - **Ergebnis:** Alle Termine der Serie stehen in der Liste.
 - **Gut zu wissen:** Ferien und Feiertage richten sich nach dem Bundesland der
-  Gruppe (siehe L-51).
+  Gruppe (siehe L-51). Ausgelassene und dazugenommene Tage bleiben erhalten,
+  wenn du „Bis“ änderst. Wählst du bei „Antwort bis“ ein „Eigenes Datum …“,
+  gilt derselbe Abstand für jeden Termin der Serie.
 
 ### L-05 Die Werke eines Termins festlegen
 

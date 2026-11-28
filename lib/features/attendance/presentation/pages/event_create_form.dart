@@ -141,7 +141,7 @@ extension _RdEventCreateForm on _RdEventCreatePageState {
               ),
             RdListRow(
               title: l10n.rdCreateFormRepeat,
-              value: _repeatLabel(l10n, locale),
+              value: _repeatLabel(l10n, locale, dates),
               onTap: () => _pickRepeat(holidays),
             ),
           ],
@@ -195,7 +195,7 @@ extension _RdEventCreateForm on _RdEventCreatePageState {
               subtitle:
                   !_optionsExpanded && (_songs.isNotEmpty || _deadline != RdDeadline.none)
                       ? [
-                        if (_deadline != RdDeadline.none) rdDeadlineLabel(l10n, _deadline),
+                        if (_deadline != RdDeadline.none) _deadlineText(l10n, dates),
                         if (_songs.isNotEmpty) l10n.redesignCreateSongsCount(_songs.length),
                       ].join(' · ')
                       : null,
@@ -205,8 +205,8 @@ extension _RdEventCreateForm on _RdEventCreatePageState {
             if (_optionsExpanded) ...[
               RdListRow(
                 title: l10n.redesignCreateDeadline,
-                value: rdDeadlineLabel(l10n, _deadline),
-                onTap: _pickDeadline,
+                value: _deadlineText(l10n, dates),
+                onTap: () => _pickDeadline(dates),
               ),
               if (type != null && ref.watch(currentTenantProvider)?.type != 'general') ...[
                 RdListRow(
@@ -294,15 +294,23 @@ extension _RdEventCreateForm on _RdEventCreatePageState {
     );
   }
 
-  String _repeatLabel(AppLocalizations l10n, String locale) {
+  String _repeatLabel(AppLocalizations l10n, String locale, List<DateTime> dates) {
     final until = DateFormat.Md(locale).format(_until);
     return switch (_repeat) {
-      RdRepeat.once => l10n.redesignCreateRepeatOnce,
+      RdRepeat.once =>
+        dates.length > 1 ? l10n.redesignCreateRepeatCustom(dates.length - 1) : l10n.redesignCreateRepeatOnce,
       RdRepeat.weekly => l10n.redesignCreateRepeatWeekly(DateFormat.E(locale).format(_date), until),
       RdRepeat.biweekly => l10n.redesignCreateRepeatBiweekly(until),
-      RdRepeat.custom => l10n.redesignCreateRepeatCustom(_customDates.length - 1),
     };
   }
+
+  String _deadlineText(AppLocalizations l10n, List<DateTime> dates) => rdDeadlineValue(
+    l10n,
+    _deadline,
+    customMinutes: _deadlineMinutes,
+    firstStart: rdStartOf(dates.isEmpty ? _date : dates.first, _start ?? _type?.startTime),
+    series: dates.length > 1,
+  );
 
   String _summary(
     AppLocalizations l10n,

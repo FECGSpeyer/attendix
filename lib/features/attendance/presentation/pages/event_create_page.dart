@@ -25,7 +25,6 @@ import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/layout/route_leave_guard.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart' show showAppDatePicker, showAppTimePicker;
 import '../attendance_create_writes.dart';
-import '../widgets/multi_date_calendar.dart';
 import '../widgets/songs_selection_sheet.dart';
 import '../../data/create_logic.dart';
 import '../../../../core/logic/type_flags.dart';
@@ -64,10 +63,16 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
   String? _end;
   int _durationDays = 1;
   RdDeadline _deadline = RdDeadline.none;
+
+  /// "Antwort bis" with "Eigenes Datum": minutes before each Termin.
+  int? _deadlineMinutes;
   RdRepeat _repeat = RdRepeat.once;
   late DateTime _until = rdAddDays(_date, 42);
   bool _skipHolidays = false;
-  List<DateTime> _customDates = const [];
+
+  /// Single days left out of the rhythm, or added on top ("Weitere Daten").
+  Set<DateTime> _removed = const {};
+  Set<DateTime> _added = const {};
   List<SongHistoryEntry> _songs = const [];
   Map<int, int> _duty = {};
 
@@ -135,21 +140,13 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
     _duty = {};
   }
 
-  List<DateTime> _dates(HolidayData holidays) {
-    switch (_repeat) {
-      case RdRepeat.once:
-        return [_date];
-      case RdRepeat.custom:
-        return _customDates.isEmpty ? [_date] : _customDates;
-      case RdRepeat.weekly:
-      case RdRepeat.biweekly:
-        final all = rdRepeatDates(_date, _until, everyWeeks: _repeat == RdRepeat.biweekly ? 2 : 1);
-        return _skipHolidays ? all.where((d) => rdHolidayOn(holidays, d) == null).toList() : all;
-    }
-  }
+  List<DateTime> _dates(HolidayData holidays) => rdChosenDates(
+    rdRhythmDates(_date, _repeat, _until, skipHolidays: _skipHolidays, holidays: holidays),
+    _removed,
+    _added,
+  );
 
   Future<void> _pickDate() async {
-    if (_repeat == RdRepeat.custom) return _pickCustomDates();
     final now = DateTime.now();
     final picked = await showAppDatePicker(
       context: context,
@@ -165,26 +162,9 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
       _until = rdMovedSeriesEnd(_date, day, _until);
       _date = day;
       if (_until.isBefore(_date)) _until = _date;
-    });
-  }
-
-  Future<void> _pickCustomDates() async {
-    final result = await MultiDateCalendarDialog.show(
-      context,
-      initialDates: _repeat == RdRepeat.custom ? _customDates : [_date],
-    );
-    if (result == null || !mounted) return;
-    final days = {for (final d in result) rdDay(d)}.toList()..sort();
-    _touch(() {
-      if (days.isEmpty) return;
-      _date = days.first;
-      if (days.length == 1) {
-        _repeat = RdRepeat.once;
-        _customDates = const [];
-      } else {
-        _repeat = RdRepeat.custom;
-        _customDates = days;
-      }
+      // Days left out belonged to the old series; added days stay.
+      _removed = const {};
+      _added = {..._added}..remove(day);
     });
   }
 
@@ -223,15 +203,27 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
       until: _until.isAfter(_date) ? _until : rdAddDays(_date, 42),
       skipHolidays: _skipHolidays,
       holidays: holidays,
+      removed: _removed,
+      added: _added,
       offerHolidays: holidaysOff && _isLead,
     );
     if (choice == null || !mounted) return;
-    if (choice.custom) return _pickCustomDates();
     _touch(() {
       _repeat = choice.repeat;
       _until = choice.until;
       _skipHolidays = choice.skipHolidays;
-      _customDates = const [];
+      _removed = choice.removed;
+      _added = choice.added;
+      // Einmalig without its own day (dropped in the calendar): the first
+      // chosen day becomes the Datum.
+      if (_repeat == RdRepeat.once && _removed.contains(_date)) {
+        final days = _dates(holidays);
+        if (days.isNotEmpty) {
+          _date = days.first;
+          _removed = const {};
+          _added = days.skip(1).toSet();
+        }
+      }
     });
     if (choice.showHolidays) await _manage(RedesignRoutes.holidays);
   }
@@ -281,9 +273,21 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
     });
   }
 
-  Future<void> _pickDeadline() async {
-    final picked = await showRdDeadlinePicker(context, _deadline);
-    if (picked != null && mounted) _touch(() => _deadline = picked);
+  Future<void> _pickDeadline(List<DateTime> dates) async {
+    final type = _type;
+    final picked = await showRdDeadlinePicker(
+      context,
+      _deadline,
+      customMinutes: _deadlineMinutes,
+      firstStart: rdStartOf(dates.isEmpty ? _date : dates.first, _start ?? type?.startTime),
+      series: dates.length > 1,
+    );
+    if (picked != null && mounted) {
+      _touch(() {
+        _deadline = picked.option;
+        _deadlineMinutes = picked.customMinutes;
+      });
+    }
   }
 
   Future<void> _addSongs() async {
@@ -320,6 +324,7 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
     final start = _start ?? type.startTime;
     final end = _end ?? type.endTime;
     final deadline = _deadline;
+    final deadlineMinutes = _deadlineMinutes;
     final duration = _durationDays;
     final songs = List<SongHistoryEntry>.of(_songs);
     final duty = Map<int, int>.of(_duty);
@@ -358,7 +363,7 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
         ToastHelper.showError(context, l10n.redesignCreateEndBeforeStart);
         return;
       }
-      final passed = rdDeadlinePassedOn(deadline, chosenDates, start);
+      final passed = rdDeadlinePassedOn(deadline, chosenDates, start, customMinutes: deadlineMinutes);
       if (passed != null) {
         ToastHelper.showError(
           context,
@@ -385,7 +390,10 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
         place: place.isEmpty ? null : place,
         songEntries: songs,
         dutyRequiredByWeekday: duty,
-        deadlineFor: deadline == RdDeadline.none ? null : (day) => rdDeadlineFor(deadline, day, start),
+        deadlineFor:
+            deadline == RdDeadline.none
+                ? null
+                : (day) => rdDeadlineFor(deadline, day, start, customMinutes: deadlineMinutes),
       );
       final ids = await writer.create(input);
       if (!mounted || _currentScope != _draftScope) return;
