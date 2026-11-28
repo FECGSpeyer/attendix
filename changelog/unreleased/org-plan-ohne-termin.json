@@ -1,1 +1,1 @@
-{"bump": "patch", "changes": ["🐛 Beta Org-Pläne: freie Ablaufpläne ohne verwirrende Markierung „Ohne Termin“, doppelte Org-Anzeige oben entfernt, ＋ öffnet dort die Ablaufplanung statt Termin/Besprechung"]}
+{"bump": "patch", "changes": ["🐛 Beta Org-Pläne: freie Ablaufpläne zeigen statt „Ohne Termin“ die Gruppe, die sie der Organisation hinzugefügt hat; doppelte Org-Anzeige oben entfernt; ＋ öffnet dort die Ablaufplanung statt Termin/Besprechung"]}

@@ -99,11 +99,16 @@ final mySharedPlansProvider = FutureProvider<List<SharedPlan>>((ref) async {
 /// One entry of the Org-Pläne list: a Termin flagged as org plan or an ad-hoc plan.
 class OrgPlanEntry {
   const OrgPlanEntry.attendance(PlanAttendance this.attendance)
-      : sharedPlan = null;
-  const OrgPlanEntry.adHoc(SharedPlan this.sharedPlan) : attendance = null;
+      : sharedPlan = null,
+        groupName = null;
+  const OrgPlanEntry.adHoc(SharedPlan this.sharedPlan, {this.groupName}) : attendance = null;
 
   final PlanAttendance? attendance;
   final SharedPlan? sharedPlan;
+
+  /// Ad-hoc plans: name of the group that added the plan to the organisation
+  /// (null when unknown, e.g. plans added before this was stored).
+  final String? groupName;
 
   bool get isAdHoc => sharedPlan != null;
 
@@ -131,8 +136,11 @@ class OrgPlanEntry {
     return (t != null && t.isNotEmpty) ? t : l10nWithoutContext.plansPlan;
   }
 
-  String get tenantLabel =>
-      attendance != null ? (attendance!.tenantName ?? '') : l10nWithoutContext.plansOrgPlan;
+  String get tenantLabel {
+    if (attendance != null) return attendance!.tenantName ?? '';
+    final g = groupName;
+    return g != null && g.isNotEmpty ? g : l10nWithoutContext.plansOrgPlan;
+  }
 
   int get fieldCount => plan.fields.length;
 
@@ -169,13 +177,16 @@ final orgPlansProvider = FutureProvider<List<OrgPlanEntry>>((ref) async {
   final repo = ref.watch(orgPlanRepositoryProvider);
   final results = await Future.wait([
     repo.getOrgPlans(org!.id!),
-    repo.getAdHocOrgPlans(org.id!).catchError((_) => <SharedPlan>[]),
+    repo.getAdHocOrgPlans(org.id!).catchError((_) => <({SharedPlan plan, int? tenantId})>[]),
+    repo.getOrgTenantNames(org.id!).catchError((_) => <int, String>{}),
   ]);
   final attendances = results[0] as List<PlanAttendance>;
-  final adHoc = results[1] as List<SharedPlan>;
+  final adHoc = results[1] as List<({SharedPlan plan, int? tenantId})>;
+  final names = results[2] as Map<int, String>;
   return [
     ...attendances.where((a) => a.plan != null).map(OrgPlanEntry.attendance),
-    ...adHoc.map(OrgPlanEntry.adHoc),
+    for (final a in adHoc)
+      OrgPlanEntry.adHoc(a.plan, groupName: a.tenantId == null ? null : names[a.tenantId]),
   ];
 });
 

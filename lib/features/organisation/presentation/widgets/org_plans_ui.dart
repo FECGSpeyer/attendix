@@ -170,10 +170,14 @@ class RdTodayOrgPlansCard extends ConsumerWidget {
 
 /// Compact neutral origin tag used inside an ORG container (Heute ORG card or
 /// Termine › Org-Pläne), where the organisation itself is already named above.
-/// Only Termin plans name their group; a free plan (no Termin, no group) gets
-/// no tag, because "Ohne Termin" read as "this event has no Termin".
+/// Termin plans name their group; a free plan names the group that added it
+/// to the organisation, or carries no tag when that is unknown ("Ohne Termin"
+/// read as "this event has no Termin").
 Widget? _orgOriginPill(BuildContext context, OrgPlanEntry entry) {
-  if (entry.isAdHoc) return null;
+  if (entry.isAdHoc) {
+    final g = entry.groupName;
+    return g != null && g.isNotEmpty ? RdPill(g, icon: Icons.groups_outlined) : null;
+  }
   if (entry.tenantLabel.isNotEmpty) {
     return RdPill(entry.tenantLabel, icon: Icons.groups_outlined);
   }

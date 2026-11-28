@@ -362,13 +362,18 @@ class PlanRepository extends BaseRepository with TenantAwareRepository {
   }
 
   /// Adds an ad-hoc plan of the current user to an organisation (or removes it with null).
+  /// The current group is stored with it (`tenant_id`), so Org-Pläne can show
+  /// which group added the plan, like the group of a Termin plan.
   Future<void> setMySharedPlanOrg(String id, int? orgId) async {
     try {
       final userId = supabase.auth.currentUser?.id;
       if (userId == null) return;
       await supabase
           .from('shared_plans')
-          .update({'org_id': orgId})
+          .update({
+            'org_id': orgId,
+            'tenant_id': orgId != null && hasTenantId ? currentTenantId : null,
+          })
           .eq('id', id)
           .eq('creator_user_id', userId);
     } catch (e, stack) {

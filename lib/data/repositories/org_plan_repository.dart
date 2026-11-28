@@ -179,8 +179,9 @@ class OrgPlanRepository extends BaseRepository {
     }
   }
 
-  /// Ad-hoc plans added to the organisation.
-  Future<List<SharedPlan>> getAdHocOrgPlans(int orgId) async {
+  /// Ad-hoc plans added to the organisation, each with the group that added
+  /// it (`shared_plans.tenant_id`, null for plans added before that column).
+  Future<List<({SharedPlan plan, int? tenantId})>> getAdHocOrgPlans(int orgId) async {
     try {
       final response = await supabase
           .from('shared_plans')
@@ -188,9 +189,14 @@ class OrgPlanRepository extends BaseRepository {
           .eq('org_id', orgId)
           .order('date', ascending: true);
 
-      return (response as List)
-          .map((e) => SharedPlan.fromJson(e as Map<String, dynamic>))
-          .toList();
+      return (response as List).map((e) {
+        final row = e as Map<String, dynamic>;
+        final t = row['tenant_id'];
+        return (
+          plan: SharedPlan.fromJson(row),
+          tenantId: t is int ? t : int.tryParse('${t ?? ''}'),
+        );
+      }).toList();
     } catch (e, stack) {
       handleError(e, stack, 'getAdHocOrgPlans');
       rethrow;

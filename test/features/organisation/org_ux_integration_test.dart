@@ -180,6 +180,31 @@ void main() {
       expect(find.text('Ohne Termin'), findsNothing); // free plans carry no tag
     });
 
+    testWidgets('free plan names the group that added it to the organisation', (tester) async {
+      final entry = OrgPlanEntry.adHoc(
+        SharedPlan(
+          id: 'sp2',
+          editKey: 'k',
+          planTitle: 'Gottesdienst',
+          date: _isoDay(DateTime.now()),
+          time: '09:35',
+          fields: const [PlanField(id: 'a', name: 'Lied', time: '5')],
+        ),
+        groupName: 'Orchester Speyer',
+      );
+
+      await tester.pumpWidget(_wrap(
+        const RdTodayOrgPlansCard(),
+        overrides: [
+          currentOrganisationProvider.overrideWith((_) async => _org),
+          orgPlansProvider.overrideWith((_) async => [entry]),
+        ],
+      ));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Orchester Speyer'), findsOneWidget);
+    });
+
     testWidgets('renders nothing without an organisation', (tester) async {
       await tester.pumpWidget(_wrap(
         const RdTodayOrgPlansCard(),

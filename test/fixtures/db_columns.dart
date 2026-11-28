@@ -473,6 +473,8 @@ const Map<String, Set<String>> kDbColumns = {
     'id',
     'org_id',
     'plan_title',
+    // supabase/sql/org_plan_gruppe.sql: group that added the plan to the org.
+    'tenant_id',
     'time',
   },
   'shifts': {
