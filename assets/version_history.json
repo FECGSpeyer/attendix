@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.162.1",
+      "date": "28.11.2026",
+      "changes": [
+        "🐛 Beta Org-Pläne: freie Ablaufpläne zeigen statt „Ohne Termin“ die Gruppe, die sie der Organisation hinzugefügt hat; doppelte Org-Anzeige oben entfernt; ＋ öffnet dort die Ablaufplanung statt Termin/Besprechung"
+      ]
+    },
+    {
       "version": "0.162.0",
       "date": "28.11.2026",
       "changes": [
