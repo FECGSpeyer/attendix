@@ -18173,13 +18173,6 @@
   "@redesignEventClosing": {
     "description": "redesign.event.closing"
   },
-  "redesignEventConductorFor": "Dirigent für „{name}“",
-  "@redesignEventConductorFor": {
-    "description": "redesign.event.conductorFor",
-    "placeholders": {
-      "name": {}
-    }
-  },
   "redesignEventConductorForAll": "Dirigent für alle",
   "@redesignEventConductorForAll": {
     "description": "redesign.event.conductorForAll"
@@ -18714,6 +18707,10 @@
   "redesignEventUndone": "Rückgängig gemacht",
   "@redesignEventUndone": {
     "description": "redesign.event.undone"
+  },
+  "redesignEventWhoConducts": "Wer dirigiert?",
+  "@redesignEventWhoConducts": {
+    "description": "redesign.event.whoConducts"
   },
   "redesignEventWorkNumber": "Nr. {number}",
   "@redesignEventWorkNumber": {

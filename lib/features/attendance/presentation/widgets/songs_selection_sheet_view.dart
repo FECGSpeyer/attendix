@@ -4,8 +4,9 @@ part of 'songs_selection_sheet.dart';
 typedef _RdConductor = ({int? id, String? other});
 
 /// View layout for "Werk(e) hinzufügen": all Werke are picked at once, then
-/// "Dirigent für alle" plus a conductor per Werk (tap a Werk to change only
-/// its conductor), so two conductors need one pass, not two.
+/// "Wer dirigiert?" with "Dirigent für alle" plus the conductor of each Werk
+/// below its name (tap a Werk to change only its conductor), so two
+/// conductors need one pass, not two.
 extension _RdSongsSelection on _SongsSelectionSheetState {
   /// "Dirigent für alle"; without a choice yet the first conductor.
   _RdConductor? _rdForAll(List<Person> conductors) {
@@ -103,7 +104,9 @@ extension _RdSongsSelection on _SongsSelectionSheetState {
             Semantics(
               header: true,
               child: Text(
-                count == 0 ? l10n.attListAddSongs : l10n.redesignEventAddWorksTitle(count),
+                // The Werke are chosen already, this sheet asks for the
+                // Dirigent; the count stays on the button.
+                count == 0 ? l10n.attListAddSongs : l10n.redesignEventWhoConducts,
                 style: RdType.cardTitle(p),
               ),
             ),
@@ -120,36 +123,31 @@ extension _RdSongsSelection on _SongsSelectionSheetState {
                   RdListRow(
                     key: Key('rd-songs-row-$id'),
                     title: songTitle(id),
+                    // The Dirigent below the Werk like in the Termin's Werk
+                    // list; one that differs from "Dirigent für alle" in the
+                    // link color (no dark pill: that reads as "selected").
+                    subtitle: _rdConductorLabel(_rdConductorFor(id, conductors), conductors),
+                    subtitleColor: _rdOverrides.containsKey(id) ? p.link : null,
                     showChevron: false,
                     selected: _rdExpandedSongId == id,
-                    // Open: the chips below get the full width.
-                    trailing:
-                        _rdExpandedSongId == id
-                            ? Icon(Icons.expand_less, size: 20, color: p.text2)
-                            : _RdConductorPill(
-                              label: _rdConductorLabel(_rdConductorFor(id, conductors), conductors),
-                              exception: _rdOverrides.containsKey(id),
-                            ),
+                    trailing: Icon(
+                      _rdExpandedSongId == id ? Icons.expand_less : Icons.expand_more,
+                      size: 20,
+                      color: p.text2,
+                    ),
                     onTap: () => _update(() => _rdExpandedSongId = _rdExpandedSongId == id ? null : id),
                     footer:
                         _rdExpandedSongId == id
                             ? Padding(
                               padding: const EdgeInsets.only(top: 4, bottom: 4),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(l10n.redesignEventConductorFor(songTitle(id)), style: RdType.meta(p, size: 13)),
-                                  const SizedBox(height: 8),
-                                  Wrap(
-                                    spacing: 8,
-                                    runSpacing: 8,
-                                    children: _rdConductorChips(
-                                      conductors,
-                                      _rdConductorFor(id, conductors),
-                                      (c) => _rdSetFor(id, c, conductors),
-                                    ),
-                                  ),
-                                ],
+                              child: Wrap(
+                                spacing: 8,
+                                runSpacing: 8,
+                                children: _rdConductorChips(
+                                  conductors,
+                                  _rdConductorFor(id, conductors),
+                                  (c) => _rdSetFor(id, c, conductors),
+                                ),
                               ),
                             )
                             : null,
@@ -170,42 +168,6 @@ extension _RdSongsSelection on _SongsSelectionSheetState {
               label: count == 0 ? l10n.attListAddSongs : l10n.redesignEventAddWorksTitle(count),
               onPressed: _canAdd() ? _addSongs : null,
             ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// Conductor of a Werk at the end of its row; tap the row to change it.
-class _RdConductorPill extends StatelessWidget {
-  const _RdConductorPill({required this.label, required this.exception});
-
-  final String label;
-
-  /// Differs from "Dirigent für alle".
-  final bool exception;
-
-  @override
-  Widget build(BuildContext context) {
-    final p = context.rd;
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 160),
-      child: Container(
-        padding: const EdgeInsets.fromLTRB(10, 5, 6, 5),
-        decoration: BoxDecoration(color: exception ? p.text : p.soft, borderRadius: BorderRadius.circular(14)),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Flexible(
-              child: Text(
-                label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.w500, color: exception ? p.bg : p.softText),
-              ),
-            ),
-            Icon(Icons.expand_more, size: 18, color: exception ? p.bg : p.softText),
           ],
         ),
       ),

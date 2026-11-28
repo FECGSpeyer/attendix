@@ -82,6 +82,7 @@ class RdListRow extends StatelessWidget {
     super.key,
     required this.title,
     this.subtitle,
+    this.subtitleColor,
     this.leading,
     this.trailing,
     this.value,
@@ -94,6 +95,9 @@ class RdListRow extends StatelessWidget {
 
   final String title;
   final String? subtitle;
+
+  /// Color of [subtitle] (default grey), e.g. a Werk whose Dirigent differs.
+  final Color? subtitleColor;
   final Widget? leading;
   final Widget? trailing;
 
@@ -138,7 +142,10 @@ class RdListRow extends StatelessWidget {
                         if (subtitle != null && subtitle!.isNotEmpty)
                           Padding(
                             padding: const EdgeInsets.only(top: 2),
-                            child: Text(subtitle!, style: RdType.meta(p, size: 13)),
+                            child: Text(
+                              subtitle!,
+                              style: RdType.meta(p, size: 13).copyWith(color: subtitleColor),
+                            ),
                           ),
                         if (footer != null)
                           Padding(

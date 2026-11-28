@@ -14858,11 +14858,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignEventClosing => 'Wrap-up';
 
   @override
-  String redesignEventConductorFor(Object name) {
-    return 'Conductor for “$name”';
-  }
-
-  @override
   String get redesignEventConductorForAll => 'Conductor for all';
 
   @override
@@ -15282,6 +15277,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignEventUndone => 'Undone';
+
+  @override
+  String get redesignEventWhoConducts => 'Who conducts?';
 
   @override
   String redesignEventWorkNumber(Object number) {
