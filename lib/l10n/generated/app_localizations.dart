@@ -23406,12 +23406,6 @@ abstract class AppLocalizations {
   /// **'Abschluss'**
   String get redesignEventClosing;
 
-  /// redesign.event.conductorFor
-  ///
-  /// In de, this message translates to:
-  /// **'Dirigent für „{name}“'**
-  String redesignEventConductorFor(Object name);
-
   /// redesign.event.conductorForAll
   ///
   /// In de, this message translates to:
@@ -24029,6 +24023,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Rückgängig gemacht'**
   String get redesignEventUndone;
+
+  /// redesign.event.whoConducts
+  ///
+  /// In de, this message translates to:
+  /// **'Wer dirigiert?'**
+  String get redesignEventWhoConducts;
 
   /// redesign.event.workNumber
   ///

@@ -14987,11 +14987,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignEventClosing => 'Abschluss';
 
   @override
-  String redesignEventConductorFor(Object name) {
-    return 'Dirigent für „$name“';
-  }
-
-  @override
   String get redesignEventConductorForAll => 'Dirigent für alle';
 
   @override
@@ -15412,6 +15407,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignEventUndone => 'Rückgängig gemacht';
+
+  @override
+  String get redesignEventWhoConducts => 'Wer dirigiert?';
 
   @override
   String redesignEventWorkNumber(Object number) {
