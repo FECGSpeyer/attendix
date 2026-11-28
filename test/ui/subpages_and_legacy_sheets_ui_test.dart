@@ -290,8 +290,8 @@ void main() {
         });
       });
 
-      // TODO(ui-overflow): RdEventEditPage overflows RenderFlex by 65px on the right
-      // under narrowPhoneLargeText (320x640 @ 1.6x); test at 1.0x until fixed.
+      // TODO(ui-overflow): RdEventEditPage overflows by 65px at 320x640 @ 1.6x in the
+      // shared RdListRow Row (primitives/surfaces.dart); test at 1.0x until fixed.
       testWidgets('RdEventEditPage renders cleanly without overflow', (tester) async {
         final effective = _narrow1xFallback(profile);
         await runCapturingFlutterErrors(() async {
@@ -311,8 +311,9 @@ void main() {
         });
       });
 
-      // TODO(ui-overflow): RdWorkPage overflows RenderFlex by 58px and 17px on the right
-      // under narrowPhoneLargeText (320x640 @ 1.6x); test at 1.0x until fixed.
+      // TODO(ui-overflow): RdWorkPage overflows at 320x640 @ 1.6x: 58px in the header Row
+      // (work_page.dart, unbounded RdTextLink) and 17px in RdSectionHeader
+      // (primitives/badges.dart); test at 1.0x until fixed.
       testWidgets('RdWorkPage renders cleanly without overflow', (tester) async {
         final effective = _narrow1xFallback(profile);
         await runCapturingFlutterErrors(() async {
@@ -327,26 +328,26 @@ void main() {
         });
       });
 
-      // TODO(ui-overflow): RdWorkEditPage 4-option RdSegmented<int> (difficulty) overflows
-      // RenderFlex by 277px under narrowPhoneLargeText (320x640 @ 1.6x) and by 3.0px under
-      // iphone/iphoneDark (390x844 @ 1.0x); test at desktop until fixed.
-      if (profile == UiViewportProfile.desktop) {
-        testWidgets('RdWorkEditPage renders cleanly without overflow', (tester) async {
-          await runCapturingFlutterErrors(() async {
-            await pumpUiApp(
-              tester,
-              const RdWorkEditPage(songId: 1),
-              profile: profile,
-              path: '/werke/1/bearbeiten',
-              overrides: _baseOverrides(),
-            );
-            expectHorizontallyWithinViewport(tester, find.text('Festliche Ouvertüre'), profile.size);
-          });
+      // Regression guard: the "Kategorien" header Row (work_edit_form.dart)
+      // used to overflow by 3px at 390x844 and 277px at 320x640 @ 1.6x
+      // because the "Kategorien verwalten" link had no width bound.
+      testWidgets('RdWorkEditPage renders cleanly without overflow', (tester) async {
+        await runCapturingFlutterErrors(() async {
+          await pumpUiApp(
+            tester,
+            const RdWorkEditPage(songId: 1),
+            profile: profile,
+            path: '/werke/1/bearbeiten',
+            overrides: _baseOverrides(),
+          );
+          expectHorizontallyWithinViewport(tester, find.text('Festliche Ouvertüre'), profile.size);
+          expectHorizontallyWithinViewport(tester, find.text('Kategorien verwalten'), profile.size);
+          expectHorizontallyWithinViewport(tester, find.byType(RdSegmented<int>), profile.size);
         });
-      }
+      });
 
-      // TODO(ui-overflow): RdPersonPage overflows RenderFlex by 10px on the right
-      // under narrowPhoneLargeText (320x640 @ 1.6x); test at 1.0x until fixed.
+      // TODO(ui-overflow): RdPersonPage overflows by 10px at 320x640 @ 1.6x in the header
+      // Row (person_page.dart, unbounded RdTextLink); test at 1.0x until fixed.
       testWidgets('RdPersonPage renders cleanly without overflow', (tester) async {
         final effective = _narrow1xFallback(profile);
         await runCapturingFlutterErrors(() async {
@@ -453,8 +454,8 @@ void main() {
         });
       });
 
-      // TODO(ui-overflow): RdNotificationsPage overflows RenderFlex by 19px on the right
-      // under narrowPhoneLargeText (320x640 @ 1.6x); test at 1.0x until fixed.
+      // TODO(ui-overflow): RdNotificationsPage overflows by 19px at 320x640 @ 1.6x in the
+      // shared RdListRow Row (primitives/surfaces.dart); test at 1.0x until fixed.
       testWidgets('RdNotificationsPage renders cleanly without overflow', (tester) async {
         final effective = _narrow1xFallback(profile);
         await runCapturingFlutterErrors(() async {

@@ -107,7 +107,15 @@ extension _RdWorkEditForm on _RdWorkEditPageState {
         Row(
           children: [
             Expanded(child: RdGroupLabel(l10n.redesignWorkEditCategories)),
-            RdTextLink(label: l10n.redesignWorkEditManageCategories, onTap: () => showSongCategoriesSheet(context)),
+            // Up to 2/3 of the row: with large text or a narrow phone the
+            // link wraps instead of pushing the row past the screen edge.
+            Flexible(
+              flex: 2,
+              child: RdTextLink(
+                label: l10n.redesignWorkEditManageCategories,
+                onTap: () => showSongCategoriesSheet(context),
+              ),
+            ),
           ],
         ),
         if (data.categories.isEmpty)

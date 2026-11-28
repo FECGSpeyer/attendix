@@ -174,17 +174,25 @@ void main() {
           expectWithinViewport(tester, searchBtn, profile.size);
           expectNoOverlaps(tester, [heading, searchBtn]);
 
-          final pastSegment = find.text('Vergangen');
-          if (pastSegment.evaluate().isNotEmpty) {
-            await tester.tap(pastSegment.first);
-            await settleUi(tester, steps: 5);
-          }
+          // Leaders with an organisation always get all three segments; a
+          // missing one is a regression, not a reason to skip the check.
+          Finder segment(String label) => find.descendant(
+                of: find.byType(RdSegmented<RdEventsSegment>),
+                matching: find.text(label),
+              );
+          final pastSegment = segment('Vergangen');
+          expect(pastSegment, findsOneWidget);
+          await tester.tap(pastSegment);
+          await settleUi(tester, steps: 5);
+          expect(find.text('Frühjahrskonzert'), findsNothing);
 
-          final orgSegment = find.text('Org-Pläne');
-          if (orgSegment.evaluate().isNotEmpty) {
-            await tester.tap(orgSegment.first);
-            await settleUi(tester, steps: 5);
-          }
+          final orgSegment = segment('Org-Pläne');
+          expect(orgSegment, findsOneWidget);
+          await tester.tap(orgSegment);
+          await settleUi(tester, steps: 5);
+          final orgEmpty = find.textContaining('Keine bevorstehenden Org-Pläne');
+          expect(orgEmpty, findsOneWidget);
+          expectHorizontallyWithinViewport(tester, orgEmpty, profile.size);
         });
       });
 

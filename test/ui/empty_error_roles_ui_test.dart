@@ -260,6 +260,92 @@ void main() {
         expect(find.text('Erneut versuchen'), findsOneWidget);
       });
     });
+
+    // Retry buttons must really reload: a dead `onPressed` leaves the user
+    // stuck on the error card. Each loader fails once, then succeeds.
+    testWidgets('RdTodayPage (leader) retry reloads the attendance list', (tester) async {
+      var calls = 0;
+      await runCapturingFlutterErrors(() async {
+        await pumpUiApp(
+          tester,
+          const RdTodayPage(),
+          profile: UiViewportProfile.iphone,
+          path: '/heute',
+          overrides: [
+            ..._populatedBase(role: Role.admin),
+            realtimeAttendanceListProvider.overrideWith((ref) async {
+              // Same refetch trigger the real provider watches.
+              ref.watch(attendanceRefetchCounter);
+              if (++calls == 1) throw Exception('network');
+              return worldAttendances;
+            }),
+          ],
+        );
+        expect(find.text('Das konnte nicht geladen werden.'), findsOneWidget);
+
+        await tester.tap(find.text('Erneut versuchen'));
+        await settleUi(tester, steps: 5);
+        expect(calls, 2);
+        expect(find.text('Das konnte nicht geladen werden.'), findsNothing);
+        expect(find.text('Gerade stehen keine Termine an.'), findsNothing);
+      });
+    });
+
+    testWidgets('RdMembersPage retry reloads the players stream', (tester) async {
+      var calls = 0;
+      var failing = true;
+      await runCapturingFlutterErrors(() async {
+        await pumpUiApp(
+          tester,
+          const RdMembersPage(),
+          profile: UiViewportProfile.iphone,
+          path: '/mitglieder',
+          overrides: [
+            ..._populatedBase(role: Role.admin),
+            realtimePlayersProvider.overrideWith((ref) {
+              calls++;
+              return failing ? Stream<List<Person>>.error(Exception('network')) : Stream.value(worldPersons);
+            }),
+          ],
+        );
+        expect(find.text('Das konnte nicht geladen werden.'), findsOneWidget);
+        expect(find.text('Anna Berg'), findsNothing);
+        final callsBeforeRetry = calls;
+
+        failing = false;
+        await tester.tap(find.text('Erneut versuchen'));
+        await settleUi(tester, steps: 5);
+        expect(find.text('Das konnte nicht geladen werden.'), findsNothing);
+        expect(calls, greaterThan(callsBeforeRetry));
+        expect(find.text('Anna Berg'), findsOneWidget);
+      });
+    });
+
+    testWidgets('RdWorksPage retry reloads the songs', (tester) async {
+      var calls = 0;
+      await runCapturingFlutterErrors(() async {
+        await pumpUiApp(
+          tester,
+          const RdWorksPage(),
+          profile: UiViewportProfile.iphone,
+          path: '/werke',
+          overrides: [
+            ..._populatedBase(role: Role.admin),
+            songsProvider.overrideWith((ref) async {
+              if (++calls == 1) throw Exception('network');
+              return worldSongs;
+            }),
+          ],
+        );
+        expect(find.text('Das konnte nicht geladen werden.'), findsOneWidget);
+        expect(find.text('Festliche Ouvertüre'), findsNothing);
+
+        await tester.tap(find.text('Erneut versuchen'));
+        await settleUi(tester, steps: 5);
+        expect(find.text('Das konnte nicht geladen werden.'), findsNothing);
+        expect(find.text('Festliche Ouvertüre'), findsOneWidget);
+      });
+    });
   });
 
   group('3. Role permission UI matrix', () {
@@ -284,7 +370,7 @@ void main() {
       });
     });
 
-    testWidgets('Role.admin sees members add/more, works add, and Verwaltung entry', (tester) async {
+    testWidgets('Role.admin sees members add and more buttons', (tester) async {
       await runCapturingFlutterErrors(() async {
         await pumpUiApp(
           tester,
@@ -298,7 +384,7 @@ void main() {
       });
     });
 
-    testWidgets('Role.admin sees works add button and Verwaltung on RdMePage', (tester) async {
+    testWidgets('Role.admin sees works add button', (tester) async {
       await runCapturingFlutterErrors(() async {
         await pumpUiApp(
           tester,
@@ -345,7 +431,7 @@ void main() {
       });
     });
 
-    testWidgets('Role.helper hides members add, works add, and Verwaltung', (tester) async {
+    testWidgets('Role.helper hides members add button', (tester) async {
       await runCapturingFlutterErrors(() async {
         await pumpUiApp(
           tester,
@@ -358,7 +444,7 @@ void main() {
       });
     });
 
-    testWidgets('Role.helper hides works add and Verwaltung on RdMePage', (tester) async {
+    testWidgets('Role.helper hides works add button', (tester) async {
       await runCapturingFlutterErrors(() async {
         await pumpUiApp(
           tester,
@@ -400,7 +486,7 @@ void main() {
       });
     });
 
-    testWidgets('Role.player hides members add, works add, and Verwaltung', (tester) async {
+    testWidgets('Role.player hides members add button', (tester) async {
       await runCapturingFlutterErrors(() async {
         await pumpUiApp(
           tester,
@@ -448,7 +534,24 @@ void main() {
           path: '/heute',
           overrides: _populatedBase(role: Role.viewer),
         );
-        expect(find.byIcon(Icons.info_outline), findsOneWidget);
+        expect(
+          find.text('Als Beobachter siehst du den Überblick. Einzelne Termine öffnet die Leitung.'),
+          findsOneWidget,
+        );
+        expect(find.byKey(const Key('rd-events-add')), findsNothing);
+      });
+    });
+
+    testWidgets('Role.admin does not get the observer hint on Today', (tester) async {
+      await runCapturingFlutterErrors(() async {
+        await pumpUiApp(
+          tester,
+          const RdTodayPage(),
+          profile: UiViewportProfile.iphone,
+          path: '/heute',
+          overrides: _populatedBase(role: Role.admin),
+        );
+        expect(find.textContaining('Als Beobachter'), findsNothing);
       });
     });
 
@@ -468,7 +571,7 @@ void main() {
       });
     });
 
-    testWidgets('Role.viewer hides members add/more and works add', (tester) async {
+    testWidgets('Role.viewer hides members add and more buttons', (tester) async {
       await runCapturingFlutterErrors(() async {
         await pumpUiApp(
           tester,
@@ -577,7 +680,9 @@ void main() {
 
         await tester.tap(find.text('Org-Pläne'));
         await settleUi(tester, steps: 5);
-        expect(find.text('Org-Pläne'), findsOneWidget);
+        // The segment body (not just its label) must switch.
+        expect(find.textContaining('Keine bevorstehenden Org-Pläne'), findsOneWidget);
+        expect(find.text('Gesamtprobe'), findsNothing);
 
         await tester.tap(find.text('Kommend'));
         await settleUi(tester, steps: 5);
@@ -585,9 +690,7 @@ void main() {
       });
     });
 
-    testWidgets('RdEventCreatePage disables submit while saving/checking permission and hides it when no types exist', (
-      tester,
-    ) async {
+    testWidgets('RdEventCreatePage disables submit while the permission check runs and re-enables it after', (tester) async {
       await runCapturingFlutterErrors(() async {
         final permission = Completer<bool>();
         await pumpUiApp(
