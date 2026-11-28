@@ -340,29 +340,49 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
     // Gemeinde field (read when the menu opens).
     ref.watch(personExtraFieldsProvider);
 
+    final hasMenu = attendance != null && members != null && _menuHasActions(attendance, members);
+    final backWidget = RdSplitScope.of(context)?.isDetail ?? false
+        ? const SizedBox(height: 44)
+        : RdBackLink(label: l10n.redesignTabEvents, onTap: _back);
+    final editWidget = RdTextLink(
+      key: const Key('rd-event-edit'),
+      label: l10n.redesignEventEdit,
+      onTap: () => context.push(RedesignRoutes.eventEdit(_id)),
+    );
+    final largeText = MediaQuery.textScalerOf(context).scale(16) > 20;
     final children = <Widget>[
-      Row(
-        children: [
-          Expanded(
-            child: RdSplitScope.of(context)?.isDetail ?? false
-                ? const SizedBox(height: 44)
-                : RdBackLink(label: l10n.redesignTabEvents, onTap: _back),
-          ),
-          RdTextLink(
-            key: const Key('rd-event-edit'),
-            label: l10n.redesignEventEdit,
-            onTap: () => context.push(RedesignRoutes.eventEdit(_id)),
-          ),
-          if (attendance != null && members != null && _menuHasActions(attendance, members)) ...[
-            const SizedBox(width: 4),
-            RdCircleButton(
-              key: const Key('rd-event-menu'),
-              icon: Icons.more_horiz,
-              label: l10n.redesignEventMenu,
-              onPressed: () => _openMenu(attendance, members),
-            ),
-          ],
-        ],
+      LayoutBuilder(
+        builder: (context, constraints) {
+          final tight = largeText || constraints.maxWidth < 310;
+          final menuWidth = hasMenu ? 48.0 : 0.0;
+          return Row(
+            children: [
+              Expanded(child: backWidget),
+              if (tight)
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: (constraints.maxWidth - menuWidth - 96).clamp(80.0, double.infinity),
+                  ),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: AlignmentDirectional.centerEnd,
+                    child: editWidget,
+                  ),
+                )
+              else
+                editWidget,
+              if (hasMenu) ...[
+                const SizedBox(width: 4),
+                RdCircleButton(
+                  key: const Key('rd-event-menu'),
+                  icon: Icons.more_horiz,
+                  label: l10n.redesignEventMenu,
+                  onPressed: () => _openMenu(attendance, members),
+                ),
+              ],
+            ],
+          );
+        },
       ),
     ];
 

@@ -40,11 +40,6 @@ const _profiles = [
   UiViewportProfile.desktop,
 ];
 
-/// Pages that currently overflow at 320x640 @ 1.6x text scale run at 1.0x
-/// (`narrowPhone`) until their `lib/` RenderFlex / header layouts are fixed.
-UiViewportProfile _narrow1xFallback(UiViewportProfile profile) =>
-    profile == UiViewportProfile.narrowPhoneLargeText ? UiViewportProfile.narrowPhone : profile;
-
 const _counts = RdStatusCounts(present: 6, lateAnnounced: 1, excused: 1, open: 2);
 
 Widget _shell(Widget child) => RdShell(child: child);
@@ -124,41 +119,38 @@ void main() {
           );
           final heading = _pageHeading('Heute');
           final bell = _pageWidget(find.byIcon(Icons.notifications_outlined));
-          expectHorizontallyWithinViewport(tester, heading, profile.size);
-          expectHorizontallyWithinViewport(tester, bell, profile.size);
+          expectWithinViewport(tester, heading, profile.size);
+          expectWithinViewport(tester, bell, profile.size);
           if (profile.size.width < 840) {
             final chip = _pageWidget(find.byType(RdGroupChip));
-            expectHorizontallyWithinViewport(tester, chip, profile.size);
+            expectWithinViewport(tester, chip, profile.size);
             expectNoOverlaps(tester, [chip, bell]);
           }
           expectNoOverlaps(tester, [heading, bell]);
         });
       });
 
-      // TODO(ui-overflow): RdTodayPage (member) overflows RenderFlex by 5.6px and 65px
-      // on the right under narrowPhoneLargeText (320x640 @ 1.6x); test at 1.0x until fixed.
       testWidgets('RdTodayPage (member) renders without overflow or header collision', (tester) async {
-        final effective = _narrow1xFallback(profile);
         await runCapturingFlutterErrors(() async {
           await pumpUiApp(
             tester,
             const RdTodayPage(),
-            profile: effective,
+            profile: profile,
             path: '/heute',
             shell: _shell,
             overrides: _memberOverrides(),
           );
           final heading = _pageHeading('Heute');
           final bell = _pageWidget(find.byIcon(Icons.notifications_outlined));
-          expectHorizontallyWithinViewport(tester, heading, effective.size);
-          expectHorizontallyWithinViewport(tester, bell, effective.size);
-          if (effective.size.width < 840) {
+          expectWithinViewport(tester, heading, profile.size);
+          expectWithinViewport(tester, bell, profile.size);
+          if (profile.size.width < 840) {
             final chip = _pageWidget(find.byType(RdGroupChip));
-            expectHorizontallyWithinViewport(tester, chip, effective.size);
+            expectWithinViewport(tester, chip, profile.size);
             expectNoOverlaps(tester, [chip, bell]);
           }
           expectNoOverlaps(tester, [heading, bell]);
-          expectHorizontallyWithinViewport(tester, find.byType(RdOwnAnswerSection), effective.size);
+          expectHorizontallyWithinViewport(tester, find.byType(RdOwnAnswerSection), profile.size);
         });
       });
 
@@ -178,8 +170,8 @@ void main() {
           );
           final heading = _pageHeading('Termine');
           final searchBtn = _pageWidget(find.byIcon(Icons.search));
-          expectHorizontallyWithinViewport(tester, heading, profile.size);
-          expectHorizontallyWithinViewport(tester, searchBtn, profile.size);
+          expectWithinViewport(tester, heading, profile.size);
+          expectWithinViewport(tester, searchBtn, profile.size);
           expectNoOverlaps(tester, [heading, searchBtn]);
 
           final pastSegment = find.text('Vergangen');
@@ -196,16 +188,12 @@ void main() {
         });
       });
 
-      // TODO(ui-overflow): RdEventPage header row (RdBackLink + Bearbeiten + rd-event-menu)
-      // pushes rd-event-menu past right edge (358.5 > 320.0) under narrowPhoneLargeText
-      // (320x640 @ 1.6x); test at 1.0x until fixed.
       testWidgets('RdEventPage(attendanceId: 21) renders without overflow or header collision', (tester) async {
-        final effective = _narrow1xFallback(profile);
         await runCapturingFlutterErrors(() async {
           await pumpUiApp(
             tester,
             const RdEventPage(attendanceId: 21),
-            profile: effective,
+            profile: profile,
             path: '/termine/21',
             overrides: [
               ..._leaderOverrides(),
@@ -220,59 +208,51 @@ void main() {
           final back = find.byType(RdBackLink);
           final edit = find.byKey(const Key('rd-event-edit'));
           final menu = find.byKey(const Key('rd-event-menu'));
-          expectHorizontallyWithinViewport(tester, heading, effective.size);
-          expectHorizontallyWithinViewport(tester, back, effective.size);
-          expectHorizontallyWithinViewport(tester, edit, effective.size);
-          expectHorizontallyWithinViewport(tester, menu, effective.size);
+          expectWithinViewport(tester, heading, profile.size);
+          expectWithinViewport(tester, back, profile.size);
+          expectWithinViewport(tester, edit, profile.size);
+          expectWithinViewport(tester, menu, profile.size);
           expectNoOverlaps(tester, [back, edit, menu]);
         });
       });
 
-      // TODO(ui-overflow): RdMembersPage overflows RenderFlex on the right by
-      // 161px/185px under narrowPhoneLargeText (320x640 @ 1.6x) and 46px/61px
-      // under narrowPhone (320x640 @ 1.0x); test at >=390px until fixed.
-      if (profile != UiViewportProfile.narrowPhoneLargeText) {
-        testWidgets('RdMembersPage renders without overflow or header collision', (tester) async {
-          await runCapturingFlutterErrors(() async {
-            await pumpUiApp(
-              tester,
-              const RdMembersPage(),
-              profile: profile,
-              path: '/mitglieder',
-              shell: _shell,
-              overrides: _leaderOverrides(),
-            );
-            final heading = _pageHeading('Mitglieder');
-            final more = find.byKey(const Key('rd-members-more'));
-            final filter = find.byKey(const Key('rd-members-filter'));
-            expectHorizontallyWithinViewport(tester, heading, profile.size);
-            expectHorizontallyWithinViewport(tester, more, profile.size);
-            expectHorizontallyWithinViewport(tester, filter, profile.size);
-            expectHorizontallyWithinViewport(tester, find.byType(RdSegmented<RdMembersFilter>), profile.size);
-            expectNoOverlaps(tester, [heading, more]);
-          });
+      testWidgets('RdMembersPage renders without overflow or header collision', (tester) async {
+        await runCapturingFlutterErrors(() async {
+          await pumpUiApp(
+            tester,
+            const RdMembersPage(),
+            profile: profile,
+            path: '/mitglieder',
+            shell: _shell,
+            overrides: _leaderOverrides(),
+          );
+          final heading = _pageHeading('Mitglieder');
+          final more = find.byKey(const Key('rd-members-more'));
+          final filter = find.byKey(const Key('rd-members-filter'));
+          expectWithinViewport(tester, heading, profile.size);
+          expectWithinViewport(tester, more, profile.size);
+          expectWithinViewport(tester, filter, profile.size);
+          expectWithinViewport(tester, find.byType(RdSegmented<RdMembersFilter>), profile.size);
+          expectNoOverlaps(tester, [heading, more]);
         });
-      }
+      });
 
-      // TODO(ui-overflow): RdWorksPage overflows RenderFlex by 42px on the right
-      // across song rows under narrowPhoneLargeText (320x640 @ 1.6x); test at 1.0x until fixed.
       testWidgets('RdWorksPage renders without overflow or header collision', (tester) async {
-        final effective = _narrow1xFallback(profile);
         await runCapturingFlutterErrors(() async {
           await pumpUiApp(
             tester,
             const RdWorksPage(),
-            profile: effective,
+            profile: profile,
             path: '/werke',
             shell: _shell,
             overrides: _leaderOverrides(),
           );
           final heading = _pageHeading('Werke');
           final more = _pageWidget(find.byIcon(Icons.more_horiz));
-          expectHorizontallyWithinViewport(tester, heading, effective.size);
-          expectHorizontallyWithinViewport(tester, more, effective.size);
-          expectHorizontallyWithinViewport(tester, find.byType(RdFilterLink), effective.size);
-          expectHorizontallyWithinViewport(tester, find.byKey(const ValueKey('rd-work-1')), effective.size);
+          expectWithinViewport(tester, heading, profile.size);
+          expectWithinViewport(tester, more, profile.size);
+          expectWithinViewport(tester, find.byType(RdFilterLink), profile.size);
+          expectHorizontallyWithinViewport(tester, find.byKey(const ValueKey('rd-work-1')), profile.size);
           expectNoOverlaps(tester, [heading, more]);
         });
       });
@@ -288,7 +268,7 @@ void main() {
             overrides: _leaderOverrides(),
           );
           final heading = _pageHeading('Ich');
-          expectHorizontallyWithinViewport(tester, heading, profile.size);
+          expectWithinViewport(tester, heading, profile.size);
         });
       });
 
@@ -302,10 +282,10 @@ void main() {
             overrides: _leaderOverrides(),
           );
           final heading = _pageHeading('Verwaltung');
-          expectHorizontallyWithinViewport(tester, heading, profile.size);
+          expectWithinViewport(tester, heading, profile.size);
           if (profile.size.width < 840) {
             final back = find.byType(RdBackLink);
-            expectHorizontallyWithinViewport(tester, back, profile.size);
+            expectWithinViewport(tester, back, profile.size);
             expectNoOverlaps(tester, [back, heading]);
           }
         });
@@ -328,8 +308,8 @@ void main() {
           );
           final heading = _pageHeading('Organisation');
           final infoBtn = find.byKey(const Key('rd-org-settings-info'));
-          expectHorizontallyWithinViewport(tester, heading, profile.size);
-          expectHorizontallyWithinViewport(tester, infoBtn, profile.size);
+          expectWithinViewport(tester, heading, profile.size);
+          expectWithinViewport(tester, infoBtn, profile.size);
           expectNoOverlaps(tester, [heading, infoBtn]);
         });
       });
