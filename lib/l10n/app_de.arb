@@ -14446,10 +14446,6 @@
       "date": {}
     }
   },
-  "rdOrgAdHocShort": "Ohne Termin",
-  "@rdOrgAdHocShort": {
-    "description": "rdOrg.adHocShort"
-  },
   "rdOrgArchiveNote": "Die Personen werden hier archiviert. Wer ein Konto hat, bekommt eine Nachricht.",
   "@rdOrgArchiveNote": {
     "description": "rdOrg.archiveNote"
@@ -14751,10 +14747,6 @@
   "rdOrgPersonFields": "Gemeinsame eigene Felder",
   "@rdOrgPersonFields": {
     "description": "rdOrg.personFields"
-  },
-  "rdOrgPlanAdHocMeta": "ORG-Plan ohne Termin",
-  "@rdOrgPlanAdHocMeta": {
-    "description": "rdOrg.planAdHocMeta"
   },
   "rdOrgPlanBackClose": "Schließen",
   "@rdOrgPlanBackClose": {

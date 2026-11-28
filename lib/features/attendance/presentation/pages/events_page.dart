@@ -71,6 +71,15 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
 
   bool get _past => _segment == RdEventsSegment.past;
 
+  /// The segment "Org-Pläne" is open (only Admins/Verantwortliche of a group
+  /// in an organisation see it): "+" then creates an Org-Plan, no Termin.
+  bool _orgSegmentActive() {
+    if (_segment != RdEventsSegment.orgPlans) return false;
+    final role = ref.watch(effectiveRoleProvider);
+    if (!role.isAdmin && !role.isResponsible) return false;
+    return ref.watch(currentOrganisationProvider).valueOrNull != null;
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -125,7 +134,13 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
 
     return RdPage(
       onRefresh: () => _refreshEvents(parent: parent, leader: leader, ownInLeaderList: ownInLeaderList),
-      floatingActionButton: canCreate && !inSplit ? const RdEventCreateMenu() : null,
+      floatingActionButton: !leader || inSplit
+          ? null
+          : _orgSegmentActive()
+          ? const RdOrgPlanAddButton()
+          : canCreate
+          ? const RdEventCreateMenu()
+          : null,
       children: [
         _buildHeader(
           context,

@@ -49,7 +49,7 @@ class PlanViewerPage extends ConsumerStatefulWidget {
   /// Prominent ORG / group origin badge shown above the metadata (e.g. "ORG · Jugendchor").
   final String? originBadge;
 
-  /// Optional secondary origin note (e.g. "ORG-Plan ohne Termin · FECG Speyer").
+  /// Optional secondary origin note (e.g. the organisation name "FECG Speyer").
   final String? originHint;
 
   /// Optional action to switch to the owning group (for cross-tenant Live Activities).

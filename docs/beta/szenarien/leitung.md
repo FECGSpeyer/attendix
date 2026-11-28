@@ -809,7 +809,10 @@ Felder sind Sache der Administratoren: siehe [A-04 bis A-07](admin.md).
   2. Jeder Eintrag ist klar mit „ORG“ bzw. „ORG-Plan“ gekennzeichnet; eigene
      Termine mit aktivem Organisationsplan tragen ebenfalls ein „ORG“-Zeichen.
   3. Tippe auf einen Plan, um ihn im Live-Modus anzusehen. Oben steht immer, aus
-     welcher Gruppe oder ob er als „ORG-Plan ohne Termin“ stammt.
+     welcher Gruppe er stammt. Ein freier Ablaufplan (ohne Termin, siehe L-13)
+     gehört zu keiner Gruppe und trägt in der Liste keine Gruppenmarkierung.
+  4. Das ＋ öffnet im Segment „Org-Pläne“ direkt die „Ablaufplanung“ für einen
+     neuen Org-Plan (nicht die Auswahl für Termine der eigenen Gruppe).
 - **Ergebnis:** Org-Pläne sind ohne Umweg über die Verwaltung nutzbar und lassen
   sich nie mit normalen Terminen der eigenen Gruppe verwechseln.
 

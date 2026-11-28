@@ -177,7 +177,7 @@ void main() {
       expect(find.byKey(const Key('rd-today-org-plans-card')), findsOneWidget);
       expect(find.text('Wortunterhaltung'), findsOneWidget);
       expect(find.text('FECG Speyer'), findsOneWidget);
-      expect(find.text('Ohne Termin'), findsOneWidget);
+      expect(find.text('Ohne Termin'), findsNothing); // free plans carry no tag
     });
 
     testWidgets('renders nothing without an organisation', (tester) async {
@@ -251,7 +251,10 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Wortunterhaltung'), findsOneWidget);
-      expect(find.text('Ohne Termin'), findsOneWidget);
+      expect(find.text('Ohne Termin'), findsNothing); // free plans carry no tag
+      // "+" creates an Org-Plan here, not a Termin of the own group.
+      expect(find.byKey(const Key('rd-org-plans-add')), findsOneWidget);
+      expect(find.byKey(const Key('rd-events-add')), findsNothing);
     });
   });
 
