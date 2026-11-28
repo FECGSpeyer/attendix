@@ -17718,6 +17718,52 @@
   "@redesignCreateDeadline2d": {
     "description": "redesign.create.deadline2d"
   },
+  "redesignCreateDeadlineCustom": "Eigenes Datum …",
+  "@redesignCreateDeadlineCustom": {
+    "description": "redesign.create.deadlineCustom"
+  },
+  "redesignCreateDeadlineCustomDays": "{count, plural, one {1 Tag} other {{count} Tage}}",
+  "@redesignCreateDeadlineCustomDays": {
+    "description": "redesign.create.deadlineCustomDays",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignCreateDeadlineCustomEach": "{offset} vor jedem Termin",
+  "@redesignCreateDeadlineCustomEach": {
+    "description": "redesign.create.deadlineCustomEach",
+    "placeholders": {
+      "offset": {}
+    }
+  },
+  "redesignCreateDeadlineCustomEachHint": "Bei mehreren Terminen gilt derselbe Abstand für jeden Termin.",
+  "@redesignCreateDeadlineCustomEachHint": {
+    "description": "redesign.create.deadlineCustomEachHint"
+  },
+  "redesignCreateDeadlineCustomHours": "{count} Std.",
+  "@redesignCreateDeadlineCustomHours": {
+    "description": "redesign.create.deadlineCustomHours",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignCreateDeadlineCustomLabel": "Eigenes Datum",
+  "@redesignCreateDeadlineCustomLabel": {
+    "description": "redesign.create.deadlineCustomLabel"
+  },
+  "redesignCreateDeadlineCustomMinutes": "{count} Min.",
+  "@redesignCreateDeadlineCustomMinutes": {
+    "description": "redesign.create.deadlineCustomMinutes",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignCreateDeadlineCustomTooLate": "„Antwort bis“ muss vor dem ersten Termin liegen.",
+  "@redesignCreateDeadlineCustomTooLate": {
+    "description": "redesign.create.deadlineCustomTooLate"
+  },
   "redesignCreateDeadlineHint": "Danach kann man nicht mehr zusagen, absagen geht weiter.",
   "@redesignCreateDeadlineHint": {
     "description": "redesign.create.deadlineHint"
@@ -17857,6 +17903,13 @@
   "@redesignCreatePlaceHint": {
     "description": "redesign.create.placeHint"
   },
+  "redesignCreateRepeatAdded": "{count} dazu",
+  "@redesignCreateRepeatAdded": {
+    "description": "redesign.create.repeatAdded",
+    "placeholders": {
+      "count": {}
+    }
+  },
   "redesignCreateRepeatBiweekly": "Alle 2 Wochen bis {date}",
   "@redesignCreateRepeatBiweekly": {
     "description": "redesign.create.repeatBiweekly",
@@ -17867,6 +17920,14 @@
   "redesignCreateRepeatBiweeklyOption": "Alle 2 Wochen",
   "@redesignCreateRepeatBiweeklyOption": {
     "description": "redesign.create.repeatBiweeklyOption"
+  },
+  "redesignCreateRepeatChipRestore": "zurückholen",
+  "@redesignCreateRepeatChipRestore": {
+    "description": "redesign.create.repeatChipRestore"
+  },
+  "redesignCreateRepeatChipSkip": "auslassen",
+  "@redesignCreateRepeatChipSkip": {
+    "description": "redesign.create.repeatChipSkip"
   },
   "redesignCreateRepeatCount": "{count, plural, one {1 Termin} other {{count} Termine}}",
   "@redesignCreateRepeatCount": {
@@ -17909,9 +17970,28 @@
   "@redesignCreateRepeatPick": {
     "description": "redesign.create.repeatPick"
   },
+  "redesignCreateRepeatPickTitle": "Tage wählen",
+  "@redesignCreateRepeatPickTitle": {
+    "description": "redesign.create.repeatPickTitle"
+  },
   "redesignCreateRepeatSkipHolidays": "Ferien und Feiertage auslassen",
   "@redesignCreateRepeatSkipHolidays": {
     "description": "redesign.create.repeatSkipHolidays"
+  },
+  "redesignCreateRepeatSkipped": "{count} ausgelassen",
+  "@redesignCreateRepeatSkipped": {
+    "description": "redesign.create.repeatSkipped",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignCreateRepeatSkippedLegend": "ausgelassen",
+  "@redesignCreateRepeatSkippedLegend": {
+    "description": "redesign.create.repeatSkippedLegend"
+  },
+  "redesignCreateRepeatTapHint": "Tippe einen Tag an, um ihn auszulassen. Nochmal antippen holt ihn zurück.",
+  "@redesignCreateRepeatTapHint": {
+    "description": "redesign.create.repeatTapHint"
   },
   "redesignCreateRepeatUntil": "Bis",
   "@redesignCreateRepeatUntil": {

@@ -33,11 +33,18 @@ class MultiDateCalendar extends ConsumerStatefulWidget {
   final ValueChanged<List<DateTime>> onDatesChanged;
   final DateTime? initialFocusedDay;
 
+  /// Days drawn as left out (outlined, struck through) while not selected,
+  /// e.g. the days of a series; [skippedLabel] names them in the legend.
+  final List<DateTime> skippedDates;
+  final String? skippedLabel;
+
   const MultiDateCalendar({
     super.key,
     required this.selectedDates,
     required this.onDatesChanged,
     this.initialFocusedDay,
+    this.skippedDates = const [],
+    this.skippedLabel,
   });
 
   @override
@@ -112,6 +119,9 @@ class _MultiDateCalendarState extends ConsumerState<MultiDateCalendar> {
           ),
           calendarBuilders: CalendarBuilders(
             defaultBuilder: (context, day, focusedDay) {
+              if (widget.skippedDates.any((d) => isSameDay(d, day))) {
+                return _skippedDay(context, day);
+              }
               final highlight = _getHighlight(
                 day,
                 attendancesAsync.valueOrNull ?? [],
@@ -158,8 +168,10 @@ class _MultiDateCalendarState extends ConsumerState<MultiDateCalendar> {
               );
             },
           ),
+          // No month/2-weeks switch: its label is not translated and the
+          // month view is all this picker needs.
           headerStyle: const HeaderStyle(
-            formatButtonVisible: true,
+            formatButtonVisible: false,
             titleCentered: true,
           ),
         ),
@@ -168,6 +180,23 @@ class _MultiDateCalendarState extends ConsumerState<MultiDateCalendar> {
         const Divider(),
         _buildLegend(typesAsync.valueOrNull ?? [], holidaysAsync.valueOrNull),
       ],
+    );
+  }
+
+  Widget _skippedDay(BuildContext context, DateTime day) {
+    final color = AppColors.mediumOf(context);
+    return Container(
+      margin: const EdgeInsets.all(6),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(color: color, width: 1.5),
+      ),
+      child: Center(
+        child: Text(
+          '${day.day}',
+          style: TextStyle(color: color, decoration: TextDecoration.lineThrough),
+        ),
+      ),
     );
   }
 
@@ -212,6 +241,25 @@ class _MultiDateCalendarState extends ConsumerState<MultiDateCalendar> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
         children: [
+          if (widget.skippedLabel != null && widget.skippedDates.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(right: 16),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 12,
+                    height: 12,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: AppColors.mediumOf(context), width: 1.5),
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Text(widget.skippedLabel!, style: TextStyle(fontSize: 12, color: AppColors.dark)),
+                ],
+              ),
+            ),
           // Attendance types
           ...types.where((t) => t.visible == true).take(4).map((type) {
             final color = ColorUtils.parseNamedColor(type.color);
@@ -367,17 +415,30 @@ bool _isDayInRange(DateTime day, DateTime start, DateTime end) {
 /// Modal dialog for multi-date selection
 class MultiDateCalendarDialog extends StatelessWidget {
   final List<DateTime> initialDates;
+  final DateTime? initialFocusedDay;
+  final String? title;
+
+  /// Live count under the title ("7 Termine").
+  final String Function(int count)? countLabel;
+  final List<DateTime> skippedDates;
+  final String? skippedLabel;
 
   const MultiDateCalendarDialog({
     super.key,
     required this.initialDates,
+    this.initialFocusedDay,
+    this.title,
+    this.countLabel,
+    this.skippedDates = const [],
+    this.skippedLabel,
   });
 
   @override
   Widget build(BuildContext context) {
     List<DateTime> selectedDates = List.from(initialDates);
 
-    return Dialog(
+    // One state for the count in the header and the calendar.
+    return StatefulBuilder(builder: (context, setState) => Dialog(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 400, maxHeight: 600),
         child: Column(
@@ -389,12 +450,22 @@ class MultiDateCalendarDialog extends StatelessWidget {
               child: Row(
                 children: [
                   Expanded(
-                    child: Text(
-                      context.l10n.attendanceFlutterSelectDate,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title ?? context.l10n.attendanceFlutterSelectDate,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        if (countLabel != null)
+                          Text(
+                            countLabel!(selectedDates.length),
+                            style: TextStyle(fontSize: 13, color: AppColors.mediumOf(context)),
+                          ),
+                      ],
                     ),
                   ),
                   IconButton(
@@ -407,33 +478,35 @@ class MultiDateCalendarDialog extends StatelessWidget {
             const Divider(height: 1),
             // Calendar
             Flexible(
-              child: StatefulBuilder(
-                builder: (context, setState) {
-                  return SingleChildScrollView(
-                    child: MultiDateCalendar(
-                      selectedDates: selectedDates,
-                      onDatesChanged: (dates) {
-                        setState(() {
-                          selectedDates = dates;
-                        });
-                      },
-                    ),
-                  );
-                },
+              child: SingleChildScrollView(
+                child: MultiDateCalendar(
+                  selectedDates: selectedDates,
+                  initialFocusedDay: initialFocusedDay,
+                  skippedDates: skippedDates,
+                  skippedLabel: skippedLabel,
+                  onDatesChanged: (dates) {
+                    setState(() {
+                      selectedDates = dates;
+                    });
+                  },
+                ),
               ),
             ),
             const Divider(height: 1),
             // Actions
             Padding(
               padding: const EdgeInsets.all(16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+              // Stacks the buttons instead of overflowing on narrow
+              // screens or with large text.
+              child: OverflowBar(
+                alignment: MainAxisAlignment.end,
+                spacing: 8,
+                overflowAlignment: OverflowBarAlignment.end,
                 children: [
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(),
                     child: IonButtonLabel(context.l10n.commonCancel),
                   ),
-                  const SizedBox(width: 8),
                   FilledButton(
                     onPressed: () => Navigator.of(context).pop(selectedDates),
                     child: IonButtonLabel(context.l10n.commonApply),
@@ -444,18 +517,28 @@ class MultiDateCalendarDialog extends StatelessWidget {
           ],
         ),
       ),
-    );
+    ));
   }
 
   /// Show the dialog and return selected dates
   static Future<List<DateTime>?> show(
     BuildContext context, {
     required List<DateTime> initialDates,
+    DateTime? initialFocusedDay,
+    String? title,
+    String Function(int count)? countLabel,
+    List<DateTime> skippedDates = const [],
+    String? skippedLabel,
   }) {
     return showAppDialog<List<DateTime>>(
       context: context,
       builder: (context) => MultiDateCalendarDialog(
         initialDates: initialDates,
+        initialFocusedDay: initialFocusedDay,
+        title: title,
+        countLabel: countLabel,
+        skippedDates: skippedDates,
+        skippedLabel: skippedLabel,
       ),
     );
   }

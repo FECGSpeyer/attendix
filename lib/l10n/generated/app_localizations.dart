@@ -22872,6 +22872,54 @@ abstract class AppLocalizations {
   /// **'2 Tage vorher'**
   String get redesignCreateDeadline2d;
 
+  /// redesign.create.deadlineCustom
+  ///
+  /// In de, this message translates to:
+  /// **'Eigenes Datum …'**
+  String get redesignCreateDeadlineCustom;
+
+  /// redesign.create.deadlineCustomDays
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Tag} other {{count} Tage}}'**
+  String redesignCreateDeadlineCustomDays(num count);
+
+  /// redesign.create.deadlineCustomEach
+  ///
+  /// In de, this message translates to:
+  /// **'{offset} vor jedem Termin'**
+  String redesignCreateDeadlineCustomEach(Object offset);
+
+  /// redesign.create.deadlineCustomEachHint
+  ///
+  /// In de, this message translates to:
+  /// **'Bei mehreren Terminen gilt derselbe Abstand für jeden Termin.'**
+  String get redesignCreateDeadlineCustomEachHint;
+
+  /// redesign.create.deadlineCustomHours
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Std.'**
+  String redesignCreateDeadlineCustomHours(Object count);
+
+  /// redesign.create.deadlineCustomLabel
+  ///
+  /// In de, this message translates to:
+  /// **'Eigenes Datum'**
+  String get redesignCreateDeadlineCustomLabel;
+
+  /// redesign.create.deadlineCustomMinutes
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Min.'**
+  String redesignCreateDeadlineCustomMinutes(Object count);
+
+  /// redesign.create.deadlineCustomTooLate
+  ///
+  /// In de, this message translates to:
+  /// **'„Antwort bis“ muss vor dem ersten Termin liegen.'**
+  String get redesignCreateDeadlineCustomTooLate;
+
   /// redesign.create.deadlineHint
   ///
   /// In de, this message translates to:
@@ -23046,6 +23094,12 @@ abstract class AppLocalizations {
   /// **'z. B. Probenraum, Musterstr. 1'**
   String get redesignCreatePlaceHint;
 
+  /// redesign.create.repeatAdded
+  ///
+  /// In de, this message translates to:
+  /// **'{count} dazu'**
+  String redesignCreateRepeatAdded(Object count);
+
   /// redesign.create.repeatBiweekly
   ///
   /// In de, this message translates to:
@@ -23057,6 +23111,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Alle 2 Wochen'**
   String get redesignCreateRepeatBiweeklyOption;
+
+  /// redesign.create.repeatChipRestore
+  ///
+  /// In de, this message translates to:
+  /// **'zurückholen'**
+  String get redesignCreateRepeatChipRestore;
+
+  /// redesign.create.repeatChipSkip
+  ///
+  /// In de, this message translates to:
+  /// **'auslassen'**
+  String get redesignCreateRepeatChipSkip;
 
   /// redesign.create.repeatCount
   ///
@@ -23100,11 +23166,35 @@ abstract class AppLocalizations {
   /// **'Tage im Kalender wählen'**
   String get redesignCreateRepeatPick;
 
+  /// redesign.create.repeatPickTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Tage wählen'**
+  String get redesignCreateRepeatPickTitle;
+
   /// redesign.create.repeatSkipHolidays
   ///
   /// In de, this message translates to:
   /// **'Ferien und Feiertage auslassen'**
   String get redesignCreateRepeatSkipHolidays;
+
+  /// redesign.create.repeatSkipped
+  ///
+  /// In de, this message translates to:
+  /// **'{count} ausgelassen'**
+  String redesignCreateRepeatSkipped(Object count);
+
+  /// redesign.create.repeatSkippedLegend
+  ///
+  /// In de, this message translates to:
+  /// **'ausgelassen'**
+  String get redesignCreateRepeatSkippedLegend;
+
+  /// redesign.create.repeatTapHint
+  ///
+  /// In de, this message translates to:
+  /// **'Tippe einen Tag an, um ihn auszulassen. Nochmal antippen holt ihn zurück.'**
+  String get redesignCreateRepeatTapHint;
 
   /// redesign.create.repeatUntil
   ///

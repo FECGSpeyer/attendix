@@ -245,12 +245,39 @@ void main() {
       expect(rdDeadlineFor(RdDeadline.week, DateTime(2026, 11, 3), '19:00', now: now), isNull);
     });
 
+    test('a custom date counts back the same wall-clock time for each Termin', () {
+      // 25 Std. before 19:00, also across the DST change on 25.10.
+      expect(rdDeadlineFor(RdDeadline.custom, day, '19:00', now: now, customMinutes: 25 * 60), DateTime(2026, 11, 11, 18));
+      expect(
+        rdDeadlineFor(RdDeadline.custom, DateTime(2026, 10, 26), '19:00', now: DateTime(2026, 10, 1), customMinutes: 25 * 60),
+        DateTime(2026, 10, 25, 18),
+      );
+      expect(rdDeadlineFor(RdDeadline.custom, day, '19:00', now: now), isNull);
+    });
+
     test('rdDeadlinePassedOn names the first day whose deadline is over', () {
       final soon = DateTime(2026, 11, 3);
       expect(rdDeadlinePassedOn(RdDeadline.week, [day, soon], '19:00', now: now), soon);
       expect(rdDeadlinePassedOn(RdDeadline.hours24, [day, soon], '19:00', now: now), isNull);
       expect(rdDeadlinePassedOn(RdDeadline.none, [soon], '19:00', now: now), isNull);
     });
+  });
+
+  test('single days are left out of or added to the rhythm', () {
+    final rhythm = rdRhythmDates(DateTime(2026, 11, 21), RdRepeat.weekly, DateTime(2027, 1, 9));
+    expect(rhythm, hasLength(8));
+    final changes = rdDateChanges(rhythm, [
+      ...rhythm.where((d) => d != DateTime(2026, 12, 26)),
+      DateTime(2026, 12, 23, 12),
+    ]);
+    expect(changes.removed, {DateTime(2026, 12, 26)});
+    expect(changes.added, {DateTime(2026, 12, 23)});
+    // A later "Bis" keeps both changes.
+    final longer = rdRhythmDates(DateTime(2026, 11, 21), RdRepeat.weekly, DateTime(2027, 1, 16));
+    final chosen = rdChosenDates(longer, changes.removed, changes.added);
+    expect(chosen, hasLength(9));
+    expect(chosen, contains(DateTime(2026, 12, 23)));
+    expect(chosen, isNot(contains(DateTime(2026, 12, 26))));
   });
 
   test('rdInvitedPersons mirrors the create write path', () {
@@ -585,9 +612,23 @@ void main() {
       await tester.tap(find.text('Jede Woche'));
       await _settle(tester);
       expect(find.text('7 Termine'), findsOneWidget);
+      // A tapped day is left out, a second tap would bring it back.
+      await tester.tap(find.widgetWithIcon(InkWell, Icons.close).last);
+      await _settle(tester);
+      expect(find.text('6 Termine'), findsOneWidget);
+      expect(find.text('1 ausgelassen'), findsOneWidget);
+      // The calendar shows the same days; its X comes back to the sheet.
+      await tester.tap(find.text('Tage im Kalender wählen'));
+      await _settle(tester);
+      expect(find.text('Tage wählen'), findsOneWidget);
+      expect(find.text('6 Termine'), findsNWidgets(2));
+      await tester.tap(find.descendant(of: find.byType(Dialog), matching: find.byType(IconButton)));
+      await _settle(tester);
+      expect(find.text('Weitere Daten'), findsOneWidget);
+      expect(find.text('6 Termine'), findsOneWidget);
       await tester.tap(find.text('Fertig'));
       await _settle(tester);
-      expect(find.textContaining('Es werden 7 Termine angelegt'), findsOneWidget);
+      expect(find.textContaining('Es werden 6 Termine angelegt'), findsOneWidget);
       expect(find.textContaining('jeden '), findsOneWidget);
     });
 

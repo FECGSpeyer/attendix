@@ -14471,6 +14471,46 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignCreateDeadline2d => '2 days before';
 
   @override
+  String get redesignCreateDeadlineCustom => 'Custom date …';
+
+  @override
+  String redesignCreateDeadlineCustomDays(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days',
+      one: '1 day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignCreateDeadlineCustomEach(Object offset) {
+    return '$offset before each event';
+  }
+
+  @override
+  String get redesignCreateDeadlineCustomEachHint =>
+      'With several events the same lead time applies to each one.';
+
+  @override
+  String redesignCreateDeadlineCustomHours(Object count) {
+    return '$count h';
+  }
+
+  @override
+  String get redesignCreateDeadlineCustomLabel => 'Custom date';
+
+  @override
+  String redesignCreateDeadlineCustomMinutes(Object count) {
+    return '$count min';
+  }
+
+  @override
+  String get redesignCreateDeadlineCustomTooLate =>
+      '“Reply by” must be before the first event.';
+
+  @override
   String get redesignCreateDeadlineHint =>
       'After that, members can no longer accept; declining still works.';
 
@@ -14586,12 +14626,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignCreatePlaceHint => 'e.g. rehearsal room, 1 Main St';
 
   @override
+  String redesignCreateRepeatAdded(Object count) {
+    return '$count added';
+  }
+
+  @override
   String redesignCreateRepeatBiweekly(Object date) {
     return 'Every 2 weeks until $date';
   }
 
   @override
   String get redesignCreateRepeatBiweeklyOption => 'Every 2 weeks';
+
+  @override
+  String get redesignCreateRepeatChipRestore => 'bring back';
+
+  @override
+  String get redesignCreateRepeatChipSkip => 'skip';
 
   @override
   String redesignCreateRepeatCount(num count) {
@@ -14633,7 +14684,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignCreateRepeatPick => 'Pick days in the calendar';
 
   @override
+  String get redesignCreateRepeatPickTitle => 'Pick days';
+
+  @override
   String get redesignCreateRepeatSkipHolidays => 'Skip holidays';
+
+  @override
+  String redesignCreateRepeatSkipped(Object count) {
+    return '$count skipped';
+  }
+
+  @override
+  String get redesignCreateRepeatSkippedLegend => 'skipped';
+
+  @override
+  String get redesignCreateRepeatTapHint =>
+      'Tap a day to skip it. Tap it again to bring it back.';
 
   @override
   String get redesignCreateRepeatUntil => 'Until';
