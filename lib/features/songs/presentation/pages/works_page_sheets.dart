@@ -191,6 +191,7 @@ class _WorkRow extends StatelessWidget {
     final p = context.rd;
     final number = song.fullNumber;
     final second = subtitle.isNotEmpty ? subtitle : (song.composer ?? '');
+    final largeText = MediaQuery.textScalerOf(context).scale(16) > 20;
     return Semantics(
       button: onTap != null,
       selected: selected,
@@ -202,50 +203,64 @@ class _WorkRow extends StatelessWidget {
             constraints: const BoxConstraints(minHeight: 56),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 44,
-                    child: Text(
-                      number,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: p.text2,
-                        fontFeatures: const [FontFeature.tabularFigures()],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          song.name,
-                          maxLines: 2,
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final stackPill = pill != null && (largeText || constraints.maxWidth < 300);
+                  return Row(
+                    children: [
+                      SizedBox(
+                        width: 44,
+                        child: Text(
+                          number,
+                          maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: p.text),
-                        ),
-                        if (second.isNotEmpty)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 2),
-                            child: Text(
-                              second,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: RdType.meta(p, size: 13),
-                            ),
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: p.text2,
+                            fontFeatures: const [FontFeature.tabularFigures()],
                           ),
-                      ],
-                    ),
-                  ),
-                  if (pill != null) ...[const SizedBox(width: 6), pill!],
-                  if (onTap != null) ...[const SizedBox(width: 4), Icon(Icons.chevron_right, size: 20, color: p.text2)],
-                ],
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              song.name,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: p.text),
+                            ),
+                            if (second.isNotEmpty)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 2),
+                                child: Text(
+                                  second,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: RdType.meta(p, size: 13),
+                                ),
+                              ),
+                            if (stackPill)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 6),
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  alignment: AlignmentDirectional.centerStart,
+                                  child: pill!,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                      if (pill != null && !stackPill) ...[const SizedBox(width: 6), pill!],
+                      if (onTap != null) ...[const SizedBox(width: 4), Icon(Icons.chevron_right, size: 20, color: p.text2)],
+                    ],
+                  );
+                },
               ),
             ),
           ),

@@ -173,6 +173,7 @@ class _MemberRow extends StatelessWidget {
     final color = pct == null ? p.text2 : rdPercentColor(p, pct);
 
     final isChecked = checked;
+    final largeText = MediaQuery.textScalerOf(context).scale(16) > 20;
     return Semantics(
       button: onTap != null && isChecked == null,
       selected: selected,
@@ -185,88 +186,108 @@ class _MemberRow extends StatelessWidget {
             constraints: const BoxConstraints(minHeight: 60),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-              child: Row(
-                children: [
-                  if (isChecked != null)
-                    SizedBox(
-                      width: 36,
-                      child: Icon(
-                        isChecked ? Icons.check_circle : Icons.radio_button_unchecked,
-                        color: isChecked ? p.primary : p.text2,
-                      ),
-                    )
-                  else
-                    RdInitials(rdInitialsOf(name.isEmpty ? '?' : name)),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Row(
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final tight = largeText || constraints.maxWidth < 300;
+                  final nameText = Text(
+                    name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: p.text),
+                  );
+                  return Row(
+                    children: [
+                      if (isChecked != null)
+                        SizedBox(
+                          width: 36,
+                          child: Icon(
+                            isChecked ? Icons.check_circle : Icons.radio_button_unchecked,
+                            color: isChecked ? p.primary : p.text2,
+                          ),
+                        )
+                      else
+                        RdInitials(rdInitialsOf(name.isEmpty ? '?' : name)),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            Flexible(
-                              child: Text(
-                                name,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: p.text),
+                            if (tight)
+                              Wrap(
+                                spacing: 6,
+                                runSpacing: 4,
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                children: [
+                                  nameText,
+                                  if (person.isLeader)
+                                    const FittedBox(
+                                      fit: BoxFit.scaleDown,
+                                      alignment: AlignmentDirectional.centerStart,
+                                      child: RdLeaderTag(),
+                                    ),
+                                ],
+                              )
+                            else
+                              Row(
+                                children: [
+                                  Flexible(child: nameText),
+                                  if (person.isLeader) ...[
+                                    const SizedBox(width: 6),
+                                    const RdLeaderTag(),
+                                  ],
+                                ],
                               ),
-                            ),
-                            if (person.isLeader) ...[
-                              const SizedBox(width: 6),
-                              const RdLeaderTag(),
-                            ],
+                            if (hints.isNotEmpty)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 2),
+                                child: Text(
+                                  hints.join(' · '),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: RdType.meta(p, size: 13),
+                                ),
+                              ),
+                            if (reason != null)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 2),
+                                child: Text(
+                                  reason!,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(fontSize: 13, color: p.absent),
+                                ),
+                              ),
                           ],
                         ),
-                        if (hints.isNotEmpty)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 2),
-                            child: Text(
-                              hints.join(' · '),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: RdType.meta(p, size: 13),
-                            ),
-                          ),
-                        if (reason != null)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 2),
-                            child: Text(
-                              reason!,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(fontSize: 13, color: p.absent),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                  if (rate.isNew) ...[
-                    const SizedBox(width: 8),
-                    Text(l10n.redesignMembersNew, style: TextStyle(fontSize: 15, color: p.text2)),
-                  ],
-                  if (pct != null) ...[
-                    const SizedBox(width: 8),
-                    if (low) ...[
-                      Icon(Icons.warning_amber_rounded, size: 16, color: color, semanticLabel: l10n.redesignMembersLow),
-                      const SizedBox(width: 2),
-                    ],
-                    Text(
-                      l10n.redesignMembersPercent(pct),
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                        color: color,
-                        fontFeatures: const [FontFeature.tabularFigures()],
                       ),
-                    ),
-                  ],
-                  if (onTap != null && isChecked == null) ...[
-                    const SizedBox(width: 4),
-                    Icon(Icons.chevron_right, size: 20, color: p.text2),
-                  ],
-                ],
+                      if (rate.isNew) ...[
+                        const SizedBox(width: 8),
+                        Text(l10n.redesignMembersNew, style: TextStyle(fontSize: 15, color: p.text2)),
+                      ],
+                      if (pct != null) ...[
+                        const SizedBox(width: 8),
+                        if (low) ...[
+                          Icon(Icons.warning_amber_rounded, size: 16, color: color, semanticLabel: l10n.redesignMembersLow),
+                          const SizedBox(width: 2),
+                        ],
+                        Text(
+                          l10n.redesignMembersPercent(pct),
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                            color: color,
+                            fontFeatures: const [FontFeature.tabularFigures()],
+                          ),
+                        ),
+                      ],
+                      if (onTap != null && isChecked == null) ...[
+                        const SizedBox(width: 4),
+                        Icon(Icons.chevron_right, size: 20, color: p.text2),
+                      ],
+                    ],
+                  );
+                },
               ),
             ),
           ),

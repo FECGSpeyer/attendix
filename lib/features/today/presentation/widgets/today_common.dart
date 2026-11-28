@@ -75,17 +75,34 @@ class RdEventRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final day = EventListUtils.parse(date);
     final locale = currentIntlLocale();
-    return RdListRow(
-      leading: RdDateTile(
-        weekday: day == null ? '' : DateFormat.E(locale).format(day).replaceAll('.', ''),
-        day: day == null ? '–' : '${day.day}',
-        highlight: highlight,
-      ),
-      title: title,
-      subtitle: meta,
-      trailing: trailing,
-      onTap: onTap,
-      showChevron: trailing == null,
+    final leadingTile = RdDateTile(
+      weekday: day == null ? '' : DateFormat.E(locale).format(day).replaceAll('.', ''),
+      day: day == null ? '–' : '${day.day}',
+      highlight: highlight,
+    );
+    if (trailing == null) {
+      return RdListRow(
+        leading: leadingTile,
+        title: title,
+        subtitle: meta,
+        onTap: onTap,
+        showChevron: true,
+      );
+    }
+    final largeText = MediaQuery.textScalerOf(context).scale(16) > 20;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final stackTrailing = largeText || constraints.maxWidth < 310;
+        return RdListRow(
+          leading: leadingTile,
+          title: title,
+          subtitle: meta,
+          trailing: stackTrailing ? null : trailing,
+          footer: stackTrailing ? trailing : null,
+          onTap: onTap,
+          showChevron: false,
+        );
+      },
     );
   }
 }

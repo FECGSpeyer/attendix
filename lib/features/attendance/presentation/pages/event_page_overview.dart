@@ -173,17 +173,36 @@ class _Overview extends ConsumerWidget {
                 const SizedBox(height: 6),
               ],
               // The whole list sits in the Anwesenheit.
-              InkWell(
-                key: const Key('rd-event-answers-open'),
-                borderRadius: BorderRadius.circular(8),
-                onTap: () => onRecord(RdRecordFilter.all),
-                child: Row(
-                  children: [
-                    Expanded(child: Text(title, style: RdType.section(p))),
-                    Text(side, style: RdType.meta(p, size: 13)),
-                    Icon(Icons.chevron_right, size: 18, color: p.text2),
-                  ],
-                ),
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final tight = constraints.maxWidth < 280 || MediaQuery.textScalerOf(context).scale(16) > 20;
+                  return InkWell(
+                    key: const Key('rd-event-answers-open'),
+                    borderRadius: BorderRadius.circular(8),
+                    onTap: () => onRecord(RdRecordFilter.all),
+                    child: tight
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(child: Text(title, style: RdType.section(p))),
+                                  Icon(Icons.chevron_right, size: 18, color: p.text2),
+                                ],
+                              ),
+                              const SizedBox(height: 2),
+                              Text(side, style: RdType.meta(p, size: 13)),
+                            ],
+                          )
+                        : Row(
+                            children: [
+                              Expanded(child: Text(title, style: RdType.section(p))),
+                              Text(side, style: RdType.meta(p, size: 13)),
+                              Icon(Icons.chevron_right, size: 18, color: p.text2),
+                            ],
+                          ),
+                  );
+                },
               ),
               const SizedBox(height: 8),
               // Numbers instead of the bar; a 0 is left out.
