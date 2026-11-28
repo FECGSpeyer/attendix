@@ -151,6 +151,115 @@ GOLDEN_SLUG_FEATURE_ALIASES: dict[str, str] = {
     "team": "team_organization",
 }
 
+GOLDEN_CATEGORY_ORDER = ("main", "page", "sheet", "dark", "desktop")
+
+GOLDEN_CATEGORY_META: dict[str, dict[str, str]] = {
+    "main": {
+        "label": "Hauptseiten",
+        "description": "Mobile Hauptansichten (Light Mode, 390×844)",
+    },
+    "page": {
+        "label": "Subpages",
+        "description": "Sekundäre Detail-, Formular- & Login-Seiten",
+    },
+    "sheet": {
+        "label": "Sheets",
+        "description": "Bottom-Sheets, Menüs & adaptive Action-Sheets",
+    },
+    "dark": {
+        "label": "Dark Mode",
+        "description": "Hauptseiten im Dark Mode (Brightness.dark)",
+    },
+    "desktop": {
+        "label": "Desktop",
+        "description": "Desktop Split-View mit Navigation-Rail (1280×800)",
+    },
+}
+
+# Explicit compound slug mappings (after stripping look & category prefixes).
+GOLDEN_COMPOUND_FEATURE_MAP: dict[str, tuple[str, ...]] = {
+    "org_settings": ("organisation",),
+    "event_create": ("attendance",),
+    "person_detail": ("people",),
+    "work_detail": ("songs",),
+    "login": ("auth",),
+    "org_song_copy": ("organisation", "songs"),
+    "event_create_menu": ("attendance", "team_organization"),
+    "org_info": ("organisation",),
+    "action_sheet": (),
+}
+
+RISK_CLASS_ORDER = ("layout", "visual", "flows", "security", "e2e")
+
+RISK_CLASS_META: dict[str, dict[str, str]] = {
+    "layout": {
+        "badge": "Risiko 1",
+        "title": "Layout & Overflows",
+        "short": "Layout",
+        "source_hint": "test/ui/**, Layout-, Header-, Sheet- & Spacing-Tests",
+        "catches": (
+            "RenderFlex-Overflows, abgeschnittene Texte, zu kleine Touch-Targets, "
+            "Header-/Sheet-Umbruchfehler und Design-System-Verstöße über Viewports & Text-Skalen."
+        ),
+    },
+    "visual": {
+        "badge": "Risiko 2",
+        "title": "Visuelle Regression",
+        "short": "Visuell",
+        "source_hint": "test/golden/goldens/*.png (Hauptseiten, Subpages, Sheets, Dark Mode, Desktop)",
+        "catches": (
+            "Pixel-, Farb-, Icon-, Kontrast- und Typografie-Regressionen auf "
+            "Hauptseiten, Subpages, Bottom-Sheets, Dark Mode und Desktop Split-View."
+        ),
+    },
+    "flows": {
+        "badge": "Risiko 3",
+        "title": "Empty / Error / Rollen / Flows",
+        "short": "Flows & Rollen",
+        "source_hint": "empty_error_roles_ui_test.dart, test/features/** & test/shared/**",
+        "catches": (
+            "Kaputte Empty-/Error-States, fehlende Rollen-Sichtbarkeit, "
+            "Provider-State-Bugs, kaputte Such-/Filter-/Formular-Flows und Navigation."
+        ),
+    },
+    "security": {
+        "badge": "Risiko 4",
+        "title": "Multi-Tenant & Security",
+        "short": "Tenant & Sec",
+        "source_hint": "tenant, security, db_query_columns, guard, rls, offline, force_unwrap",
+        "catches": (
+            "Mandanten-Lecks (fehlende tenantId-Filter), unsichere DB-Spalten/"
+            "RLS-Zugriffe, Offline-Cache-Lecks beim Accountwechsel und Force-Unwrap-Crashes."
+        ),
+    },
+    "e2e": {
+        "badge": "Risiko 5",
+        "title": "Echte E2E-Journeys",
+        "short": "E2E",
+        "source_hint": "patrol_test/** (Web & Android gegen lokales Supabase)",
+        "catches": (
+            "Durchgängige Benutzerreisen über echte Supabase-Queries, Auth-Flows, "
+            "Rollenrechte, DB-Mutationen und Routing im Browser & auf Mobilgeräten."
+        ),
+    },
+}
+
+_LAYOUT_RISK_PATH_RE = re.compile(
+    r"(?:^|[/_])(?:layout|overflow|header|sheet|spacing|responsive|alignment|popover|dismiss)(?:[/_.]|$)"
+)
+_SECURITY_RISK_KEYWORDS = (
+    "tenant",
+    "security",
+    "db_query_columns",
+    "guard",
+    "rls",
+    "offline",
+    "force_unwrap",
+)
+_SECURITY_CASE_RE = re.compile(
+    r"\b(?:tenantid|tenant_id|cross-tenant|rls|security|db_query_columns|force[-_ ]unwrap)\b"
+)
+
 # Keyword rules for attributing Patrol E2E flow snippets to lib/features/<name>.
 PATROL_FEATURE_KEYWORDS: list[tuple[str, tuple[str, ...]]] = [
     ("auth", ("loginpage", "signin", "anmelden", "passwort", "ausloggen")),
@@ -208,6 +317,7 @@ class TestFileEntry:
     path: str
     layer: str
     features: list[str] = field(default_factory=list)
+    risk_classes: list[str] = field(default_factory=list)
     cases: list[TestCaseEntry] = field(default_factory=list)
     passed: int = 0
     failed: int = 0
@@ -224,6 +334,7 @@ class GoldenEntry:
     path: str
     features: list[str]
     size_bytes: int
+    category: str = "main"
     width: int | None = None
     height: int | None = None
     data_uri: str | None = None
@@ -244,6 +355,8 @@ class DashboardReport:
     layer_stats: dict[str, dict[str, Any]]
     totals: dict[str, Any]
     failed_cases: list[dict[str, str]]
+    risk_class_stats: dict[str, dict[str, Any]] = field(default_factory=dict)
+    golden_category_counts: dict[str, int] = field(default_factory=dict)
     # Result-file health (CI shards): files without a final `done` event,
     # how many result files were expected, and Flutter test files that have
     # no live result although other files do.
@@ -501,6 +614,62 @@ def extract_patrol_flow_blocks(source: str) -> list[tuple[str, str]]:
     return blocks
 
 
+def classify_golden_category(name_or_filename: str) -> str:
+    """Classifies a golden filename (e.g. beta_dark_heute.png) into a category id."""
+    stem = Path(name_or_filename).stem.lower()
+    slug = re.sub(r"^(?:beta|classic)_", "", stem)
+    if slug.startswith("dark_"):
+        return "dark"
+    if slug.startswith("desktop_"):
+        return "desktop"
+    if slug.startswith("sheet_"):
+        return "sheet"
+    if slug.startswith("page_"):
+        return "page"
+    return "main"
+
+
+def classify_test_risk_classes(
+    rel_path: str,
+    layer: str,
+    case_names: list[str] | None = None,
+) -> list[str]:
+    """Classifies a test file into one or more bug-catching risk classes."""
+    norm = rel_path.replace("\\", "/").lower()
+    matched: set[str] = set()
+
+    if layer == "ui":
+        if "empty_error_roles" in norm:
+            matched.add("flows")
+        else:
+            matched.add("layout")
+    elif layer == "golden":
+        matched.add("visual")
+    elif layer == "patrol":
+        matched.add("e2e")
+    elif layer in ("features", "core"):
+        if _LAYOUT_RISK_PATH_RE.search(norm):
+            matched.add("layout")
+
+        is_pure_security_guard = any(
+            k in norm for k in ("security", "force_unwrap", "query_guard")
+        )
+        if layer == "features" and not is_pure_security_guard:
+            matched.add("flows")
+        elif "empty_error_roles" in norm or any(
+            k in norm for k in ("role_permission", "route_access", "legacy_routes", "nav_replace")
+        ):
+            matched.add("flows")
+
+        case_blob = " ".join(case_names or []).lower()
+        if any(kw in norm for kw in _SECURITY_RISK_KEYWORDS) or (
+            case_blob and _SECURITY_CASE_RE.search(case_blob)
+        ):
+            matched.add("security")
+
+    return [rid for rid in RISK_CLASS_ORDER if rid in matched]
+
+
 def map_goldens_to_features(
     repo_root: Path, known_features: set[str]
 ) -> dict[str, list[str]]:
@@ -547,16 +716,23 @@ def map_goldens_to_features(
     if goldens_dir.is_dir():
         for png in sorted(goldens_dir.glob("*.png")):
             stem = png.stem.lower()
-            # Strip common look prefixes like beta_ or classic_
-            slug = re.sub(r"^(?:beta|classic)_", "", stem)
-            feats: set[str] = set(slug_features.get(slug, set()))
-            if not feats:
-                if slug in GOLDEN_SLUG_FEATURE_ALIASES:
-                    candidate = GOLDEN_SLUG_FEATURE_ALIASES[slug]
+            # Strip common look prefixes (beta_/classic_) and category prefixes
+            # (dark_/desktop_/page_/sheet_) for accurate fallback matching.
+            raw_slug = re.sub(r"^(?:beta|classic)_", "", stem)
+            base_slug = re.sub(r"^(?:dark|desktop|page|sheet)_", "", raw_slug)
+            feats: set[str] = set(slug_features.get(raw_slug, set()))
+
+            if base_slug in GOLDEN_COMPOUND_FEATURE_MAP:
+                for candidate in GOLDEN_COMPOUND_FEATURE_MAP[base_slug]:
+                    if candidate in known_features:
+                        feats.add(candidate)
+            elif not feats:
+                if base_slug in GOLDEN_SLUG_FEATURE_ALIASES:
+                    candidate = GOLDEN_SLUG_FEATURE_ALIASES[base_slug]
                     if candidate in known_features:
                         feats.add(candidate)
                 else:
-                    for token in slug.split("_"):
+                    for token in base_slug.split("_"):
                         candidate = GOLDEN_SLUG_FEATURE_ALIASES.get(token, token)
                         if candidate in known_features:
                             feats.add(candidate)
@@ -785,6 +961,12 @@ def scan_repository(
             static_cases = extract_dart_tests(source)
 
             live = live_by_file.get(rel_path)
+            effective_cases = live["cases"] if live else static_cases
+            risk_classes = classify_test_risk_classes(
+                rel_path,
+                layer,
+                [c.name for c in effective_cases],
+            )
             if live:
                 cases = live["cases"]
                 files.append(
@@ -792,6 +974,7 @@ def scan_repository(
                         path=rel_path,
                         layer=layer,
                         features=file_feats,
+                        risk_classes=risk_classes,
                         cases=cases,
                         passed=live["passed"],
                         failed=live["failed"],
@@ -806,6 +989,7 @@ def scan_repository(
                         path=rel_path,
                         layer=layer,
                         features=file_feats,
+                        risk_classes=risk_classes,
                         cases=static_cases,
                     )
                 )
@@ -833,12 +1017,18 @@ def scan_repository(
                     patrol_flow_features[feat] += 1
                     file_feats.add(feat)
             live = live_by_file.get(rel_path)
+            effective_cases = live["cases"] if live else cases
             files.append(
                 TestFileEntry(
                     path=rel_path,
                     layer="patrol",
                     features=sorted(file_feats),
-                    cases=live["cases"] if live else cases,
+                    risk_classes=classify_test_risk_classes(
+                        rel_path,
+                        "patrol",
+                        [c.name for c in effective_cases],
+                    ),
+                    cases=effective_cases,
                     passed=live["passed"] if live else 0,
                     failed=live["failed"] if live else 0,
                     skipped=live["skipped"] if live else 0,
@@ -871,6 +1061,7 @@ def scan_repository(
                     path=rel_path,
                     layer="tool",
                     features=[],
+                    risk_classes=[],
                     cases=cases,
                 )
             )
@@ -881,11 +1072,17 @@ def scan_repository(
     scanned_paths = {f.path for f in files}
     for rel_path in sorted(set(live_by_file) - scanned_paths):
         live = live_by_file[rel_path]
+        orphan_layer = classify_test_file(rel_path)
         files.append(
             TestFileEntry(
                 path=rel_path,
-                layer=classify_test_file(rel_path),
+                layer=orphan_layer,
                 features=[],
+                risk_classes=classify_test_risk_classes(
+                    rel_path,
+                    orphan_layer,
+                    [c.name for c in live["cases"]],
+                ),
                 cases=live["cases"],
                 passed=live["passed"],
                 failed=live["failed"],
@@ -898,11 +1095,14 @@ def scan_repository(
     # 4. Scan test/golden/goldens/*.png
     golden_feature_map = map_goldens_to_features(repo_root, known_features)
     goldens: list[GoldenEntry] = []
+    golden_category_counts: dict[str, int] = {cat: 0 for cat in GOLDEN_CATEGORY_ORDER}
     goldens_dir = repo_root / "test" / "golden" / "goldens"
     if goldens_dir.is_dir():
         for png in sorted(goldens_dir.glob("*.png")):
             rel_path = png.relative_to(repo_root).as_posix()
             width, height = read_png_dimensions(png)
+            category = classify_golden_category(png.name)
+            golden_category_counts[category] = golden_category_counts.get(category, 0) + 1
             data_uri: str | None = None
             if embed_goldens:
                 raw_bytes = png.read_bytes()
@@ -914,6 +1114,7 @@ def scan_repository(
                     path=rel_path,
                     features=golden_feature_map.get(png.name, []),
                     size_bytes=png.stat().st_size,
+                    category=category,
                     width=width,
                     height=height,
                     data_uri=data_uri,
@@ -927,9 +1128,11 @@ def scan_repository(
         unit_cases = 0
         ui_files = 0
         ui_cases = 0
+        feat_risks: set[str] = set()
         for fentry in files:
             if feat not in fentry.features:
                 continue
+            feat_risks.update(fentry.risk_classes)
             if fentry.layer in ("features", "core"):
                 unit_files += 1
                 unit_cases += len(fentry.cases)
@@ -938,6 +1141,10 @@ def scan_repository(
                 ui_cases += len(fentry.cases)
         golden_count = sum(1 for g in goldens if feat in g.features)
         patrol_count = patrol_flow_features.get(feat, 0)
+        if golden_count > 0:
+            feat_risks.add("visual")
+        if patrol_count > 0:
+            feat_risks.add("e2e")
         total_signals = unit_cases + ui_cases + golden_count + patrol_count
         matrix.append(
             {
@@ -948,11 +1155,12 @@ def scan_repository(
                 "ui_cases": ui_cases,
                 "goldens": golden_count,
                 "patrol_flows": patrol_count,
+                "risk_classes": [rid for rid in RISK_CLASS_ORDER if rid in feat_risks],
                 "total": total_signals,
             }
         )
 
-    # 6. Aggregate layer stats and global totals
+    # 6. Aggregate layer stats, risk class stats, and global totals
     layer_stats: dict[str, dict[str, Any]] = {}
     for layer_id in LAYER_ORDER:
         layer_files = [f for f in files if f.layer == layer_id]
@@ -964,6 +1172,27 @@ def scan_repository(
             "skipped": sum(f.skipped for f in layer_files),
             "duration_ms": sum(f.duration_ms for f in layer_files),
             "has_live": any(f.has_live_results for f in layer_files),
+        }
+
+    risk_class_stats: dict[str, dict[str, Any]] = {}
+    for risk_id in RISK_CLASS_ORDER:
+        risk_files = [f for f in files if risk_id in f.risk_classes]
+        risk_feats_covered = sum(
+            1 for row in matrix if risk_id in row["risk_classes"]
+        )
+        risk_class_stats[risk_id] = {
+            "files": len(risk_files),
+            "cases": sum(len(f.cases) for f in risk_files),
+            "passed": sum(f.passed for f in risk_files),
+            "failed": sum(f.failed for f in risk_files),
+            "skipped": sum(f.skipped for f in risk_files),
+            "duration_ms": sum(f.duration_ms for f in risk_files),
+            "has_live": any(f.has_live_results for f in risk_files),
+            "features_covered": risk_feats_covered,
+            "goldens": len(goldens) if risk_id == "visual" else 0,
+            "golden_categories": (
+                dict(golden_category_counts) if risk_id == "visual" else {}
+            ),
         }
 
     failed_cases: list[dict[str, str]] = []
@@ -1013,6 +1242,8 @@ def scan_repository(
         layer_stats=layer_stats,
         totals=totals,
         failed_cases=failed_cases,
+        risk_class_stats=risk_class_stats,
+        golden_category_counts=golden_category_counts,
         incomplete_results=list(run_info.get("incomplete", [])),
         expected_results=expected_results,
         files_without_results=files_without_results,
@@ -1138,13 +1369,59 @@ def render_markdown(report: DashboardReport) -> str:
             lines.append(f"- … und {len(report.failed_cases) - 25} weitere.")
 
     uncovered = [r["feature"] for r in report.feature_matrix if r["total"] == 0]
+    golden_cat_parts = [
+        f"{GOLDEN_CATEGORY_META[cid]['label']}: {report.golden_category_counts.get(cid, 0)}"
+        for cid in GOLDEN_CATEGORY_ORDER
+    ]
+    lines.extend(
+        [
+            "",
+            '### Bug-Risikoklassen-Abdeckung ("Welche echten Fehlerklassen fangen wir ab?")',
+            "",
+            "| Risikoklasse | Quelle | Dateien / Artefakte | Testfälle | Features | Live-Status |",
+            "|---|---|---|---:|---:|---|",
+        ]
+    )
+    for risk_id in RISK_CLASS_ORDER:
+        rmeta = RISK_CLASS_META[risk_id]
+        rst = report.risk_class_stats.get(
+            risk_id,
+            {
+                "files": 0,
+                "cases": 0,
+                "passed": 0,
+                "failed": 0,
+                "skipped": 0,
+                "has_live": False,
+                "features_covered": 0,
+                "goldens": 0,
+            },
+        )
+        file_word = "Datei" if rst["files"] == 1 else "Dateien"
+        if risk_id == "visual":
+            artifact_col = f"{rst['files']} {file_word} · {rst.get('goldens', 0)} Goldens"
+        else:
+            artifact_col = f"{rst['files']} {file_word}"
+        if rst["has_live"]:
+            live_col = (
+                f"❌ {rst['failed']} Fail · {rst['passed']} OK"
+                if rst["failed"] > 0
+                else f"✅ {rst['passed']} OK"
+            )
+        else:
+            live_col = "—"
+        lines.append(
+            f"| **{rmeta['title']}** | `{rmeta['source_hint']}` | "
+            f"{artifact_col} | {rst['cases']} | {rst['features_covered']}/{t['features_total']} | {live_col} |"
+        )
+
     lines.extend(
         [
             "",
             "### Kennzahlen & Abdeckung",
             "",
             f"- **Feature-Abdeckung:** {t['features_covered']} / {t['features_total']} Features in `lib/features/` mit mindestens einem Test-Signal",
-            f"- **Golden-Screenshots:** {t['goldens']} Referenzbilder in `test/golden/goldens/`",
+            f"- **Golden-Screenshots:** {t['goldens']} Referenzbilder in `test/golden/goldens/` ({' · '.join(golden_cat_parts)})",
             f"- **Patrol E2E-Flows:** {t['patrol_flows']} Szenarien in {t['patrol_files']} Rollen-Dateien (`patrol_test/`)",
         ]
     )
@@ -1251,10 +1528,86 @@ def render_html(report: DashboardReport, html_path: Path) -> str:
             """
         )
 
+    # Build Bug-Risk-Class cards ("Welche echten Fehlerklassen fangen wir ab?")
+    risk_cards_html: list[str] = []
+    for risk_id in RISK_CLASS_ORDER:
+        rmeta = RISK_CLASS_META[risk_id]
+        rst = report.risk_class_stats.get(
+            risk_id,
+            {
+                "files": 0,
+                "cases": 0,
+                "passed": 0,
+                "failed": 0,
+                "skipped": 0,
+                "duration_ms": 0,
+                "has_live": False,
+                "features_covered": 0,
+                "goldens": 0,
+                "golden_categories": {},
+            },
+        )
+        if rst["has_live"]:
+            rtone = "pill-pass" if rst["failed"] == 0 else "pill-fail"
+            rlive_text = (
+                f"{rst['passed']} OK"
+                + (f" · {rst['failed']} Fail" if rst["failed"] else "")
+                + f" · {format_duration(rst['duration_ms'])}"
+            )
+            rpill = f'<span class="pill {rtone}">{html.escape(rlive_text)}</span>'
+        elif risk_id == "visual":
+            rpill = (
+                f'<span class="pill pill-info">{rst.get("goldens", 0)} Goldens · '
+                f'{rst["cases"]} Tests</span>'
+            )
+        else:
+            file_word = "Datei" if rst["files"] == 1 else "Dateien"
+            rpill = (
+                f'<span class="pill pill-muted">{rst["files"]} {file_word} · '
+                f'{rst["cases"]} Tests</span>'
+            )
+
+        golden_breakdown_html = ""
+        if risk_id == "visual":
+            cat_buttons = []
+            for cat_id in GOLDEN_CATEGORY_ORDER:
+                cat_label = GOLDEN_CATEGORY_META[cat_id]["label"]
+                cat_cnt = report.golden_category_counts.get(cat_id, 0)
+                cat_buttons.append(
+                    f'<button type="button" class="chip-tag chip-link" '
+                    f'onclick="focusGoldenCategory(\'{html.escape(cat_id)}\')">'
+                    f'{html.escape(cat_label)}: {cat_cnt}</button>'
+                )
+            golden_breakdown_html = (
+                '<div class="risk-subchips">' + "".join(cat_buttons) + "</div>"
+            )
+
+        risk_cards_html.append(
+            f"""
+            <article class="layer-card risk-card" data-risk="{html.escape(risk_id)}">
+              <div class="layer-head">
+                <div>
+                  <span class="layer-badge">{html.escape(rmeta['badge'])}</span>
+                  <h3>{html.escape(rmeta['title'])}</h3>
+                </div>
+                {rpill}
+              </div>
+              <p class="layer-path"><code>{html.escape(rmeta['source_hint'])}</code></p>
+              <p class="layer-desc">{html.escape(rmeta['catches'])}</p>
+              {golden_breakdown_html}
+              <div class="risk-foot">
+                <span class="muted">{rst['features_covered']} / {t['features_total']} Features abgedeckt</span>
+                <button type="button" class="btn btn-sm" onclick="focusRisk('{html.escape(risk_id)}')">Tests filtern →</button>
+              </div>
+            </article>
+            """
+        )
+
     # Feature Coverage Matrix rows
     matrix_rows_html: list[str] = []
     for row in report.feature_matrix:
         feat = row["feature"]
+        row_risks = set(row.get("risk_classes", []))
         row_cls = "row-gap" if row["total"] == 0 else ""
 
         def cell_badge(count: int, sub: str = "") -> str:
@@ -1265,6 +1618,12 @@ def render_html(report: DashboardReport, html_path: Path) -> str:
 
         unit_sub = f"{row['unit_files']}D" if row["unit_files"] else ""
         ui_sub = f"{row['ui_files']}D" if row["ui_files"] else ""
+        risk_badges_html = "".join(
+            f'<span class="risk-mini {"risk-mini-on" if rid in row_risks else "risk-mini-off"}" '
+            f'title="{html.escape(RISK_CLASS_META[rid]["title"])}">'
+            f'{html.escape(RISK_CLASS_META[rid]["short"])}</span>'
+            for rid in RISK_CLASS_ORDER
+        )
         total_pill = (
             '<span class="pill pill-warn">Keine Tests</span>'
             if row["total"] == 0
@@ -1272,38 +1631,53 @@ def render_html(report: DashboardReport, html_path: Path) -> str:
         )
         matrix_rows_html.append(
             f"""
-            <tr class="{row_cls}" data-feature="{html.escape(feat)}" data-gap="{'1' if row['total'] == 0 else '0'}">
+            <tr class="{row_cls}" data-feature="{html.escape(feat)}" data-gap="{'1' if row['total'] == 0 else '0'}" data-risks="{html.escape(','.join(row.get('risk_classes', [])))}">
               <td><strong>{html.escape(feat)}</strong></td>
               <td class="tc">{cell_badge(row['unit_cases'], unit_sub)}</td>
               <td class="tc">{cell_badge(row['ui_cases'], ui_sub)}</td>
               <td class="tc">{cell_badge(row['goldens'])}</td>
               <td class="tc">{cell_badge(row['patrol_flows'])}</td>
+              <td><div class="risk-mini-wrap">{risk_badges_html}</div></td>
               <td class="tc">{total_pill}</td>
             </tr>
             """
         )
 
-    # Golden gallery cards
+    # Golden gallery category chips & cards
+    golden_category_chips_html: list[str] = [
+        f'<button type="button" class="chip active" data-golden-cat="all" '
+        f'onclick="setGoldenCategory(\'all\')">Alle ({len(report.goldens)})</button>'
+    ]
+    for cat_id in GOLDEN_CATEGORY_ORDER:
+        cat_label = GOLDEN_CATEGORY_META[cat_id]["label"]
+        cat_count = report.golden_category_counts.get(cat_id, 0)
+        golden_category_chips_html.append(
+            f'<button type="button" class="chip" data-golden-cat="{html.escape(cat_id)}" '
+            f'onclick="setGoldenCategory(\'{html.escape(cat_id)}\')">'
+            f'{html.escape(cat_label)} ({cat_count})</button>'
+        )
+
     golden_cards_html: list[str] = []
     for g in report.goldens:
         src = _golden_src(g, html_path, report.repo_root)
         dims = f"{g.width}×{g.height} px" if g.width and g.height else "PNG"
         size_kb = f"{g.size_bytes / 1024:.0f} KB"
+        cat_label = GOLDEN_CATEGORY_META.get(g.category, {}).get("label", g.category)
         feat_tags = "".join(
             f'<span class="chip-tag">{html.escape(f)}</span>' for f in g.features
         )
         golden_cards_html.append(
             f"""
-            <figure class="golden-card" data-name="{html.escape(g.name)}">
+            <figure class="golden-card" data-name="{html.escape(g.name)}" data-category="{html.escape(g.category)}">
               <button type="button" class="golden-thumb-btn" onclick="openGoldenModal(this)"
                 data-src="{html.escape(src)}" data-title="{html.escape(g.name)}"
-                data-meta="{html.escape(g.path)} · {dims} · {size_kb}">
+                data-meta="{html.escape(g.path)} · {html.escape(cat_label)} · {dims} · {size_kb}">
                 <img src="{html.escape(src)}" alt="{html.escape(g.name)}" loading="lazy" />
               </button>
               <figcaption>
                 <div class="golden-title">{html.escape(g.name)}</div>
                 <div class="golden-sub">{dims} · {size_kb}</div>
-                <div class="golden-tags">{feat_tags or '<span class="chip-tag">App</span>'}</div>
+                <div class="golden-tags"><span class="chip-tag chip-cat">{html.escape(cat_label)}</span>{feat_tags or '<span class="chip-tag">App</span>'}</div>
               </figcaption>
             </figure>
             """
@@ -1321,6 +1695,8 @@ def render_html(report: DashboardReport, html_path: Path) -> str:
             "layer": f.layer,
             "layerLabel": LAYER_META[f.layer]["short"],
             "features": f.features,
+            "riskClasses": f.risk_classes,
+            "riskLabels": [RISK_CLASS_META[r]["short"] for r in f.risk_classes],
             "passed": f.passed,
             "failed": f.failed,
             "skipped": f.skipped,
@@ -1701,6 +2077,9 @@ def render_html(report: DashboardReport, html_path: Path) -> str:
       align-items: center;
       justify-content: center;
     }}
+    .golden-card[data-category="desktop"] .golden-thumb-btn {{
+      aspect-ratio: 16 / 10;
+    }}
     .golden-thumb-btn img {{
       width: 100%;
       height: 100%;
@@ -1721,6 +2100,63 @@ def render_html(report: DashboardReport, html_path: Path) -> str:
       color: var(--muted);
       padding: 0.1rem 0.45rem;
       border-radius: 6px;
+    }}
+    .chip-tag.chip-cat {{
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 600;
+    }}
+    .chip-link {{
+      border: 0;
+      cursor: pointer;
+    }}
+    .chip-link:hover {{
+      background: var(--accent-soft);
+      color: var(--accent);
+    }}
+    .risk-card {{
+      justify-content: space-between;
+    }}
+    .risk-subchips {{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-top: 0.15rem;
+    }}
+    .risk-foot {{
+      margin-top: auto;
+      padding-top: 0.65rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+    }}
+    .btn-sm {{
+      padding: 0.28rem 0.6rem;
+      font-size: 0.78rem;
+    }}
+    .risk-mini-wrap {{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25rem;
+    }}
+    .risk-mini {{
+      font-size: 0.7rem;
+      padding: 0.1rem 0.42rem;
+      border-radius: 999px;
+      font-weight: 600;
+      white-space: nowrap;
+    }}
+    .risk-mini-on {{
+      background: var(--pass-bg);
+      color: var(--pass);
+    }}
+    .risk-mini-off {{
+      background: var(--surface-2);
+      color: var(--muted);
+      opacity: 0.45;
     }}
 
     .explorer-list {{ divide-y: 1px solid var(--border); }}
@@ -1894,18 +2330,38 @@ def render_html(report: DashboardReport, html_path: Path) -> str:
       </div>
     </section>
 
+    <section class="block" id="riskSection">
+      <h2>Bug-Risikoklassen-Abdeckung (&bdquo;Welche echten Fehlerklassen fangen wir ab?&ldquo;)</h2>
+      <p class="section-lead">
+        Jeder Test zahlt auf eine oder mehrere reale Fehlerklassen ein. Klicke auf eine Risikoklasse, um passende Tests direkt im Explorer zu filtern.
+      </p>
+      <div class="layer-grid">
+        {''.join(risk_cards_html)}
+      </div>
+    </section>
+
     <section class="block">
       <h2>Feature-Abdeckungsmatrix (<code>lib/features/*</code>)</h2>
       <p class="section-lead">
-        Zeigt pro Fachbereich, wie viele Unit-/Widget-Tests, UI-Guards, Golden-Screenshots und Patrol-E2E-Flows vorhanden sind.
+        Zeigt pro Fachbereich Unit-/Widget-Tests, UI-Guards, Golden-Screenshots, Patrol-E2E-Flows und abgedeckte Bug-Risikoklassen.
       </p>
       <div class="panel">
         <div class="panel-toolbar">
           <input type="search" id="featureSearch" class="input" placeholder="Feature filtern (z. B. attendance, songs)…" oninput="filterMatrix()" />
-          <label class="chip" id="gapToggleWrap">
-            <input type="checkbox" id="gapOnly" onchange="filterMatrix()" style="margin-right:0.35rem;vertical-align:middle;" />
-            Nur Lücken (0 Signale)
-          </label>
+          <div style="display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center;">
+            <select id="matrixMissingRisk" class="input" style="min-width:190px;" onchange="filterMatrix()" aria-label="Fehlende Risikoklasse filtern">
+              <option value="all">Alle Risikoklassen</option>
+              <option value="missing:layout">Fehlt: Layout &amp; Overflows</option>
+              <option value="missing:visual">Fehlt: Visuelle Regression</option>
+              <option value="missing:flows">Fehlt: Empty / Error / Rollen / Flows</option>
+              <option value="missing:security">Fehlt: Multi-Tenant &amp; Security</option>
+              <option value="missing:e2e">Fehlt: Echte E2E-Journeys</option>
+            </select>
+            <label class="chip" id="gapToggleWrap">
+              <input type="checkbox" id="gapOnly" onchange="filterMatrix()" style="margin-right:0.35rem;vertical-align:middle;" />
+              Nur Lücken (0 Signale)
+            </label>
+          </div>
         </div>
         <div class="table-wrap">
           <table id="matrixTable">
@@ -1916,6 +2372,7 @@ def render_html(report: DashboardReport, html_path: Path) -> str:
                 <th class="tc">UI-Guards</th>
                 <th class="tc">Goldens</th>
                 <th class="tc">Patrol E2E</th>
+                <th>Risikoklassen</th>
                 <th class="tc">Status</th>
               </tr>
             </thead>
@@ -1927,32 +2384,48 @@ def render_html(report: DashboardReport, html_path: Path) -> str:
       </div>
     </section>
 
-    <section class="block">
+    <section class="block" id="goldenSection">
       <h2>Golden-Screenshot-Galerie</h2>
       <p class="section-lead">
-        Klicke auf einen Screenshot für die Vollansicht.{' Eingebettet als standalone Data-URIs.' if report.goldens and report.goldens[0].data_uri else ''}
+        Klicke auf einen Screenshot für die Vollansicht oder filtere nach Kategorie.{' Eingebettet als standalone Data-URIs.' if report.goldens and report.goldens[0].data_uri else ''}
       </p>
-      <div class="golden-grid">
+      <div class="panel" style="margin-bottom:1rem;">
+        <div class="panel-toolbar">
+          <div class="chips" id="goldenCategoryChips">
+            {''.join(golden_category_chips_html)}
+          </div>
+          <span id="goldenCount" class="muted" style="font-size:0.82rem;">{len(report.goldens)} von {len(report.goldens)} Screenshots angezeigt</span>
+        </div>
+      </div>
+      <div class="golden-grid" id="goldenGrid">
         {''.join(golden_cards_html)}
       </div>
     </section>
 
-    <section class="block">
+    <section class="block" id="explorerSection">
       <h2>Interaktiver Test-Explorer</h2>
       <p class="section-lead">
-        Durchsuche Dateien, Features und einzelne Testfälle. Klicke auf eine Datei, um alle enthaltenen Tests anzuzeigen.
+        Durchsuche Dateien, Features, Bug-Risikoklassen und einzelne Testfälle. Klicke auf eine Datei, um alle enthaltenen Tests anzuzeigen.
       </p>
       <div class="panel">
         <div class="panel-toolbar">
           <input type="search" id="explorerSearch" class="input" placeholder="Datei, Feature oder Testtitel suchen…" oninput="renderExplorer()" />
           <div class="chips" id="layerChips">
-            <button type="button" class="chip active" data-layer="all" onclick="setLayer('all')">Alle</button>
+            <button type="button" class="chip active" data-layer="all" onclick="setLayer('all')">Alle Schichten</button>
             <button type="button" class="chip" data-layer="ui" onclick="setLayer('ui')">UI-Guards</button>
             <button type="button" class="chip" data-layer="golden" onclick="setLayer('golden')">Goldens</button>
             <button type="button" class="chip" data-layer="features" onclick="setLayer('features')">Features &amp; Shared</button>
             <button type="button" class="chip" data-layer="core" onclick="setLayer('core')">Core, Data &amp; Security</button>
             <button type="button" class="chip" data-layer="patrol" onclick="setLayer('patrol')">Patrol E2E</button>
             <button type="button" class="chip" data-layer="tool" onclick="setLayer('tool')">Tool-Tests</button>
+          </div>
+          <div class="chips" id="riskChips">
+            <button type="button" class="chip active" data-risk="all" onclick="setRisk('all')">Alle Risiken</button>
+            <button type="button" class="chip" data-risk="layout" onclick="setRisk('layout')">Layout &amp; Overflows</button>
+            <button type="button" class="chip" data-risk="visual" onclick="setRisk('visual')">Visuelle Regression</button>
+            <button type="button" class="chip" data-risk="flows" onclick="setRisk('flows')">Empty / Error / Rollen / Flows</button>
+            <button type="button" class="chip" data-risk="security" onclick="setRisk('security')">Multi-Tenant &amp; Security</button>
+            <button type="button" class="chip" data-risk="e2e" onclick="setRisk('e2e')">Echte E2E-Journeys</button>
           </div>
           <div class="chips" id="statusChips">
             <button type="button" class="chip active" data-status="all" onclick="setStatus('all')">Alle Status</button>
@@ -1988,7 +2461,9 @@ def render_html(report: DashboardReport, html_path: Path) -> str:
   <script>
     const TEST_FILES = {explorer_json};
     let activeLayer = 'all';
+    let activeRisk = 'all';
     let activeStatus = 'all';
+    let activeGoldenCategory = 'all';
 
     function escapeHtml(str) {{
       return String(str ?? '')
@@ -2025,14 +2500,46 @@ def render_html(report: DashboardReport, html_path: Path) -> str:
       dlg.showModal();
     }}
 
+    function setGoldenCategory(cat) {{
+      activeGoldenCategory = cat;
+      document.querySelectorAll('#goldenCategoryChips .chip').forEach((c) => {{
+        c.classList.toggle('active', c.dataset.goldenCat === cat);
+      }});
+      const cards = document.querySelectorAll('#goldenGrid .golden-card');
+      let shown = 0;
+      cards.forEach((card) => {{
+        const visible = cat === 'all' || card.dataset.category === cat;
+        card.style.display = visible ? '' : 'none';
+        if (visible) shown += 1;
+      }});
+      const countEl = document.getElementById('goldenCount');
+      if (countEl) {{
+        countEl.textContent = shown + ' von ' + cards.length + ' Screenshots angezeigt';
+      }}
+    }}
+
+    function focusGoldenCategory(cat) {{
+      setGoldenCategory(cat);
+      const section = document.getElementById('goldenSection');
+      if (section) section.scrollIntoView({{ behavior: 'smooth', block: 'start' }});
+    }}
+
     function filterMatrix() {{
       const q = (document.getElementById('featureSearch').value || '').trim().toLowerCase();
       const gapOnly = document.getElementById('gapOnly').checked;
+      const riskFilterEl = document.getElementById('matrixMissingRisk');
+      const riskFilter = riskFilterEl ? riskFilterEl.value : 'all';
       const rows = document.querySelectorAll('#matrixTable tbody tr');
       rows.forEach((tr) => {{
         const feat = (tr.dataset.feature || '').toLowerCase();
         const isGap = tr.dataset.gap === '1';
-        const visible = (!q || feat.includes(q)) && (!gapOnly || isGap);
+        const risks = (tr.dataset.risks || '').split(',').filter(Boolean);
+        let riskOk = true;
+        if (riskFilter.startsWith('missing:')) {{
+          const target = riskFilter.slice('missing:'.length);
+          riskOk = !risks.includes(target);
+        }}
+        const visible = (!q || feat.includes(q)) && (!gapOnly || isGap) && riskOk;
         tr.style.display = visible ? '' : 'none';
       }});
     }}
@@ -2043,6 +2550,21 @@ def render_html(report: DashboardReport, html_path: Path) -> str:
         c.classList.toggle('active', c.dataset.layer === layer);
       }});
       renderExplorer();
+    }}
+
+    function setRisk(risk) {{
+      activeRisk = risk;
+      document.querySelectorAll('#riskChips .chip').forEach((c) => {{
+        c.classList.toggle('active', c.dataset.risk === risk);
+      }});
+      renderExplorer();
+    }}
+
+    function focusRisk(risk) {{
+      setLayer('all');
+      setRisk(risk);
+      const section = document.getElementById('explorerSection');
+      if (section) section.scrollIntoView({{ behavior: 'smooth', block: 'start' }});
     }}
 
     function setStatus(status) {{
@@ -2076,11 +2598,13 @@ def render_html(report: DashboardReport, html_path: Path) -> str:
 
       for (const file of TEST_FILES) {{
         if (activeLayer !== 'all' && file.layer !== activeLayer) continue;
+        if (activeRisk !== 'all' && !(file.riskClasses || []).includes(activeRisk)) continue;
 
         const fileMatchesQuery =
           !q ||
           file.path.toLowerCase().includes(q) ||
-          file.features.some((ft) => ft.toLowerCase().includes(q));
+          file.features.some((ft) => ft.toLowerCase().includes(q)) ||
+          (file.riskLabels || []).some((rl) => rl.toLowerCase().includes(q));
 
         const visibleCases = file.cases.filter((c) => {{
           const statusOk = activeStatus === 'all' || c.status === activeStatus;
@@ -2106,6 +2630,9 @@ def render_html(report: DashboardReport, html_path: Path) -> str:
 
       const htmlParts = matchedFiles.map(({{ file, visibleCases }}) => {{
         const openAttr = file.failed > 0 || (q && visibleCases.length > 0 && matchedFiles.length <= 12) ? ' open' : '';
+        const riskChips = (file.riskLabels || [])
+          .map((rl) => '<span class="chip-tag chip-cat">' + escapeHtml(rl) + '</span>')
+          .join('');
         const featChips = file.features
           .map((ft) => '<span class="chip-tag">' + escapeHtml(ft) + '</span>')
           .join('');
@@ -2139,7 +2666,7 @@ def render_html(report: DashboardReport, html_path: Path) -> str:
               '<div class="file-left">' +
                 '<span class="pill pill-info">' + escapeHtml(file.layerLabel) + '</span>' +
                 '<span class="file-path">' + escapeHtml(file.path) + '</span>' +
-                featChips +
+                riskChips + featChips +
               '</div>' +
               '<div class="file-right">' + rightBadges + '</div>' +
             '</summary>' +

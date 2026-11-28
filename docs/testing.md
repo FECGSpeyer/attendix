@@ -6,12 +6,12 @@ Attendix secures app quality across four automated `flutter test` layers, supple
 
 | Layer | Location | What it catches | Local command |
 |---|---|---|---|
-| **1. UI Layout & Design Guards** | `test/ui/` | Layout overflows, clipped text, undersized touch targets, spacing & design-system violations | `flutter test test/ui/` |
-| **2. Visual Goldens** | `test/golden/` | Unintended pixel, colour, icon or typography regressions on key pages ([test/golden/README.md](../test/golden/README.md)) | `flutter test test/golden` |
+| **1. UI Layout & Design Guards** | `test/ui/` | Responsive overflows (`main_pages_responsive_ui_test.dart`), subpages & legacy sheets (`subpages_and_legacy_sheets_ui_test.dart`), empty/error/role states (`empty_error_roles_ui_test.dart`), dialogs (`sheets_and_dialogs_ui_test.dart`), and design-system rules (`design_system_guard_test.dart`) | `flutter test test/ui/` |
+| **2. Visual Goldens** | `test/golden/` | Unintended pixel, colour, icon or typography regressions across **24 screenshots** (`pages_beta_test.dart` for 8 main pages + `extended_goldens_test.dart` for 16 Dark Mode, Desktop, Subpage & Sheet views; [test/golden/README.md](../test/golden/README.md)) | `flutter test test/golden` |
 | **3. Widget & Feature Tests** | `test/features/`, `test/shared/` | Broken user flows, Riverpod provider state, role permissions, forms, navigation and adaptive sheets | `flutter test test/features/ test/shared/` |
-| **4. Core, Data, Security & Helpers** | `test/core/`, `test/data/`, `test/helpers/`, `test/*_test.dart` | Multi-tenant security leaks (`tenantId` guards), models, date/calc utils, l10n and PWA/service-worker tooling | `flutter test test/core/ test/data/` |
+| **4. Core, Data, Security & Helpers** | `test/core/`, `test/data/`, `test/helpers/`, `test/*_test.dart` | Multi-tenant security leaks (`tenantId` guards, `db_query_columns`, RLS/offline caches, force-unwrap safety), models, date/calc utils, l10n and PWA/service-worker tooling | `flutter test test/core/ test/data/` |
 
-On CI (`.github/workflows/ci.yml`), all files under `test/` run across **4 parallel Linux shards**, alongside static analysis (`dart analyze`) and Python/JS tool checks (`python3 -m unittest tool/testing/test_dashboard.py`). On pull requests that touch `test/golden/goldens/**`, **Bildvergleich** (`.github/workflows/golden-preview.yml`) comments before/after screenshots directly on the PR.
+On CI (`.github/workflows/ci.yml`), all files under `test/` run across **4 parallel Linux shards**, alongside static analysis (`dart analyze`) and Python/JS tool checks (`python3 -m unittest tool/testing/test_dashboard.py`). On pull requests that touch `test/golden/goldens/**`, **Bildvergleich** (`.github/workflows/golden-preview.yml`) comments before/after screenshots directly on the PR. To regenerate Linux reference PNGs on demand without a local Linux container, trigger **`.github/workflows/update-goldens.yml`** (`workflow_dispatch`), which runs `flutter test test/golden --update-goldens` on Ubuntu and uploads `test/golden/goldens/*.png` as the `updated-linux-goldens` artifact.
 
 ## Test-Dashboard
 
@@ -29,7 +29,12 @@ python3 tool/testing/generate_test_dashboard.py \
   --markdown build/test-dashboard/summary.md
 ```
 
-- **What it shows:** KPI cards, the 4-layer explanation, a **Feature Coverage Matrix** across `lib/features/*`, a **Golden Screenshot Gallery** (embedded standalone when `--embed-goldens` is passed), and an **Interactive Test Explorer** with search, layer filters, status filters and expandable test case lists.
+- **What it shows:**
+  - KPI cards and the 4+2 test-layer architecture overview.
+  - **Bug-Risikoklassen-Abdeckung ("Welche echten Fehlerklassen fangen wir ab?"):** Groups all tests across 5 bug-catching risk classes (`Layout & Overflows`, `Visuelle Regression`, `Empty / Error / Rollen / Flows`, `Multi-Tenant & Security`, `Echte E2E-Journeys`), with direct explorer filtering.
+  - **Feature Coverage Matrix:** Per-feature breakdown across `lib/features/*` including test counts, Golden/Patrol coverage, and risk-class badges.
+  - **Golden Screenshot Gallery:** Interactive category filter chips (`Hauptseiten`, `Subpages`, `Sheets`, `Dark Mode`, `Desktop`) and full-size modal preview (embedded standalone when `--embed-goldens` is passed).
+  - **Interactive Test Explorer:** Searchable file and test-case list with layer, bug-risk-class, and execution-status filters.
 - **Online (GitHub Pages):** Every push to `master` automatically publishes the interactive dashboard live to <https://fecgspeyer.github.io/attendix/>.
 - **In GitHub Actions CI:** Every `CI` run aggregates all 4 shard JSON reports into `$GITHUB_STEP_SUMMARY` and uploads the standalone HTML dashboard as the **`test-dashboard`** artifact (retained for 14 days, even when a shard fails).
 

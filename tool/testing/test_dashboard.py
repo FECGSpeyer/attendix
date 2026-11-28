@@ -473,5 +473,172 @@ class ResultHealthTests(unittest.TestCase):
         self.assertEqual(dash.classify_test_file("././patrol_test/a_test.dart"), "patrol")
 
 
+class GoldenCategoryAndRiskViewTests(unittest.TestCase):
+    def test_classify_golden_category(self) -> None:
+        cases = {
+            "beta_dark_heute.png": "dark",
+            "beta_desktop_termine.png": "desktop",
+            "beta_sheet_org_song_copy.png": "sheet",
+            "beta_page_org_settings.png": "page",
+            "beta_heute.png": "main",
+            "beta_heute_mitglied.png": "main",
+            "beta_verwaltung.png": "main",
+        }
+        for filename, expected in cases.items():
+            with self.subTest(filename=filename):
+                self.assertEqual(dash.classify_golden_category(filename), expected)
+
+    def test_map_goldens_to_features_for_extended_categories(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            known = {
+                "attendance",
+                "auth",
+                "organisation",
+                "people",
+                "profile",
+                "settings",
+                "songs",
+                "team_organization",
+                "today",
+            }
+            for feat in known:
+                (root / "lib" / "features" / feat).mkdir(parents=True)
+
+            goldens_dir = root / "test" / "golden" / "goldens"
+            goldens_dir.mkdir(parents=True)
+            expected = {
+                "beta_heute.png": ["today"],
+                "beta_dark_heute.png": ["today"],
+                "beta_dark_termine.png": ["attendance"],
+                "beta_dark_werke.png": ["songs"],
+                "beta_dark_ich.png": ["profile"],
+                "beta_desktop_termine.png": ["attendance"],
+                "beta_desktop_mitglieder.png": ["people"],
+                "beta_desktop_werke.png": ["songs"],
+                "beta_page_org_settings.png": ["organisation"],
+                "beta_page_event_create.png": ["attendance"],
+                "beta_page_person_detail.png": ["people"],
+                "beta_page_work_detail.png": ["songs"],
+                "beta_page_login.png": ["auth"],
+                "beta_sheet_org_song_copy.png": ["organisation", "songs"],
+                "beta_sheet_event_create_menu.png": ["attendance", "team_organization"],
+                "beta_sheet_org_info.png": ["organisation"],
+                "beta_sheet_action_sheet.png": [],
+            }
+            for fname in expected:
+                (goldens_dir / fname).write_bytes(_make_png(4, 4))
+
+            mapped = dash.map_goldens_to_features(root, known)
+            for fname, exp_feats in expected.items():
+                with self.subTest(fname=fname):
+                    self.assertEqual(mapped[fname], exp_feats)
+
+    def test_classify_test_risk_classes(self) -> None:
+        self.assertEqual(
+            dash.classify_test_risk_classes("test/ui/main_pages_responsive_ui_test.dart", "ui"),
+            ["layout"],
+        )
+        self.assertEqual(
+            dash.classify_test_risk_classes("test/ui/design_system_guard_test.dart", "ui"),
+            ["layout"],
+        )
+        self.assertEqual(
+            dash.classify_test_risk_classes("test/ui/empty_error_roles_ui_test.dart", "ui"),
+            ["flows"],
+        )
+        self.assertEqual(
+            dash.classify_test_risk_classes("test/golden/extended_goldens_test.dart", "golden"),
+            ["visual"],
+        )
+        self.assertEqual(
+            dash.classify_test_risk_classes("test/features/people/force_unwrap_safety_test.dart", "features"),
+            ["security"],
+        )
+        self.assertEqual(
+            dash.classify_test_risk_classes("test/core/providers/tenant_bind_test.dart", "core"),
+            ["security"],
+        )
+        self.assertEqual(
+            dash.classify_test_risk_classes("test/data/db_query_columns_test.dart", "core"),
+            ["security"],
+        )
+        self.assertEqual(
+            dash.classify_test_risk_classes("patrol_test/login_test.dart", "patrol"),
+            ["e2e"],
+        )
+
+    def test_bug_risk_class_overview_and_golden_chips_in_html_and_markdown(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            for feat in ("attendance", "organisation", "songs", "people", "auth"):
+                (root / "lib" / "features" / feat).mkdir(parents=True)
+
+            (root / "test" / "ui").mkdir(parents=True)
+            (root / "test" / "ui" / "main_pages_responsive_ui_test.dart").write_text(
+                "import 'package:attendix/features/attendance/x.dart';\n"
+                "void main() { testWidgets('no overflow', (t) async {}); }\n",
+                encoding="utf-8",
+            )
+            (root / "test" / "ui" / "empty_error_roles_ui_test.dart").write_text(
+                "import 'package:attendix/features/people/x.dart';\n"
+                "void main() { testWidgets('empty state', (t) async {}); }\n",
+                encoding="utf-8",
+            )
+            (root / "test" / "golden" / "goldens").mkdir(parents=True)
+            (root / "test" / "golden" / "extended_goldens_test.dart").write_text(
+                "void main() { testWidgets('dark', (t) async {}); }\n",
+                encoding="utf-8",
+            )
+            for name in (
+                "beta_termine.png",
+                "beta_page_org_settings.png",
+                "beta_sheet_org_song_copy.png",
+                "beta_dark_termine.png",
+                "beta_desktop_mitglieder.png",
+            ):
+                (root / "test" / "golden" / "goldens" / name).write_bytes(_make_png(8, 8))
+
+            (root / "test" / "core").mkdir(parents=True)
+            (root / "test" / "core" / "tenant_rls_test.dart").write_text(
+                "import 'package:attendix/features/organisation/x.dart';\n"
+                "void main() { test('enforces tenantId', () {}); }\n",
+                encoding="utf-8",
+            )
+            (root / "patrol_test").mkdir(parents=True)
+            (root / "patrol_test" / "login_test.dart").write_text(
+                "void main() { patrolTest('N-01 Login', tags: ['pr'], ($) async {}); }\n",
+                encoding="utf-8",
+            )
+
+            report = dash.scan_repository(root, embed_goldens=False)
+            self.assertEqual(
+                report.golden_category_counts,
+                {"main": 1, "page": 1, "sheet": 1, "dark": 1, "desktop": 1},
+            )
+            for rid in dash.RISK_CLASS_ORDER:
+                self.assertGreaterEqual(report.risk_class_stats[rid]["files"], 1)
+
+            html_path = root / "dash.html"
+            html_text = dash.render_html(report, html_path)
+            self.assertIn("Bug-Risikoklassen-Abdeckung", html_text)
+            for meta in dash.RISK_CLASS_META.values():
+                self.assertIn(dash.html.escape(meta["title"]), html_text)
+            for cat_id in dash.GOLDEN_CATEGORY_ORDER:
+                self.assertIn(f'data-golden-cat="{cat_id}"', html_text)
+                self.assertIn(f'data-category="{cat_id}"', html_text)
+            self.assertIn('id="goldenCategoryChips"', html_text)
+            self.assertIn('id="riskChips"', html_text)
+
+            md_text = dash.render_markdown(report)
+            self.assertIn("### Bug-Risikoklassen-Abdeckung", md_text)
+            self.assertIn("**Layout & Overflows**", md_text)
+            self.assertIn("**Visuelle Regression**", md_text)
+            self.assertIn("**Empty / Error / Rollen / Flows**", md_text)
+            self.assertIn("**Multi-Tenant & Security**", md_text)
+            self.assertIn("**Echte E2E-Journeys**", md_text)
+            self.assertIn("Hauptseiten: 1 · Subpages: 1 · Sheets: 1 · Dark Mode: 1 · Desktop: 1", md_text)
+
+
 if __name__ == "__main__":
     unittest.main()
