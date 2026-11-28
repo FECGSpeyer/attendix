@@ -1,15 +1,30 @@
 # Golden images
 
-Pictures of whole pages in `goldens/`, rendered by widget tests with the
-app's real fonts and icons. A test fails when a page no longer looks like its
-picture. They catch what behaviour tests do not see: spacing, colours, a
-missing button, a widget that moved.
+Pictures of whole pages, subpages, and modals in `goldens/` (24 total),
+rendered by widget tests with the app's real fonts and icons. A test fails
+when a screen no longer looks like its picture. They catch what behaviour
+tests do not see: spacing, colours, a missing button, a widget that moved.
 
-| File | Pages |
-|---|---|
-| `pages_beta_test.dart` | Main app pages (`beta_*`) |
+| File | Coverage | Count |
+|---|---|---|
+| `pages_beta_test.dart` | Main app pages (`beta_*`) | 8 |
+| `extended_goldens_test.dart` | Dark Mode (`beta_dark_*`), Desktop Split-Views (`beta_desktop_*`), Subpages & Forms (`beta_page_*`), Sheets & Modals (`beta_sheet_*`) | 16 |
 
 ## After an intended change
+
+### Option 1: 1-click GitHub Actions generator (recommended on macOS/Windows)
+
+Run the manual workflow **Update Linux Goldens** (`.github/workflows/update-goldens.yml`)
+on your branch via **Actions → Update Linux Goldens → Run workflow**:
+
+- Checks out the selected branch on `ubuntu-latest` with Flutter `3.47.9`.
+- Runs `flutter test test/golden --update-goldens`.
+- Uploads all `test/golden/goldens/*.png` files as the `updated-linux-goldens` artifact (7 days retention).
+
+Download the artifact, copy the updated PNGs into `test/golden/goldens/`, review
+them, and commit them with your change.
+
+### Option 2: Locally on Linux
 
 ```bash
 flutter test test/golden --update-goldens
@@ -48,5 +63,8 @@ testWidgets('Mitglieder', (tester) async {
 - **No dates that move.** The app reads the clock directly, so the world's
   Termine lie in 2099 and 2024. If a page prints today's date, swap that text
   with `expectGolden(..., replace: {...})`.
-- Keep it few: one picture per page that matters, not one per state. A state
-  belongs into a behaviour test.
+- **Modals & bottom sheets.** Trigger the sheet from inside `MaterialApp` (e.g.
+  via a host `Scaffold`) and wait with `settle(tester)` so `find.byType(MaterialApp)`
+  captures the modal overlay.
+- Keep it few: one picture per page or modal that matters, not one per state. A
+  state belongs into a behaviour test.
