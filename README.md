@@ -96,6 +96,8 @@ flutter test
 python3 tool/testing/generate_test_dashboard.py --open
 ```
 
+Online-Dashboard nach jedem Push auf `master`: <https://fecgspeyer.github.io/attendix/> (Details in [docs/testing.md](docs/testing.md)).
+
 ### Projektstruktur
 
 - `lib/core/` – Konfiguration, Domänen-Logik (`core/logic/`), Provider, Router, Services, Theme & Utils

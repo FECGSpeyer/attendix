@@ -30,6 +30,7 @@ python3 tool/testing/generate_test_dashboard.py \
 ```
 
 - **What it shows:** KPI cards, the 4-layer explanation, a **Feature Coverage Matrix** across `lib/features/*`, a **Golden Screenshot Gallery** (embedded standalone when `--embed-goldens` is passed), and an **Interactive Test Explorer** with search, layer filters, status filters and expandable test case lists.
+- **Online (GitHub Pages):** Every push to `master` automatically publishes the interactive dashboard live to <https://fecgspeyer.github.io/attendix/>.
 - **In GitHub Actions CI:** Every `CI` run aggregates all 4 shard JSON reports into `$GITHUB_STEP_SUMMARY` and uploads the standalone HTML dashboard as the **`test-dashboard`** artifact (retained for 14 days, even when a shard fails).
 
 # E2E flows (Patrol)
