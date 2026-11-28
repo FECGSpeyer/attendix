@@ -59,7 +59,10 @@ extension _RdEventsFilters on _RdEventsPageState {
             }
           }),
         ),
-        if (canCreate && inSplit) ...[
+        if (inSplit && _orgSegmentActive()) ...[
+          const SizedBox(width: 8),
+          const RdOrgPlanAddButton(compact: true),
+        ] else if (canCreate && inSplit) ...[
           const SizedBox(width: 8),
           const RdEventCreateMenu(compact: true),
         ],

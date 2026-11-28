@@ -11757,9 +11757,6 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get rdOrgAdHocShort => 'Ohne Termin';
-
-  @override
   String get rdOrgArchiveNote =>
       'Die Personen werden hier archiviert. Wer ein Konto hat, bekommt eine Nachricht.';
 
@@ -12002,9 +11999,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get rdOrgPersonFields => 'Gemeinsame eigene Felder';
-
-  @override
-  String get rdOrgPlanAdHocMeta => 'ORG-Plan ohne Termin';
 
   @override
   String get rdOrgPlanBackClose => 'Schließen';

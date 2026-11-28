@@ -55,12 +55,7 @@ Future<void> openOrgPlanEntry(
       : entry.tenantLabel.isNotEmpty
           ? l10n.rdOrgBadgeGroup(entry.tenantLabel)
           : l10n.rdOrgBadge;
-  final hint = entry.isAdHoc
-      ? [
-          l10n.rdOrgPlanAdHocMeta,
-          if (orgName != null && orgName.isNotEmpty) orgName,
-        ].join(' · ')
-      : (orgName != null && orgName.isNotEmpty ? orgName : null);
+  final hint = orgName != null && orgName.isNotEmpty ? orgName : null;
   return showPlanViewer(
     context,
     attendance: att,

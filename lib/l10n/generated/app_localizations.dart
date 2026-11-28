@@ -18751,12 +18751,6 @@ abstract class AppLocalizations {
   /// **'Aushilfe bis {date}'**
   String rdHelperUntil(Object date);
 
-  /// rdOrg.adHocShort
-  ///
-  /// In de, this message translates to:
-  /// **'Ohne Termin'**
-  String get rdOrgAdHocShort;
-
   /// rdOrg.archiveNote
   ///
   /// In de, this message translates to:
@@ -19140,12 +19134,6 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Gemeinsame eigene Felder'**
   String get rdOrgPersonFields;
-
-  /// rdOrg.planAdHocMeta
-  ///
-  /// In de, this message translates to:
-  /// **'ORG-Plan ohne Termin'**
-  String get rdOrgPlanAdHocMeta;
 
   /// rdOrg.planBackClose
   ///

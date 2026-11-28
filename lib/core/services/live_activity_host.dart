@@ -330,10 +330,7 @@ class RiverpodLiveActivityHost implements LiveActivityHost {
       defaultLive: true,
       backLabel: l10n.rdOrgPlanBackClose,
       originBadge: l10n.rdOrgBadgeAdHoc,
-      originHint: [
-        l10n.rdOrgPlanAdHocMeta,
-        if (orgName != null && orgName.isNotEmpty) orgName,
-      ].join(' · '),
+      originHint: orgName != null && orgName.isNotEmpty ? orgName : null,
     );
   }
 }

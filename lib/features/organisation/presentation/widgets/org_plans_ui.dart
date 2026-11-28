@@ -170,10 +170,13 @@ class RdTodayOrgPlansCard extends ConsumerWidget {
 
 /// Compact neutral origin tag used inside an ORG container (Heute ORG card or
 /// Termine › Org-Pläne), where the organisation itself is already named above.
+/// Termin plans name their group; a free plan names the group that added it
+/// to the organisation, or carries no tag when that is unknown ("Ohne Termin"
+/// read as "this event has no Termin").
 Widget? _orgOriginPill(BuildContext context, OrgPlanEntry entry) {
-  final l10n = context.l10n;
   if (entry.isAdHoc) {
-    return RdPill(l10n.rdOrgAdHocShort, icon: Icons.edit_note);
+    final g = entry.groupName;
+    return g != null && g.isNotEmpty ? RdPill(g, icon: Icons.groups_outlined) : null;
   }
   if (entry.tenantLabel.isNotEmpty) {
     return RdPill(entry.tenantLabel, icon: Icons.groups_outlined);
@@ -296,21 +299,41 @@ class RdOrgPlansSegmentBody extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const SizedBox(height: 12),
+        // A group belongs to at most one organisation, so no org pill here:
+        // the line names it and the (i) explains what an organisation is.
         Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            if (org != null)
-              Expanded(
-                child: Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: RdOrgPill(
-                    org.name,
-                    showInfo: true,
-                    tooltip: l10n.rdOrgInfoButtonTooltip,
-                    onTap: () => showRdOrgInfoSheet(context),
-                  ),
-                ),
-              ),
-            if (org == null) const Spacer(),
+            Expanded(
+              child: org == null
+                  ? const SizedBox.shrink()
+                  : Semantics(
+                      button: true,
+                      label: l10n.rdOrgInfoButtonTooltip,
+                      excludeSemantics: true,
+                      child: InkWell(
+                        key: const Key('rd-events-org-info'),
+                        borderRadius: BorderRadius.circular(8),
+                        onTap: () => showRdOrgInfoSheet(context),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          child: Text.rich(
+                            TextSpan(
+                              text: '${l10n.rdOrgEventsOrgSubtitle(org.name)} ',
+                              children: [
+                                WidgetSpan(
+                                  alignment: PlaceholderAlignment.middle,
+                                  child: Icon(Icons.info_outline, size: 16, color: p.text2),
+                                ),
+                              ],
+                            ),
+                            style: RdType.meta(p, size: 13),
+                          ),
+                        ),
+                      ),
+                    ),
+            ),
+            const SizedBox(width: 12),
             RdTextLink(
               key: const Key('rd-events-org-plans-manage'),
               label: l10n.plansManage,
@@ -318,10 +341,6 @@ class RdOrgPlansSegmentBody extends ConsumerWidget {
             ),
           ],
         ),
-        if (org != null) ...[
-          const SizedBox(height: 4),
-          Text(l10n.rdOrgEventsOrgSubtitle(org.name), style: RdType.meta(p, size: 13)),
-        ],
         const SizedBox(height: 6),
         if (sections.isEmpty)
           Padding(
@@ -431,5 +450,41 @@ class _OrgPlanListCard extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+/// "+" of Termine while the segment "Org-Pläne" is open: opens the
+/// Ablaufplanung (a free plan that can be added to the organisation there)
+/// instead of the Termin choice (Termin / Besprechung) of the own group.
+class RdOrgPlanAddButton extends StatelessWidget {
+  const RdOrgPlanAddButton({super.key, this.compact = false});
+
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    void open() => context.push('/settings/org-plans/planung');
+    return compact
+        ? SizedBox.square(
+            dimension: 44,
+            child: IconButton.filled(
+              key: const Key('rd-org-plans-add'),
+              tooltip: l10n.plansOpenPlanning,
+              icon: const Icon(Icons.add, size: 22),
+              style: IconButton.styleFrom(backgroundColor: p.primary, foregroundColor: p.onPrimary),
+              onPressed: open,
+            ),
+          )
+        : FloatingActionButton(
+            key: const Key('rd-org-plans-add'),
+            tooltip: l10n.plansOpenPlanning,
+            backgroundColor: p.primary,
+            foregroundColor: p.onPrimary,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+            onPressed: open,
+            child: const Icon(Icons.add, size: 28),
+          );
   }
 }
